@@ -8,11 +8,11 @@ const BackTestingTablePage = ({
   handleOFF,
   updateTrigger,
   setUpdateTrigger,
-  id
+  id,
 }) => {
   const [data, setData] = useState([]);
   const [sum, setSum] = useState(0);
-  const {theme} = useTheme();
+  const { theme } = useTheme();
 
   const handleDelete = () => {
     axios
@@ -66,6 +66,78 @@ const BackTestingTablePage = ({
             <thead>
               <tr className="bg-[#3a2d7d] text-white">
                 <th className="p-1border border-gray-300">Sr No.</th>
+                <th className="p-1border border-gray-300">Entry Time</th>
+                <th className="p-1border border-gray-300">RSI value</th>
+                <th className="p-1border border-gray-300">D Entry Value</th>
+                <th className="p-1border border-gray-300">Entry Type</th>
+                <th className="p-1border border-gray-300">Entry Price</th>
+                <th className="p-1border border-gray-300">Exit Time</th>
+                <th className="p-1border border-gray-300">D EXit Value</th>
+                <th className="p-1border border-gray-300">Exit Type</th>
+                <th className="p-1border border-gray-300">Exit Price</th>
+                <th className="p-1border border-gray-300">Difference</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data?.data?.map((item, index) => {
+                let priceDiff = null;
+                if (item.entryPrice !== null && item.exitPrice !== null) {
+                  priceDiff =
+                    item.OrderType === "Sell"
+                      ? (item.entryPrice - item.exitPrice).toFixed(2)
+                      : (item.exitPrice - item.entryPrice).toFixed(2);
+                }
+                return (
+                  <tr
+                    key={index}
+                    className={`${
+                      theme === "dark"
+                        ? "hover:bg-gray-700"
+                        : "hover:bg-gray-100"
+                    }`}>
+                    <td className="p-1 border border-gray-300 text-center">
+                      {index + 1}
+                    </td>
+                    <td className="p-1 border border-gray-300 text-center">
+                      {formatDate(item.entryTime)}
+                    </td>
+                    <td className="p-1 border border-gray-300 text-center">
+                      {item.RSI_Value?.toFixed(2)}
+                    </td>
+                    <td className="p-1 border border-gray-300 text-center">
+                      {item?.dynamicEntryValue?.toFixed(2)}
+                    </td>
+                    <td className="p-1 border border-gray-300 text-center">
+                      {item.OrderType}
+                    </td>
+                    <td className="p-1 border border-gray-300 text-center">
+                      {item.entryPrice?.toFixed(2)}
+                    </td>
+
+                    <td className="p-1 border border-gray-300 text-center">
+                      {formatDate(item.exitTime)}
+                    </td>
+                    <td className="p-1 border border-gray-300 text-center">
+                      {item.dynamicExitValue?.toFixed(2)}
+                    </td>
+                    <td className="p-1 border border-gray-300 text-center">
+                      {item.transactionType}
+                    </td>
+                    <td className="p-1 border border-gray-300 text-center">
+                      {item.exitPrice?.toFixed(2)}
+                    </td>
+                    <td className="p-1 border border-gray-300 text-center">
+                      {priceDiff}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          {/* <table className="w-fit mx-auto mb-20">
+            <thead>
+              <tr className="bg-[#3a2d7d] text-white">
+                <th className="p-1border border-gray-300">Sr No.</th>
                 <th className="p-1border border-gray-300">Symbol</th>
                 <th className="p-1border border-gray-300">
                   Dynamic Exit Value
@@ -93,7 +165,7 @@ const BackTestingTablePage = ({
                       : (item.exitPrice - item.entryPrice).toFixed(2);
                 }
                 return (
-                  <tr key={index} 
+                  <tr key={index}
                   className={`${
                     theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
                   }`}
@@ -146,7 +218,7 @@ const BackTestingTablePage = ({
                 );
               })}
             </tbody>
-          </table>
+          </table> */}
           <div className="mt-2">
             <p className="font-semibold">
               Total Point Difference: {sum?.toFixed(2)}

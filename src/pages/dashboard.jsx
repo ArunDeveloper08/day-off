@@ -180,54 +180,46 @@ const Dashboard = () => {
         <div className="text-center">
           <Button
             onClick={() => onOpen("add-new-trade", { getAllTrades, trades })}
-            className="px-5 py-2 rounded-md border-2"
-          >
+            className="px-5 py-2 rounded-md border-2">
             Add New Trade
           </Button>
           <Button
             onClick={() => navigate("/future/angel-one")}
-            className="px-5 py-2 rounded-md border-2"
-          >
+            className="px-5 py-2 rounded-md border-2">
             Looser/Gainer
           </Button>
 
           <Button
             onClick={() => navigate("/future/sop")}
-            className="px-5 py-2 rounded-md border-2"
-          >
+            className="px-5 py-2 rounded-md border-2">
             SOP
           </Button>
           <Button
             onClick={() => navigate("/future/angel-login")}
-            className="px-5 py-2 rounded-md border-2"
-          >
+            className="px-5 py-2 rounded-md border-2">
             Angel-Login
           </Button>
           <Button
             onClick={() => {
               handleResetDataOnServer();
             }}
-            className="px-5 py-2 rounded-md border-2"
-          >
+            className="px-5 py-2 rounded-md border-2">
             Reset Data on server
           </Button>
 
           <Button
             onClick={toggleShowOffTerminals}
-            className="px-5 py-2 rounded-md border-2"
-          >
+            className="px-5 py-2 rounded-md border-2">
             {showOffTerminals ? "Hide" : "Show"}
           </Button>
           <Button
             onClick={toggleShowOffLosserGainer}
-            className="px-5 py-2 rounded-md border-2"
-          >
+            className="px-5 py-2 rounded-md border-2">
             {showGainer ? "Hide Losser/Gainer" : "Show Losser/Gainer"}
           </Button>
           <Button
             onClick={handleLogout}
-            className="px-5 py-2 rounded-md border-2"
-          >
+            className="px-5 py-2 rounded-md border-2">
             Logout
           </Button>
           <ModeToggle />
@@ -291,8 +283,7 @@ const Dashboard = () => {
                           item.isMaster
                             ? "text-green-700 font-semibold"
                             : "text-red-700 font-semibold"
-                        }
-                      >
+                        }>
                         {item.isMaster ? "True" : "False"}
                       </td>
 
@@ -401,10 +392,10 @@ const Dashboard = () => {
                             name="terminal"
                             value={editValues.terminal}
                             onChange={handleInputChange}
-                            className="w-full border-[1px] border-black p-2 rounded-md"
-                          >
+                            className="w-full border-[1px] border-black p-2 rounded-md">
                             <option value="ON">ON</option>
                             <option value="OFF">OFF</option>
+                            <option value="manualIn">Manual In</option>
                           </select>
                         ) : (
                           <span
@@ -412,8 +403,7 @@ const Dashboard = () => {
                               item.terminal === "ON"
                                 ? "text-red-700 font-semibold"
                                 : "text-green-700 font-semibold"
-                            }
-                          >
+                            }>
                             {item.terminal}
                           </span>
                         )}
@@ -424,8 +414,7 @@ const Dashboard = () => {
                             name="orderType"
                             value={editValues.orderType}
                             onChange={handleInputChange}
-                            className="w-full border-[1px] border-black p-2 rounded-md"
-                          >
+                            className="w-full border-[1px] border-black p-2 rounded-md">
                             <option value="Buy">Buy</option>
                             <option value="Sell">Sell</option>
                           </select>
@@ -435,8 +424,7 @@ const Dashboard = () => {
                               item.orderType === "Sell"
                                 ? "text-red-700 font-semibold"
                                 : "text-green-700 font-semibold"
-                            }
-                          >
+                            }>
                             {item.orderType}
                           </span>
                         )}
@@ -446,14 +434,12 @@ const Dashboard = () => {
                           item.orderType === "Bearish"
                             ? "text-red-700 font-semibold"
                             : "text-green-700 font-semibold"
-                        }
-                      >
+                        }>
                         {item.marketTrend}
                         <p className="text-[11px] text-black  ">
                           {item.rangeBound}
                         </p>
                       </td>
-
                       {/* <td className="text-blue-500 font-bold">
                       {(
                         (item.tradeEntryPercent * item.LastPivot) /
@@ -542,7 +528,6 @@ const Dashboard = () => {
                         item.priceDecPercent
                       )}
                     </td> */}
-
                       <td>
                         <Button onClick={() => handleEdit(item)}>Edit</Button>
                       </td>
@@ -557,8 +542,7 @@ const Dashboard = () => {
                           onClick={() =>
                             handleOpenNewTab(`/future/live?id=${item.id}`)
                           }
-                          className="text-xs"
-                        >
+                          className="text-xs">
                           <SquareArrowOutUpRight className="w-4 h-4" />
                         </Button>
                       </td>
@@ -568,8 +552,7 @@ const Dashboard = () => {
                           onClick={() =>
                             handleOpenNewTab(`/future/back?id=${item.id}`)
                           }
-                          className="text-xs"
-                        >
+                          className="text-xs">
                           <SquareArrowOutUpRight className="w-4 h-4" />
                         </Button>
                       </td>
@@ -650,14 +633,12 @@ const Dashboard = () => {
                               trades,
                             })
                           }
-                          className="px-2 rounded-md"
-                        >
+                          className="px-2 rounded-md">
                           <FilePenLine className="w-4 h-4" />
                         </Button>
                         <Button
                           onClick={() => handleDelete(item.id)}
-                          className="px-2 rounded-md"
-                        >
+                          className="px-2 rounded-md">
                           <Trash className="w-4 h-4" />
                         </Button>
                       </td>

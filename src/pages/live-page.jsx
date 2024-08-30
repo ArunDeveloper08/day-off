@@ -73,7 +73,7 @@ export const LivePage = () => {
     data: {},
     error: "",
   });
-  const [hideConfig , setHideConfig] = useState(true)
+  const [hideConfig, setHideConfig] = useState(true);
   if (!id) return null;
   const getTradeConfig = async () => {
     try {
@@ -90,7 +90,6 @@ export const LivePage = () => {
       }));
     }
   };
-
   const getChartData = () => {
     if (isUserScroll) return;
     axios
@@ -170,7 +169,18 @@ export const LivePage = () => {
       console.log(err);
     }
   };
-
+  const handleCreateTrendLines = async (trendline) => {
+    try {
+      await axios.put(`${BASE_URL_OVERALL}/config/edit`, {
+        id,
+        trendLines: trendline,
+      });
+      getChartData();
+      alert("successfully Updated TrendLines");
+    } catch (err) {
+      console.error(err);
+    }
+  };
   const handleChange = (e) => {
     const { name, value } = e.target;
     setValues((prev) => ({
@@ -192,7 +202,6 @@ export const LivePage = () => {
       alert("Some error Occured");
     }
   };
-
   return (
     <div>
       {data.error ? (
@@ -202,24 +211,23 @@ export const LivePage = () => {
           <div>
             <p className="font-semibold text-center font-mono text-[20px] text-green-600">
               Angel-One(Main Chart)
-              <Button size="sm" onClick={()=>setHideConfig(prev=>!prev)}>
+              <Button size="sm" onClick={() => setHideConfig((prev) => !prev)}>
                 {hideConfig ? "Hide Config Data" : "Show Config Data"}
               </Button>
             </p>
-            {
-              hideConfig && 
+            {hideConfig && (
               <div>
-              <UIButton
-                getHighLowLines={getHighLowLines}
-                showRow={showRow}
-                setShowRow={setShowRow}
-                data={data}
-                socketData={socketData}
-                masterId={masterId}
-              />
-            </div>  
-            }
-          
+                <UIButton
+                  getHighLowLines={getHighLowLines}
+                  showRow={showRow}
+                  setShowRow={setShowRow}
+                  data={data}
+                  socketData={socketData}
+                  masterId={masterId}
+                />
+              </div>
+            )}
+
             <div className="flex justify-center ">
               <div className="px-1 flex items-center ">
                 {/* <Label>Date :</Label> */}
@@ -259,15 +267,13 @@ export const LivePage = () => {
                   }
                   className={`px-1 py-1 duration-300 text-xs font-semibold rounded-md ${
                     showRow.fibonacci ? "bg-black text-gray-100" : "bg-white "
-                  }`}
-                >
+                  }`}>
                   <div className=" flex items-center ">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 28 28"
                       width="28"
-                      height="28"
-                    >
+                      height="28">
                       <g fill="currentColor" fill-rule="nonzero">
                         <path d="M3 5h22v-1h-22z"></path>
                         <path d="M3 17h22v-1h-22z"></path>
@@ -290,15 +296,13 @@ export const LivePage = () => {
                     showRow.equidistantChannel
                       ? "bg-black text-gray-100"
                       : "bg-white "
-                  }`}
-                >
+                  }`}>
                   <div className="flex  items-center">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 28 28"
                       width="28"
-                      height="28"
-                    >
+                      height="28">
                       <g fill="currentColor" fill-rule="nonzero">
                         <path d="M8.354 18.354l10-10-.707-.707-10 10zM12.354 25.354l5-5-.707-.707-5 5z"></path>
                         <path d="M20.354 17.354l5-5-.707-.707-5 5z"></path>
@@ -317,20 +321,17 @@ export const LivePage = () => {
                   }
                   className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
                     showRow.trendLine ? "bg-black text-gray-100" : "bg-white "
-                  }`}
-                >
+                  }`}>
                   <div className="flex items-center">
                     <span
                       className="icon-KTgbfaP5"
                       role="img"
-                      aria-hidden="true"
-                    >
+                      aria-hidden="true">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 28 28"
                         width="28"
-                        height="28"
-                      >
+                        height="28">
                         <g fill="currentColor" fill-rule="nonzero">
                           <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
                           <path d="M22.5 7c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM5.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
@@ -340,6 +341,7 @@ export const LivePage = () => {
                     <span>Trendline</span>
                   </div>
                 </button>
+                {/* <Button>Update Trendlines</Button> */}
                 {/* <ModeToggle /> */}
               </div>
             </div>
@@ -348,7 +350,7 @@ export const LivePage = () => {
           <div className="flex">
             {/* <div className="w-[10%]">
               <div className=" px-1 items-center space-y-3">
-    
+
                 &nbsp; &nbsp;
                 <div className="px-1 text-center flex items-center ">
                   <Label>S1 </Label> &nbsp;
@@ -418,13 +420,16 @@ export const LivePage = () => {
                 </div>
                 &nbsp;
                 <div className=" ml-5">
-              
+
                 </div>
               </div>
             </div> */}
             <div className="w-[100%]">
               {apiData?.length > 0 && (
                 <CandleChart
+                  //   id={id}
+                  //   getChartData={getChartData}
+                  handleCreateTrendLines={handleCreateTrendLines}
                   data={apiData}
                   intractiveData={intractiveData}
                   getMoreData={() => {}}
@@ -433,7 +438,6 @@ export const LivePage = () => {
                   showRow={showRow}
                   theme={theme}
                   // xExtents={xExtents}
-
                   height={(height * 7) / 10}
                 />
               )}

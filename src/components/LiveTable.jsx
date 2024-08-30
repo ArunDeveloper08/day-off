@@ -13,7 +13,7 @@ const LiveTable = () => {
   });
   const [socketData, setSocketData] = useState([]);
   const { isConnected, socket } = useLiveSocket();
-  
+
   const liveTradeData = () => {
     axios
       .get(`${tradeConfig.url}/chart/realTime`)
@@ -32,16 +32,14 @@ const LiveTable = () => {
 
     return () => clearInterval(interval); // Clear interval on component unmount
   }, []);
-  
+
   useEffect(() => {
     if (!isConnected) return;
     socket.on("getLiveData", (message) => {
-
       if (!message) return;
       setSocketData(message);
     });
   }, [socket, isConnected]);
-
 
   useEffect(() => {
     if (data?.length >= 0 && socketData?.last_price) {
@@ -68,12 +66,13 @@ const LiveTable = () => {
     }
     return { CallType: item.CallType, identifier: item.identifier, diff };
   };
-  
+
+  console.log(trands);
 
   return (
     <div>
- <div className="ml-3 mt-2 flex justify-around">
- {lastTwoDiffs.diff1?.diff && (
+      <div className="ml-3 mt-2 flex justify-around">
+        {lastTwoDiffs.diff1?.diff && (
           <p className="font-semibold font-serif">
             {lastTwoDiffs.diff1?.identifier} ({lastTwoDiffs.diff1?.CallType}):{" "}
             {lastTwoDiffs.diff1?.diff}
@@ -85,84 +84,84 @@ const LiveTable = () => {
             {lastTwoDiffs.diff2?.diff}
           </p>
         )}
- </div>
-    <table className="w-fit mx-auto mb-20">
-      <thead>
-        <tr>
-          <th className="p-1 border border-gray-300">Sr No.</th>
-          <th className="p-1 border border-gray-300">Symbol</th>
-          <th className="p-1 border border-gray-300">Entry Time</th>
-          <th className="p-1 border border-gray-300">Exit Time</th>
-          <th className="p-1 border border-gray-300">API Entry Time</th>
-          <th className="p-1 border border-gray-300">API Exit Time</th>
-          <th className="p-1 border border-gray-300">Identifier</th>
-          <th className="p-1 border border-gray-300">Entry Type</th>
-          <th className="p-1 border border-gray-300">Call Type</th>
-          <th className="p-1 border border-gray-300">Entry Pivot</th>
-          <th className="p-1 border border-gray-300">Exit Pivot</th>
-          <th className="p-1 border border-gray-300">Price Diff</th>
-          <th className="p-1 border border-gray-300">Transaction Type</th>
-        </tr>
-      </thead>
-      <tbody>
-        {data &&
-          data?.map((item, index) => {
-            let priceDiff = null;
+      </div>
+      <table className="w-fit mx-auto mb-20">
+        <thead>
+          <tr>
+            <th className="p-1 border border-gray-300">Sr No.</th>
+            <th className="p-1 border border-gray-300">Symbol</th>
+            <th className="p-1 border border-gray-300">Entry Time</th>
+            <th className="p-1 border border-gray-300">Exit Time</th>
+            <th className="p-1 border border-gray-300">API Entry Time</th>
+            <th className="p-1 border border-gray-300">API Exit Time</th>
+            <th className="p-1 border border-gray-300">Identifier</th>
+            <th className="p-1 border border-gray-300">Entry Type</th>
+            <th className="p-1 border border-gray-300">Call Type</th>
+            <th className="p-1 border border-gray-300">Entry Pivot</th>
+            <th className="p-1 border border-gray-300">Exit Pivot</th>
+            <th className="p-1 border border-gray-300">Price Diff</th>
+            <th className="p-1 border border-gray-300">Transaction Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data &&
+            data?.map((item, index) => {
+              let priceDiff = null;
 
-            if (item.entryPrice !== null && item.exitPrice !== null) {
-              priceDiff =
-                item.CallType === "PE"
-                  ? (item.entryPrice - item.exitPrice).toFixed(2)
-                  : (item.exitPrice - item.entryPrice).toFixed(2);
-            }
-            return (
-              <tr key={index} className="hover:bg-gray-100">
-                <td className="border border-gray-300 text-center text-[13px]">
-                  {index + 1}
-                </td>
-                <td className="border border-gray-300 text-center text-[13px] p-1">
-                  {item.symbol}
-                </td>
-                <td className="border border-gray-300 text-center text-[13px] p-1">
-                  {formatDate(item.realEntryTime)}
-                </td>
-                <td className="border border-gray-300 text-center text-[13px] p-1">
-                  {formatDate(item.realExitTime)}
-                </td>
-                <td className="border border-gray-300 text-center text-[13px] p-1">
-                  {formatDate(item.entryTime)}
-                </td>
-                <td className="border border-gray-300 text-center text-[13px] p-1">
-                  {formatDate(item.exitTime)}
-                </td>
-                <td className="border border-gray-300 text-center text-[13px] p-1">
-                  {item.identifier}
-                </td>
-                <td className="border border-gray-300 text-center text-[13px] p-1">
-                  {item.EntryType}
-                </td>
-                <td className="border border-gray-300 text-center text-[13px] p-1">
-                  {item.CallType}
-                </td>
-                <td className="border border-gray-300 text-center text-[13px] p-1">
-                  {item.entryPivot?.toFixed(2)}
-                </td>
-                <td className="border border-gray-300 text-center text-[13px] p-1">
-                  {item?.exitPivot?.toFixed(2)}
-                </td>
-                <td className="p-1 border border-gray-300 text-center text-[13px]">
-                  {priceDiff}
-                </td>
-                <td className="p-1 border border-gray-300 text-center text-[13px]">
-                  <button className="rounded-sm text-[13px] p-1">
-                    {item.transactionType}
-                  </button>
-                </td>
-              </tr>
-            );
-          })}
-      </tbody>
-    </table>
+              if (item.entryPrice !== null && item.exitPrice !== null) {
+                priceDiff =
+                  item.CallType === "PE"
+                    ? (item.entryPrice - item.exitPrice).toFixed(2)
+                    : (item.exitPrice - item.entryPrice).toFixed(2);
+              }
+              return (
+                <tr key={index} className="hover:bg-gray-100">
+                  <td className="border border-gray-300 text-center text-[13px]">
+                    {index + 1}
+                  </td>
+                  <td className="border border-gray-300 text-center text-[13px] p-1">
+                    {item.symbol}
+                  </td>
+                  <td className="border border-gray-300 text-center text-[13px] p-1">
+                    {formatDate(item.realEntryTime)}
+                  </td>
+                  <td className="border border-gray-300 text-center text-[13px] p-1">
+                    {formatDate(item.realExitTime)}
+                  </td>
+                  <td className="border border-gray-300 text-center text-[13px] p-1">
+                    {formatDate(item.entryTime)}
+                  </td>
+                  <td className="border border-gray-300 text-center text-[13px] p-1">
+                    {formatDate(item.exitTime)}
+                  </td>
+                  <td className="border border-gray-300 text-center text-[13px] p-1">
+                    {item.identifier}
+                  </td>
+                  <td className="border border-gray-300 text-center text-[13px] p-1">
+                    {item.EntryType}
+                  </td>
+                  <td className="border border-gray-300 text-center text-[13px] p-1">
+                    {item.CallType}
+                  </td>
+                  <td className="border border-gray-300 text-center text-[13px] p-1">
+                    {item.entryPivot?.toFixed(2)}
+                  </td>
+                  <td className="border border-gray-300 text-center text-[13px] p-1">
+                    {item?.exitPivot?.toFixed(2)}
+                  </td>
+                  <td className="p-1 border border-gray-300 text-center text-[13px]">
+                    {priceDiff}
+                  </td>
+                  <td className="p-1 border border-gray-300 text-center text-[13px]">
+                    <button className="rounded-sm text-[13px] p-1">
+                      {item.transactionType}
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+        </tbody>
+      </table>
     </div>
   );
 };
