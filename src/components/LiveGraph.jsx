@@ -148,6 +148,7 @@ function tooltipContent(underlyingValue) {
     };
   };
 }
+let colorsArray = ["red", "green", "blue", "black", "purple"];
 const defaultAnnotationProps = {
   onClick: console.log.bind(console),
 };
@@ -190,7 +191,8 @@ const macdAppearance = {
   },
 };
 const CandleChart = ({
-  getMoreData,
+  handleCreateTrendLines,
+  getChartData,
   data: initialData,
   intractiveData,
   width,
@@ -201,7 +203,6 @@ const CandleChart = ({
 }) => {
   const margin = { left: 80, right: 80, top: 30, bottom: 50 };
   const calculatedData = initialData;
-  
   // Trendline state
   const [enableTrendLine, setEnableTrendLine] = useState(false);
   const [trends1, setTrends1] = useState([
@@ -212,10 +213,10 @@ const CandleChart = ({
       type: "XLINE",
     },
   ]);
-  const [trends3, setTrends3] = useState(intractiveData?.trends);
+  const [trends3, setTrends3] = useState(intractiveData?.trendLines);
   const node1Ref = useRef(null);
   const node3Ref = useRef(null);
-
+  //   console.log({ trends3 });
   // Fibonacci state
   const [enableFib, setEnableFib] = useState(true);
   const [retracements1, setRetracements1] = useState([]);
@@ -261,13 +262,23 @@ const CandleChart = ({
   //   setEnableTrendLine(false);
   //   setTrends1(newTrends);
   //   logTrendLines(newTrends);
-  // };    
+  // };
 
   const onDrawCompleteChart3 = (newTrends) => {
-    
     setEnableTrendLine(false);
-    setTrends3(newTrends); 
-    logTrendLines(newTrends);
+    let coloredNewTrends = newTrends.map((item, ind) => {
+      return {
+        ...item,
+        appearance: {
+          ...item.appearance,
+          stroke: colorsArray[ind],
+        },
+      };
+    });
+    console.log({ coloredNewTrends });
+    console.log({ newTrends });
+    setTrends3(coloredNewTrends);
+    logTrendLines(coloredNewTrends);
   };
 
   const onFibComplete1 = (newRetracements) => {
@@ -361,187 +372,190 @@ const CandleChart = ({
   //     nodeRef.current.resetYDomain();
   //   }
   // };
+  console.log("Live Graph");
 
   const handleReset = () => {
     setSuffix(suffix + 1);
   };
-  const handleSubmit =async()=>{
-    try{
-      const response = await axios.post(`${BASE_URL_OVERALL}/trendline`,{
-        trends3
-      })
-    }catch(err){
-      console.error(err);
-    }
-  }
+  //   const handleSubmit = async () => {
+  //     try {
+  //       const response = await axios.put(`${BASE_URL_OVERALL}/config/edit`, {
+  //         id,
+  //         trendLines: trends3,
+  //       });
+  //       await getChartData();
+  //       alert("successfully Updated TrendLines");
+  //     } catch (err) {
+  //       console.error(err);
+  //     }
+  //   };
 
   return (
-    <>   
-     <button
-    className="bg-green-600 px-2 py-1 rounded-sm border-blue-50 text-white"
-     onClick={handleSubmit}
-    >submit</button>
-    <ChartCanvas
-      id="chartId"
-      width={width}
-      height={height}         
-      ratio={ratio}
-      margin={margin}
-      type={type}
-      data={data}
-      xScale={xScale}
-      xAccessor={xAccessor}
-      displayXAccessor={displayXAccessor}
-      xExtents={xExtents}
-      seriesName={`MSFT_${suffix}`}
-    >
-      <Chart
-        id={1}
-        yExtents={[(d) => [d.high, d.low, d.pivot - d.dynamicExitValue]]}
-        padding={{ top: 10, bottom: 20 }}
-      >
-        <XAxis axisAt="bottom" orient="bottom" ticks={15} />
-        <YAxis axisAt="right" orient="right" />
-        {showRow.candle && (
-          <CandlestickSeries
-            opacity={1}
-            fill={(d) =>
-              d.close > d.open
-                ? d.low >= d.open
-                  ? "green"
-                  : "#70e078"
-                : d.high <= d.open
-                ? "red"
-                : "#edbdb8"
-            }
-          />
-        )}
-        {showRow.dynamicEntryValue && (
-          <LineSeries
-            strokeWidth={4}
-            stroke="orange"
-            yAccessor={(d) => d.dynamicEntryValue}
-          />
-        )}
-        {showRow.underlyingValue && (
-          <LineSeries
-            strokeWidth={2}
-            stroke="black"
-            yAccessor={(d) => Number(d.underlyingValue) + 2}
-          />
-        )}
-        {showRow.initialLow && (
-          <LineSeries
-            strokeDasharray="Dash"
-            strokeWidth={4}
-            stroke="gray"
-            yAccessor={(d) => Number(d.InitialLow) + 2}
-          />
-        )}
-        {showRow.RangeBoundTargetProfit && (
-          <LineSeries
-            strokeDasharray="Dash"
-            strokeWidth={4}
-            stroke="pink"
-            yAccessor={(d) => Number(d.RangeBoundTargetProfit)}
-          />
-        )}
-        {showRow.dynamicExitValue && (
-          <LineSeries
-            strokeWidth={4}
-            stroke="blue"
-            yAccessor={(d) =>
-              d?.exitSupport ? Number(d.exitSupport) : undefined
-            }
-          />
-        )}
-        {showRow.Last_Highest_LTP && (
-          <LineSeries
-            strokeDasharray="Dash"
-            strokeWidth={4}
-            stroke="red"
-            yAccessor={(d) =>
-              d?.Last_Highest_LTP ? Number(d.Last_Highest_LTP) : undefined
-            }
-          />
-        )}
-        {showRow.movingAvg && (
-          <>
+    <div className="flex flex-col">
+      <button
+        className="bg-green-600 px-5 py-2 rounded-sm border-blue-50 w-fit mx-auto text-white"
+        onClick={() => handleCreateTrendLines(trends3)}>
+        Submit
+      </button>
+      <ChartCanvas
+        id="chartId"
+        width={width}
+        height={height}
+        ratio={ratio}
+        margin={margin}
+        type={type}
+        data={data}
+        xScale={xScale}
+        xAccessor={xAccessor}
+        displayXAccessor={displayXAccessor}
+        xExtents={xExtents}
+        seriesName={`MSFT_${suffix}`}>
+        <Chart
+          id={1}
+          yExtents={[(d) => [d.high, d.low, d.pivot - d.dynamicExitValue]]}
+          padding={{ top: 10, bottom: 20 }}>
+          <XAxis axisAt="bottom" orient="bottom" ticks={15} />
+          <YAxis axisAt="right" orient="right" />
+          {showRow.candle && (
+            <CandlestickSeries
+              opacity={1}
+              fill={(d) =>
+                d.close > d.open
+                  ? d.low >= d.open
+                    ? "green"
+                    : "#70e078"
+                  : d.high <= d.open
+                  ? "red"
+                  : "#edbdb8"
+              }
+            />
+          )}
+          {showRow.dynamicEntryValue && (
+            <LineSeries
+              strokeWidth={4}
+              stroke="orange"
+              yAccessor={(d) => d.dynamicEntryValue}
+            />
+          )}
+          {showRow.underlyingValue && (
             <LineSeries
               strokeWidth={2}
               stroke="black"
-              yAccessor={(d) => Number(d.movingAvgMA1)}
+              yAccessor={(d) => Number(d.underlyingValue) + 2}
             />
+          )}
+          {showRow.initialLow && (
             <LineSeries
-              strokeWidth={3}
+              strokeDasharray="Dash"
+              strokeWidth={4}
+              stroke="gray"
+              yAccessor={(d) => Number(d.InitialLow) + 2}
+            />
+          )}
+          {showRow.RangeBoundTargetProfit && (
+            <LineSeries
+              strokeDasharray="Dash"
+              strokeWidth={4}
+              stroke="pink"
+              yAccessor={(d) => Number(d.RangeBoundTargetProfit)}
+            />
+          )}
+          {showRow.dynamicExitValue && (
+            <LineSeries
+              strokeWidth={4}
+              stroke="blue"
+              yAccessor={(d) =>
+                d?.exitSupport ? Number(d.exitSupport) : undefined
+              }
+            />
+          )}
+          {showRow.Last_Highest_LTP && (
+            <LineSeries
+              strokeDasharray="Dash"
+              strokeWidth={4}
               stroke="red"
-              yAccessor={(d) => Number(d.movingAvgMA2)}
+              yAccessor={(d) =>
+                d?.Last_Highest_LTP ? Number(d.Last_Highest_LTP) : undefined
+              }
             />
-          </>
-        )}
-        {showRow.showAvg && (
-          <>
-            <LineSeries
-              strokeWidth={2}
-              stroke="green"
-              yAccessor={(d) => d.highAvg}
-            />
+          )}
+          {showRow.movingAvg && (
+            <>
+              <LineSeries
+                strokeWidth={2}
+                stroke="black"
+                yAccessor={(d) => Number(d.movingAvgMA1)}
+              />
+              <LineSeries
+                strokeWidth={3}
+                stroke="red"
+                yAccessor={(d) => Number(d.movingAvgMA2)}
+              />
+            </>
+          )}
+          {showRow.showAvg && (
+            <>
+              <LineSeries
+                strokeWidth={2}
+                stroke="green"
+                yAccessor={(d) => d.highAvg}
+              />
 
-            <LineSeries
-              strokeWidth={2}
-              stroke="red"
-              yAccessor={(d) => d.lowAvg}
-            />
-          </>
-        )}
+              <LineSeries
+                strokeWidth={2}
+                stroke="red"
+                yAccessor={(d) => d.lowAvg}
+              />
+            </>
+          )}
 
-        {showRow.rangeBoundLine && (
-          <>
-            <LineSeries
-              strokeWidth={3}
-              stroke="#191970"
-              yAccessor={(d) => d.R_min}
-            />
-            <LineSeries
-              strokeWidth={3}
-              stroke="#191970"
-              yAccessor={(d) => d.R_max}
-            />
+          {showRow.rangeBoundLine && (
+            <>
+              <LineSeries
+                strokeWidth={3}
+                stroke="#191970"
+                yAccessor={(d) => d.R_min}
+              />
+              <LineSeries
+                strokeWidth={3}
+                stroke="#191970"
+                yAccessor={(d) => d.R_max}
+              />
 
-            <LineSeries
-              strokeWidth={2}
-              stroke="#e75480"
-              yAccessor={(d) => d.R_center}
-            />
-            <LineSeries
-              strokeWidth={2}
-              stroke="green"
-              yAccessor={(d) => d.OuterR_min}
-            />
+              <LineSeries
+                strokeWidth={2}
+                stroke="#e75480"
+                yAccessor={(d) => d.R_center}
+              />
+              <LineSeries
+                strokeWidth={2}
+                stroke="green"
+                yAccessor={(d) => d.OuterR_min}
+              />
 
-            <LineSeries
-              strokeWidth={2}
-              stroke="red"
-              yAccessor={(d) => d.OuterR_max}
-            />
-          </>
-        )}
+              <LineSeries
+                strokeWidth={2}
+                stroke="red"
+                yAccessor={(d) => d.OuterR_max}
+              />
+            </>
+          )}
 
-        <LineSeries
-          strokeWidth={"3"}
-          stroke="brown"
-          yAccessor={(d) => d.movingAvgWMA}
-        />
-
-        {showRow.pivot && (
           <LineSeries
-            strokeWidth={2}
-            stroke="black"
-            yAccessor={(d) => d.pivot}
+            strokeWidth={"3"}
+            stroke="brown"
+            yAccessor={(d) => d.movingAvgWMA}
           />
-        )}
 
-        {/* {showRow.suppRes && (
+          {showRow.pivot && (
+            <LineSeries
+              strokeWidth={2}
+              stroke="black"
+              yAccessor={(d) => d.pivot}
+            />
+          )}
+
+          {/* {showRow.suppRes && (
           <>
             <LineSeries
               strokeWidth={2}
@@ -553,7 +567,7 @@ const CandleChart = ({
               stroke="green"
               yAccessor={(d) => d.s2}
             />
-  
+
             <LineSeries
               strokeWidth={4}
               stroke="green"
@@ -565,265 +579,265 @@ const CandleChart = ({
           </>
         )} */}
 
-        {showRow.monthlyHigh && (
-          <>
-            <Annotate
-              with={LabelAnnotation}
-              when={(d) => d.idx.index === 6}
-              usingProps={{
-                text: "MonthlyHigh",
-                fill: "black",
-                fontFamily: "Arial",
-                y: ({ yScale, datum }) => yScale(datum.monthlyHigh), // Calculate y position based on yScale
-                fontSize: 20,
-                textAnchor: "middle",
-                yOffset: -10, // Adjust as needed to position the text above the high point
-                xOffset: 0, // Adjust horizontal offset if necessary
-              }}
-            />
+          {showRow.monthlyHigh && (
+            <>
+              <Annotate
+                with={LabelAnnotation}
+                when={(d) => d.idx.index === 6}
+                usingProps={{
+                  text: "MonthlyHigh",
+                  fill: "black",
+                  fontFamily: "Arial",
+                  y: ({ yScale, datum }) => yScale(datum.monthlyHigh), // Calculate y position based on yScale
+                  fontSize: 20,
+                  textAnchor: "middle",
+                  yOffset: -10, // Adjust as needed to position the text above the high point
+                  xOffset: 0, // Adjust horizontal offset if necessary
+                }}
+              />
 
-            <Annotate
-              with={LabelAnnotation}
-              when={(d) => d.idx.index === 6}
-              usingProps={{
-                text: "MonthlyLow",
-                fill: "black",
-                fontFamily: "Arial",
-                y: ({ yScale, datum }) => yScale(datum.monthlyLow), // Calculate y position based on yScale
-                fontSize: 20,
-                textAnchor: "middle",
-                yOffset: -10, // Adjust as needed to position the text above the high point
-                xOffset: 0, // Adjust horizontal offset if necessary
-              }}
-            />
-            <LineSeries
-              strokeWidth={6}
-              stroke="red"
-              yAccessor={(d) => d.monthlyHigh}
-            />
-            <LineSeries
-              strokeWidth={6}
-              stroke="green"
-              yAccessor={(d) => d.monthlyLow}
-            />
-          </>
-        )}
+              <Annotate
+                with={LabelAnnotation}
+                when={(d) => d.idx.index === 6}
+                usingProps={{
+                  text: "MonthlyLow",
+                  fill: "black",
+                  fontFamily: "Arial",
+                  y: ({ yScale, datum }) => yScale(datum.monthlyLow), // Calculate y position based on yScale
+                  fontSize: 20,
+                  textAnchor: "middle",
+                  yOffset: -10, // Adjust as needed to position the text above the high point
+                  xOffset: 0, // Adjust horizontal offset if necessary
+                }}
+              />
+              <LineSeries
+                strokeWidth={6}
+                stroke="red"
+                yAccessor={(d) => d.monthlyHigh}
+              />
+              <LineSeries
+                strokeWidth={6}
+                stroke="green"
+                yAccessor={(d) => d.monthlyLow}
+              />
+            </>
+          )}
 
-        {showRow.weekly && (
-          <>
-            <Annotate
-              with={LabelAnnotation}
-              when={(d) => d.idx.index === 6}
-              usingProps={{
-                text: "weeklyHigh",
-                fill: "black",
-                fontFamily: "Arial",
-                y: ({ yScale, datum }) => yScale(datum.weeklyHigh), // Calculate y position based on yScale
-                fontSize: 14,
-                textAnchor: "middle",
-                yOffset: -10, // Adjust as needed to position the text above the high point
-                xOffset: 0, // Adjust horizontal offset if necessary
-              }}
-            />
+          {showRow.weekly && (
+            <>
+              <Annotate
+                with={LabelAnnotation}
+                when={(d) => d.idx.index === 6}
+                usingProps={{
+                  text: "weeklyHigh",
+                  fill: "black",
+                  fontFamily: "Arial",
+                  y: ({ yScale, datum }) => yScale(datum.weeklyHigh), // Calculate y position based on yScale
+                  fontSize: 14,
+                  textAnchor: "middle",
+                  yOffset: -10, // Adjust as needed to position the text above the high point
+                  xOffset: 0, // Adjust horizontal offset if necessary
+                }}
+              />
 
-            <Annotate
-              with={LabelAnnotation}
-              when={(d) => d.idx.index === 6}
-              usingProps={{
-                text: "weeklyLow",
-                fill: "black",
-                fontFamily: "Arial",
-                y: ({ yScale, datum }) => yScale(datum.weeklyLow), // Calculate y position based on yScale
-                fontSize: 14,
-                textAnchor: "middle",
-                yOffset: -10, // Adjust as needed to position the text above the Low point
-                xOffset: 0, // Adjust horizontal offset if necessary
-              }}
-            />
-            <LineSeries
-              strokeWidth={5}
-              stroke="red"
-              yAccessor={(d) => d.weeklyHigh}
-            />
-            <LineSeries
-              strokeWidth={5}
-              stroke="green"
-              yAccessor={(d) => d.weeklyLow}
-            />
-          </>
-        )}
+              <Annotate
+                with={LabelAnnotation}
+                when={(d) => d.idx.index === 6}
+                usingProps={{
+                  text: "weeklyLow",
+                  fill: "black",
+                  fontFamily: "Arial",
+                  y: ({ yScale, datum }) => yScale(datum.weeklyLow), // Calculate y position based on yScale
+                  fontSize: 14,
+                  textAnchor: "middle",
+                  yOffset: -10, // Adjust as needed to position the text above the Low point
+                  xOffset: 0, // Adjust horizontal offset if necessary
+                }}
+              />
+              <LineSeries
+                strokeWidth={5}
+                stroke="red"
+                yAccessor={(d) => d.weeklyHigh}
+              />
+              <LineSeries
+                strokeWidth={5}
+                stroke="green"
+                yAccessor={(d) => d.weeklyLow}
+              />
+            </>
+          )}
 
-        {showRow.fourHourly && (
-          <>
-            <Annotate
-              with={LabelAnnotation}
-              when={(d) => d.idx.index === 6}
-              usingProps={{
-                text: "fourHourlyHigh",
-                fill: "black",
-                fontFamily: "Arial",
-                y: ({ yScale, datum }) => yScale(datum.fourHourlyHigh), // Calculate y position based on yScale
-                fontSize: 14,
-                textAnchor: "middle",
-                yOffset: -10, // Adjust as needed to position the text above the high point
-                xOffset: 0, // Adjust horizontal offset if necessary
-              }}
-            />
+          {showRow.fourHourly && (
+            <>
+              <Annotate
+                with={LabelAnnotation}
+                when={(d) => d.idx.index === 6}
+                usingProps={{
+                  text: "fourHourlyHigh",
+                  fill: "black",
+                  fontFamily: "Arial",
+                  y: ({ yScale, datum }) => yScale(datum.fourHourlyHigh), // Calculate y position based on yScale
+                  fontSize: 14,
+                  textAnchor: "middle",
+                  yOffset: -10, // Adjust as needed to position the text above the high point
+                  xOffset: 0, // Adjust horizontal offset if necessary
+                }}
+              />
 
-            <Annotate
-              with={LabelAnnotation}
-              when={(d) => d.idx.index === 6}
-              usingProps={{
-                text: "fourHourlyLow",
-                fill: "black",
-                fontFamily: "Arial",
-                y: ({ yScale, datum }) => yScale(datum.fourHourlyLow), // Calculate y position based on yScale
-                fontSize: 14,
-                textAnchor: "middle",
-                yOffset: -10, // Adjust as needed to position the text above the Low point
-                xOffset: 0, // Adjust horizontal offset if necessary
-              }}
-            />
+              <Annotate
+                with={LabelAnnotation}
+                when={(d) => d.idx.index === 6}
+                usingProps={{
+                  text: "fourHourlyLow",
+                  fill: "black",
+                  fontFamily: "Arial",
+                  y: ({ yScale, datum }) => yScale(datum.fourHourlyLow), // Calculate y position based on yScale
+                  fontSize: 14,
+                  textAnchor: "middle",
+                  yOffset: -10, // Adjust as needed to position the text above the Low point
+                  xOffset: 0, // Adjust horizontal offset if necessary
+                }}
+              />
 
-            <LineSeries
-              strokeWidth={3}
-              stroke="red"
-              yAccessor={(d) => d.fourHourlyHigh}
-            />
-            <LineSeries
-              strokeWidth={3}
-              stroke="green"
-              yAccessor={(d) => d.fourHourlyLow}
-            />
-          </>
-        )}
+              <LineSeries
+                strokeWidth={3}
+                stroke="red"
+                yAccessor={(d) => d.fourHourlyHigh}
+              />
+              <LineSeries
+                strokeWidth={3}
+                stroke="green"
+                yAccessor={(d) => d.fourHourlyLow}
+              />
+            </>
+          )}
 
-        {showRow.hourly && (
-          <>
-            <Annotate
-              with={LabelAnnotation}
-              when={(d) => d.idx.index === 6}
-              usingProps={{
-                text: "hourlyHigh",
-                fill: "black",
-                fontFamily: "Arial",
-                y: ({ yScale, datum }) => yScale(datum.hourlyHigh), // Calculate y position based on yScale
-                fontSize: 14,
-                textAnchor: "middle",
-                yOffset: -10, // Adjust as needed to position the text above the high point
-                xOffset: 0, // Adjust horizontal offset if necessary
-              }}
-            />
+          {showRow.hourly && (
+            <>
+              <Annotate
+                with={LabelAnnotation}
+                when={(d) => d.idx.index === 6}
+                usingProps={{
+                  text: "hourlyHigh",
+                  fill: "black",
+                  fontFamily: "Arial",
+                  y: ({ yScale, datum }) => yScale(datum.hourlyHigh), // Calculate y position based on yScale
+                  fontSize: 14,
+                  textAnchor: "middle",
+                  yOffset: -10, // Adjust as needed to position the text above the high point
+                  xOffset: 0, // Adjust horizontal offset if necessary
+                }}
+              />
 
-            <Annotate
-              with={LabelAnnotation}
-              when={(d) => d.idx.index === 6}
-              usingProps={{
-                text: "hourlyLow",
-                fill: "black",
-                fontFamily: "Arial",
-                y: ({ yScale, datum }) => yScale(datum.hourlyLow), // Calculate y position based on yScale
-                fontSize: 14,
-                textAnchor: "middle",
-                yOffset: -10, // Adjust as needed to position the text above the Low point
-                xOffset: 0, // Adjust horizontal offset if necessary
-              }}
-            />
-            <LineSeries
-              strokeWidth={2}
-              stroke="red"
-              yAccessor={(d) => d.hourlyHigh}
-            />
-            <LineSeries
-              strokeWidth={2}
-              stroke="green"
-              yAccessor={(d) => d.hourlyLow}
-            />
-          </>
-        )}
+              <Annotate
+                with={LabelAnnotation}
+                when={(d) => d.idx.index === 6}
+                usingProps={{
+                  text: "hourlyLow",
+                  fill: "black",
+                  fontFamily: "Arial",
+                  y: ({ yScale, datum }) => yScale(datum.hourlyLow), // Calculate y position based on yScale
+                  fontSize: 14,
+                  textAnchor: "middle",
+                  yOffset: -10, // Adjust as needed to position the text above the Low point
+                  xOffset: 0, // Adjust horizontal offset if necessary
+                }}
+              />
+              <LineSeries
+                strokeWidth={2}
+                stroke="red"
+                yAccessor={(d) => d.hourlyHigh}
+              />
+              <LineSeries
+                strokeWidth={2}
+                stroke="green"
+                yAccessor={(d) => d.hourlyLow}
+              />
+            </>
+          )}
 
-        {showRow.daily && (
-          <>
-            <Annotate
-              with={LabelAnnotation}
-              when={(d) => d.idx.index === 6}
-              usingProps={{
-                text: "dailyHigh",
-                fill: "black",
-                fontFamily: "Arial",
-                y: ({ yScale, datum }) => yScale(datum.dailyHigh), // Calculate y position based on yScale
-                fontSize: 14,
-                textAnchor: "middle",
-                yOffset: -10, // Adjust as needed to position the text above the high point
-                xOffset: 0, // Adjust horizontal offset if necessary
-              }}
-            />
+          {showRow.daily && (
+            <>
+              <Annotate
+                with={LabelAnnotation}
+                when={(d) => d.idx.index === 6}
+                usingProps={{
+                  text: "dailyHigh",
+                  fill: "black",
+                  fontFamily: "Arial",
+                  y: ({ yScale, datum }) => yScale(datum.dailyHigh), // Calculate y position based on yScale
+                  fontSize: 14,
+                  textAnchor: "middle",
+                  yOffset: -10, // Adjust as needed to position the text above the high point
+                  xOffset: 0, // Adjust horizontal offset if necessary
+                }}
+              />
 
-            <Annotate
-              with={LabelAnnotation}
-              when={(d) => d.idx.index === 6}
-              usingProps={{
-                text: "dailyLow",
-                fill: "black",
-                fontFamily: "Arial",
-                y: ({ yScale, datum }) => yScale(datum.dailyLow), // Calculate y position based on yScale
-                fontSize: 14,
-                textAnchor: "middle",
-                yOffset: -10, // Adjust as needed to position the text above the Low point
-                xOffset: 0, // Adjust horizontal offset if necessary
-              }}
-            />
+              <Annotate
+                with={LabelAnnotation}
+                when={(d) => d.idx.index === 6}
+                usingProps={{
+                  text: "dailyLow",
+                  fill: "black",
+                  fontFamily: "Arial",
+                  y: ({ yScale, datum }) => yScale(datum.dailyLow), // Calculate y position based on yScale
+                  fontSize: 14,
+                  textAnchor: "middle",
+                  yOffset: -10, // Adjust as needed to position the text above the Low point
+                  xOffset: 0, // Adjust horizontal offset if necessary
+                }}
+              />
 
-            <LineSeries
-              strokeWidth={4}
-              stroke="red"
-              yAccessor={(d) => d.dailyHigh}
-            />
-            <LineSeries
-              strokeWidth={4}
-              stroke="green"
-              yAccessor={(d) => d.dailyLow}
-            />
-          </>
-        )}
+              <LineSeries
+                strokeWidth={4}
+                stroke="red"
+                yAccessor={(d) => d.dailyHigh}
+              />
+              <LineSeries
+                strokeWidth={4}
+                stroke="green"
+                yAccessor={(d) => d.dailyLow}
+              />
+            </>
+          )}
 
-        {showRow.MouseCoordinates && (
-          <>
-            <MouseCoordinateX
-              at="bottom"
-              orient="bottom"
-              displayFormat={timeFormat("%Y-%m-%d")}
-            />
-            <MouseCoordinateY
-              at="right"
-              orient="right"
-              displayFormat={format(".0f")}
-            />
-          </>
-        )}
+          {showRow.MouseCoordinates && (
+            <>
+              <MouseCoordinateX
+                at="bottom"
+                orient="bottom"
+                displayFormat={timeFormat("%Y-%m-%d")}
+              />
+              <MouseCoordinateY
+                at="right"
+                orient="right"
+                displayFormat={format(".0f")}
+              />
+            </>
+          )}
 
-        <HoverTooltip
-          yAccessor={(d) => d.underlyingValue}
-          tooltipContent={tooltipContent()}
-          fontSize={15}
-        />
-        {showRow.arrow && (
-          <>
-            <Annotate
-              with={SvgPathAnnotation}
-              when={(d) => d.entryTime != null}
-              usingProps={longAnnotationProps}
-            />
-            <Annotate
-              with={SvgPathAnnotation}
-              when={(d) => d.exitTime != null}
-              usingProps={shortAnnotationProps}
-            />
-          </>
-        )}
-        {showRow.trendLine && (
-          <>
-            {/* <TrendLine
+          <HoverTooltip
+            yAccessor={(d) => d.underlyingValue}
+            tooltipContent={tooltipContent()}
+            fontSize={15}
+          />
+          {showRow.arrow && (
+            <>
+              <Annotate
+                with={SvgPathAnnotation}
+                when={(d) => d.entryTime != null}
+                usingProps={longAnnotationProps}
+              />
+              <Annotate
+                with={SvgPathAnnotation}
+                when={(d) => d.exitTime != null}
+                usingProps={shortAnnotationProps}
+              />
+            </>
+          )}
+          {showRow.trendLine && (
+            <>
+              {/* <TrendLine
               ref={(node) => {
                 node1Ref.current = node;
               }}
@@ -835,121 +849,120 @@ const CandleChart = ({
               onComplete={onDrawCompleteChart1}
               trends={trends1}
             /> */}
-            <TrendLine
-              ref={(node) => {
-                node3Ref.current = node;
-              }}
-              enabled={enableTrendLine}
-              type="RAY"
-              snap={false}
-              value={trends3}
-              snapTo={(d) => [d?.high, d?.low]}
-              onStart={() => console.log("START")}
-              onComplete={onDrawCompleteChart3}
-              trends={trends3}
-            />
+              <TrendLine
+                ref={(node) => {
+                  node3Ref.current = node;
+                }}
+                enabled={enableTrendLine}
+                type="RAY"
+                snap={false}
+                value={trends3}
+                snapTo={(d) => [d?.high, d?.low]}
+                onStart={() => console.log("START")}
+                onComplete={onDrawCompleteChart3}
+                trends={trends3}
+              />
 
-            <DrawingObjectSelector
-              enabled={!enableTrendLine}
-              getInteractiveNodes={() => ({
-                Trendline: { 1: node1Ref.current, 3: node3Ref.current },
-              })}
-              drawingObjectMap={{
-                Trendline: "trends",
-              }}
-              onSelect={handleSelection}
-            />
-          </>
-        )}
-        {showRow.fibonacci && (
-          <>
-            <FibonacciRetracement
-              ref={fibNode1Ref}
-              enabled={enableFib}
-              type="BOUND"
-              retracements={retracements1}
-              onComplete={onFibComplete1}
-            />
-            <FibonacciRetracement
-              ref={fibNode3Ref}
-              enabled={enableFib}
-              type="BOUND"
-              retracements={retracements3}
-              onComplete={onFibComplete3}
-            />
-            <DrawingObjectSelector
-              enabled={!enableFib}
-              getInteractiveNodes={() => ({
-                FibonacciRetracement: {
-                  1: fibNode1Ref.current,
-                  3: fibNode3Ref.current,
-                },
-              })}
-              drawingObjectMap={{
-                FibonacciRetracement: "retracements",
-              }}
-              onSelect={handleSelection}
-            />
-          </>
-        )}
-        {showRow.equidistantChannel && (
-          <>
-            <EquidistantChannel
-              ref={channelNode1Ref}
-              enabled={enableEquidistantChannel}
-              type="RAY"
-              onComplete={onChannelComplete1}
-              channels={channels1}
-            />
-            <EquidistantChannel
-              ref={channelNode3Ref}
-              enabled={enableEquidistantChannel}
-              type="RAY"
-              onComplete={onChannelComplete3}
-              channels={channels1}
-            />
-            <DrawingObjectSelector
-              enabled={!enableEquidistantChannel}
-              getInteractiveNodes={() => ({
-                EquidistantChannel: {
-                  1: channelNode1Ref.current,
-                  3: channelNode3Ref.current,
-                },
-              })}
-              drawingObjectMap={{
-                EquidistantChannel: "channels",
-              }}
-              onSelect={handleSelection}
-            />
-          </>
-        )}
-        <MACDSeries yAccessor={(d) => d.macd} {...macdAppearance} />
-        {/* <MACDTooltip
+              <DrawingObjectSelector
+                enabled={!enableTrendLine}
+                getInteractiveNodes={() => ({
+                  Trendline: { 1: node1Ref.current, 3: node3Ref.current },
+                })}
+                drawingObjectMap={{
+                  Trendline: "trends",
+                }}
+                onSelect={handleSelection}
+              />
+            </>
+          )}
+          {showRow.fibonacci && (
+            <>
+              <FibonacciRetracement
+                ref={fibNode1Ref}
+                enabled={enableFib}
+                type="BOUND"
+                retracements={retracements1}
+                onComplete={onFibComplete1}
+              />
+              <FibonacciRetracement
+                ref={fibNode3Ref}
+                enabled={enableFib}
+                type="BOUND"
+                retracements={retracements3}
+                onComplete={onFibComplete3}
+              />
+              <DrawingObjectSelector
+                enabled={!enableFib}
+                getInteractiveNodes={() => ({
+                  FibonacciRetracement: {
+                    1: fibNode1Ref.current,
+                    3: fibNode3Ref.current,
+                  },
+                })}
+                drawingObjectMap={{
+                  FibonacciRetracement: "retracements",
+                }}
+                onSelect={handleSelection}
+              />
+            </>
+          )}
+          {showRow.equidistantChannel && (
+            <>
+              <EquidistantChannel
+                ref={channelNode1Ref}
+                enabled={enableEquidistantChannel}
+                type="RAY"
+                onComplete={onChannelComplete1}
+                channels={channels1}
+              />
+              <EquidistantChannel
+                ref={channelNode3Ref}
+                enabled={enableEquidistantChannel}
+                type="RAY"
+                onComplete={onChannelComplete3}
+                channels={channels1}
+              />
+              <DrawingObjectSelector
+                enabled={!enableEquidistantChannel}
+                getInteractiveNodes={() => ({
+                  EquidistantChannel: {
+                    1: channelNode1Ref.current,
+                    3: channelNode3Ref.current,
+                  },
+                })}
+                drawingObjectMap={{
+                  EquidistantChannel: "channels",
+                }}
+                onSelect={handleSelection}
+              />
+            </>
+          )}
+          <MACDSeries yAccessor={(d) => d.macd} {...macdAppearance} />
+          {/* <MACDTooltip
           origin={[-38, 15]}
           yAccessor={(d) => d.macd}
           options={macdCalculator.options()}
           appearance={macdAppearance}
         /> */}
-        <ZoomButtons onReset={handleReset} />
-      </Chart>
+          <ZoomButtons onReset={handleReset} />
+        </Chart>
 
-      <Chart
-        id={2}
-        height={150}
-        yExtents={[(d) => d.volume]}
-        origin={(w, h) => [0, h - 150]}
-      >
-        {showRow?.volume && (
-          <BarSeries
-            yAccessor={(d) => d.volume}
-            fill={(d) => (d.close > d.open ? "#6BA583" : "#FF0000")}
-          />
-        )}
-      </Chart>
+        <Chart
+          id={2}
+          height={150}
+          yExtents={[(d) => d.volume]}
+          origin={(w, h) => [0, h - 150]}>
+          {showRow?.volume && (
+            <BarSeries
+              yAccessor={(d) => d.volume}
+              fill={(d) => (d.close > d.open ? "#6BA583" : "#FF0000")}
+            />
+          )}
+        </Chart>
 
-      {showRow.MouseCoordinates && <CrossHairCursor stroke="blue" />}
-    </ChartCanvas>
-    </>
+        {showRow.MouseCoordinates && <CrossHairCursor stroke="blue" />}
+      </ChartCanvas>
+    </div>
   );
 };
 
