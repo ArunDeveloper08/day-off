@@ -22,7 +22,7 @@ const IdentifierLooserGainer = () => {
   const [values, setValues] = useState({
     tradingsymbol: "",
   });
-  const [data , setData] = useState([])
+  const [data, setData] = useState([]);
   // const getPrevDate = async () => {
   //   try {
   //     const response = await axios.get(
@@ -65,17 +65,15 @@ const IdentifierLooserGainer = () => {
         tradingSymbol: values.tradingsymbol,
       })
       .then((res) => {
-        setData(res?.data?.data)
-     
-     
+        setData(res?.data?.data);
       })
       .catch((err) => {
         console.log(err);
-        alert(err.response.data.message)
+        alert(err.response.data.message);
       });
   };
   // console.log("data",data)
-  
+
   return (
     <Fragment>
       <div className="flex justify-around m-3 items-center">
@@ -89,10 +87,10 @@ const IdentifierLooserGainer = () => {
             className="mt-1"
             type="text"
           /> */}
-            <CustomAutocomplete
-              value={values?.tradingsymbol}
-              onChangeFunction={handleChangeSymbol}
-            />
+          <CustomAutocomplete
+            value={values?.tradingsymbol}
+            onChangeFunction={handleChangeSymbol}
+          />
         </div>
         <div className="flex items-center">
           <Button onClick={handleSubmit}>Submit</Button>
@@ -115,26 +113,89 @@ const IdentifierLooserGainer = () => {
           </tr>
         </thead>
         <tbody>
-     {
-      data?.map((item,index)=>{
-        return(
-          <tr>
-           <td className="p-1 border border-gray-300 ">{index+1}</td>
-           <td className="p-1 border border-gray-300 ">{item.date}</td>
-           <td className="p-1 border border-gray-300 ">{item.tradingSymbol}</td>
-           <td className="p-1 border border-gray-300 ">{item.TopPriceGainers_percentChange ?? "NULL"}</td>
-           <td className="p-1 border border-gray-300 ">{item.LongBuildUps_percentChange ?? "NULL"}</td>
-           <td className="p-1 border border-gray-300 ">{item.TopOiGainers_percentChange ?? "NULL"}</td>
-           <td className="p-1 border border-gray-300 ">{item.ShortCoverings_percentChange ?? "NULL"}</td>
-           <td className="p-1 border border-gray-300 ">{item.TopPriceLoosers_percentChange ?? "NULL"}</td>
-           <td className="p-1 border border-gray-300 ">{item.TopOiLoosers_percentChange ?? "NULL"}</td>
-           <td className="p-1 border border-gray-300 ">{item.ShortBuildUps_percentChange ?? "NULL"}</td>
-           <td className="p-1 border border-gray-300 ">{item.LongUnwindings_percentChange ?? "NULL"}</td>
-          
-          </tr>
-        )
-      })
-     }
+          {data?.map((item, index) => {
+            return (
+              <tr>
+                <td className="p-1 border border-gray-300 ">{index + 1}</td>
+                <td className="p-1 border border-gray-300 ">{item.date}</td>
+                <td className="p-1 border border-gray-300 ">
+                  {item.tradingSymbol}
+                </td>
+                <td
+                  className={`${
+                    item.TopPriceGainers_percentChange
+                      ? "text-green-500 font-bold p-1 border border-gray-300"
+                      : " p-1 border border-gray-300"
+                  }`}
+                >
+                  {item.TopPriceGainers_percentChange ?? "NULL"}
+                </td>
+                <td
+                  className={`${
+                    item.LongBuildUps_percentChange
+                      ? "text-green-500 font-bold p-1 border border-gray-300"
+                      : " p-1 border border-gray-300"
+                  }`}
+                >
+                  {item.LongBuildUps_percentChange ?? "NULL"}
+                </td>
+                <td
+                  className={`${
+                    item.TopOiGainers_percentChange
+                      ? "text-green-500 font-bold p-1 border border-gray-300"
+                      : " p-1 border border-gray-300"
+                  }`}
+                >
+                  {item.TopOiGainers_percentChange ?? "NULL"}
+                </td>
+                <td
+                  className={`${
+                    item.ShortCoverings_percentChange
+                      ? "text-green-500 font-bold p-1 border border-gray-300"
+                      : " p-1 border border-gray-300"
+                  }`}
+                >
+                  {item.ShortCoverings_percentChange ?? "NULL"}
+                </td>
+                <td
+                  className={`${
+                    item.TopPriceLoosers_percentChange
+                      ? "text-green-500 font-bold p-1 border border-gray-300"
+                      : " p-1 border border-gray-300"
+                  }`}
+                >
+                  {item.TopPriceLoosers_percentChange ?? "NULL"}
+                </td>
+                <td
+                  className={`${
+                    item.TopOiLoosers_percentChange
+                      ? "text-green-500 font-bold p-1 border border-gray-300"
+                      : " p-1 border border-gray-300"
+                  }`}
+                >
+                  {item.TopOiLoosers_percentChange ?? "NULL"}
+                </td>
+                <td
+                  className={`${
+                    item.ShortBuildUps_percentChange
+                      ? "text-green-500 font-bold p-1 border border-gray-300"
+                      : " p-1 border border-gray-300"
+                  }`}
+                >
+                  {item.ShortBuildUps_percentChange ?? "NULL"}
+                </td>
+                <td
+                  className={`${
+                    item.LongUnwindings_percentChange
+                      ? "text-green-500 font-bold p-1 border border-gray-300"
+                      : " p-1 border border-gray-300"
+                  }`}
+                >
+                  {item.LongUnwindings_percentChange ?? "NULL"}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </Fragment>
