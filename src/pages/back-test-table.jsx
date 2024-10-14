@@ -64,18 +64,26 @@ const BackTestingTablePage = ({
         <>
           <table className="w-fit mx-auto mb-20">
             <thead>
-              <tr className="bg-[#3a2d7d] text-white">
-                <th className="p-1border border-gray-300">Sr No.</th>
-                <th className="p-1border border-gray-300">Entry Time</th>
-                <th className="p-1border border-gray-300">RSI value</th>
-                <th className="p-1border border-gray-300">D Entry Value</th>
-                <th className="p-1border border-gray-300">Entry Type</th>
-                <th className="p-1border border-gray-300">Entry Price</th>
-                <th className="p-1border border-gray-300">Exit Time</th>
-                <th className="p-1border border-gray-300">D EXit Value</th>
-                <th className="p-1border border-gray-300">Exit Type</th>
-                <th className="p-1border border-gray-300">Exit Price</th>
-                <th className="p-1border border-gray-300">Difference</th>
+              <tr>
+                <th className="p-1 border border-gray-300">Sr No.</th>
+                {/* <th className="p-1 border border-gray-300">Identifier</th> */}
+                <th className="p-1 border border-gray-300">Entry Time</th>
+                <th className="p-1 border border-gray-300">Entry Order Type</th>
+                <th className="p-1 border border-gray-300">Entry RSI Value</th>
+                <th className="p-1 border border-gray-300">D_Entry Value</th>
+                <th className="p-1 border border-gray-300">Entry Price</th>
+                &nbsp; &nbsp; &nbsp;
+                <th className="p-1 border border-gray-300">Exit Time</th>
+                <th className="p-1 border border-gray-300">Exit Ref Value</th>
+                <th className="p-1 border border-gray-300">D_Exit Value</th>
+                <th className="p-1 border border-gray-300">Exit Price</th>
+                <th className="p-1 border border-gray-300">Exit Order Type</th>
+                <th className="p-1 border border-gray-300">Exit RSI Value</th>
+                {/* <th className="p-1 border border-gray-300">Order Type</th> */}
+                {/* <th className="p-1 border border-gray-300">D_Exit Value</th> */}
+                <th className="p-1 border border-gray-300">Exit Reason</th>
+                <th className="p-1 border border-gray-300">Price Diff</th>
+                <th className="p-1 border border-gray-300">Option</th>
               </tr>
             </thead>
             <tbody>
@@ -84,8 +92,8 @@ const BackTestingTablePage = ({
                 if (item.entryPrice !== null && item.exitPrice !== null) {
                   priceDiff =
                     item.OrderType === "Sell"
-                      ? (item.entryPrice - item.exitPrice).toFixed(2)
-                      : (item.exitPrice - item.entryPrice).toFixed(2);
+                      ? (item.entryPrice - item.exitPrice)?.toFixed(2)
+                      : (item.exitPrice - item.entryPrice)?.toFixed(2);
                 }
                 return (
                   <tr
@@ -94,40 +102,72 @@ const BackTestingTablePage = ({
                       theme === "dark"
                         ? "hover:bg-gray-700"
                         : "hover:bg-gray-100"
-                    }`}>
-                    <td className="p-1 border border-gray-300 text-center">
+                    }`}
+                  >
+                    <td className="border border-gray-300 text-center text-[13px]">
                       {index + 1}
                     </td>
-                    <td className="p-1 border border-gray-300 text-center">
-                      {formatDate(item.entryTime)}
+                    {/* <td className="border border-gray-300 text-center text-[13px] p-1">
+                    {item.identifier}
+                  </td> */}
+                    <td className="border border-gray-300 text-center text-[13px] p-1">
+                      {formatDate(item.realEntryTime)}
                     </td>
-                    <td className="p-1 border border-gray-300 text-center">
+                    <td className="border border-gray-300 text-center text-[13px] p-1">
+                      {item.entryOrderType}
+                    </td>
+                    <td className="border border-gray-300 text-center text-[13px] p-1">
                       {item.RSI_Value?.toFixed(2)}
                     </td>
-                    <td className="p-1 border border-gray-300 text-center">
-                      {item?.dynamicEntryValue?.toFixed(2)}
+                    <td className="p-1 border border-gray-300 text-center text-[13px]">
+                      {item.dynamicEntryValue}
                     </td>
-                    <td className="p-1 border border-gray-300 text-center">
-                      {item.OrderType}
+                    <td className="border border-gray-300 text-center text-[13px] p-1">
+                      {item.entryPivot?.toFixed(2)}
                     </td>
-                    <td className="p-1 border border-gray-300 text-center">
-                      {item.entryPrice?.toFixed(2)}
+                    &nbsp; &nbsp; &nbsp;
+                    <td className="border border-gray-300 text-center text-[13px] p-1">
+                      {formatDate(item.realExitTime)}
                     </td>
-
-                    <td className="p-1 border border-gray-300 text-center">
-                      {formatDate(item.exitTime)}
+                    <td className="border border-gray-300 text-center text-[13px] p-1">
+                    {item.DExitRefValue}
+                  </td>
+                  <td className="border border-gray-300 text-center text-[13px] p-1">
+                    {(item.DExitRefValue - item.dynamicExitValue)?.toFixed(2)}
+                  </td>
+                    <td className="border border-gray-300 text-center text-[13px] p-1">
+                      {item?.exitPivot?.toFixed(2)}
                     </td>
-                    <td className="p-1 border border-gray-300 text-center">
+                    <td className="p-1 border border-gray-300 text-center text-[13px]">
+                      <button className="rounded-sm text-[13px] p-1">
+                        {item.exitOrderType}
+                      </button>
+                    </td>
+                    <td className="p-1 border border-gray-300 text-center text-[13px]">
+                      {item.exitRSI_Value}
+                    </td>
+                    {/* <td className="border border-gray-300 text-center text-[13px] p-1">
                       {item.dynamicExitValue?.toFixed(2)}
+                    </td> */}
+                    <td className="p-1 border border-gray-300 text-center text-[13px]">
+                      {item.exitReason}
                     </td>
-                    <td className="p-1 border border-gray-300 text-center">
-                      {item.transactionType}
+                    <td
+                      className={`${
+                        priceDiff < 0 ? "text-red-700" : "text-green-700"
+                      }
+                    p-1 border border-gray-300 text-center text-[13px] font-semibold
+                  `}
+                    >
+                      {priceDiff}    
                     </td>
-                    <td className="p-1 border border-gray-300 text-center">
-                      {item.exitPrice?.toFixed(2)}
-                    </td>
-                    <td className="p-1 border border-gray-300 text-center">
-                      {priceDiff}
+                    <td className="p-1 border border-gray-300 text-center text-[13px]">
+                      <button 
+                      className="bg-red-500 hover:bg-red-700 px-1  border-black border-[1px] rounded-sm text-white font-semibold"
+                       onClick={handleDelete}
+                      >
+                        Delete
+                      </button>
                     </td>
                   </tr>
                 );
@@ -219,9 +259,16 @@ const BackTestingTablePage = ({
               })}
             </tbody>
           </table> */}
-          <div className="mt-2">
-            <p className="font-semibold">
-              Total Point Difference: {sum?.toFixed(2)}
+          <div>
+            <p className="font-bold text-center text-xl">
+              Total Point Difference:{" "}
+              <span
+                className={`${sum < 0 ? "text-red-700" : "text-green-700"}
+          font-bold text-center text-xl
+          `}
+              >
+                {sum?.toFixed(2)}
+              </span>
             </p>
           </div>
         </>

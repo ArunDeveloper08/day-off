@@ -10,3 +10,30 @@ export default defineConfig({
     },
   },
 });
+
+
+
+
+ // import { defineConfig } from 'vite';
+// import JavaScriptObfuscator from 'javascript-obfuscator';
+// export default defineConfig({
+//   build: {
+//     minify: false, // Turn off default minification
+//     rollupOptions: {
+//       plugins: [
+//         JavaScriptObfuscator({
+//           compact: true,
+//           controlFlowFlattening: true,
+//           deadCodeInjection: true,
+//           debugProtection: true,
+//           disableConsoleOutput: true,
+//         }),
+//       ],
+//       resolve: {
+//             alias: {
+//               "@": path.resolve(__dirname, "./src"),
+//             },
+//            },
+//     },
+//   },
+// });

@@ -123,6 +123,8 @@ export const BackTestingPage = () => {
         console.log(err);
       });
   };
+
+
   useEffect(() => {
     if (isConnected && socket) {
       socket?.on("sendingTradeData", (message) => {
@@ -155,6 +157,7 @@ export const BackTestingPage = () => {
       });
     }
   }, [socket, isConnected]);
+
   const handleRESET = () => {
     window.location.reload();
   };
@@ -165,7 +168,7 @@ export const BackTestingPage = () => {
     }
   }, [data?.data?.identifier]);
   // console.log({ isConnected },socket?.id);
-  console.log(apiData)
+  console.log(apiData);
   return (
     <div>
       {data.loading ? (
@@ -179,7 +182,10 @@ export const BackTestingPage = () => {
           </p>
           <div className="flex flex-wrap gap-x-10 font-semibold py-2">
             <p className="text-[14px]">
-              Trade Terminal : {data?.data?.terminal}
+              Trade Terminal :{" "}
+              {data?.data?.terminal === "manualIn"
+                ? "Manual In"
+                : data?.data?.terminal}
             </p>
             <p className="text-green-600 text-[14px]">
               Candle :
@@ -219,6 +225,7 @@ export const BackTestingPage = () => {
             <p className="text-[14px]">RSI Max : {data?.data?.rsiMax}</p>
             <p className="text-[14px]">RSI Live : {latestValues?.RSI_Value}</p>
             <p className="text-[14px]">RSI Min : {data?.data?.rsiMin}</p>
+            <p className="text-[14px]">Order Type : {data?.data?.orderType}</p>
           </div>
           <div>
             <button
@@ -294,8 +301,9 @@ export const BackTestingPage = () => {
             >
               Target Profit
             </button>
+
             {/* 
-      &nbsp; &nbsp;
+              &nbsp; &nbsp;
          <button
            onClick={() =>
              setShowRow((p) => ({
@@ -309,6 +317,7 @@ export const BackTestingPage = () => {
          >
            <span className="flex">Buy Sell (Arrow)</span>
          </button> */}
+
             &nbsp; &nbsp;
             <button
               onClick={() =>
@@ -342,6 +351,7 @@ export const BackTestingPage = () => {
               Initial Low
             </button>
             &nbsp; &nbsp;
+
             <button
               onClick={() =>
                 setShowRow((p) => ({
@@ -402,19 +412,9 @@ export const BackTestingPage = () => {
               Volume
             </button>
             &nbsp; &nbsp;
-            <button
-              onClick={() =>
-                setShowRow((p) => ({
-                  ...p,
-                  suppRes: !p.suppRes,
-                }))
-              }
-              className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-                showRow.suppRes ? "bg-blue-500 text-gray-100" : "bg-gray-300 "
-              }`}
-            >
-              Supp&Res
-            </button>
+          
+        
+
             &nbsp; &nbsp;
           </div>
 
@@ -449,6 +449,7 @@ export const BackTestingPage = () => {
               height={(height * 7) / 10}
             />
           )}
+
           <BackTestingTablePage
             updateTrigger={updateTrigger}
             setUpdateTrigger={setUpdateTrigger}

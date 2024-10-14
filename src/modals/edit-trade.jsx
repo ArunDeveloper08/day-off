@@ -73,7 +73,7 @@ export const EditTrade = () => {
     setValues((prev) => ({ ...prev, [key]: value }));
   };
   const handleSubmit = async () => {
-    if (values.lotSize === "") {
+    if (values.isMaster && values.lotSize === "") {
       return alert("Please enter Lot Size .");
     }
     if (parseFloat(values.minExitPercent) > parseFloat(values.maxExitPercent)) {
@@ -86,11 +86,11 @@ export const EditTrade = () => {
       0;
       return alert("Entry Hystresis Percent Should be less than 25%");
     }
-    if (values?.rangeBoundPercent > values?.rangeBoundPercent2) {
-      return alert(
-        "Range Bound Percent 2 Should be greater than Range Bound Percent "
-      );
-    }
+    // if (values?.rangeBoundPercent > values?.rangeBoundPercent2) {
+    //   return alert(
+    //     "Range Bound Percent 2 Should be greater than Range Bound Percent "
+    //   );
+    // }
     try {
       await axios.put(`${BASE_URL_OVERALL}/config/edit`, {
         id: values.id,
@@ -121,7 +121,7 @@ export const EditTrade = () => {
         candleSize: values.candleSize,
         exchange: values.exchange,
         rangeBoundPercent: values.rangeBoundPercent,
-        rangeBoundPercent2: values.rangeBoundPercent2,
+        // rangeBoundPercent2: values.rangeBoundPercent2,
         microProfitPercent: values.microProfitPercent,
         entryHystresisPercent: values.entryHystresisPercent,
         movingAvgOFFSET: values.movingAvgOFFSET,
@@ -150,6 +150,15 @@ export const EditTrade = () => {
         lotSize: values.lotSize,
         customerGrading: values.customerGrading,
         narration: values.narration,
+        strikeDiff: values.strikeDiff,
+        targetLevel: values.targetLevel,
+        category: values.category,
+        targetBelow: values.targetBelow,
+        targetAbove: values.targetAbove,
+        callTargetLevel: values.callTargetLevel,
+        putTargetLevel: values.putTargetLevel,
+        maxZoneTime: values.maxZoneTime,
+        noTradeZone: values.noTradeZone,
 
         // targetProfit: values.targetProfit,
       });
@@ -192,18 +201,21 @@ export const EditTrade = () => {
                 <div className="px-1">
                   <Label>Index Value</Label>
                   <Select
-                    // disabled={loading}
+                    
                     value={values.indexValue}
                     name="terminal"
                     onValueChange={(value) => handleSelect("indexValue", value)}
                   >
                     <SelectTrigger className="w-full mt-1 border-zinc-500">
                       <SelectValue>{values.indexValue}</SelectValue>
-                    </SelectTrigger>
+                    </SelectTrigger>  
                     <SelectContent>
                       <SelectGroup>
                         <SelectLabel>Trade Index</SelectLabel>
-                        {[1, 2, 3, 4, 5, 6, 7, 11]?.map((suggestion) => (
+                        {[
+                          1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+                          17, 18, 19, 20, 
+                        ]?.map((suggestion) => (
                           <SelectItem key={suggestion} value={suggestion}>
                             {suggestion}
                           </SelectItem>
@@ -269,16 +281,44 @@ export const EditTrade = () => {
                     type="number"
                   />
                 </div>
-                <div className="px-1">
-                  <Label>Lot Size</Label>
-                  <Input
-                    name="lotSize"
-                    onChange={handleChange}
-                    value={values.lotSize}
-                    className="mt-1"
-                    type="number"
-                  />
-                </div>
+
+                {values?.isMaster == true && (
+                  <>
+                    <div className="px-1">
+                      <Label>Alert Above</Label>
+                      <Input
+                        name="targetAbove"
+                        onChange={handleChange}
+                        value={values.targetAbove}
+                        className="mt-1"
+                        type="text"
+                      />
+                    </div>
+                    <div className="px-1">
+                      <Label>Alert Below</Label>
+                      <Input
+                        name="targetBelow"
+                        onChange={handleChange}
+                        value={values.targetBelow}
+                        className="mt-1"
+                        type="text"
+                      />
+                    </div>
+                  </>
+                )}
+
+                {values?.isMaster && (
+                  <div className="px-1">
+                    <Label>Lot Size</Label>
+                    <Input
+                      name="lotSize"
+                      onChange={handleChange}
+                      value={values.lotSize}
+                      className="mt-1"
+                      type="number"
+                    />
+                  </div>
+                )}
                 <div className="px-1">
                   <Label>Is Master</Label>
                   <Select
@@ -306,6 +346,20 @@ export const EditTrade = () => {
                     </SelectContent>
                   </Select>
                 </div>
+                {values?.isMaster == true && (
+                  <>
+                    <div className="px-1">
+                      <Label>Strike Difference</Label>
+                      <Input
+                        name="strikeDiff"
+                        onChange={handleChange}
+                        value={values.strikeDiff}
+                        className="mt-1"
+                        type="text"
+                      />
+                    </div>
+                  </>
+                )}
 
                 {values?.isMaster == false && (
                   <div className="px-1">
@@ -323,9 +377,9 @@ export const EditTrade = () => {
                       <SelectContent>
                         <SelectGroup>
                           <SelectLabel>Master Name</SelectLabel>
-                          <SelectItem value={{ masterName: "self" }}>
+                          {/* <SelectItem value={{ masterName: "self" }}>
                             Self
-                          </SelectItem>
+                          </SelectItem> */}
                           {trades?.map((item, index) => (
                             <SelectItem key={index} value={item}>
                               {item.masterName}
@@ -336,52 +390,64 @@ export const EditTrade = () => {
                     </Select>
                   </div>
                 )}
+                <div className="px-1">
+                  <Label>Category</Label>
+                  <Select
+                    value={values?.category}
+                    name="category"
+                    onValueChange={(value) => handleSelect("category", value)}
+                  >
+                    <SelectTrigger className="w-full mt-1 border-zinc-500">
+                      <SelectValue>{values?.category}</SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>category</SelectLabel>
+                        <SelectItem value="Breakout">My Today Stock</SelectItem>
+                        <SelectItem value="52weakLow">My Hot WatchList</SelectItem>
+                        <SelectItem value="52weakHigh">52 Weak High</SelectItem>
+                        <SelectItem value="Index">Index</SelectItem>
+                        <SelectItem value="Banking">Banking</SelectItem>
+                        <SelectItem value="Pharma">Pharma</SelectItem>
+                        <SelectItem value="IT">IT</SelectItem>
+                        <SelectItem value="Energy">Energy</SelectItem>
+                        <SelectItem value="Auto">Auto</SelectItem>
+                        <SelectItem value="RangeBound">RangeBound</SelectItem>
+                        <SelectItem value="Chemical">Chemical</SelectItem>
+                        <SelectItem value="Defence">Defence</SelectItem>
+                        <SelectItem value="RealEstate">Real Estate</SelectItem>
+                        <SelectItem value="Others">Others</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
 
                 {values?.indexValue != 6 && (
                   <>
-                    <div className="px-1">
-                      <Label>SMA 1</Label>
-                      <Input
-                        name="SMA1"
-                        onChange={handleChange}
-                        value={values.SMA1}
-                        className="mt-1"
-                        type="number"
-                        min={0}
-                      />
-                    </div>
-                    <div className="px-1">
-                      <Label>SMA 2</Label>
-                      <Input
-                        name="SMA2"
-                        onChange={handleChange}
-                        value={values.SMA2}
-                        className="mt-1"
-                        type="number"
-                        min={0}
-                      />
-                    </div>
-
-                    <div className="px-1">
-                      <Label>Range Bound 1(%)</Label>
-                      <Input
-                        name="rangeBoundPercent"
-                        onChange={handleChange}
-                        value={values.rangeBoundPercent}
-                        className="mt-1"
-                        type="rangeBoundPercent"
-                      />
-                    </div>
-                    <div className="px-1">
-                      <Label>Range Bound 2(%)</Label>
-                      <Input
-                        name="rangeBoundPercent2"
-                        onChange={handleChange}
-                        value={values.rangeBoundPercent2}
-                        className="mt-1"
-                        type="rangeBoundPercent2"
-                      />
-                    </div>
+                    {values?.indexValue != 4 && (
+                      <>
+                        <div className="px-1">
+                          <Label>Range Bound (%)</Label>
+                          <Input
+                            name="rangeBoundPercent"
+                            onChange={handleChange}
+                            value={values.rangeBoundPercent}
+                            className="mt-1"
+                            type="rangeBoundPercent"
+                          />
+                        </div>
+                        {/* <div className="px-1">                       
+                          <Label>Range Bound 2(%)</Label>
+                          <Input
+                            name="rangeBoundPercent2"
+                            onChange={handleChange}
+                            value={values.rangeBoundPercent2}
+                            className="mt-1"
+                            type="rangeBoundPercent2"
+                          />
+                        </div> */}
+                      </>
+                    )}
                     {values.rangeBound != "Disable" && (
                       <>
                         <div className="px-1">
@@ -416,37 +482,122 @@ export const EditTrade = () => {
                         </div>
                       </>
                     )}
-
-                    <div className="px-1">
-                      <Label>RSI Min</Label>
-                      <Input
-                        name="rsiMin"
-                        onChange={handleChange}
-                        value={values.rsiMin}
-                        className="mt-1"
-                        type="rsiMin"
-                      />
-                    </div>
-                    <div className="px-1">
-                      <Label>RSI Max</Label>
-                      <Input
-                        name="rsiMax"
-                        onChange={handleChange}
-                        value={values.rsiMax}
-                        className="mt-1"
-                        type="rsiMax"
-                      />
-                    </div>
-                    <div className="px-1">
-                      <Label>RSI Candle</Label>
-                      <Input
-                        name="rsiCandle"
-                        onChange={handleChange}
-                        value={values.rsiCandle}
-                        className="mt-1"
-                        type="rsiCandle"
-                      />
-                    </div>
+                    {values?.indexValue != 4 && (
+                      <>
+                        <div className="px-1">
+                          <Label>SMA 1</Label>
+                          <Input
+                            name="SMA1"
+                            onChange={handleChange}
+                            value={values.SMA1}
+                            className="mt-1"
+                            type="number"
+                            min={0}
+                          />
+                        </div>
+                        <div className="px-1">
+                          <Label>SMA 2</Label>
+                          <Input
+                            name="SMA2"
+                            onChange={handleChange}
+                            value={values.SMA2}
+                            className="mt-1"
+                            type="number"
+                            min={0}
+                          />
+                        </div>
+                        <div className="px-1">
+                          <Label>RSI Min</Label>
+                          <Input
+                            name="rsiMin"
+                            onChange={handleChange}
+                            value={values.rsiMin}
+                            className="mt-1"
+                            type="rsiMin"
+                          />
+                        </div>
+                        <div className="px-1">
+                          <Label>RSI Max</Label>
+                          <Input
+                            name="rsiMax"
+                            onChange={handleChange}
+                            value={values.rsiMax}
+                            className="mt-1"
+                            type="rsiMax"
+                          />
+                        </div>
+                        <div className="px-1">
+                          <Label>RSI Candle</Label>
+                          <Input
+                            name="rsiCandle"
+                            onChange={handleChange}
+                            value={values.rsiCandle}
+                            className="mt-1"
+                            type="rsiCandle"
+                          />
+                        </div>
+                        <div className="px-1">
+                          <Label>MV Source 1</Label>
+                          <Select
+                            // disabled={loading}
+                            value={values.mvSource1}
+                            name="mvSource1"
+                            onValueChange={(value) =>
+                              handleSelect("mvSource1", value)
+                            }
+                          >
+                            <SelectTrigger className="w-full mt-1 border-zinc-500">
+                              <SelectValue>{values.mvSource1}</SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectLabel>MV Source 1</SelectLabel>
+                                {["open", "close", "high"]?.map(
+                                  (suggestion) => (
+                                    <SelectItem
+                                      key={suggestion}
+                                      value={suggestion}
+                                    >
+                                      {suggestion}
+                                    </SelectItem>
+                                  )
+                                )}
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="px-1">
+                          <Label>MV Source 2</Label>
+                          <Select
+                            // disabled={loading}
+                            value={values.mvSource2}
+                            name="mvSource2"
+                            onValueChange={(value) =>
+                              handleSelect("mvSource2", value)
+                            }
+                          >
+                            <SelectTrigger className="w-full mt-1 border-zinc-500">
+                              <SelectValue>{values.mvSource2}</SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectLabel>MV Source 2</SelectLabel>
+                                {["open", "close", "high"]?.map(
+                                  (suggestion) => (
+                                    <SelectItem
+                                      key={suggestion}
+                                      value={suggestion}
+                                    >
+                                      {suggestion}
+                                    </SelectItem>
+                                  )
+                                )}
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </>
+                    )}
                     <div className="px-1">
                       <Label>Candle Type</Label>
                       <Select
@@ -472,81 +623,34 @@ export const EditTrade = () => {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div className="px-1">
-                      <Label>MV Source 1</Label>
-                      <Select
-                        // disabled={loading}
-                        value={values.mvSource1}
-                        name="mvSource1"
-                        onValueChange={(value) =>
-                          handleSelect("mvSource1", value)
-                        }
-                      >
-                        <SelectTrigger className="w-full mt-1 border-zinc-500">
-                          <SelectValue>{values.mvSource1}</SelectValue>
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>MV Source 1</SelectLabel>
-                            {["open", "close", "high"]?.map((suggestion) => (
-                              <SelectItem key={suggestion} value={suggestion}>
-                                {suggestion}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="px-1">
-                      <Label>MV Source 2</Label>
-                      <Select
-                        // disabled={loading}
-                        value={values.mvSource2}
-                        name="mvSource2"
-                        onValueChange={(value) =>
-                          handleSelect("mvSource2", value)
-                        }
-                      >
-                        <SelectTrigger className="w-full mt-1 border-zinc-500">
-                          <SelectValue>{values.mvSource2}</SelectValue>
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>MV Source 2</SelectLabel>
-                            {["open", "close", "high"]?.map((suggestion) => (
-                              <SelectItem key={suggestion} value={suggestion}>
-                                {suggestion}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="px-1">
-                      <Label>Range Bound</Label>
-                      <Select
-                        // disabled={loading}
-                        value={values.orderType}
-                        name="rangeBound"
-                        onValueChange={(value) =>
-                          handleSelect("rangeBound", value)
-                        }
-                      >
-                        <SelectTrigger className="w-full mt-1 border-zinc-500">
-                          <SelectValue>{values.rangeBound}</SelectValue>
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>Range Bound</SelectLabel>
-                            {["Enable", "Disable"]?.map((suggestion) => (
-                              <SelectItem key={suggestion} value={suggestion}>
-                                {suggestion}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </div>
+
+                    {/* {values?.isMaster == false && (
+                      <div className="px-1">
+                        <Label>Range Bound</Label>
+                        <Select
+                          // disabled={loading}
+                          value={values.orderType}
+                          name="rangeBound"
+                          onValueChange={(value) =>
+                            handleSelect("rangeBound", value)
+                          }
+                        >
+                          <SelectTrigger className="w-full mt-1 border-zinc-500">
+                            <SelectValue>{values.rangeBound}</SelectValue>
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectLabel>Range Bound</SelectLabel>
+                              {["Enable", "Disable"]?.map((suggestion) => (
+                                <SelectItem key={suggestion} value={suggestion}>
+                                  {suggestion}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )} */}
                   </>
                 )}
 
@@ -560,18 +664,21 @@ export const EditTrade = () => {
                     type="text"
                   />
                 </div>
-                {values.indexValue != 6 && (
+
+                {values.indexValue != 6 && values.indexValue != 4 && (
                   <>
-                    <div className="px-1">
-                      <Label>Max Exit %</Label>
-                      <Input
-                        name="maxExitPercent"
-                        onChange={handleChange}
-                        value={values.maxExitPercent}
-                        className="mt-1"
-                        type="text"
-                      />
-                    </div>
+                    {values?.isMaster == false && (
+                      <div className="px-1">
+                        <Label>Max Exit %</Label>
+                        <Input
+                          name="maxExitPercent"
+                          onChange={handleChange}
+                          value={values.maxExitPercent}
+                          className="mt-1"
+                          type="text"
+                        />
+                      </div>
+                    )}
                   </>
                 )}
 
@@ -659,7 +766,7 @@ export const EditTrade = () => {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectGroup>
-                            <SelectLabel>Range Bound</SelectLabel>
+                            <SelectLabel>Moving Avg</SelectLabel>
                             {["SMA", "WMA"]?.map((suggestion) => (
                               <SelectItem key={suggestion} value={suggestion}>
                                 {suggestion}
@@ -672,7 +779,7 @@ export const EditTrade = () => {
                   </>
                 )}
 
-                {values?.isMaster == false && (
+                {values?.isMaster == false && values?.indexValue != 4 && (
                   <>
                     <div className="px-1">
                       <Label>Initial Entry (%)</Label>
@@ -685,38 +792,17 @@ export const EditTrade = () => {
                         type="number"
                       />
                     </div>
-                    {/* <div className="px-1">
-                    <Label>Re Entry At Min Profit(%)</Label>
-
-                    <Input
-                      name="minReEntryatMinProfitPercent"
-                      onChange={handleChange}
-                      value={values.minReEntryatMinProfitPercent}
-                      className="mt-1"
-                      type="number"
-                    />
-                  </div> */}
 
                     <div className="px-1">
                       <Label>Exit Inc %</Label>
                       <Input
                         name="priceIncPercent"
                         onChange={handleChange}
-                        value={values?.priceIncPercent}
+                        value={values.priceIncPercent}
                         className="mt-1"
                         type="text"
                       />
                     </div>
-                    {/* <div className="px-1">
-                        <Label>Exit Dec %</Label>
-                        <Input
-                          name="priceDecPercent"
-                          onChange={handleChange}
-                          value={values?.priceDecPercent}
-                          className="mt-1"
-                          type="text"
-                        />
-                      </div> */}
                   </>
                 )}
 
@@ -735,18 +821,20 @@ export const EditTrade = () => {
 
                 {values?.isMaster == false && (
                   <>
-                    {values.indexValue != 6 && (
+                    {values.indexValue != 6 && values.indexValue != 4 && (
                       <>
-                        <div className="px-1">
-                          <Label>Loss Count</Label>
-                          <Input
-                            name="lossLimit"
-                            onChange={handleChange}
-                            value={values.lossLimit}
-                            className="mt-1"
-                            type="number"
-                          />
-                        </div>
+                        {/* {values.indexValue != 4 && (
+                          <div className="px-1">
+                            <Label>Loss Count</Label>
+                            <Input
+                              name="lossLimit"
+                              onChange={handleChange}
+                              value={values.lossLimit}
+                              className="mt-1"
+                              type="number"
+                            />
+                          </div>
+                        )} */}
 
                         <div className="px-1">
                           <Label>Order Type</Label>
@@ -780,17 +868,72 @@ export const EditTrade = () => {
                     )}
                   </>
                 )}
-                <div className="px-1">
-                  <Label>Minimum Profit (%)</Label>
+                {values.indexValue != 4 && values?.isMaster == false && (
+                  <div className="px-1">
+                    <Label>Minimum Profit (%)</Label>
+                    <Input
+                      name="minProfit"
+                      onChange={handleChange}
+                      value={values.minProfit}
+                      className="mt-1"
+                      type="number"
+                    />
+                  </div>
+                )}
+
+                {values.isMaster && (
+                  <>
+                    <div className="px-1">
+                      <Label>Put Target Level</Label>
+                      <Input
+                        name="putTargetLevel"
+                        onChange={handleChange}
+                        value={values.putTargetLevel}
+                        className="mt-1"
+                        type="number"
+                        min={0}
+                      />
+                    </div>
+                    <div className="px-1">
+                      <Label>Call Target Level</Label>
+                      <Input
+                        name="callTargetLevel"
+                        onChange={handleChange}
+                        value={values.callTargetLevel}
+                        className="mt-1"
+                        type="number"
+                        min={0}
+                      />
+                    </div>
+                  </>
+                )}
+                {
+                (values.isMaster && values.indexValue == 4 ) && (
+                  <>
+                    <div className="px-1">
+                      <Label>Max Zone Time</Label>
+                      <Input
+                        name="maxZoneTime"
+                        onChange={handleChange}
+                        value={values.maxZoneTime}
+                        className="mt-1"
+                        type="number"
+                        min={0}
+                      />
+                    </div>
+                    <div className="px-1">
+                  <Label>No Trade Zone</Label>
                   <Input
-                    name="minProfit"
+                    name="noTradeZone"
                     onChange={handleChange}
-                    value={values.minProfit}
+                    value={values.noTradeZone}
                     className="mt-1"
                     type="number"
+                    min={0}
                   />
                 </div>
-
+                  </>
+                )}
                 {/* <div className="px-1">
                 <Label>Micro Profit (%)</Label>
                 <Input

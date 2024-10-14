@@ -71,7 +71,7 @@ const Sop = () => {
     }
   };
   
-  useEffect(() => {
+  useEffect(() => {      
     fetchContentFromAPI();
   }, [values.tradeIndex]);
   
@@ -91,7 +91,7 @@ const Sop = () => {
           <SelectContent>
             <SelectGroup>
               <SelectLabel>Trade Index</SelectLabel>
-              {[1, 2, 3, 4, 5, 6, 7,11].map((suggestion) => (
+              {[1, 2, 3, 4, 5, 6, 7,8,9,10,11,12,13,14,15,16,17,18,19,20].map((suggestion) => (
                 <SelectItem key={suggestion} value={suggestion}>
                   {suggestion}
                 </SelectItem>

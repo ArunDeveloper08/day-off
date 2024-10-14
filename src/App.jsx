@@ -18,10 +18,10 @@ import CustomTab from "./pages/CustomTab";
 import AngelLogin from "./pages/AngelLogin";
 import secureLocalStorage from "react-secure-storage";
 import ModalProvider from "./providers/modal-provider";
+import IdentifierLooserGainer from "./pages/IdentifierLooserGainer";
 
 export default function Home() {
   // useAuth();
-
   const RedirectIfAuthenticated = ({ children }) => {
     const isAuthenticated =
       secureLocalStorage.getItem("Authenticate") === "aAg@16&5jNs$%d0*";
@@ -55,6 +55,14 @@ export default function Home() {
           }
         />
         <Route
+          path="/future/particular-identifier-losser-gainer"
+          element={
+            <ProtectedRoute>
+              <IdentifierLooserGainer />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/future/angel-login"
           element={
             <ProtectedRoute>
@@ -66,7 +74,7 @@ export default function Home() {
         <Route
           path="/future/dashboard"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute>           
               <DashboardPage />
             </ProtectedRoute>
           }
@@ -88,8 +96,9 @@ export default function Home() {
             element={<Navigate to="gainer-looser" replace={true} />}
           />
           <Route path="gainer-looser" element={<GainerLosser />} />
-          <Route path="option-greek" element={<OptionGreek />} />
+          <Route path="option-greek" element={<OptionGreek />} />          
           <Route path="other" element={<OtherPage />} />
+
         </Route>
       </Routes>
     </ThemeProvider>

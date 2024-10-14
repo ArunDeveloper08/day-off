@@ -1,27 +1,54 @@
-// import { Button } from "@mui/material";
 import React, { useEffect } from "react";
 import { Button } from "../components/ui/button";
 import { useModal } from "@/hooks/use-modal";
+import axios from "axios";
+import { BASE_URL_OVERALL } from "@/lib/constants";
 
-const UIButton = ({ showRow, setShowRow, data, getHighLowLines , masterId }) => {
+const UIButton = ({
+  showRow,
+  setShowRow,
+  data,
+  getHighLowLines,
+  masterId,
+  setTrendLineActive,
+  trendLineActive,
+  id,
+  liveTrendValue,
+}) => {
   const { onOpen } = useModal();
   const handleOpenNewTab = (url) => {
-    // console.log(url);
     window.open(url, "_blank");
   };
 
   useEffect(() => {
     if (data?.data?.identifier) {
-      document.title = ` ${data?.data?.identifier}`;
+      document.title = `${data?.data?.identifier}`;
     }
   }, [data?.data?.identifier]);
 
-  //  console.log("hehe",data?.data?.orderType)
+  const handleSubmit = async () => {
+    setTrendLineActive(!trendLineActive);
+    try {
+      await axios.put(`${BASE_URL_OVERALL}/config/edit`, {
+        id,
+        trendLineActive: trendLineActive,
+      });
+
+      alert("successfully Updated");
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <div>
-    
-      <div className="flex flex-wrap gap-x-10 font-semibold py-2">
-        <p className="text-[14px]">Trade Terminal : {data?.data?.terminal}</p>
+      <div className="flex flex-wrap gap-x-10 font-semibold py-1">
+        <p className="text-[14px]">
+          Trade Terminal :{" "}
+          {data?.data?.terminal === "manualIn"
+            ? "Manual In"
+            : data?.data?.terminal}
+        </p>
         <p className="text-green-600 text-[14px]">
           Candle :
           {data?.data?.interval === "minute"
@@ -34,7 +61,6 @@ const UIButton = ({ showRow, setShowRow, data, getHighLowLines , masterId }) => 
         </p>
         <p className="text-[14px]">Trade Index: {data?.data?.tradeIndex}</p>
         <p className="text-[14px]">WMA : {data?.data?.WMA}</p>
-
         <p className="text-[14px]">Candle Size : {data?.data?.candleSize}</p>
         <p className="text-[14px]">
           D_Exit : {data?.data?.dynamicExitValue?.toFixed(2)}
@@ -43,14 +69,20 @@ const UIButton = ({ showRow, setShowRow, data, getHighLowLines , masterId }) => 
           D_Entry : {data?.data?.dynamicEntryValue?.toFixed(2)}
         </p>
         <p className="text-[14px]">
+          Min Profit :{" "}
+          {((data?.data?.LastPivot * data?.data?.minProfit) / 100)?.toFixed(2)}
+        </p>
+        <p className="text-[14px]">
           Initial_Exit : {data?.data?.BaseExitValue?.toFixed(2)}
         </p>
         <p className="text-[14px]">
-          Range Bound1: {data?.data?.rangeBoundPercent} %
+          Range Bound: {data?.data?.rangeBoundPercent}%
         </p>
-        <p className="text-[14px]">
-          Range Bound2: {data?.data?.rangeBoundPercent2} %
-        </p>
+        
+        {/* <p className="text-[14px]">
+          Range Bound2: {data?.data?.rangeBoundPercent2}%
+        </p>*/}
+
         <p className="text-[14px]">SMA1 : {data?.data?.SMA1}</p>
         <p className="text-[14px]">SMA2 : {data?.data?.SMA2}</p>
         <p className="text-[14px]">MV Source1 : {data?.data?.mvSource1}</p>
@@ -59,7 +91,23 @@ const UIButton = ({ showRow, setShowRow, data, getHighLowLines , masterId }) => 
         {/* <p className="text-[14px]">RSI Live : {data?.data?.RSI_Value}</p> */}
         <p className="text-[14px]">RSI Min : {data?.data?.rsiMin}</p>
         <p className="text-[14px]">Order Type : {data?.data?.orderType}</p>
-        <p className="text-[14px]">Market Trend : {data?.data?.marketTrend}</p>
+        <p className="text-[14px]">Master Trend : {data?.data?.masterTrend}</p>
+        {/* <p className="text-[14px]">Target Level : {data?.data?.targetLevel}</p> */}
+
+        {liveTrendValue && (
+          <div className="flex">
+            {liveTrendValue?.map((item, index) => {
+              return (
+                <div className="flex " key={index}>
+                  <div className="text-sm font-semibold text-gray-800">
+                    {item.name}: {item.value?.toFixed(1)}
+                  </div>
+                  &nbsp; &nbsp;
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
       <button
         onClick={() =>
@@ -237,6 +285,20 @@ const UIButton = ({ showRow, setShowRow, data, getHighLowLines , masterId }) => 
       >
         Volume
       </button>
+      &nbsp; &nbsp;
+      <button
+        onClick={() =>
+          setShowRow((p) => ({
+            ...p,
+            toolTip: !p.toolTip,
+          }))
+        }
+        className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+          showRow.toolTip ? "bg-blue-500 text-gray-100" : "bg-gray-300 "
+        }`}
+      >
+        Tool Tip
+      </button>
       {/* <button
         onClick={() =>
           setShowRow((p) => ({
@@ -337,33 +399,39 @@ const UIButton = ({ showRow, setShowRow, data, getHighLowLines , masterId }) => 
           >
             Hourly
           </button>
+          &nbsp; &nbsp;
         </>
       )}
       &nbsp; &nbsp;
       <div className="mt-1">
-       
         &nbsp; &nbsp;
         {data?.data?.isMaster == true ? (
-          <Button size="xs" className="p-1" onClick={getHighLowLines}>
-            High/Low line
-          </Button>
+          <>
+            <Button size="xs" className="p-1" onClick={getHighLowLines}>
+              High/Low line
+            </Button>
+            &nbsp; &nbsp;
+            <Button size="xs" className="p-1" onClick={handleSubmit}>
+              {trendLineActive ? "Activate TrendLine" : "Deactivate TrendLine"}
+            </Button>
+          </>
         ) : (
-          <>        
-          <Button
-          onClick={() => handleOpenNewTab(`/future/helping?id=${masterId}`)}
-          size="xs"
-          className="p-1"
-        >
-          Helping Chart
-        </Button>
-        &nbsp; &nbsp;
-          <Button
-            onClick={() => onOpen("condition-modal")}
-            size="xs"
-            className="p-1"
-          >
-            Entry/Exit Condition
-          </Button>
+          <>
+            <Button
+              onClick={() => handleOpenNewTab(`/future/helping?id=${masterId}`)}
+              size="xs"
+              className="p-1"
+            >
+              Helping Chart
+            </Button>
+            &nbsp; &nbsp;
+            <Button
+              onClick={() => onOpen("condition-modal")}
+              size="xs"
+              className="p-1"
+            >
+              Entry/Exit Condition
+            </Button>
           </>
         )}
         &nbsp; &nbsp;

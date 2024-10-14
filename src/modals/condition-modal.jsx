@@ -9,6 +9,7 @@ import axios from "axios";
 import { useLocation } from "react-router-dom";
 import { BASE_URL_OVERALL } from "../lib/constants";
 import { useEffect, useRef, useState } from "react";
+import { formatDate } from "@/lib/utils";
 
 const ConditionModal = () => {
   const { isOpen, type, onClose } = useModal();
@@ -30,12 +31,12 @@ const ConditionModal = () => {
     }
   };
 
-  useEffect(() => {
-    getData();
-    const interval = setInterval(getData, 15 * 1000);
-    intervalRef.current = interval;
-    return () => clearInterval(interval);
-  }, []);
+  // useEffect(() => {
+  //   getData();
+  //   const interval = setInterval(getData, 15 * 1000);
+  //   intervalRef.current = interval;
+  //   return () => clearInterval(interval);
+  // }, []);
 
 
   return (
@@ -45,7 +46,7 @@ const ConditionModal = () => {
           {/* <DialogTitle>Entry Exit Condition</DialogTitle> */}
           <div className="flex justify-around mt-2">
             <DialogTitle>Terminal : {data?.terminal}</DialogTitle>
-            <DialogTitle>Time : {data?.timestamp}</DialogTitle>
+            <DialogTitle>Time : {formatDate(data?.timestamp)}</DialogTitle>
             <DialogTitle>Trade Index : {data?.tradeIndex}</DialogTitle>
           </div>
 
@@ -124,7 +125,7 @@ const ConditionModal = () => {
             </div>
 
             <div className="mt-8">
-              {data.EntryCASE2 && (
+              {data?.EntryCASE2 && (
                 <>
                   <DialogTitle>Re-Entry  Condition </DialogTitle>
                   <div>

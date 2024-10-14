@@ -1,17 +1,24 @@
 import { BASE_URL_OVERALL } from "@/lib/constants";
 import { useLiveSocket } from "@/providers/live-socket-provider";
 import axios from "axios";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { useLocation } from "react-router-dom";
 import CandleChart from "../components/LiveGraph";
+// import CandleChart from "../payments/Test"
 import LiveDataTable from "./live-table";
 import "react-toastify/dist/ReactToastify.css";
-import { groupBy } from "./dashboard";
+// import { groupBy } from "./dashboard";
 
-import { ModeToggle } from "@/components/mode-toggle";
+// import { ModeToggle } from "@/components/mode-toggle";
 import { useTheme } from "@/components/theme-provider";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+// import { Label } from "@/components/ui/label";
 
 import { Button } from "@/components/ui/button";
 import UIButton from "../components/UIButton";
@@ -19,7 +26,10 @@ import { IoPlay, IoPause } from "react-icons/io5";
 
 export const LivePage = () => {
   const { theme, setTheme } = useTheme();
+  const [trendLineActive, setTrendLineActive] = useState(false);
+  const [liveTrendValue, setLiveTrendValue] = useState([]);
   const [intractiveData, setIntractiveData] = useState([]);
+  const [chartType, setChartType] = useState("svg");
   const intervalRef = useRef(null);
   useEffect(() => {
     setTheme("light");
@@ -32,9 +42,11 @@ export const LivePage = () => {
   let width = useMemo(() => window.screen.width, []);
   let height = useMemo(() => window.screen.height, []);
   const [socketData, setSocketData] = useState([]);
+  const [socketMastertData, setSocketMasterData] = useState([]);
   // const [instrumentData, setInstrumentData] = useState("");
   const [isUserScroll, setIsUserScroll] = useState(false);
   const [masterId, setMasterId] = useState("");
+  const [trends3, setTrends3] = useState([]);
 
   const [values, setValues] = useState({
     s1: null,
@@ -50,7 +62,7 @@ export const LivePage = () => {
     dynamicExitValue: false,
     dynamicEntryValue: false,
     arrow: false,
-    trendLine: false,
+    trendLine: true,
     initialLow: false,
     Last_Highest_LTP: false,
     rangeBoundLine: true,
@@ -66,6 +78,7 @@ export const LivePage = () => {
     hourly: false,
     daily: false,
     suppRes: false,
+    toolTip: true,
   });
   const [apiData, setApiData] = useState([]);
   const [data, setData] = useState({
@@ -75,6 +88,8 @@ export const LivePage = () => {
   });
   const [hideConfig, setHideConfig] = useState(true);
   if (!id) return null;
+
+  // console.log("width",width)
   const getTradeConfig = async () => {
     try {
       const { data } = await axios.get(
@@ -90,19 +105,22 @@ export const LivePage = () => {
       }));
     }
   };
-  const getChartData = () => {
+  const getChartData = useCallback(() => {
     if (isUserScroll) return;
+
     axios
       .get(`${BASE_URL_OVERALL}/chart?id=${id}&date=${prevDate}`)
       .then((res) => {
         setIntractiveData(res.data);
         setApiData(res.data.data);
         setMasterId(res.data.masterID);
+        setLiveTrendValue(res.data.liveTrendValue);
+        setTrends3(res.data.trendLines)
       })
       .catch((err) => {
         console.log("API Fail to get Chart Data");
       });
-  };
+  }, []); // Add dependencies here
 
   useEffect(() => {
     getTradeConfig();
@@ -118,7 +136,7 @@ export const LivePage = () => {
     intervalRef.current = interval;
 
     return () => clearInterval(interval);
-  }, [id, prevDate, isUserScroll]);
+  }, [id, prevDate, isUserScroll, trendLineActive]);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -141,15 +159,44 @@ export const LivePage = () => {
     if (!isConnected || !data?.data?.instrument_token) return;
     socket?.on("getLiveData", (socketdata) => {
       socketdata.token = Number(socketdata?.token?.replace(/"/g, "")); // Removes all double quotes
-      // console.log(socketdata)
+
       if (socketdata.token === data?.data.instrument_token) {
         setSocketData(socketdata);
       }
+      if (socketdata.token == data?.data.masterChart_InstrumentToken) {
+        setSocketMasterData(socketdata);
+      }
     });
+
     return () => {
       socket.off("getLiveData");
     };
   }, [socket, data, isConnected]);
+
+  // useEffect(() => {
+  //   if (!isConnected || !data?.data?.instrument_token) return;
+
+  //   socket?.on("getLiveData", (socketdata) => {
+  //     // Check if token is a string before applying replace
+  //     if (typeof socketdata?.token === "string") {
+  //       socketdata.token = Number(socketdata?.token?.replace(/"/g, ""));
+  //     } else {
+  //       // If it's not a string, attempt to convert it to a number directly
+  //       socketdata.token = Number(socketdata?.token);
+  //     }
+
+  //     // Proceed if the token matches the instrument token
+  //     if (socketdata.token === data?.data.instrument_token) {
+  //       setSocketData(socketdata);
+  //     }
+  //   });
+
+  //   return () => {
+  //     socket?.off("getLiveData"); // Clean up the event listener when the component unmounts
+  //   };
+  // }, [socket, data, isConnected]);
+
+  // console.log("data?.data?.instrument_token",data?.data.masterChart_InstrumentToken)
 
   const handleSubmit = async () => {
     // getChartData();
@@ -169,25 +216,47 @@ export const LivePage = () => {
       console.log(err);
     }
   };
-  const handleCreateTrendLines = async (trendline) => {
-    try {
-      await axios.put(`${BASE_URL_OVERALL}/config/edit`, {
-        id,
-        trendLines: trendline,
-      });
-      getChartData();
-      alert("successfully Updated TrendLines");
-    } catch (err) {
-      console.error(err);
-    }
-  };
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setValues((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+
+  const handleCreateTrendLines = useCallback(
+    async (trendline, textList1, retracements3, channels1) => {
+      // if (trendline?.some(line => line?.endTime === undefined && line?.startTime)) {
+      //   return alert(
+      //     "Please ensure the TrendLine remains inside the chart. The TrendLine's endpoint should not go outside the chart"
+      //   );
+      // }
+      const textLabel = JSON.stringify(textList1);
+
+      for (let i = 0; i <= 7; i++) {
+        if (trendline[i]?.endTime === undefined && trendline[i]?.startTime) {
+          return alert(
+            "Please ensure the TrendLine remains inside the chart. The TrendLine's endpoint should not go outside the chart"
+          );
+        }
+      }
+      try {
+        await axios.put(`${BASE_URL_OVERALL}/config/edit`, {
+          id,
+          trendLines: trendline,
+          textLabel: textLabel,
+          retracements: retracements3,
+          channels: channels1,
+        });
+        getChartData(); // Ensure this is defined and working correctly
+        alert("Successfully updated trend lines");
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    [] // Add dependencies if necessary
+  );
+
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setValues((prev) => ({
+  //     ...prev,
+  //     [name]: value,
+  //   }));
+  // };
 
   const toggleScroll = () => {
     setIsUserScroll((prevState) => !prevState);
@@ -202,6 +271,7 @@ export const LivePage = () => {
       alert("Some error Occured");
     }
   };
+
   return (
     <div>
       {data.error ? (
@@ -224,13 +294,16 @@ export const LivePage = () => {
                   data={data}
                   socketData={socketData}
                   masterId={masterId}
+                  setTrendLineActive={setTrendLineActive}
+                  trendLineActive={trendLineActive}
+                  id={id}
+                  liveTrendValue={liveTrendValue}
                 />
               </div>
             )}
 
             <div className="flex justify-center ">
               <div className="px-1 flex items-center ">
-                {/* <Label>Date :</Label> */}
                 <Input
                   type="date"
                   value={prevDate}
@@ -245,7 +318,8 @@ export const LivePage = () => {
                 </Button>
               </div>
               <button className="text-lg text-center font-semibold text-green-600 ml-5">
-                LTP : {socketData?.last_traded_price} &nbsp; &nbsp; RSI Live :{" "}
+                LTP : {socketData?.last_traded_price} &nbsp; &nbsp; Master LTP :
+                {socketMastertData?.last_traded_price} &nbsp; &nbsp; RSI Live :{" "}
                 {socketData?.RSI_value} &nbsp; &nbsp;
               </button>
               &nbsp; &nbsp; &nbsp; &nbsp;
@@ -267,13 +341,15 @@ export const LivePage = () => {
                   }
                   className={`px-1 py-1 duration-300 text-xs font-semibold rounded-md ${
                     showRow.fibonacci ? "bg-black text-gray-100" : "bg-white "
-                  }`}>
+                  }`}
+                >
                   <div className=" flex items-center ">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 28 28"
                       width="28"
-                      height="28">
+                      height="28"
+                    >
                       <g fill="currentColor" fill-rule="nonzero">
                         <path d="M3 5h22v-1h-22z"></path>
                         <path d="M3 17h22v-1h-22z"></path>
@@ -296,13 +372,15 @@ export const LivePage = () => {
                     showRow.equidistantChannel
                       ? "bg-black text-gray-100"
                       : "bg-white "
-                  }`}>
+                  }`}
+                >
                   <div className="flex  items-center">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 28 28"
                       width="28"
-                      height="28">
+                      height="28"
+                    >
                       <g fill="currentColor" fill-rule="nonzero">
                         <path d="M8.354 18.354l10-10-.707-.707-10 10zM12.354 25.354l5-5-.707-.707-5 5z"></path>
                         <path d="M20.354 17.354l5-5-.707-.707-5 5z"></path>
@@ -321,17 +399,20 @@ export const LivePage = () => {
                   }
                   className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
                     showRow.trendLine ? "bg-black text-gray-100" : "bg-white "
-                  }`}>
+                  }`}
+                >
                   <div className="flex items-center">
                     <span
                       className="icon-KTgbfaP5"
                       role="img"
-                      aria-hidden="true">
+                      aria-hidden="true"
+                    >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 28 28"
                         width="28"
-                        height="28">
+                        height="28"
+                      >
                         <g fill="currentColor" fill-rule="nonzero">
                           <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
                           <path d="M22.5 7c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM5.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
@@ -428,17 +509,20 @@ export const LivePage = () => {
               {apiData?.length > 0 && (
                 <CandleChart
                   //   id={id}
-                  //   getChartData={getChartData}
+                  getChartData={getChartData}
                   handleCreateTrendLines={handleCreateTrendLines}
                   data={apiData}
                   intractiveData={intractiveData}
-                  getMoreData={() => {}}
+                  // getMoreData={() => {}}
                   ratio={1}
                   width={width}
                   showRow={showRow}
                   theme={theme}
                   // xExtents={xExtents}
                   height={(height * 7) / 10}
+                  chartType={chartType}
+                  trends3={trends3}
+                  setTrends3={setTrends3}
                 />
               )}
             </div>

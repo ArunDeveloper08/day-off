@@ -4,6 +4,7 @@ export const BASE_URL_FUTURE_BACK = "http://192.168.31.8:5001/test";
 // export const BASE_URL_FUTURE_BACK = "https://www.pesonline12.in/sharemarketFuture/test";
 export const BASE_URL_COMMODITY_LIVE = "http://192.168.1.241:5003";
 export const BASE_URL_COMMODITY_BACK = "http://192.168.1.241:5005";
+
 // export const BASE_URL_OVERALL = "https://www.pesonline12.in/teststock";
 
 // local URL

@@ -135,7 +135,7 @@ const TableByOI = ({ logDate }) => {
     const { data } = await axios.post(
       ANGEL_URI,
       {
-        datatype: { datatype: "PercPriceLosers", expirytype: "NEAR" },
+        datatype: { datatype: "PercOILosers", expirytype: "NEAR" },
         date: logDate,
       }
       // { headers: headers }
@@ -330,7 +330,7 @@ const TableByPrice = ({ setValue, logDate }) => {
               </tr>
             </thead>
             <tbody>
-              {looser?.map((item, ind) => (
+              { looser && looser?.map((item, ind) => (
                 <tr key={ind}>
                   <td>{item.tradingSymbol}</td>
                   <td>{item.symbolToken}</td>
@@ -372,6 +372,7 @@ const PCRTable = ({ logDate }) => {
 
   return (
     <div className="flex gap-10 flex-wrap justify-around">
+      <BuilUpTable logDate={logDate} />
       <div>
         {!logDate && (
           <p className="text-center font-bold text-xl">
@@ -400,10 +401,10 @@ const PCRTable = ({ logDate }) => {
           </tbody>
         </table>
       </div>
-      <BuilUpTable logDate={logDate} />
     </div>
   );
 };
+
 
 const buildUpKeys = [
   { keys: "Long Built Up", message: "Price May go Up" },
@@ -411,11 +412,14 @@ const buildUpKeys = [
   { keys: "Short Covering", message: "Price may go up" },
   { keys: "Long Unwinding", message: "Price may go down" },
 ];
+
 const BuilUpTable = ({ logDate }) => {
   const ANGEL_URI_BUILD_UP = `${ANGEL_BASE_URL_LOCAL}/api/v1/logs/get`;
   const [buildUpData, setbuildupData] = useState([]);
+
   useEffect(() => {
     const fetchData = async () => {
+      setbuildupData([]);
       for (const { keys, message } of buildUpKeys) {
         const { data } = await axios.post(ANGEL_URI_BUILD_UP, {
           datatype: {
@@ -439,53 +443,182 @@ const BuilUpTable = ({ logDate }) => {
     fetchData();
   }, [logDate]);
 
-  return buildUpData.map((item, ind) => {
-    return (
-      <div key={ind}>
-        {!logDate && (
-          <p className="text-center font-bold text-xl">
-            {item.key} - {item.message}:{" "}
-            {moment().format("DD-MMM-yyyy hh:mm:ss")}
-          </p>
-        )}
-        {logDate && (
-          <p className="text-center font-bold text-xl">
-            {item.key} - {item.message}: {logDate}
-          </p>
-        )}
-        <table key={item.key}>
-          <thead className="bg-gray-700 text-gray-200">
-            <tr>
-              <th>Trading Symbol</th>
-              <th>Symbol Token</th>
-              <th>LTP</th>
-              <th>Price Change</th>
-              <th>Percent Change</th>
-              <th>Open Interest</th>
-              <th>Net Change Open Interest</th>
-            </tr>
-          </thead>
-          <tbody>
-            {item?.data &&
-              item?.data?.map((childItem, ind) => {
-                return (
-                  <tr key={ind}>
-                    <td>{childItem.tradingSymbol}</td>
-                    <td>{childItem.symbolToken}</td>
-                    <td>{childItem.ltp}</td>
-                    <td>{childItem.netChange}</td>
-                    <td>{childItem.percentChange}</td>
-                    <td>{childItem.opnInterest}</td>
-                    <td>{childItem.netChangeOpnInterest}</td>
+  // Split the buildUpData into pairs of two to create a grid structure
+  const chunkedData = [];
+  for (let i = 0; i < buildUpData.length; i += 2) {
+    chunkedData?.push(buildUpData?.slice(i, i + 2));
+  }
+
+  return (
+    <div>
+      {chunkedData?.map((row, rowIndex) => (
+        <div key={rowIndex} className="grid grid-cols-2 gap-4 mb-4 mt-4">
+          {row.map((item, ind) => (
+            <div key={ind}>
+              {!logDate && (
+                <p className="text-center font-bold text-xl">
+                  {item.key} - {item.message}:{" "}
+                  {moment().format("DD-MMM-yyyy hh:mm:ss")}
+                </p>
+              )}
+              {logDate && (
+                <p className="text-center font-bold text-xl">
+                  {item.key} - {item.message}: {logDate}
+                </p>
+              )}
+              <table key={item.key}>
+                <thead className="bg-gray-700 text-gray-200">
+                  <tr>
+                    <th>Trading Symbol</th>
+                    <th>Symbol Token</th>
+                    <th>LTP</th>
+                    <th>Price Change</th>
+                    <th>Percent Change</th>
+                    <th>OI</th>
+                    <th>Net Change OI</th>
                   </tr>
-                );
-              })}
-          </tbody>
-        </table>
-      </div>
-    );
-  });
-};
+                </thead>
+                <tbody>
+                  { item?.data && item?.data?.map((childItem, index) => (
+                    <tr key={index}>
+                      <td>{childItem.tradingSymbol}</td>
+                      <td>{childItem.symbolToken}</td>
+                      <td>{childItem.ltp}</td>
+                      <td>{childItem.netChange}</td>
+                      <td>{childItem.percentChange}</td>
+                      <td>{childItem.opnInterest}</td>
+                      <td>{childItem.netChangeOpnInterest}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}; 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// const buildUpKeys = [
+//   { keys: "Long Built Up", message: "Price May go Up" },
+//   { keys: "Short Built Up", message: "Price May Go Down" },
+//   { keys: "Short Covering", message: "Price may go up" },
+//   { keys: "Long Unwinding", message: "Price may go down" },
+// ];
+// const BuilUpTable = ({ logDate }) => {
+//   const ANGEL_URI_BUILD_UP = `${ANGEL_BASE_URL_LOCAL}/api/v1/logs/get`;
+//   const [buildUpData, setbuildupData] = useState([]);
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       for (const { keys, message } of buildUpKeys) {
+//         const { data } = await axios.post(ANGEL_URI_BUILD_UP, {
+//           datatype: {
+//             expirytype: "NEAR",
+//             datatype: keys,
+//           },
+//           date: logDate,
+//         });
+//         setbuildupData((prev) => [
+//           ...prev,
+//           {
+//             key: keys,
+//             message,
+//             data: data.data,
+//           },
+//         ]);
+//         // Wait for 1 second before the next iteration
+//         await new Promise((resolve) => setTimeout(resolve, 1000));
+//       }
+//     };
+//     fetchData();
+//   }, [logDate]);
+
+//   return buildUpData.map((item, ind) => {
+//     return (
+//       // <div>
+//         <div key={ind} className="grid grid-cols-2">
+//           <div>
+//             {!logDate && (
+//               <p className="text-center font-bold text-xl">
+//                 {item.key} - {item.message}:{" "}
+//                 {moment().format("DD-MMM-yyyy hh:mm:ss")}
+//               </p>
+//             )}
+//             {logDate && (
+//               <p className="text-center font-bold text-xl">
+//                 {item.key} - {item.message}: {logDate}
+//               </p>
+//             )}
+//             <div>
+//               <table key={item.key}>
+//                 <thead className="bg-gray-700 text-gray-200">
+//                   <tr>
+//                     <th>Trading Symbol</th>
+//                     <th>Symbol Token</th>
+//                     <th>LTP</th>
+//                     <th>Price Change</th>
+//                     <th>Percent Change</th>
+//                     <th>OI</th>
+//                     <th>Net Change OI</th>
+//                   </tr>
+//                 </thead>
+//                 <tbody>
+//                   {item?.data &&
+//                     item?.data?.map((childItem, ind) => {
+//                       return (
+//                         <tr key={ind}>
+//                           <td>{childItem.tradingSymbol}</td>
+//                           <td>{childItem.symbolToken}</td>
+//                           <td>{childItem.ltp}</td>
+//                           <td>{childItem.netChange}</td>
+//                           <td>{childItem.percentChange}</td>
+//                           <td>{childItem.opnInterest}</td>
+//                           <td>{childItem.netChangeOpnInterest}</td>
+//                         </tr>
+//                       );
+//                     })}
+//                 </tbody>
+//               </table>
+//             </div>
+//           </div>
+//         </div>
+//       // </div>
+//     );
+//   });
+// };
 
 // import { ANGEL_BASE_URL, ANGEL_BASE_URL_LOCAL } from "@/lib/constants";
 // import axios from "axios";
@@ -861,3 +994,4 @@ const BuilUpTable = ({ logDate }) => {
 //     );
 //   });
 // };
+
