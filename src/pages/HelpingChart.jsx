@@ -172,7 +172,7 @@ const HelpingChart = () => {
 
       .catch((err) => {
         console.log(err);
-        alert(err?.response?.data?.message);
+        // alert(err?.response?.data?.message);
       });
     // }, 1000);
   };
@@ -196,7 +196,7 @@ const HelpingChart = () => {
   useEffect(() => {
     getChartData();
     // if (!values) return;
-    const interval = setInterval(getChartData, 12 * 1000);
+    const interval = setInterval(getChartData, 2 * 100 * 1000);
     //  intervalRef.current = interval;
 
     return () => clearInterval(interval);
@@ -271,6 +271,20 @@ const HelpingChart = () => {
       // Proceed if the token matches the instrument token
       if (socketdata.token === data?.data.instrument_token) {
         setSocketData(socketdata);
+        setApiData((prevApiData) => {
+          if (!prevApiData || prevApiData.length === 0) return prevApiData;
+  
+          // Clone the previous data to avoid direct mutation
+          const updatedData = [...prevApiData];
+          
+          // Replace the `close` value in the last candle with `last_traded_price`
+          updatedData[updatedData.length - 1] = {
+            ...updatedData[updatedData.length - 1],
+            close: socketData.last_traded_price,
+          };
+  
+          return updatedData;
+        });
       }
     });
 
@@ -278,6 +292,8 @@ const HelpingChart = () => {
       socket?.off("getLiveData"); // Clean up the event listener when the component unmounts
     };
   }, [socket, data, isConnected]);
+
+  // console.log("socketData",socketData)
 
   const handleSelect = (key, value) => {
     setValues((prev) => ({ ...prev, [key]: value }));

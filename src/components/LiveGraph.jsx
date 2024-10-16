@@ -344,10 +344,12 @@ const CandleChart = ({
     // return;
 
     // Intractive TEXT UI
+    // console.log("Hii")
     const [enableInteractiveObject, setEnableInteractiveObject] =
       useState(false);
     const [textList1, setTextList1] = useState(
-      JSON.parse(intractiveData?.textLabel)
+      JSON.parse(intractiveData?.textLabel) 
+         
     );
     const [textList3, setTextList3] = useState([]);
     const [showModal, setShowModal] = useState(false);
@@ -397,7 +399,7 @@ const CandleChart = ({
         setTextList3(state.textList_3 || []);
       }
     };
-
+                              
     // const handleTextChange = (text, chartId) => {
     //   console.log("Updated Text:", text, "ChartId:", chartId , "text postion",text.position);
     //   const textList = chartId === 1 ? textList1 : textList3;
@@ -436,7 +438,7 @@ const CandleChart = ({
     //   setEnableInteractiveObject(false);
     //   setChartId(chartId);
     // };
-
+                                
     const handleTextChange = (text, chartId) => {
       // console.log(
       //   "Updated Text:",
