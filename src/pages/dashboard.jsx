@@ -525,7 +525,7 @@ const Dashboard = () => {
           >
             Clear Notification
           </Button>
-          <ModeToggle />
+          {/* <ModeToggle /> */}
         </div>
 
 

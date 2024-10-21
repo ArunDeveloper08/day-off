@@ -9,6 +9,18 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  // server: {
+  //   host: true, // Enables access via local IP
+  //   open: false, // Prevents automatic opening of the browser
+  // },
+  // server: {
+  //   host: '0.0.0.0',
+  //   port: 3000, // Change the port to 3000
+  //   open: false,
+  // },
+  
+
+  
 });
 
 

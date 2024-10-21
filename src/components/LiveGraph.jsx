@@ -511,6 +511,7 @@ const CandleChart = ({
     ]);
     // const [trends3, setTrends3] = useState(intractiveData?.trendLines);
     const node1Ref = useRef(null);
+  
     const node3Ref = useRef(null);
     //   console.log({ trends3 });
     // Fibonacci state
@@ -751,6 +752,10 @@ const CandleChart = ({
         console.log(err);
       }
     };
+   
+
+
+    
 
     return (
       <div className="flex flex-col">
@@ -868,6 +873,10 @@ const CandleChart = ({
             </div>
           </>
         )}
+        <div
+      
+        >
+
 
         {data?.length && (
           <ChartCanvas
@@ -1414,6 +1423,7 @@ const CandleChart = ({
                     onComplete={onDrawCompleteChart3}
                     trends={trends3}
                     // strokeColor="#ededed"  // Example color
+              
                   />
 
                   <DrawingObjectSelector
@@ -1526,6 +1536,7 @@ const CandleChart = ({
             {showRow.MouseCoordinates && <CrossHairCursor stroke="blue" />}
           </ChartCanvas>
         )}
+        </div>
       </div>
     );
   } catch (error) {

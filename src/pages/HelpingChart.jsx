@@ -88,8 +88,12 @@ const HelpingChart = () => {
   }, [data]);
 
   const { socket, isConnected } = useLiveSocket();
-  let width = useMemo(() => window.screen.width, []);
-  let height = useMemo(() => window.screen.height, []);
+  // let width = useMemo(() => window.screen.width, []);
+  // let height = useMemo(() => window.screen.height, []);
+
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+
   const [socketData, setSocketData] = useState([]);
   const [showRow, setShowRow] = useState({
     showAvg: false,
@@ -196,7 +200,7 @@ const HelpingChart = () => {
   useEffect(() => {
     getChartData();
     // if (!values) return;
-    const interval = setInterval(getChartData, 2 * 100 * 1000);
+    const interval = setInterval(getChartData, 1 * 100 * 1000);
     //  intervalRef.current = interval;
 
     return () => clearInterval(interval);
@@ -255,11 +259,9 @@ const HelpingChart = () => {
   // }, [socket, data, isConnected]);
 
   useEffect(() => {
-    
     if (!isConnected || !data?.data?.instrument_token) return;
- 
+
     socket?.on("getLiveData", (socketdata) => {
-      
       // Check if token is a string before applying replace
       if (typeof socketdata?.token === "string") {
         socketdata.token = Number(socketdata?.token?.replace(/"/g, ""));
@@ -273,16 +275,16 @@ const HelpingChart = () => {
         setSocketData(socketdata);
         setApiData((prevApiData) => {
           if (!prevApiData || prevApiData.length === 0) return prevApiData;
-  
+
           // Clone the previous data to avoid direct mutation
           const updatedData = [...prevApiData];
-          
+
           // Replace the `close` value in the last candle with `last_traded_price`
           updatedData[updatedData.length - 1] = {
             ...updatedData[updatedData.length - 1],
             close: socketData.last_traded_price,
           };
-  
+
           return updatedData;
         });
       }
@@ -379,11 +381,9 @@ const HelpingChart = () => {
     getTrendLinesValue();
     const interval = setInterval(getTrendLinesValue, 12 * 1000);
     // intervalRef.current = interval;
-   
+
     return () => clearInterval(interval);
   }, []);
-
-
 
   const setCETrendLine = () => {
     setShowRow((prevState) => {
@@ -439,17 +439,16 @@ const HelpingChart = () => {
     });
   };
 
-  const getTestMode =()=>{
+  const getTestMode = () => {
     axios
       .get(`${BASE_URL_OVERALL}/config/getMasterTestMode?id=${id}`)
       .then((res) => {
-   
         setTestingMode(res?.data?.data?.[0]?.testMode);
       })
       .catch((err) => {
         console.log(err);
       });
-  }
+  };
   const toggleTestingMode = async () => {
     try {
       const newMode = !testingMode;
@@ -467,44 +466,29 @@ const HelpingChart = () => {
     }
   };
 
-
-
   useEffect(() => {
     getTestMode();
   }, []);
 
-//  console.log("CEZone",trendLineValue.zone.CEZone.low)
-  
+  //  console.log("CEZone",trendLineValue.zone.CEZone.low)
 
   return (
-    <div>
+    <div className="p-2">
       {data.error ? (
         "Some Error Occcured"
       ) : (
-        <>
-          <h2 className=" text-center font-semibold text-[18px] font-mono text-red-600">
+        < >
+          <h2 className="text-center font-semibold text-[18px] font-mono text-red-600 sm:text-[20px] md:text-[24px]">
             Angel-One (Helping Chart) &nbsp;{" "}
             <button className="text-md text-center font-semibold text-red-700">
               LTP : {socketData?.last_traded_price} &nbsp;
-              {/* Call Target Level :
-              {ceTargetValue
-                ? ceTargetValue?.toFixed(1)
-                : (
-                    (data?.data?.callTargetLevel *
-                      socketData?.last_traded_price) /
-                    100
-                  )?.toFixed(1)}{" "}
-              &nbsp; Put Target Level :
-              {peTargetValue
-                ? peTargetValue?.toFixed(1)
-                : (
-                    (data?.data?.putTargetLevel *
-                      socketData?.last_traded_price) /
-                    100
-                  )?.toFixed(1)} */}
             </button>
             &nbsp; &nbsp;
-            <Button size="sm" onClick={() => setHideConfig((prev) => !prev)}>
+            <Button
+              size="sm"
+              onClick={() => setHideConfig((prev) => !prev)}
+              className="text-sm md:text-md"
+            >
               {hideConfig ? "Hide Config Data" : "Show Config Data"}
             </Button>
           </h2>
@@ -513,44 +497,35 @@ const HelpingChart = () => {
             <>
               <div>
                 <div className="flex flex-wrap gap-x-5 font-semibold py-2">
-                  <p>Trade Terminal : {data?.data?.terminal}</p>
-                  <p className="text-red-600">
+                  <p className=" text-[13px] md:text-[16px]">Trade Terminal : {data?.data?.terminal}</p>
+                  <p className="text-red-600  text-[13px] md:text-[16px]">
                     Candle :
                     {values?.interval === "minute"
                       ? "1 minute"
                       : values?.interval}
                   </p>
-                  <p>
+                  <p className=" text-[13px] md:text-[16px]">
                     Identifier:
                     {data?.data?.identifier}
                   </p>
-                  <p>Trade Index: {data?.data?.tradeIndex}</p>
-                  {/* 
-                  <p>D_Exit : {data?.data?.dynamicExitValue?.toFixed(2)}</p>
-                  <p>D_Entry : {data?.data?.tradeEntryPercent?.toFixed(2)}</p>
-                  <p className="text-[14px]">
-                    Range Bound: {data?.data?.rangeBoundPercent} %
-                  </p> */}
-                  {/* <p className="text-[14px]">
-                  Range Bound2: {data?.data?.rangeBoundPercent2} %
-                </p> */}
+                  <p className=" text-[13px] md:text-[16px]">Trade Index: {data?.data?.tradeIndex}</p>
                   {data?.data?.tradeIndex != 4 && (
                     <>
-                      <p>SMA1 : {data?.data?.SMA1}</p>
-                      <p>SMA2 : {data?.data?.SMA2}</p>
+                      <p className=" text-[13px] md:text-[16px]">SMA1 : {data?.data?.SMA1}</p>
+                      <p className=" text-[13px] md:text-[16px]">SMA2 : {data?.data?.SMA2}</p>
                     </>
                   )}
-                  <p className="text-red-500">
+                  <p className="text-red-500 text-[13px] md:text-[16px]">
                     {ceStopLoss && `CE Stop Loss : ${ceStopLoss?.toFixed(1)}`}
                   </p>
-                  <p className="text-red-500">
+                  <p className="text-red-500 text-[13px] md:text-[16px]">
                     {peStopLoss && `PE Stop Loss : ${peStopLoss?.toFixed(1)}`}
                   </p>
                   <p
                     className={`${
                       data.data.haveTradeOfCE
-                        ? "text-red-600"
-                        : "text-green-600"
+                        ? "text-red-600 text-[13px] md:text-[16px]"
+                        : "text-green-600 text-[13px] md:text-[16px]"
                     }`}
                   >
                     Call Trade Status :
@@ -560,14 +535,14 @@ const HelpingChart = () => {
                   <p
                     className={`${
                       data.data.haveTradeOfPE
-                        ? "text-red-600"
-                        : "text-green-600"
+                        ? "text-red-600 text-[13px] md:text-[16px]"
+                        : "text-green-600 text-[13px] md:text-[16px]"
                     }`}
                   >
                     Put Trade Status:
                     {data.data.haveTradeOfPE ? "True" : "False"}
                   </p>
-                  <Button size="xs" className="p-1" onClick={getHighLowLines}>
+                  <Button size="xs" className="p-1 text-[13px] md:text-[16px]" onClick={getHighLowLines}>
                     High/Low line
                   </Button>
                   <button
@@ -576,14 +551,20 @@ const HelpingChart = () => {
                       testingMode === 1
                         ? "bg-red-600 text-white"
                         : "bg-green-600 text-white"
-                    } px-1 border-muted-foreground rounded-sm`}
+                    } px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]`}
                   >
                     {testingMode === 1 ? "Test Mode ON" : "Test Mode OFF"}
                   </button>
                 </div>
-                {(trendLineValue  ) && (
+
+
+
+                {trendLineValue && (
                   <div>
-                    <p className="font-semibold">
+                    <p className="font-semibold text-[13px] md:text-[16px]
+                    
+                  
+                    ">
                       R1 :{trendLineValue.Resistance1CurrPrice?.toFixed(1)}
                       &nbsp; &nbsp; R2 :
                       {trendLineValue.Resistance2CurrPrice?.toFixed(1)}
@@ -599,14 +580,10 @@ const HelpingChart = () => {
                       {trendLineValue.Support3CurrPrice?.toFixed(1)}
                       &nbsp; &nbsp; S4 :
                       {trendLineValue.Support4CurrPrice?.toFixed(1)}
-
-
-                      &nbsp; &nbsp; CE Zone :
-                      {trendLineValue?.zone?.CEZone?.low}-{trendLineValue?.zone?.CEZone?.high}
-                      &nbsp; &nbsp; PE Zone :
-                      {trendLineValue?.zone?.PEZone?.low}-{trendLineValue?.zone?.PEZone?.high}
-
-
+                      &nbsp; &nbsp; CE Zone :{trendLineValue?.zone?.CEZone?.low}
+                      -{trendLineValue?.zone?.CEZone?.high}
+                      &nbsp; &nbsp; PE Zone :{trendLineValue?.zone?.PEZone?.low}
+                      -{trendLineValue?.zone?.PEZone?.high}
                       &nbsp; &nbsp; Call Target Level :
                       {trendLineValue?.callTargetLevelPrice?.toFixed(1)}
                       &nbsp; &nbsp; PE Target Level :
@@ -616,23 +593,8 @@ const HelpingChart = () => {
                   </div>
                 )}
 
-                <div>
-                  {/* <button
-                    onClick={() =>
-                      setShowRow((p) => ({
-                        ...p,
-                        showAvg: !p.showAvg,
-                      }))
-                    }
-                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-                      showRow.showAvg
-                        ? "bg-blue-500 text-gray-100"
-                        : "bg-gray-300 "
-                    }`}
-                  >
-                    Avg Line
-                  </button> */}
-                  &nbsp; &nbsp;
+                <div className="flex justify-between flex-wrap gap-1 md:gap-y-1">
+                  
                   <button
                     onClick={() =>
                       setShowRow((p) => ({
@@ -640,7 +602,7 @@ const HelpingChart = () => {
                         pivot: !p.pivot,
                       }))
                     }
-                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                    className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
                       showRow.pivot
                         ? "bg-blue-500 text-gray-100"
                         : "bg-gray-300 "
@@ -648,7 +610,7 @@ const HelpingChart = () => {
                   >
                     Pivot Line
                   </button>
-                  &nbsp; &nbsp;
+                 
                   <button
                     onClick={() =>
                       setShowRow((p) => ({
@@ -656,7 +618,7 @@ const HelpingChart = () => {
                         candle: !p.candle,
                       }))
                     }
-                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                    className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
                       showRow.candle
                         ? "bg-blue-500 text-gray-100"
                         : "bg-gray-300 "
@@ -664,7 +626,7 @@ const HelpingChart = () => {
                   >
                     Candle
                   </button>
-                  &nbsp; &nbsp;
+                 
                   <button
                     onClick={() =>
                       setShowRow((p) => ({
@@ -672,7 +634,7 @@ const HelpingChart = () => {
                         dynamicExitValue: !p.dynamicExitValue,
                       }))
                     }
-                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                    className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
                       showRow.dynamicExitValue
                         ? "bg-blue-500 text-gray-100"
                         : "bg-gray-300 "
@@ -680,55 +642,7 @@ const HelpingChart = () => {
                   >
                     D_Exit Value
                   </button>
-                  &nbsp; &nbsp;
-                  {/* <button
-                    onClick={() =>
-                      setShowRow((p) => ({
-                        ...p,
-                        RangeBoundTargetProfit: !p.RangeBoundTargetProfit,
-                      }))
-                    }
-                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-                      showRow.RangeBoundTargetProfit
-                        ? "bg-blue-500 text-gray-100"
-                        : "bg-gray-300 "
-                    }`}
-                  >
-                    Target Profit
-                  </button> */}
-                  {/* &nbsp; &nbsp;
-                  <button
-                    onClick={() =>
-                      setShowRow((p) => ({
-                        ...p,
-                        dynamicEntryValue: !p.dynamicEntryValue,
-                      }))
-                    }
-                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-                      showRow.dynamicEntryValue
-                        ? "bg-blue-500 text-gray-100"
-                        : "bg-gray-300 "
-                    }`}
-                  >
-                    D_Entry Value
-                  </button> */}
-                  {/* &nbsp; &nbsp;
-                  <button
-                    onClick={() =>
-                      setShowRow((p) => ({
-                        ...p,
-                        initialLow: !p.initialLow,
-                      }))
-                    }
-                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-                      showRow.initialLow
-                        ? "bg-blue-500 text-gray-100"
-                        : "bg-gray-300 "
-                    }`}
-                  >
-                    Initial Low
-                  </button> */}
-                  &nbsp; &nbsp;
+                
                   <button
                     onClick={() =>
                       setShowRow((p) => ({
@@ -736,7 +650,7 @@ const HelpingChart = () => {
                         Last_Highest_LTP: !p.Last_Highest_LTP,
                       }))
                     }
-                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                    className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
                       showRow.Last_Highest_LTP
                         ? "bg-blue-500 text-gray-100"
                         : "bg-gray-300 "
@@ -744,7 +658,7 @@ const HelpingChart = () => {
                   >
                     Last High LTP
                   </button>
-                  &nbsp; &nbsp;
+                 
                   <button
                     onClick={() =>
                       setShowRow((p) => ({
@@ -752,7 +666,7 @@ const HelpingChart = () => {
                         rangeBoundLine: !p.rangeBoundLine,
                       }))
                     }
-                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                    className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
                       showRow.rangeBoundLine
                         ? "bg-blue-500 text-gray-100"
                         : "bg-gray-300 "
@@ -760,7 +674,7 @@ const HelpingChart = () => {
                   >
                     Range Bound
                   </button>
-                  &nbsp; &nbsp;
+               
                   <button
                     onClick={() =>
                       setShowRow((p) => ({
@@ -768,7 +682,7 @@ const HelpingChart = () => {
                         movingAvg: !p.movingAvg,
                       }))
                     }
-                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                    className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
                       showRow.movingAvg
                         ? "bg-blue-500 text-gray-100"
                         : "bg-gray-300 "
@@ -776,7 +690,7 @@ const HelpingChart = () => {
                   >
                     Moving Avg
                   </button>
-                  &nbsp; &nbsp;
+                
                   <button
                     onClick={() =>
                       setShowRow((p) => ({
@@ -784,7 +698,7 @@ const HelpingChart = () => {
                         volume: !p.volume,
                       }))
                     }
-                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                    className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
                       showRow.volume
                         ? "bg-blue-500 text-gray-100"
                         : "bg-gray-300 "
@@ -792,23 +706,7 @@ const HelpingChart = () => {
                   >
                     volume
                   </button>
-                  &nbsp; &nbsp;
-                  {/* <button
-              onClick={() =>
-                setShowRow((p) => ({
-                  ...p,
-                  suppRes: !p.suppRes,
-                }))
-              }
-              className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-                showRow.suppRes ? "bg-blue-500 text-gray-100" : "bg-gray-300 "
-              }`}
-            >
-              Supp&Res
-            </button> */}
-                  {/* &nbsp; &nbsp; */}
-                  {/* <ModeToggle /> */}
-                  &nbsp; &nbsp;
+              
                   <button
                     onClick={() =>
                       setShowRow((p) => ({
@@ -816,7 +714,7 @@ const HelpingChart = () => {
                         monthlyHigh: !p.monthlyHigh,
                       }))
                     }
-                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                    className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
                       showRow.monthlyHigh
                         ? "bg-blue-500 text-gray-100"
                         : "bg-gray-300 "
@@ -824,7 +722,7 @@ const HelpingChart = () => {
                   >
                     Monthly
                   </button>
-                  &nbsp; &nbsp;
+                
                   <button
                     onClick={() =>
                       setShowRow((p) => ({
@@ -832,7 +730,7 @@ const HelpingChart = () => {
                         weekly: !p.weekly,
                       }))
                     }
-                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                    className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
                       showRow.weekly
                         ? "bg-blue-500 text-gray-100"
                         : "bg-gray-300 "
@@ -840,7 +738,7 @@ const HelpingChart = () => {
                   >
                     Weakly
                   </button>
-                  &nbsp; &nbsp;
+                
                   <button
                     onClick={() =>
                       setShowRow((p) => ({
@@ -848,7 +746,7 @@ const HelpingChart = () => {
                         daily: !p.daily,
                       }))
                     }
-                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                    className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
                       showRow.daily
                         ? "bg-blue-500 text-gray-100"
                         : "bg-gray-300 "
@@ -856,7 +754,7 @@ const HelpingChart = () => {
                   >
                     Daily
                   </button>
-                  &nbsp; &nbsp;
+                  
                   <button
                     onClick={() =>
                       setShowRow((p) => ({
@@ -864,7 +762,7 @@ const HelpingChart = () => {
                         fourHourly: !p.fourHourly,
                       }))
                     }
-                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                    className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
                       showRow.fourHourly
                         ? "bg-blue-500 text-gray-100"
                         : "bg-gray-300 "
@@ -872,7 +770,7 @@ const HelpingChart = () => {
                   >
                     Four Hourly
                   </button>
-                  &nbsp; &nbsp;
+                
                   <button
                     onClick={() =>
                       setShowRow((p) => ({
@@ -880,7 +778,7 @@ const HelpingChart = () => {
                         hourly: !p.hourly,
                       }))
                     }
-                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                    className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
                       showRow.hourly
                         ? "bg-blue-500 text-gray-100"
                         : "bg-gray-300 "
@@ -888,7 +786,7 @@ const HelpingChart = () => {
                   >
                     Hourly
                   </button>
-                  &nbsp; &nbsp;
+               
                   <button
                     onClick={() =>
                       setShowRow((p) => ({
@@ -896,7 +794,7 @@ const HelpingChart = () => {
                         toolTip: !p.toolTip,
                       }))
                     }
-                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                    className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
                       showRow.toolTip
                         ? "bg-blue-500 text-gray-100"
                         : "bg-gray-300 "
@@ -904,21 +802,10 @@ const HelpingChart = () => {
                   >
                     Tool Tip
                   </button>
-                  {/* &nbsp; &nbsp;
-                  <button
-                    onClick={setAllTrendLine}
-                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-                      showRow.allTrendLine
-                        ? "bg-blue-500 text-gray-100"
-                        : "bg-gray-300 "
-                    }`}
-                  >
-                    All TrendLine
-                  </button> */}
-                  &nbsp; &nbsp;
+                
                   <button
                     onClick={setCETrendLine}
-                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                    className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
                       showRow.ceTrendLine
                         ? "bg-blue-500 text-gray-100"
                         : "bg-gray-300"
@@ -926,10 +813,10 @@ const HelpingChart = () => {
                   >
                     CE TrendLine
                   </button>
-                  &nbsp; &nbsp;
+                 
                   <button
                     onClick={setPETrendLine}
-                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                    className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
                       showRow.peTrendLine
                         ? "bg-blue-500 text-gray-100"
                         : "bg-gray-300"
@@ -937,11 +824,14 @@ const HelpingChart = () => {
                   >
                     PE TrendLine
                   </button>
-                  &nbsp; &nbsp;
+             
                 </div>
               </div>
-              <div className="flex flex-wrap items-center mt-2 mb-1 space-x-3">
-                {/* Date Input */}
+
+
+
+              {/* <div className="flex flex-wrap items-center mt-2 mb-1 space-x-3">
+            
 
                 <div className="flex flex-col">
                   <Label>Date</Label>
@@ -955,7 +845,7 @@ const HelpingChart = () => {
                   />
                 </div>
 
-                {/* Candle Type Select */}
+                
                 <div className="flex flex-col">
                   <Label>Candle Type</Label>
                   <Select
@@ -979,7 +869,7 @@ const HelpingChart = () => {
                   </Select>
                 </div>
 
-                {/* Interval Select */}
+           
                 <div className="flex flex-col">
                   <Label>Interval</Label>
                   <Select
@@ -1014,7 +904,7 @@ const HelpingChart = () => {
                   </Select>
                 </div>
 
-                {/* WMA Input */}
+             
                 <div className="flex flex-col w-[120px]">
                   <Label>WMA</Label>
                   <Input
@@ -1027,18 +917,7 @@ const HelpingChart = () => {
                   />
                 </div>
 
-                {/* Range Bound Input */}
-                {/* <div className="flex flex-col">
-                  <Label>Range Bound</Label>
-                  <Input
-                    name="rangeBoundPercent"
-                    onChange={handleChange}
-                    value={values.rangeBoundPercent}
-                    className="mt-1"
-                    type="number" // Corrected the input type from `rangeBoundPercent` to `number`
-                  />
-                </div> */}
-                {/* Trendline Active / Deactive */}
+             
                 <div className="flex flex-col">
                   <Label>Trendline Status</Label>
                   <Select
@@ -1071,8 +950,231 @@ const HelpingChart = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                {/* Buttons Section */}
+              
                 <div className="flex items-center space-x-2 mt-2">
+                
+                  <Button onClick={handleSubmit} size="sm">
+                    Submit
+                  </Button>
+
+             
+                  <button
+                    onClick={() =>
+                      setShowRow((prev) => ({
+                        ...prev,
+                        fibonacci: !prev.fibonacci,
+                      }))
+                    }
+                    className={`px-2 py-1 text-xs font-semibold rounded-md duration-300 ${
+                      showRow.fibonacci ? "bg-black text-gray-100" : "bg-white"
+                    }`}
+                  >
+                    <div className="flex items-center">
+                      <svg
+                        width="28"
+                        height="28"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <g fill="currentColor" fillRule="nonzero">
+                          <path d="M3 5h22v-1h-22z"></path>
+                          <path d="M3 17h22v-1h-22z"></path>
+                          <path d="M3 11h19.5v-1h-19.5z"></path>
+                          <path d="M5.5 23h19.5v-1h-19.5z"></path>
+                          <path d="M3.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM24.5 12c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5z"></path>
+                        </g>
+                      </svg>
+                      <span>Fibonacci Retracement</span>
+                    </div>
+                  </button>
+
+                
+                  <button
+                    onClick={() =>
+                      setShowRow((p) => ({
+                        ...p,
+                        equidistantChannel: !p.equidistantChannel,
+                      }))
+                    }
+                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                      showRow.equidistantChannel
+                        ? "bg-black text-gray-100"
+                        : "bg-white "
+                    }`}
+                  >
+                    <div className="flex  items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 28 28"
+                        width="28"
+                        height="28"
+                      >
+                        <g fill="currentColor" fill-rule="nonzero">
+                          <path d="M8.354 18.354l10-10-.707-.707-10 10zM12.354 25.354l5-5-.707-.707-5 5z"></path>
+                          <path d="M20.354 17.354l5-5-.707-.707-5 5z"></path>
+                          <path d="M19.5 8c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM6.5 21c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM18.5 20c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
+                        </g>
+                      </svg>
+                      <span>Equidistant Channel</span>
+                    </div>
+                  </button>
+
+           
+                  <button
+                    onClick={() =>
+                      setShowRow((p) => ({
+                        ...p,
+                        trendLine: !p.trendLine,
+                      }))
+                    }
+                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                      showRow.trendLine ? "bg-black text-gray-100" : "bg-white "
+                    }`}
+                  >
+                    <div className="flex items-center">
+                      <span
+                        className="icon-KTgbfaP5"
+                        role="img"
+                        aria-hidden="true"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 28 28"
+                          width="28"
+                          height="28"
+                        >
+                          <g fill="currentColor" fill-rule="nonzero">
+                            <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
+                            <path d="M22.5 7c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM5.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
+                          </g>
+                        </svg>
+                      </span>
+                      <span>Trendline</span>
+                    </div>
+                  </button>
+                </div>
+              </div> */}
+              <div className="flex flex-wrap items-center mt-2 mb-1 space-x-3">
+                {/* Date Input */}
+                <div className="flex flex-col w-full sm:w-auto">
+                  <Label>Date</Label>
+                  <Input
+                    type="date"
+                    placeholder="date"
+                    className="w-full sm:w-[140px] border-black border-[1px] rounded-md"
+                    onChange={handleChange}
+                    name="date"
+                    max={today}
+                  />
+                </div>
+
+                {/* Candle Type Select */}
+                <div className="flex flex-col w-full sm:w-auto">
+                  <Label>Candle Type</Label>
+                  <Select
+                    value={values.candleType}
+                    name="candleType"
+                    onValueChange={(value) => handleSelect("candleType", value)}
+                  >
+                    <SelectTrigger className="w-full sm:w-[120px] mt-1 border-zinc-500">
+                      <SelectValue>{values.candleType}</SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Candle Type</SelectLabel>
+                        {["HeikinAshi", "Normal"].map((suggestion) => (
+                          <SelectItem key={suggestion} value={suggestion}>
+                            {suggestion}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Interval Select */}
+                <div className="flex flex-col w-full sm:w-auto">
+                  <Label>Interval</Label>
+                  <Select
+                    value={values.interval}
+                    name="terminal"
+                    onValueChange={(value) => handleSelect("interval", value)}
+                  >
+                    <SelectTrigger className="w-full sm:w-[150px] mt-1 border-zinc-500">
+                      <SelectValue>{values.interval}</SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Interval</SelectLabel>
+                        {[
+                          { label: "1 minute", value: "ONE_MINUTE" },
+                          { label: "3 minute", value: "THREE_MINUTE" },
+                          { label: "5 minute", value: "FIVE_MINUTE" },
+                          { label: "15 minute", value: "FIFTEEN_MINUTE" },
+                          { label: "30 minute", value: "THIRTY_MINUTE" },
+                          { label: "1 hour", value: "ONE_HOUR" },
+                          { label: "1 day", value: "ONE_DAY" },
+                        ].map((suggestion) => (
+                          <SelectItem
+                            key={suggestion.value}
+                            value={suggestion.value}
+                          >
+                            {suggestion.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* WMA Input */}
+                <div className="flex flex-col w-full sm:w-auto">
+                  <Label>WMA</Label>
+                  <Input
+                    name="WMA"
+                    onChange={handleChange}
+                    value={values.WMA}
+                    className="mt-1"
+                    type="number"
+                    min={0}
+                  />
+                </div>
+
+                {/* Trendline Status */}
+                <div className="flex flex-col w-full sm:w-auto">
+                  <Label>Trendline Status</Label>
+                  <Select
+                    value={values.trendLineActive}
+                    name="trendLineActive"
+                    onValueChange={(value) =>
+                      handleSelect("trendLineActive", value)
+                    }
+                  >
+                    <SelectTrigger className="w-full sm:w-[130px] mt-1 border-zinc-500">
+                      <SelectValue>
+                        {values.trendLineActive ? "Active" : "Deactive"}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>TrendLine Status</SelectLabel>
+                        {[
+                          { label: "Active", value: true },
+                          { label: "Deactive", value: false },
+                        ].map((suggestion) => (
+                          <SelectItem
+                            key={suggestion.value}
+                            value={suggestion.value}
+                          >
+                            {suggestion.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Buttons Section */}
+                <div className="flex items-center flex-wrap space-x-2 mt-2">
                   {/* Submit Button */}
                   <Button onClick={handleSubmit} size="sm">
                     Submit
@@ -1122,24 +1224,22 @@ const HelpingChart = () => {
                         : "bg-white "
                     }`}
                   >
-                    <div className="flex  items-center">
+                    <div className="flex items-center">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 28 28"
                         width="28"
                         height="28"
                       >
-                        <g fill="currentColor" fill-rule="nonzero">
+                        <g fill="currentColor" fillRule="nonzero">
                           <path d="M8.354 18.354l10-10-.707-.707-10 10zM12.354 25.354l5-5-.707-.707-5 5z"></path>
                           <path d="M20.354 17.354l5-5-.707-.707-5 5z"></path>
-                          <path d="M19.5 8c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM6.5 21c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM18.5 20c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
+                          <path d="M19.5 8c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM6.5 21c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
                         </g>
                       </svg>
                       <span>Equidistant Channel</span>
                     </div>
                   </button>
-
-                  {/* Trendline Button */}
                   <button
                     onClick={() =>
                       setShowRow((p) => ({
@@ -1177,7 +1277,7 @@ const HelpingChart = () => {
             </>
           )}
 
-          {apiData?.length > 0 && (
+          {/* {apiData?.length > 0 && (
             <CandleChart
               data={apiData}
               handleCreateTrendLines={handleCreateTrendLines}
@@ -1194,6 +1294,24 @@ const HelpingChart = () => {
               trends3={trends3}
               setTrends3={setTrends3}
             />
+          )} */}
+          {apiData?.length > 0 && (
+            <div className="w-full h-auto flex justify-center">
+              <CandleChart
+                data={apiData}
+                handleCreateTrendLines={handleCreateTrendLines}
+                master={data?.data}
+                ratio={1}
+                width={width + 30} // Adjust width dynamically with some margin
+                showRow={showRow}
+                theme={theme}
+                intractiveData={intractiveData}
+                height={height ? (height * 8) / 10 : "60vh"} // Responsive height
+                chartType={chartType}
+                trends3={trends3}
+                setTrends3={setTrends3}
+              />
+            </div>
           )}
         </>
       )}

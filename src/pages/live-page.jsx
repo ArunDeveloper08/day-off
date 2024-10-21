@@ -302,130 +302,120 @@ export const LivePage = () => {
               </div>
             )}
 
-            <div className="flex justify-center ">
-              <div className="px-1 flex items-center ">
-                <Input
-                  type="date"
-                  value={prevDate}
-                  placeholder="date"
-                  className="w-[150px] border-black border-[1px] rounded-md"
-                  onChange={(e) => setPrevDate(e.target.value)}
-                />
-              </div>
-              <div className="flex items-center">
-                <Button onClick={handleSubmit} size="xs" className="p-1">
-                  Submit
-                </Button>
-              </div>
-              <button className="text-lg text-center font-semibold text-green-600 ml-5">
-                LTP : {socketData?.last_traded_price} &nbsp; &nbsp; Master LTP :
-                {socketMastertData?.last_traded_price} &nbsp; &nbsp; RSI Live :{" "}
-                {socketData?.RSI_value} &nbsp; &nbsp;
-              </button>
-              &nbsp; &nbsp; &nbsp; &nbsp;
-              <button onClick={toggleScroll}>
-                {isUserScroll ? (
-                  <IoPlay className="size-6" />
-                ) : (
-                  <IoPause className="size-6" />
-                )}
-              </button>
-              <div className="flex">
-                &nbsp; &nbsp; &nbsp;
-                <button
-                  onClick={() =>
-                    setShowRow((p) => ({
-                      ...p,
-                      fibonacci: !p.fibonacci,
-                    }))
-                  }
-                  className={`px-1 py-1 duration-300 text-xs font-semibold rounded-md ${
-                    showRow.fibonacci ? "bg-black text-gray-100" : "bg-white "
-                  }`}
-                >
-                  <div className=" flex items-center ">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 28 28"
-                      width="28"
-                      height="28"
-                    >
-                      <g fill="currentColor" fill-rule="nonzero">
-                        <path d="M3 5h22v-1h-22z"></path>
-                        <path d="M3 17h22v-1h-22z"></path>
-                        <path d="M3 11h19.5v-1h-19.5z"></path>
-                        <path d="M5.5 23h19.5v-1h-19.5z"></path>
-                        <path d="M3.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM24.5 12c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
-                      </g>
-                    </svg>
-                    <span>Fibonacci Retracement</span>
-                  </div>
-                </button>
-                <button
-                  onClick={() =>
-                    setShowRow((p) => ({
-                      ...p,
-                      equidistantChannel: !p.equidistantChannel,
-                    }))
-                  }
-                  className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-                    showRow.equidistantChannel
-                      ? "bg-black text-gray-100"
-                      : "bg-white "
-                  }`}
-                >
-                  <div className="flex  items-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 28 28"
-                      width="28"
-                      height="28"
-                    >
-                      <g fill="currentColor" fill-rule="nonzero">
-                        <path d="M8.354 18.354l10-10-.707-.707-10 10zM12.354 25.354l5-5-.707-.707-5 5z"></path>
-                        <path d="M20.354 17.354l5-5-.707-.707-5 5z"></path>
-                        <path d="M19.5 8c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM6.5 21c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM18.5 20c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
-                      </g>
-                    </svg>
-                    <span>Equidistant Channel</span>
-                  </div>
-                </button>
-                <button
-                  onClick={() =>
-                    setShowRow((p) => ({
-                      ...p,
-                      trendLine: !p.trendLine,
-                    }))
-                  }
-                  className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-                    showRow.trendLine ? "bg-black text-gray-100" : "bg-white "
-                  }`}
-                >
-                  <div className="flex items-center">
-                    <span
-                      className="icon-KTgbfaP5"
-                      role="img"
-                      aria-hidden="true"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 28 28"
-                        width="28"
-                        height="28"
-                      >
-                        <g fill="currentColor" fill-rule="nonzero">
-                          <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
-                          <path d="M22.5 7c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM5.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
-                        </g>
-                      </svg>
-                    </span>
-                    <span>Trendline</span>
-                  </div>
-                </button>
-                {/* <Button>Update Trendlines</Button> */}
-                {/* <ModeToggle /> */}
-              </div>
-            </div>
+<div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-6 p-2">
+  <div className="flex items-center gap-4">
+    <Input
+      type="date"
+      value={prevDate}
+      placeholder="date"
+      className="w-full md:w-[150px] border-black border-[1px] rounded-md"
+      onChange={(e) => setPrevDate(e.target.value)}
+    />
+      <Button onClick={handleSubmit} size="xs" className="p-2">
+      Submit
+    </Button>
+  </div>
+ 
+  <button className="text-sm md:text-lg text-center font-semibold text-green-600">
+    LTP : {socketData?.last_traded_price} &nbsp; &nbsp; Master LTP :
+    {socketMastertData?.last_traded_price} &nbsp; &nbsp; RSI Live :{" "}
+    {socketData?.RSI_value} &nbsp; &nbsp;
+  </button>
+  {/* <button onClick={toggleScroll} className="text-lg">
+    {isUserScroll ? (
+      <IoPlay className="size-6" />
+    ) : (
+      <IoPause className="size-6" />
+    )}
+  </button> */}
+  <div className="flex flex-wrap gap-2 md:gap-4">
+    <button
+      onClick={() =>
+        setShowRow((p) => ({
+          ...p,
+          fibonacci: !p.fibonacci,
+        }))
+      }
+      className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+        showRow.fibonacci ? "bg-black text-gray-100" : "bg-white"
+      }`}
+    >
+      <div className="flex items-center">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 28 28"
+          width="28"
+          height="28"
+        >
+          <g fill="currentColor" fillRule="nonzero">
+            <path d="M3 5h22v-1h-22z"></path>
+            <path d="M3 17h22v-1h-22z"></path>
+            <path d="M3 11h19.5v-1h-19.5z"></path>
+            <path d="M5.5 23h19.5v-1h-19.5z"></path>
+            <path d="M3.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM24.5 12c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
+          </g>
+        </svg>
+        <span className="ml-1">Fibonacci Retracement</span>
+      </div>
+    </button>
+    <button
+      onClick={() =>
+        setShowRow((p) => ({
+          ...p,
+          equidistantChannel: !p.equidistantChannel,
+        }))
+      }
+      className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+        showRow.equidistantChannel ? "bg-black text-gray-100" : "bg-white"
+      }`}
+    >
+      <div className="flex items-center">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 28 28"
+          width="28"
+          height="28"
+        >
+          <g fill="currentColor" fillRule="nonzero">
+            <path d="M8.354 18.354l10-10-.707-.707-10 10zM12.354 25.354l5-5-.707-.707-5 5z"></path>
+            <path d="M20.354 17.354l5-5-.707-.707-5 5z"></path>
+            <path d="M19.5 8c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM6.5 21c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM18.5 20c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
+          </g>
+        </svg>
+        <span className="ml-1">Equidistant Channel</span>
+      </div>
+    </button>
+    <button
+      onClick={() =>
+        setShowRow((p) => ({
+          ...p,
+          trendLine: !p.trendLine,
+        }))
+      }
+      className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+        showRow.trendLine ? "bg-black text-gray-100" : "bg-white"
+      }`}
+    >
+      <div className="flex items-center">
+        <span className="icon-KTgbfaP5" role="img" aria-hidden="true">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 28 28"
+            width="28"
+            height="28"
+          >
+            <g fill="currentColor" fillRule="nonzero">
+              <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
+              <path d="M22.5 7c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM2.5 27c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
+            </g>
+          </svg>
+        </span>
+        <span className="ml-1">Trend Line</span>
+      </div>
+    </button>
+  </div>
+</div>
+
           </div>
 
           <div className="flex">

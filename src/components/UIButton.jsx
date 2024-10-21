@@ -42,73 +42,79 @@ const UIButton = ({
 
   return (
     <div>
-      <div className="flex flex-wrap gap-x-10 font-semibold py-1">
-        <p className="text-[14px]">
-          Trade Terminal :{" "}
-          {data?.data?.terminal === "manualIn"
-            ? "Manual In"
-            : data?.data?.terminal}
-        </p>
-        <p className="text-green-600 text-[14px]">
-          Candle :
-          {data?.data?.interval === "minute"
-            ? "1 minute"
-            : data?.data?.interval}
-        </p>
-        <p className="text-[14px]">
-          Identifier:
-          {data?.data?.identifier}
-        </p>
-        <p className="text-[14px]">Trade Index: {data?.data?.tradeIndex}</p>
-        <p className="text-[14px]">WMA : {data?.data?.WMA}</p>
-        <p className="text-[14px]">Candle Size : {data?.data?.candleSize}</p>
-        <p className="text-[14px]">
-          D_Exit : {data?.data?.dynamicExitValue?.toFixed(2)}
-        </p>
-        <p className="text-[14px]">
-          D_Entry : {data?.data?.dynamicEntryValue?.toFixed(2)}
-        </p>
-        <p className="text-[14px]">
-          Min Profit :{" "}
-          {((data?.data?.LastPivot * data?.data?.minProfit) / 100)?.toFixed(2)}
-        </p>
-        <p className="text-[14px]">
-          Initial_Exit : {data?.data?.BaseExitValue?.toFixed(2)}
-        </p>
-        <p className="text-[14px]">
-          Range Bound: {data?.data?.rangeBoundPercent}%
-        </p>
-        
-        {/* <p className="text-[14px]">
-          Range Bound2: {data?.data?.rangeBoundPercent2}%
-        </p>*/}
+   <div className="flex flex-wrap gap-4 font-semibold py-2">
+  <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+    Trade Terminal:{" "}
+    {data?.data?.terminal === "manualIn" ? "Manual In" : data?.data?.terminal}
+  </p>
+  <p className="text-green-600 text-[13px] md:text-[16px] w-full sm:w-auto">
+    Candle: {data?.data?.interval === "minute" ? "1 minute" : data?.data?.interval}
+  </p>
+  <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+    Identifier: {data?.data?.identifier}
+  </p>
+  <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+    Trade Index: {data?.data?.tradeIndex}
+  </p>
+  <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+    WMA: {data?.data?.WMA}
+  </p>
+  <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+    Candle Size: {data?.data?.candleSize}
+  </p>
+  <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+    D_Exit: {data?.data?.dynamicExitValue?.toFixed(2)}
+  </p>
+  <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+    D_Entry: {data?.data?.dynamicEntryValue?.toFixed(2)}
+  </p>
+  <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+    Min Profit: {((data?.data?.LastPivot * data?.data?.minProfit) / 100)?.toFixed(2)}
+  </p>
+  <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+    Initial_Exit: {data?.data?.BaseExitValue?.toFixed(2)}
+  </p>
+  <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+    Range Bound: {data?.data?.rangeBoundPercent}%
+  </p>
+  <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+    SMA1: {data?.data?.SMA1}
+  </p>
+  <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+    SMA2: {data?.data?.SMA2}
+  </p>
+  <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+    MV Source1: {data?.data?.mvSource1}
+  </p>
+  <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+    MV Source2: {data?.data?.mvSource2}
+  </p>
+  <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+    RSI Max: {data?.data?.rsiMax}
+  </p>
+  <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+    RSI Min: {data?.data?.rsiMin}
+  </p>
+  <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+    Order Type: {data?.data?.orderType}
+  </p>
+  <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+    Master Trend: {data?.data?.masterTrend}
+  </p>
 
-        <p className="text-[14px]">SMA1 : {data?.data?.SMA1}</p>
-        <p className="text-[14px]">SMA2 : {data?.data?.SMA2}</p>
-        <p className="text-[14px]">MV Source1 : {data?.data?.mvSource1}</p>
-        <p className="text-[14px]">MV Source2 : {data?.data?.mvSource2}</p>
-        <p className="text-[14px]">RSI Max : {data?.data?.rsiMax}</p>
-        {/* <p className="text-[14px]">RSI Live : {data?.data?.RSI_Value}</p> */}
-        <p className="text-[14px]">RSI Min : {data?.data?.rsiMin}</p>
-        <p className="text-[14px]">Order Type : {data?.data?.orderType}</p>
-        <p className="text-[14px]">Master Trend : {data?.data?.masterTrend}</p>
-        {/* <p className="text-[14px]">Target Level : {data?.data?.targetLevel}</p> */}
+  {liveTrendValue && (
+    <div className="flex flex-wrap gap-2 w-full mt-2">
+      {liveTrendValue?.map((item, index) => (
+        <div className="text-sm font-semibold text-gray-800" key={index}>
+          {item.name}: {item.value?.toFixed(1)}
+        </div>
+      ))}
+    </div>
+  )}
+</div>
 
-        {liveTrendValue && (
-          <div className="flex">
-            {liveTrendValue?.map((item, index) => {
-              return (
-                <div className="flex " key={index}>
-                  <div className="text-sm font-semibold text-gray-800">
-                    {item.name}: {item.value?.toFixed(1)}
-                  </div>
-                  &nbsp; &nbsp;
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
+
+      <div className=" mb-1 flex justify-between flex-wrap gap-1 md:gap-y-1">
       <button
         onClick={() =>
           setShowRow((p) => ({
@@ -122,7 +128,7 @@ const UIButton = ({
       >
         Avg Line
       </button>
-      &nbsp; &nbsp;
+    
       <button
         onClick={() =>
           setShowRow((p) => ({
@@ -136,7 +142,7 @@ const UIButton = ({
       >
         Pivot Line
       </button>
-      &nbsp; &nbsp;
+      
       <button
         onClick={() =>
           setShowRow((p) => ({
@@ -150,7 +156,7 @@ const UIButton = ({
       >
         Candle
       </button>
-      &nbsp; &nbsp;
+ 
       <button
         onClick={() =>
           setShowRow((p) => ({
@@ -166,7 +172,7 @@ const UIButton = ({
       >
         D_Exit Value
       </button>
-      &nbsp; &nbsp;
+    
       <button
         onClick={() =>
           setShowRow((p) => ({
@@ -182,22 +188,8 @@ const UIButton = ({
       >
         Target Profit
       </button>
-      {/* 
-      &nbsp; &nbsp;
-         <button
-           onClick={() =>
-             setShowRow((p) => ({
-               ...p,           v 
-               arrow: !p.arrow,
-             }))
-           }
-           className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-             showRow.arrow ? "bg-blue-500 text-gray-100" : "bg-gray-300"
-           }`}
-         >
-           <span className="flex">Buy Sell (Arrow)</span>
-         </button> */}
-      &nbsp; &nbsp;
+
+    
       <button
         onClick={() =>
           setShowRow((p) => ({
@@ -213,7 +205,7 @@ const UIButton = ({
       >
         D_Entry Value
       </button>
-      &nbsp; &nbsp;
+  
       <button
         onClick={() =>
           setShowRow((p) => ({
@@ -227,7 +219,7 @@ const UIButton = ({
       >
         {data?.data?.orderType == "Sell" ? "Initial High" : "Initial Low"}
       </button>
-      &nbsp; &nbsp;
+  
       <button
         onClick={() =>
           setShowRow((p) => ({
@@ -243,7 +235,7 @@ const UIButton = ({
       >
         {data?.data?.orderType == "Sell" ? "Last Low LTP" : " Last High LTP"}
       </button>
-      &nbsp; &nbsp;
+    
       <button
         onClick={() =>
           setShowRow((p) => ({
@@ -257,7 +249,7 @@ const UIButton = ({
       >
         Range Bound
       </button>
-      &nbsp; &nbsp;
+     
       <button
         onClick={() =>
           setShowRow((p) => ({
@@ -271,7 +263,7 @@ const UIButton = ({
       >
         Moving Avg
       </button>
-      &nbsp; &nbsp;
+     
       <button
         onClick={() =>
           setShowRow((p) => ({
@@ -285,7 +277,7 @@ const UIButton = ({
       >
         Volume
       </button>
-      &nbsp; &nbsp;
+     
       <button
         onClick={() =>
           setShowRow((p) => ({
@@ -299,35 +291,6 @@ const UIButton = ({
       >
         Tool Tip
       </button>
-      {/* <button
-        onClick={() =>
-          setShowRow((p) => ({
-            ...p,
-            suppRes: !p.suppRes,
-          }))
-        }
-        className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-          showRow.suppRes ? "bg-blue-500 text-gray-100" : "bg-gray-300 "
-        }`}
-      >
-        Supp&Res
-        
-      </button> */}
-      {/* &nbsp; &nbsp;
-            <button
-        onClick={() =>
-          setShowRow((p) => ({
-            ...p,
-            suppRes: !p.suppRes,
-          }))
-        }
-        className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-          showRow.suppRes ? "bg-blue-500 text-gray-100" : "bg-gray-300 "
-        }`}
-      >
-       Supp&Res
-      </button> */}
-      &nbsp; &nbsp;
       {data?.data?.isMaster == true && (
         <>
           <button
@@ -402,9 +365,9 @@ const UIButton = ({
           &nbsp; &nbsp;
         </>
       )}
-      &nbsp; &nbsp;
+     
       <div className="mt-1">
-        &nbsp; &nbsp;
+     
         {data?.data?.isMaster == true ? (
           <>
             <Button size="xs" className="p-1" onClick={getHighLowLines}>
@@ -436,7 +399,12 @@ const UIButton = ({
         )}
         &nbsp; &nbsp;
       </div>
-      &nbsp; &nbsp;
+      </div>
+     
+     
+  
+    
+     
     </div>
   );
 };

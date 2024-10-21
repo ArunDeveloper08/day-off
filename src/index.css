@@ -1,0 +1,17 @@
+@media (max-width: 640px) {
+    .chart-container {
+      height: 50vh; /* Smaller height for mobile */
+    }
+}
+
+@media (min-width: 640px) {
+    .chart-container {
+      height: 60vh; /* Larger height for desktop */
+    }
+}
+
+.trend-line {
+    touch-action: none; /* Prevent default touch actions */
+    cursor: pointer; /* Change cursor to indicate interactivity */
+  }
+  
