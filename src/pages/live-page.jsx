@@ -271,7 +271,7 @@ export const LivePage = () => {
       alert("Some error Occured");
     }
   };
-
+//  console.log("socketdata",socketData)
   return (
     <div>
       {data.error ? (

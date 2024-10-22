@@ -471,7 +471,7 @@ const HelpingChart = () => {
   }, []);
 
   //  console.log("CEZone",trendLineValue.zone.CEZone.low)
-
+  // console.log("socketdata",socketData)
   return (
     <div className="p-2">
       {data.error ? (
@@ -479,9 +479,10 @@ const HelpingChart = () => {
       ) : (
         < >
           <h2 className="text-center font-semibold text-[18px] font-mono text-red-600 sm:text-[20px] md:text-[24px]">
-            Angel-One (Helping Chart) &nbsp;{" "}
+            Angel-One &nbsp;{" "}
             <button className="text-md text-center font-semibold text-red-700">
               LTP : {socketData?.last_traded_price} &nbsp;
+              Pivot : {(socketData?.pivotValue?.[0]?.pivotValue)?.toFixed(2)} &nbsp;
             </button>
             &nbsp; &nbsp;
             <Button
@@ -584,10 +585,16 @@ const HelpingChart = () => {
                       -{trendLineValue?.zone?.CEZone?.high}
                       &nbsp; &nbsp; PE Zone :{trendLineValue?.zone?.PEZone?.low}
                       -{trendLineValue?.zone?.PEZone?.high}
-                      &nbsp; &nbsp; Call Target Level :
+                      &nbsp; &nbsp;<span className="text-green-600">
+                      Call Target Level :
                       {trendLineValue?.callTargetLevelPrice?.toFixed(1)}
-                      &nbsp; &nbsp; PE Target Level :
+                        </span>
+                      &nbsp; &nbsp; 
+                      <span className="text-red-600">
+
+                      PE Target Level :
                       {trendLineValue?.putTargetLevelPrice?.toFixed(1)}
+                      </span>
                       &nbsp; &nbsp; Time :{formatDate(trendLineValue.timestamp)}
                     </p>
                   </div>
