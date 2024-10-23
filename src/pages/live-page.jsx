@@ -30,6 +30,7 @@ export const LivePage = () => {
   const [liveTrendValue, setLiveTrendValue] = useState([]);
   const [intractiveData, setIntractiveData] = useState([]);
   const [chartType, setChartType] = useState("svg");
+  const [alert3, setAlert3] = useState([]);
   const intervalRef = useRef(null);
   useEffect(() => {
     setTheme("light");
@@ -79,6 +80,7 @@ export const LivePage = () => {
     daily: false,
     suppRes: false,
     toolTip: true,
+    alertLine: false,
   });
   const [apiData, setApiData] = useState([]);
   const [data, setData] = useState({
@@ -218,7 +220,7 @@ export const LivePage = () => {
   };
 
   const handleCreateTrendLines = useCallback(
-    async (trendline, textList1, retracements3, channels1) => {
+    async (trendline, textList1, retracements3, channels1 , alert) => {
       // if (trendline?.some(line => line?.endTime === undefined && line?.startTime)) {
       //   return alert(
       //     "Please ensure the TrendLine remains inside the chart. The TrendLine's endpoint should not go outside the chart"
@@ -226,13 +228,13 @@ export const LivePage = () => {
       // }
       const textLabel = JSON.stringify(textList1);
 
-      for (let i = 0; i <= 7; i++) {
-        if (trendline[i]?.endTime === undefined && trendline[i]?.startTime) {
-          return alert(
-            "Please ensure the TrendLine remains inside the chart. The TrendLine's endpoint should not go outside the chart"
-          );
-        }
-      }
+      // for (let i = 0; i <= 7; i++) {
+      //   if (trendline[i]?.endTime === undefined && trendline[i]?.startTime) {
+      //     return alert(
+      //       "Please ensure the TrendLine remains inside the chart. The TrendLine's endpoint should not go outside the chart"
+      //     );
+      //   }
+      // }
       try {
         await axios.put(`${BASE_URL_OVERALL}/config/edit`, {
           id,
@@ -240,6 +242,7 @@ export const LivePage = () => {
           textLabel: textLabel,
           retracements: retracements3,
           channels: channels1,
+          alertLine : alert
         });
         getChartData(); // Ensure this is defined and working correctly
         alert("Successfully updated trend lines");
@@ -385,34 +388,69 @@ export const LivePage = () => {
         <span className="ml-1">Equidistant Channel</span>
       </div>
     </button>
+
+
     <button
-      onClick={() =>
+    onClick={() =>
         setShowRow((p) => ({
-          ...p,
-          trendLine: !p.trendLine,
+            ...p,
+            trendLine: true,
+            alertLine: false, // Ensure alertLine is false when trendLine is true
         }))
-      }
-      className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+    }
+    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
         showRow.trendLine ? "bg-black text-gray-100" : "bg-white"
-      }`}
-    >
-      <div className="flex items-center">
+    }`}
+>
+    <div className="flex items-center">
         <span className="icon-KTgbfaP5" role="img" aria-hidden="true">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 28 28"
-            width="28"
-            height="28"
-          >
-            <g fill="currentColor" fillRule="nonzero">
-              <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
-              <path d="M22.5 7c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM2.5 27c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
-            </g>
-          </svg>
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 28 28"
+                width="28"
+                height="28"
+            >
+                <g fill="currentColor" fillRule="nonzero">
+                    <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
+                    <path d="M22.5 7c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM5.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
+                </g>
+            </svg>
         </span>
-        <span className="ml-1">Trend Line</span>
-      </div>
-    </button>
+        <span>Trendline</span>
+    </div>
+</button>
+
+<button
+    onClick={() =>
+        setShowRow((p) => ({
+            ...p,
+            trendLine: false, // Ensure trendLine is false when alertLine is true
+            alertLine: true,
+        }))
+    }
+    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+        showRow.alertLine ? "bg-black text-gray-100" : "bg-white"
+    }`}
+>
+    <div className="flex items-center">
+        <span className="icon-KTgbfaP5" role="img" aria-hidden="true">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 28 28"
+                width="28"
+                height="28"
+            >
+                <g fill="currentColor" fillRule="nonzero">
+                    <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
+                    <path d="M22.5 7c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM5.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
+                </g>
+            </svg>
+        </span>
+        <span>Alert Line</span>
+    </div>
+</button>
+
+
   </div>
 </div>
 
@@ -513,6 +551,8 @@ export const LivePage = () => {
                   chartType={chartType}
                   trends3={trends3}
                   setTrends3={setTrends3}
+                  alert3={alert3}
+                  setAlert3={setAlert3}
                 />
               )}
             </div>
