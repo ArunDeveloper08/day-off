@@ -92,7 +92,11 @@ const initialState = {
   callTargetLevel: "",
   putTargetLevel: "",
   maxZoneTime: "",
-  noTradeZone:""
+  noTradeZone: "",
+  trendCandleCount: "",
+  candleRatioBuy: "",
+  candleRatioSell: "",
+  secondarySellTarget: "",
   // Min_Order_Qty:"1"
 };
 
@@ -165,7 +169,11 @@ const alternateInitialState = {
   callTargetLevel: "",
   putTargetLevel: "",
   maxZoneTime: "",
-  noTradeZone:""
+  noTradeZone: "",
+  trendCandleCount: "",
+  candleRatioBuy: "",
+  candleRatioSell: "",
+  secondarySellTarget: "",
 };
 // tradeIndex =2
 const gammaBlastInitialState = {
@@ -242,7 +250,11 @@ const gammaBlastInitialState = {
   callTargetLevel: "",
   putTargetLevel: "",
   maxZoneTime: "",
-  noTradeZone:""
+  noTradeZone: "",
+  trendCandleCount: "",
+  candleRatioBuy: "",
+  candleRatioSell: "",
+  secondarySellTarget: "",
 };
 // tradeIndex =6
 
@@ -256,6 +268,7 @@ export const AddNewtrade = () => {
     data: [],
     error: "",
   });
+  const width = React.useMemo(() => window.screen.width, []);
   const isModalOpen = isOpen && type === "add-new-trade";
 
   // React.useEffect(() => {
@@ -271,7 +284,7 @@ export const AddNewtrade = () => {
 
   React.useEffect(() => {
     let newState;
-  
+
     // Check if isMaster is true and set indexValue to 4
     if (values.isMaster) {
       newState = { ...values, indexValue: "4" };
@@ -282,7 +295,7 @@ export const AddNewtrade = () => {
     } else {
       newState = { ...initialState, indexValue: values.indexValue };
     }
-  
+
     // Merge new initial state with existing filled values
     setValues((prevValues) => ({
       ...newState,
@@ -295,7 +308,6 @@ export const AddNewtrade = () => {
       // Retain any other fields that need to be preserved
     }));
   }, [values.indexValue, values.isMaster]);
-  
 
   const masterName = () => {
     const filteredData = data?.trades?.data?.filter((item) => item.isMaster);
@@ -459,6 +471,10 @@ export const AddNewtrade = () => {
         callTargetLevel: values.callTargetLevel,
         maxZoneTime: values.maxZoneTime,
         noTradeZone: values.noTradeZone,
+        trendCandleCount: values.trendCandleCount ,
+        candleRatioBuy: values.candleRatioBuy,
+        candleRatioSell: values.candleRatioSell,
+        secondarySellTarget:values.secondarySellTarget,
       });
       alert("Add Successfully");
     } catch (error) {
@@ -472,24 +488,24 @@ export const AddNewtrade = () => {
   };
 
   return (
-    <Dialog width={1200} onOpenChange={onClose} open={isModalOpen}>
-      <DialogContent className="max-w-4xl px-2 ">
+    <Dialog width={width} onOpenChange={onClose} open={isModalOpen}>
+      <DialogContent className="max-w-7xl px-2 w-full ">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">
             Add New Trade
           </DialogTitle>
         </DialogHeader>
-        <div className="h-[500px] overflow-y-auto">
+        <div className="h-[600px] overflow-y-auto ">
           <section className="grid grid-cols-3 gap-3 items-center justify-center py-5">
             <CustomAutocomplete
               value={values?.tradingsymbol}
               onChangeFunction={handleChangeSymbol}
             />
-            
+
             <div className="px-1">
               <Label>Index Value (Please fill this first )</Label>
               <Select
-               disabled={values.isMaster}
+                disabled={values.isMaster}
                 value={values.indexValue}
                 name="indexValue"
                 onValueChange={(value) => handleSelect("indexValue", value)}
@@ -731,7 +747,7 @@ export const AddNewtrade = () => {
               </div>
             )}
 
-            {values.indexValue != 6 && (
+            {(values.indexValue != 6 ||  values?.indexValue != 7) || (
               <>
                 {values.rangeBound != "Disable" && (
                   <>
@@ -826,9 +842,10 @@ export const AddNewtrade = () => {
                 )}
               </>
             )}
-            {values.indexValue != 6 && (
+            {(values.indexValue != 6 ) && (
               <>
-                {values?.indexValue != 4 && (
+                {
+                (values?.indexValue != 4 ||  values.indexValue != 7) || (
                   <>
                     <div className="px-1">
                       <Label>Range Bound (%)</Label>
@@ -840,6 +857,7 @@ export const AddNewtrade = () => {
                         type="rangeBoundPercent"
                       />
                     </div>
+
                     {/* <div className="px-1">
                       <Label>Range Bound 2(%)</Label>
                       <Input
@@ -954,7 +972,7 @@ export const AddNewtrade = () => {
               </>
             )}
 
-            {values?.indexValue == 7 && (
+            {/* {values?.indexValue == 7 && (
               <>
                 <div className="px-1">
                   <Label>Moving Avg WMA</Label>
@@ -992,7 +1010,7 @@ export const AddNewtrade = () => {
                   </Select>
                 </div>
               </>
-            )}
+            )} */}
 
             <div className="px-1">
               <Label>Min Exit %</Label>
@@ -1090,6 +1108,54 @@ export const AddNewtrade = () => {
                     </div>
                   </>
                 )}
+              </>
+            )}
+
+            {(values.indexValue == 7 || values.indexValue == 17) && (
+              <>
+              
+              
+              
+              <div className="px-1">
+                <Label> Trend Candle Count</Label>
+                <Input
+                  name="trendCandleCount"
+                  onChange={handleChange}
+                  value={values.trendCandleCount}
+                  className="mt-1"
+                  type="number"
+                />
+              </div>
+              <div className="px-1">
+                <Label>Candle Ratio Buy</Label>
+                <Input
+                  name="candleRatioBuy"
+                  onChange={handleChange}
+                  value={values.candleRatioBuy}
+                  className="mt-1"
+                  type="number"
+                />
+              </div>
+              <div className="px-1">
+                <Label>Candle Ratio Sell</Label>
+                <Input
+                  name="candleRatioSell"
+                  onChange={handleChange}
+                  value={values.candleRatioSell}
+                  className="mt-1"
+                  type="number"
+                />
+              </div>
+              <div className="px-1">
+                <Label>Secondary Sell Target (%)</Label>
+                <Input
+                  name="secondarySellTarget"
+                  onChange={handleChange}
+                  value={values.secondarySellTarget}
+                  className="mt-1"
+                  type="number"
+                />
+              </div>
               </>
             )}
 
@@ -1331,7 +1397,7 @@ async function fetchMyAPI(input) {
         params: {
           tradingsymbol: input.toUpperCase(),
           pageNumber: 1,
-          pageSize: 100,
+          pageSize: 800,
         },
       }
     );
@@ -1353,6 +1419,7 @@ function CustomAutocomplete({ value: defaultValue, onChangeFunction }) {
       debounce(async (request, callback) => {
         setLoading(true);
         const results = await fetchMyAPI(request.input);
+        console.log(results);
         callback(results);
         setLoading(false);
       }, 400),
@@ -1390,7 +1457,7 @@ function CustomAutocomplete({ value: defaultValue, onChangeFunction }) {
   return (
     <Autocomplete
       id="custom-autocomplete"
-      className="col-span-3 w-[100%] "
+      className="col-span-3 w-[100%]"
       options={options}
       getOptionLabel={(option) =>
         typeof option === "string" ? option : option.tradingsymbol
@@ -1399,9 +1466,12 @@ function CustomAutocomplete({ value: defaultValue, onChangeFunction }) {
       includeInputInList
       filterSelectedOptions
       disableClearable
-      disablePortal // Forces the dropdown to be rendered within the DOM hierarchy, ensuring correct event handling
+      disablePortal
       value={value}
       noOptionsText={loading ? "Loading..." : "No Trade Options"}
+      ListboxProps={{
+        style: { maxHeight: 510 }, // Ensures that more options can fit within the dropdown
+      }}
       onChange={(event, newValue) => {
         setValue(newValue);
         onChangeFunction(newValue);
@@ -1414,7 +1484,7 @@ function CustomAutocomplete({ value: defaultValue, onChangeFunction }) {
       )}
       renderOption={(props, option) => (
         <li {...props} key={option.tradingsymbol}>
-          <Typography variant="body2" sx={{ paddingY: "3px" }}>
+          <Typography variant="body2" sx={{ paddingY: "2px" }}>
             {option.tradingsymbol}
           </Typography>
         </li>
@@ -1422,3 +1492,85 @@ function CustomAutocomplete({ value: defaultValue, onChangeFunction }) {
     />
   );
 }
+
+// function CustomAutocomplete({ value: defaultValue, onChangeFunction }) {
+//   const [value, setValue] = React.useState(defaultValue);
+//   const [inputValue, setInputValue] = React.useState("");
+//   const [options, setOptions] = React.useState([]);
+//   const [loading, setLoading] = React.useState(false);
+
+//   const fetch = React.useMemo(
+//     () =>
+//       debounce(async (request, callback) => {
+//         setLoading(true);
+//         const results = await fetchMyAPI(request.input);
+//         console.log(results)
+//         callback(results);
+//         setLoading(false);
+//       }, 400),
+//     []
+//   );
+
+//   React.useEffect(() => {
+//     let active = true;
+//     if (inputValue === " ") {
+//       setOptions(value ? [value] : []);
+//       return undefined;
+//     }
+
+//     fetch({ input: inputValue }, (results) => {
+//       if (active) {
+//         let newOptions = [];
+
+//         if (value) {
+//           newOptions = [value];
+//         }
+
+//         if (results) {
+//           newOptions = [...newOptions, ...results];
+//         }
+
+//         setOptions(newOptions);
+//       }
+//     });
+
+//     return () => {
+//       active = false;
+//     };
+//   }, [value, inputValue, fetch]);
+
+//   return (
+//     <Autocomplete
+//       id="custom-autocomplete"
+//       className="col-span-3 w-[100%] "
+//       options={options}
+//       getOptionLabel={(option) =>
+//         typeof option === "string" ? option : option.tradingsymbol
+//       }
+//       autoComplete
+//       includeInputInList
+//       filterSelectedOptions
+//       disableClearable
+//       disablePortal // Forces the dropdown to be rendered within the DOM hierarchy, ensuring correct event handling
+//       value={value}
+//       noOptionsText={loading ? "Loading..." : "No Trade Options"}
+//       onChange={(event, newValue) => {
+//         setValue(newValue);
+//         onChangeFunction(newValue);
+//       }}
+//       onInputChange={(event, newInputValue) => {
+//         setInputValue(newInputValue);
+//       }}
+//       renderInput={(params) => (
+//         <TextField {...params} label="Select New Trade Index" fullWidth />
+//       )}
+//       renderOption={(props, option) => (
+//         <li {...props} key={option.tradingsymbol}>
+//           <Typography variant="body2" sx={{ paddingY: "3px" }}>
+//             {option.tradingsymbol}
+//           </Typography>
+//         </li>
+//       )}
+//     />
+//   );
+// }

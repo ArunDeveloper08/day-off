@@ -46,6 +46,7 @@ const HelpingChart = () => {
   const [chartType, setChartType] = useState("canvas");
   const [trends3, setTrends3] = useState([]);
   const [alert3, setAlert3] = useState([]);
+  const [entryLine, setEntryLine] = useState([]);
   useEffect(() => {
     setTheme("light");
   }, []);
@@ -123,6 +124,7 @@ const HelpingChart = () => {
     ceTrendLine: true,
     peTrendLine: true,
     alertLine: false,
+    entryLine: false,
   });
   const [hideConfig, setHideConfig] = useState(true);
   const [supportTrendLine, setSupportTrendLine] = useState([]);
@@ -168,6 +170,8 @@ const HelpingChart = () => {
         setCeStopLoss(res.data.data?.[0]?.CEStopLoss);
         setPeStopLoss(res.data.data?.[0]?.PEStopLoss);
         setIntractiveData(res.data);
+        setAlert3(res.data?.alertLine);
+        setEntryLine(res.data?.buyTrendLines);
 
         if (!hasInitializedTrends.current) {
           console.log("Setting trends for the first time");
@@ -264,6 +268,7 @@ const HelpingChart = () => {
     if (!isConnected || !data?.data?.instrument_token) return;
 
     socket?.on("getLiveData", (socketdata) => {
+      // console.log(socketdata)
       // Check if token is a string before applying replace
       if (typeof socketdata?.token === "string") {
         socketdata.token = Number(socketdata?.token?.replace(/"/g, ""));
@@ -328,41 +333,64 @@ const HelpingChart = () => {
   const handleCreateTrendLines = async (
     trendline,
     textList1,
-    retracements3,
-    channels1,
-    alert3
+
+    alert3,
+    entryLine
   ) => {
-    // if (trendline?.some(line => line?.endTime === undefined && line?.startTime)) {
-    // return alert(
-    //   "Please ensure the TrendLine remains inside the chart. The TrendLine's endpoint should not go outside the chart"
-    // );
-    // }
+    // Helper to send data to the API
+    const sendDataToAPI = async (data) => {
+      try {
+        await axios.put(`${BASE_URL_OVERALL}/config/edit`, { id, ...data });
+        alert("Successfully saved.");
+        await getChartData();
+        await getTrendLinesValue();
+      } catch (err) {
+        console.error("Error saving data:", err);
+      }
+    };
 
-    const textLabel = JSON.stringify(textList1);
-    // for (let i = 0; i <= 9; i++) {
-    //   if (trendline[i]?.endTime === undefined && trendline[i]?.startTime) {
-    //     return alert(
-    //       "Please ensure the TrendLine remains inside the chart. The TrendLine's endpoint should not go outside the chart"
-    //     );
-    //   }
-    // }
+    // Check if any trend line is incomplete
+    const incompleteLineExists = trendline?.some(
+      (line) => line?.endTime === undefined && line?.startTime
+    );
 
-    try {
-      await axios.put(`${BASE_URL_OVERALL}/config/edit`, {
-        id,
+    // Handle validations for trendline
+    if (showRow.trendLine) {
+      if (trendline?.length < 10) {
+        alert(
+          `You have only ${trendline.length} trend lines. Please add ${
+            10 - trendline.length
+          } more trend lines.`
+        );
+
+        if (incompleteLineExists) {
+          alert(
+            "Please ensure all trend lines remain inside the chart. The endpoint cannot be outside the chart."
+          );
+        }
+        return; // Exit early if validations fail
+      }
+
+      // Send only trendLine data
+      return sendDataToAPI({
         trendLines: trendline,
-        textLabel: textLabel,
-        retracements: retracements3,
-        channels: channels1,
-        alertLine:alert3
+        textLabel: JSON.stringify(textList1),
       });
-      await getChartData();
-      await getTrendLinesValue();
-      alert("successfully Updated TrendLines");
-    } catch (err) {
-      console.error(err);
     }
+
+    // Handle alertLine saving
+    if (showRow.alertLine) {
+      return sendDataToAPI({ alertLine: alert3 });
+    }
+
+    // Handle entryLine saving
+    if (showRow.entryLine) {
+      return sendDataToAPI({ buyTrendLines: entryLine });
+    }
+
+    alert("No valid data to save.");
   };
+
   const handleSubmit = () => {
     axios
       .put(`${BASE_URL_OVERALL}/config/editMaster?id=${id}`, { ...values })
@@ -474,19 +502,21 @@ const HelpingChart = () => {
     getTestMode();
   }, []);
 
+  // console.log("entryLine", entryLine);
   //  console.log("CEZone",trendLineValue.zone.CEZone.low)
   // console.log("socketdata",socketData)
+
   return (
     <div className="p-2">
       {data.error ? (
         "Some Error Occcured"
       ) : (
-        < >
+        <>
           <h2 className="text-center font-semibold text-[18px] font-mono text-red-600 sm:text-[20px] md:text-[24px]">
             Angel-One &nbsp;{" "}
             <button className="text-md text-center font-semibold text-red-700">
-              LTP : {socketData?.last_traded_price} &nbsp;
-              Pivot : {(socketData?.pivotValue?.[0]?.pivotValue)?.toFixed(2)} &nbsp;
+              LTP : {socketData?.last_traded_price} &nbsp; Pivot :{" "}
+              {socketData?.pivotValue?.[0]?.pivotValue?.toFixed(2)} &nbsp;
             </button>
             &nbsp; &nbsp;
             <Button
@@ -502,7 +532,9 @@ const HelpingChart = () => {
             <>
               <div>
                 <div className="flex flex-wrap gap-x-5 font-semibold py-2">
-                  <p className=" text-[13px] md:text-[16px]">Trade Terminal : {data?.data?.terminal}</p>
+                  <p className=" text-[13px] md:text-[16px]">
+                    Trade Terminal : {data?.data?.terminal}
+                  </p>
                   <p className="text-red-600  text-[13px] md:text-[16px]">
                     Candle :
                     {values?.interval === "minute"
@@ -513,11 +545,17 @@ const HelpingChart = () => {
                     Identifier:
                     {data?.data?.identifier}
                   </p>
-                  <p className=" text-[13px] md:text-[16px]">Trade Index: {data?.data?.tradeIndex}</p>
+                  <p className=" text-[13px] md:text-[16px]">
+                    Trade Index: {data?.data?.tradeIndex}
+                  </p>
                   {data?.data?.tradeIndex != 4 && (
                     <>
-                      <p className=" text-[13px] md:text-[16px]">SMA1 : {data?.data?.SMA1}</p>
-                      <p className=" text-[13px] md:text-[16px]">SMA2 : {data?.data?.SMA2}</p>
+                      <p className=" text-[13px] md:text-[16px]">
+                        SMA1 : {data?.data?.SMA1}
+                      </p>
+                      <p className=" text-[13px] md:text-[16px]">
+                        SMA2 : {data?.data?.SMA2}
+                      </p>
                     </>
                   )}
                   <p className="text-red-500 text-[13px] md:text-[16px]">
@@ -547,7 +585,11 @@ const HelpingChart = () => {
                     Put Trade Status:
                     {data.data.haveTradeOfPE ? "True" : "False"}
                   </p>
-                  <Button size="xs" className="p-1 text-[13px] md:text-[16px]" onClick={getHighLowLines}>
+                  <Button
+                    size="xs"
+                    className="p-1 text-[13px] md:text-[16px]"
+                    onClick={getHighLowLines}
+                  >
                     High/Low line
                   </Button>
                   <button
@@ -562,50 +604,60 @@ const HelpingChart = () => {
                   </button>
                 </div>
 
-
-
-                {trendLineValue && (
+                {data.data.tradeIndex == 4 && (
                   <div>
-                    <p className="font-semibold text-[13px] md:text-[16px]
+                    {trendLineValue && (
+                      <p
+                        className="font-semibold text-[13px] md:text-[16px]
                     
                   
-                    ">
-                      R1 :{trendLineValue.Resistance1CurrPrice?.toFixed(1)}
-                      &nbsp; &nbsp; R2 :
-                      {trendLineValue.Resistance2CurrPrice?.toFixed(1)}
-                      &nbsp; &nbsp; R3 :
-                      {trendLineValue.Resistance3CurrPrice?.toFixed(1)}
-                      &nbsp; &nbsp; R4 :
-                      {trendLineValue.Resistance4CurrPrice?.toFixed(1)}
-                      &nbsp; &nbsp; S1 :
-                      {trendLineValue.Support1CurrPrice?.toFixed(1)}
-                      &nbsp; &nbsp; S2 :
-                      {trendLineValue.Support2CurrPrice?.toFixed(1)}
-                      &nbsp; &nbsp; S3 :
-                      {trendLineValue.Support3CurrPrice?.toFixed(1)}
-                      &nbsp; &nbsp; S4 :
-                      {trendLineValue.Support4CurrPrice?.toFixed(1)}
-                      &nbsp; &nbsp; CE Zone :{trendLineValue?.zone?.CEZone?.low}
-                      -{trendLineValue?.zone?.CEZone?.high}
-                      &nbsp; &nbsp; PE Zone :{trendLineValue?.zone?.PEZone?.low}
-                      -{trendLineValue?.zone?.PEZone?.high}
-                      &nbsp; &nbsp;<span className="text-green-600">
-                      Call Target Level :
-                      {trendLineValue?.callTargetLevelPrice?.toFixed(1)}
+                    "
+                      >
+                        R1 :{trendLineValue.Resistance1CurrPrice?.toFixed(1)}
+                        &nbsp; &nbsp; R2 :
+                        {trendLineValue.Resistance2CurrPrice?.toFixed(1)}
+                        &nbsp; &nbsp; R3 :
+                        {trendLineValue.Resistance3CurrPrice?.toFixed(1)}
+                        &nbsp; &nbsp; R4 :
+                        {trendLineValue.Resistance4CurrPrice?.toFixed(1)}
+                        &nbsp; &nbsp; S1 :
+                        {trendLineValue.Support1CurrPrice?.toFixed(1)}
+                        &nbsp; &nbsp; S2 :
+                        {trendLineValue.Support2CurrPrice?.toFixed(1)}
+                        &nbsp; &nbsp; S3 :
+                        {trendLineValue.Support3CurrPrice?.toFixed(1)}
+                        &nbsp; &nbsp; S4 :
+                        {trendLineValue.Support4CurrPrice?.toFixed(1)}
+                        &nbsp; &nbsp; CE Zone :
+                        {trendLineValue?.zone?.CEZone?.low}-
+                        {trendLineValue?.zone?.CEZone?.high}
+                        &nbsp; &nbsp; PE Zone :
+                        {trendLineValue?.zone?.PEZone?.low}-
+                        {trendLineValue?.zone?.PEZone?.high}
+                        &nbsp; &nbsp;
+                        <span className="text-green-600">
+                          Call Target Level :
+                          {trendLineValue?.callTargetLevelPrice?.toFixed(1)}
                         </span>
-                      &nbsp; &nbsp; 
-                      <span className="text-red-600">
+                        &nbsp; &nbsp;
+                        <span className="text-red-600">
+                          PE Target Level :
+                          {trendLineValue?.putTargetLevelPrice?.toFixed(1)}
+                        </span>
+                        &nbsp; &nbsp; Time :
+                        {formatDate(trendLineValue.timestamp)}
+                      </p>
+                    )}
+                  </div>
+                )}
 
-                      PE Target Level :
-                      {trendLineValue?.putTargetLevelPrice?.toFixed(1)}
-                      </span>
-                      &nbsp; &nbsp; Time :{formatDate(trendLineValue.timestamp)}
-                    </p>
+                {data.data?.tradeIndex == 7 && (
+                  <div>
+                    <p></p>
                   </div>
                 )}
 
                 <div className="flex justify-between flex-wrap gap-1 md:gap-y-1">
-                  
                   <button
                     onClick={() =>
                       setShowRow((p) => ({
@@ -621,7 +673,7 @@ const HelpingChart = () => {
                   >
                     Pivot Line
                   </button>
-                 
+
                   <button
                     onClick={() =>
                       setShowRow((p) => ({
@@ -637,7 +689,7 @@ const HelpingChart = () => {
                   >
                     Candle
                   </button>
-                 
+
                   <button
                     onClick={() =>
                       setShowRow((p) => ({
@@ -653,7 +705,7 @@ const HelpingChart = () => {
                   >
                     D_Exit Value
                   </button>
-                
+
                   <button
                     onClick={() =>
                       setShowRow((p) => ({
@@ -669,7 +721,7 @@ const HelpingChart = () => {
                   >
                     Last High LTP
                   </button>
-                 
+
                   <button
                     onClick={() =>
                       setShowRow((p) => ({
@@ -685,7 +737,7 @@ const HelpingChart = () => {
                   >
                     Range Bound
                   </button>
-               
+
                   <button
                     onClick={() =>
                       setShowRow((p) => ({
@@ -701,7 +753,7 @@ const HelpingChart = () => {
                   >
                     Moving Avg
                   </button>
-                
+
                   <button
                     onClick={() =>
                       setShowRow((p) => ({
@@ -717,7 +769,7 @@ const HelpingChart = () => {
                   >
                     volume
                   </button>
-              
+
                   <button
                     onClick={() =>
                       setShowRow((p) => ({
@@ -733,7 +785,7 @@ const HelpingChart = () => {
                   >
                     Monthly
                   </button>
-                
+
                   <button
                     onClick={() =>
                       setShowRow((p) => ({
@@ -749,7 +801,7 @@ const HelpingChart = () => {
                   >
                     Weakly
                   </button>
-                
+
                   <button
                     onClick={() =>
                       setShowRow((p) => ({
@@ -765,7 +817,7 @@ const HelpingChart = () => {
                   >
                     Daily
                   </button>
-                  
+
                   <button
                     onClick={() =>
                       setShowRow((p) => ({
@@ -781,7 +833,7 @@ const HelpingChart = () => {
                   >
                     Four Hourly
                   </button>
-                
+
                   <button
                     onClick={() =>
                       setShowRow((p) => ({
@@ -797,7 +849,7 @@ const HelpingChart = () => {
                   >
                     Hourly
                   </button>
-               
+
                   <button
                     onClick={() =>
                       setShowRow((p) => ({
@@ -813,7 +865,7 @@ const HelpingChart = () => {
                   >
                     Tool Tip
                   </button>
-                
+
                   <button
                     onClick={setCETrendLine}
                     className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
@@ -824,7 +876,7 @@ const HelpingChart = () => {
                   >
                     CE TrendLine
                   </button>
-                 
+
                   <button
                     onClick={setPETrendLine}
                     className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
@@ -835,11 +887,8 @@ const HelpingChart = () => {
                   >
                     PE TrendLine
                   </button>
-             
                 </div>
               </div>
-
-
 
               {/* <div className="flex flex-wrap items-center mt-2 mb-1 space-x-3">
             
@@ -1192,7 +1241,8 @@ const HelpingChart = () => {
                   </Button>
 
                   {/* Fibonacci Button */}
-                  <button
+                  <>
+                    {/* <button
                     onClick={() =>
                       setShowRow((prev) => ({
                         ...prev,
@@ -1221,7 +1271,7 @@ const HelpingChart = () => {
                     </div>
                   </button>
 
-                  {/* Equidistant Channel Button */}
+               
                   <button
                     onClick={() =>
                       setShowRow((p) => ({
@@ -1250,67 +1300,118 @@ const HelpingChart = () => {
                       </svg>
                       <span>Equidistant Channel</span>
                     </div>
-                  </button>
-                  <button
-    onClick={() =>
-        setShowRow((p) => ({
-            ...p,
-            trendLine: true,
-            alertLine: false, // Ensure alertLine is false when trendLine is true
-        }))
-    }
-    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-        showRow.trendLine ? "bg-black text-gray-100" : "bg-white"
-    }`}
->
-    <div className="flex items-center">
-        <span className="icon-KTgbfaP5" role="img" aria-hidden="true">
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 28 28"
-                width="28"
-                height="28"
-            >
-                <g fill="currentColor" fillRule="nonzero">
-                    <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
-                    <path d="M22.5 7c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM5.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
-                </g>
-            </svg>
-        </span>
-        <span>Trendline</span>
-    </div>
-</button>
+                  </button> */}
 
-<button
-    onClick={() =>
-        setShowRow((p) => ({
-            ...p,
-            trendLine: false, // Ensure trendLine is false when alertLine is true
-            alertLine: true,
-        }))
-    }
-    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-        showRow.alertLine ? "bg-black text-gray-100" : "bg-white"
-    }`}
->
-    <div className="flex items-center">
-        <span className="icon-KTgbfaP5" role="img" aria-hidden="true">
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 28 28"
-                width="28"
-                height="28"
-            >
-                <g fill="currentColor" fillRule="nonzero">
-                    <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
-                    <path d="M22.5 7c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM5.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
-                </g>
-            </svg>
-        </span>
-        <span>Alert Line</span>
-    </div>
-</button>
-
+                    <button
+                      onClick={() =>
+                        setShowRow((p) => ({
+                          ...p,
+                          trendLine: true,
+                          alertLine: false, // Ensure alertLine is false when trendLine is true
+                          entryLine: false,
+                        }))
+                      }
+                      className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                        showRow.trendLine
+                          ? "bg-black text-gray-100"
+                          : "bg-white"
+                      }`}
+                    >
+                      <div className="flex items-center">
+                        <span
+                          className="icon-KTgbfaP5"
+                          role="img"
+                          aria-hidden="true"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 28 28"
+                            width="28"
+                            height="28"
+                          >
+                            <g fill="currentColor" fillRule="nonzero">
+                              <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
+                              <path d="M22.5 7c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM5.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
+                            </g>
+                          </svg>
+                        </span>
+                        <span>Trendline</span>
+                      </div>
+                    </button>
+                    {/* 
+                    <button
+                      onClick={() =>
+                        setShowRow((p) => ({
+                          ...p,
+                          trendLine: false, // Ensure trendLine is false when alertLine is true
+                          alertLine: true,
+                          entryLine : false,
+                        }))
+                      }
+                      className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                        showRow.alertLine
+                          ? "bg-black text-gray-100"
+                          : "bg-white"
+                      }`}
+                    >
+                      <div className="flex items-center">
+                        <span
+                          className="icon-KTgbfaP5"
+                          role="img"
+                          aria-hidden="true"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 28 28"
+                            width="28"
+                            height="28"
+                          >
+                            <g fill="currentColor" fillRule="nonzero">
+                              <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
+                              <path d="M22.5 7c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM5.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
+                            </g>
+                          </svg>
+                        </span>
+                        <span>Alert Line</span>
+                      </div>
+                    </button> */}
+                    <button
+                      onClick={() =>
+                        setShowRow((p) => ({
+                          ...p,
+                          trendLine: false, // Ensure trendLine is false when alertLine is true
+                          alertLine: false,
+                          entryLine: true,
+                        }))
+                      }
+                      className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                        showRow.entryLine
+                          ? "bg-black text-gray-100"
+                          : "bg-white"
+                      }`}
+                    >
+                      <div className="flex items-center">
+                        <span
+                          className="icon-KTgbfaP5"
+                          role="img"
+                          aria-hidden="true"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 28 28"
+                            width="28"
+                            height="28"
+                          >
+                            <g fill="currentColor" fillRule="nonzero">
+                              <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
+                              <path d="M22.5 7c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM5.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
+                            </g>
+                          </svg>
+                        </span>
+                        <span>Entry Line</span>
+                      </div>
+                    </button>
+                  </>
                 </div>
               </div>
             </>
@@ -1351,6 +1452,8 @@ const HelpingChart = () => {
                 setTrends3={setTrends3}
                 setAlert3={setAlert3}
                 alert3={alert3}
+                setEntryLine={setEntryLine}
+                entryLine={entryLine}
               />
             </div>
           )}

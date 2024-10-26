@@ -25,6 +25,10 @@ export const BackTestingPage = () => {
   const { socket, isConnected } = useLiveSocket();
   const [apiData, setApiData] = useState([]);
   const [updateTrigger, setUpdateTrigger] = useState(false);
+  const [chartType, setChartType] = useState("canvas");
+  const [trends3, setTrends3] = useState([]);
+  const [alert3, setAlert3] = useState([]);
+  const [intractiveData, setIntractiveData] = useState([]);
   const [data, setData] = useState({
     loading: false,
     data: {},
@@ -169,12 +173,66 @@ export const BackTestingPage = () => {
   }, [data?.data?.identifier]);
   // console.log({ isConnected },socket?.id);
   console.log(apiData);
+
+
+  const handleCreateTrendLines = async (
+    trendline,
+    textList1,
+    retracements3,
+    channels1,
+    alert3
+  ) => {
+    // Check if any trend line is incomplete (endTime is undefined)
+    const incompleteLineExists = trendline?.some(
+      (line) => line?.endTime === undefined && line?.startTime
+    );
+  
+    // Check if the user has fewer than 10 trend lines
+    if (trendline.length < 10) {
+      alert(
+        `You have only ${trendline.length} trend lines. Please add ${10 - trendline.length} more trend lines.`
+      );
+      // If there's an incomplete line, show the alert but still attempt to save `alertLine`
+      if (incompleteLineExists) {
+        alert(
+          "Please ensure all trend lines remain inside the chart. The endpoint of a trend line cannot be outside the chart."
+        );
+      }
+      // Save only `alertLine` as other validations failed
+      try {
+        await axios.put(`${BASE_URL_OVERALL}/config/edit`, {
+          id,
+          alertLine: alert3, // Only saving alertLine in this case
+        });
+        alert("Alert Line saved successfully.");
+      } catch (err) {
+        console.error("Error saving alertLine:", err);
+      }
+      return; // Exit early since trendLine saving isn't allowed
+    }
+  
+    // If all validations pass, save all values
+    try {
+      const textLabel = JSON.stringify(textList1);
+      await axios.put(`${BASE_URL_OVERALL}/config/edit`, {
+        id,
+        trendLines: trendline,
+        textLabel: textLabel,
+        retracements: retracements3,
+        channels: channels1,
+        alertLine: alert3,
+      });
+      await getChartData();
+      await getTrendLinesValue();
+      alert("Successfully Updated TrendLines and AlertLine.");
+    } catch (err) {
+      console.error("Error saving data:", err);
+    }
+  };
   return (
     <div>
       {data.loading ? (
         "Loading"
-      ) : data.error ? (
-        "Some Error Occcured"
       ) : (
         <>
           <p className="font-semibold text-center font-mono text-[20px] text-green-600">
@@ -443,10 +501,18 @@ export const BackTestingPage = () => {
             <CandleChart
               data={apiData}
               getMoreData={() => {}}
+              handleCreateTrendLines={handleCreateTrendLines}
               ratio={1}
+              master={data?.data}
               width={width}
               showRow={showRow}
               height={(height * 7) / 10}
+              chartType={chartType}
+              trends3={trends3}
+              setTrends3={setTrends3}
+              setAlert3={setAlert3}
+              alert3={alert3}
+              intractiveData={intractiveData}
             />
           )}
 

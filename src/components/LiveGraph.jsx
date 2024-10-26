@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useMemo, useRef, useState } from "react";
+import React, { memo, useEffect, useMemo, useRef, useState , useImperativeHandle } from "react";
 import { Chart, ChartCanvas, ZoomButtons } from "react-stockcharts";
 import {
   Annotate,
@@ -239,6 +239,8 @@ const shortAnnotationProps = {
   path: sellPath,
   tooltip: "Go short",
 };
+
+
 const useKeyPress = (callback) => {
   useEffect(() => {
     document.addEventListener("keyup", callback);
@@ -247,6 +249,8 @@ const useKeyPress = (callback) => {
     };
   }, [callback]);
 };
+
+
 const macdAppearance = {
   stroke: {
     macd: "#FF0000",
@@ -263,7 +267,7 @@ let trendLineArray = [
     name: "R4",
   },
   {
-    width: 2,
+    width: 2,  
     color: "green",
     name: "R3",
   },
@@ -320,13 +324,27 @@ const alertLineArray = [
   // { color: "green", name: "Alert Spike" },
   // { color: "pink", name: "Alert Trigger" },
 ];
+const entryLineArray = [
+  { color: "green", name: "Resistance" },
+  { color: "red", name: "Support" },
+  { color: "violet", name: "Call Target Line" },
+  { color: "orange", name: "Put Target Line" },
+  // { color: "orange", name: "Alert Signal 1" },
+  // { color: "purple", name: "Alert Signal 2" },
+  // { color: "teal", name: "Alert Signal 3" },
+  // { color: "gray", name: "Alert Signal 4" },
+  // { color: "red", name: "Alert Warning" },
+  // { color: "blue", name: "Alert Trend" },
+  // { color: "green", name: "Alert Spike" },
+  // { color: "pink", name: "Alert Trigger" },
+];
 
 const CandleChart = ({
   handleCreateTrendLines,
   chartType,
-  getChartData,
+  // getChartData,                                                                                        
   data: initialData,
-  intractiveData,
+  intractiveData, 
   width,
   height,
   showRow,
@@ -337,35 +355,30 @@ const CandleChart = ({
   setTrends3,
   alert3,
   setAlert3,
-
+  entryLine,
+  setEntryLine
   // type = "canvas",
   // type = "svg",
 }) => {
+
   try {
     const { onOpen } = useModal();
     const { getInteractiveNodes, saveInteractiveNodes } = useInteractiveNodes();
     const [enableAlertLine, setEnableAlertLine] = useState(false);
-    const trendLineRef = useRef(null);  // For trendlines
-const alertLineRef = useRef(null);  // For alert lines
-
-
-
-console.log("trends3:", trends3);
-console.log("alert3:", alert3);
-
-
-
-
+    const [enableEntryLine, setEnableEntryLine] = useState(false);
     const [enableInteractiveObject, setEnableInteractiveObject] =
       useState(false);
-    const [textList1, setTextList1] = useState(
-      JSON.parse(intractiveData?.textLabel)
-    );
+
+        const [textList1, setTextList1] = useState(
+          //JSON.parse(intractiveData?.textLabel)
+        );
+      
     const [textList3, setTextList3] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [currentText, setCurrentText] = useState("");
     const [chartId, setChartId] = useState(null);
     const canvasNode = useRef(null);
+    
     const handleSelections = (interactives, moreProps) => {
       if (enableInteractiveObject) {
         const independentCharts = moreProps.currentCharts.filter(
@@ -374,7 +387,7 @@ console.log("alert3:", alert3);
         if (independentCharts.length > 0) {
           const first = head(independentCharts);
 
-          console.log(moreProps, first);
+          // console.log(moreProps, first);
           const morePropsForChart = getMorePropsForChart(moreProps, first);
 
           if (
@@ -383,7 +396,7 @@ console.log("alert3:", alert3);
           ) {
             const { origin } = morePropsForChart.chartConfig;
             // Ensure origin is defined before accessing it
-            console.log("Origin:", origin);
+            // console.log("Origin:", origin);
           } else {
             console.error("chartConfig or origin is undefined");
           }
@@ -522,6 +535,7 @@ console.log("alert3:", alert3);
     const node1Ref = useRef(null);
     const trendLineNodeRef = useRef(null); // Separate ref for trend lines
     const alertLineNodeRef = useRef(null);
+    const entryLineNodeRef = useRef(null);
 
     const node3Ref = useRef(null);
     //   console.log({ trends3 });
@@ -567,8 +581,9 @@ console.log("alert3:", alert3);
       });
       // setTrends1(state.trends_1 || trends1);
       setTrends3(state.trends_3 || trends3);
-      setAlert3(state.alert_3 || alert3)
       setChannels1(state.channels_1 || channels1);
+      setAlert3(state.alert_3 || alert3)
+      setEntryLine(state.entryLine || entryLine)
     };
 
     const onDrawCompleteChart3 = (newTrends) => {
@@ -626,7 +641,7 @@ console.log("alert3:", alert3);
           ...item,
           appearance: {
             ...item.appearance,
-            stroke: alertLineArray[ind]?.color || "brown",
+            stroke: alertLineArray[ind]?.color || "blue",
             strokeWidth: alertLineArray[ind]?.width || 2,
           },
           startTime,
@@ -636,6 +651,36 @@ console.log("alert3:", alert3);
       });
 
       setAlert3(coloredAlerts);
+      logTrendLines(coloredAlerts);
+    };
+
+    const onDrawCompleteEntryLine3 = (newAlerts) => {
+      setEnableTrendLine(false);
+
+      let coloredAlerts = newAlerts?.map((item, ind) => {
+        let startIndex = Math.min(Math.floor(item.start[0]), data?.length - 1);
+        let startTime = data[startIndex]?.timestamp;
+
+        let endIndex = Math.floor(item?.end[0]);
+        let endTime =
+          endIndex >= 0 && endIndex < data?.length
+            ? data[endIndex]?.timestamp
+            : undefined;
+
+        return {
+          ...item,
+          appearance: {
+            ...item.appearance,
+            stroke: entryLineArray[ind]?.color || "blue",
+            strokeWidth: entryLineArray[ind]?.width || 2,
+          },
+          startTime,
+          endTime,
+          name: entryLineArray[ind]?.name || "EntyLine",
+        };
+      });
+
+      setEntryLine(coloredAlerts);
       logTrendLines(coloredAlerts);
     };
 
@@ -669,11 +714,9 @@ console.log("alert3:", alert3);
       logEquidistantChannels(newChannels);
     };
 
+
     const onKeyPress = (e) => {
-      // if (e.shiftKey && e.key === "D") {
-      //   setEnableAlertLine(true); // Enable only the alert line
-      //   // setEnableTrendLine(false);
-      // }
+
      
   
       const keyCode = e.which;
@@ -683,6 +726,7 @@ console.log("alert3:", alert3);
           setTrends1(trends1.filter((each) => !each.selected));
           setTrends3(trends3.filter((each) => !each.selected));
           setAlert3(alert3.filter((each) => !each.selected));
+          setEntryLine(entryLine.filter((each) => !each.selected));
 
           // Delete selected Fibonacci retracements
           setRetracements1(retracements1.filter((each) => !each.selected));
@@ -712,10 +756,13 @@ console.log("alert3:", alert3);
         case 68: // D - Draw Alert Trendline
           setEnableAlertLine(true);
           setEnableTrendLine(true);
+          setEnableEntryLine(true);
           break;
 
-        case 68: // D - Draw Trendline
-          setEnableTrendLine(true);
+        case 65: // A - Draw Trendline
+        setEnableAlertLine(false);
+        setEnableTrendLine(false);
+        setEnableEntryLine(false);
           break;
         case 69: // E - Enable Fibonacci
           setEnableFib(true);
@@ -728,12 +775,9 @@ console.log("alert3:", alert3);
       }
     };
 
-    // useEffect(() => {
-    //   document.addEventListener("keydown", onKeyPress);
-    //   return () => {
-    //     document.removeEventListener("keydown", onKeyPress);
-    //   };
-    // }, []);
+
+    
+
 
     useKeyPress(onKeyPress);
     const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(
@@ -768,6 +812,14 @@ console.log("alert3:", alert3);
       setTrends3([]);
       alert("Please press submit button to add change in ");
     };
+    // const handleResetAlertLines = () => {
+    //   setAlert3([]);
+    //   alert("Please press submit button to add change in ");
+    // };
+    const handleResetEntryLines = () => {
+      setEntryLine([]);
+      alert("Please press submit button to add change in ");
+    };
 
     const MannualTrade = async (id, EntryType, Signal) => {
       try {
@@ -788,6 +840,7 @@ console.log("alert3:", alert3);
 
     return (
       <div className="flex flex-col">
+
         {window.location.pathname == "/future/back" ? (
           <> </>
         ) : (
@@ -798,7 +851,7 @@ console.log("alert3:", alert3);
                 <>
                   <div className="flex flex-col gap-2 md:flex-row md:justify-around">
                     <button
-                      className="bg-green-600 px-3 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
+                      className="bg-green-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
                       onClick={() =>
                         MannualTrade(master.id, "INITIAL", "BUY_CE")
                       }
@@ -806,7 +859,7 @@ console.log("alert3:", alert3);
                       INITIAL Buy CE
                     </button>
                     <button
-                      className="bg-red-600 px-3 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
+                      className="bg-red-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
                       onClick={() => MannualTrade(master.id, "EXIT", "SELL_CE")}
                     >
                       EXIT Sell CE
@@ -837,25 +890,32 @@ console.log("alert3:", alert3);
               )}
 
               <div className="flex flex-col gap-2 md:flex-row md:justify-around">
+       
                 <button
-                  className="bg-green-600 px-3 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
+                  className="bg-red-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
+                  onClick={handleResetTrendLines}
+                >
+                  Remove TrendLine
+                </button>
+                <button
+                  className="bg-green-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
                   onClick={() =>
                     handleCreateTrendLines(
                       trends3,
                       textList1,
-                      retracements3,
-                      channels1,
-                      alert3
+                     
+                      alert3,
+                      entryLine
                     )
                   }
                 >
-                  Submit TrendLine
+                  Submit 
                 </button>
                 <button
-                  className="bg-red-600 px-3 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
-                  onClick={handleResetTrendLines}
+                  className="bg-red-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
+                  onClick={handleResetEntryLines}
                 >
-                  Remove All TrendLine
+                  Remove EntryLine
                 </button>
               </div>
 
@@ -863,7 +923,7 @@ console.log("alert3:", alert3);
                 <>
                   <div className="flex flex-col gap-2 md:flex-row md:justify-around">
                     <button
-                      className="bg-red-600 px-3 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
+                      className="bg-red-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
                       onClick={() =>
                         MannualTrade(master.id, "INITIAL", "SELL_CE")
                       }
@@ -871,7 +931,7 @@ console.log("alert3:", alert3);
                       INITIAL SELL CE
                     </button>
                     <button
-                      className="bg-green-600 px-3 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
+                      className="bg-green-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
                       onClick={() => MannualTrade(master.id, "EXIT", "BUY_CE")}
                     >
                       EXIT BUY CE
@@ -903,6 +963,8 @@ console.log("alert3:", alert3);
             </div>
           </>
         )}
+
+
         <div>
           {data?.length && (
             <ChartCanvas
@@ -1481,6 +1543,34 @@ console.log("alert3:", alert3);
      
                   </>
                 )}
+                {showRow.entryLine && (
+                  <>
+                    <TrendLine
+                      ref={(node) => {
+                        entryLineNodeRef.current = node;
+                      }}
+                      enabled={enableEntryLine}
+                      type="LINE"
+                      snap={false}
+                      value={entryLine}
+                      snapTo={(d) => [d?.high, d?.low]}
+                      onStart={() => console.log("Entry Line Line Start")}
+                      onComplete={onDrawCompleteEntryLine3}
+                      trends={entryLine}
+                    />
+                          <DrawingObjectSelector
+                      enabled={!enableEntryLine}
+                      getInteractiveNodes={() => ({
+                        EntryLine: { 1:  entryLineNodeRef.current, 3:  entryLineNodeRef.current},
+                      })}
+                      drawingObjectMap={{
+                        EntryLine: "EntryLine",
+                      }}
+                      onSelect={handleSelection}
+                    />
+     
+                  </>
+                )}
 
                 {showRow.fibonacci && (
                   <>
@@ -1583,7 +1673,7 @@ console.log("alert3:", alert3);
       </div>
     );
   } catch (error) {
-    window.location.reload();
+    // window.location.reload();
   }
 };
 const EnhancedCandleChart = fitWidth(CandleChart);

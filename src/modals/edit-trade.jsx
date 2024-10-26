@@ -159,6 +159,10 @@ export const EditTrade = () => {
         putTargetLevel: values.putTargetLevel,
         maxZoneTime: values.maxZoneTime,
         noTradeZone: values.noTradeZone,
+        trendCandleCount: values.trendCandleCount ,
+        candleRatioBuy: values.candleRatioBuy,
+        candleRatioSell: values.candleRatioSell,
+        secondarySellTarget:values.secondarySellTarget,
 
         // targetProfit: values.targetProfit,
       });
@@ -201,20 +205,19 @@ export const EditTrade = () => {
                 <div className="px-1">
                   <Label>Index Value</Label>
                   <Select
-                    
                     value={values.indexValue}
                     name="terminal"
                     onValueChange={(value) => handleSelect("indexValue", value)}
                   >
                     <SelectTrigger className="w-full mt-1 border-zinc-500">
                       <SelectValue>{values.indexValue}</SelectValue>
-                    </SelectTrigger>  
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
                         <SelectLabel>Trade Index</SelectLabel>
                         {[
                           1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
-                          17, 18, 19, 20, 
+                          17, 18, 19, 20,
                         ]?.map((suggestion) => (
                           <SelectItem key={suggestion} value={suggestion}>
                             {suggestion}
@@ -404,7 +407,9 @@ export const EditTrade = () => {
                       <SelectGroup>
                         <SelectLabel>category</SelectLabel>
                         <SelectItem value="Breakout">My Today Stock</SelectItem>
-                        <SelectItem value="52weakLow">My Hot WatchList</SelectItem>
+                        <SelectItem value="52weakLow">
+                          My Hot WatchList
+                        </SelectItem>
                         <SelectItem value="52weakHigh">52 Weak High</SelectItem>
                         <SelectItem value="Index">Index</SelectItem>
                         <SelectItem value="Banking">Banking</SelectItem>
@@ -424,7 +429,7 @@ export const EditTrade = () => {
 
                 {values?.indexValue != 6 && (
                   <>
-                    {values?.indexValue != 4 && (
+                    {(values?.indexValue != 4 || values?.indexValue != 7) || (
                       <>
                         <div className="px-1">
                           <Label>Range Bound (%)</Label>
@@ -482,7 +487,7 @@ export const EditTrade = () => {
                         </div>
                       </>
                     )}
-                    {values?.indexValue != 4 && (
+                    {(values?.indexValue != 4 || values?.indexValue != 7) || (
                       <>
                         <div className="px-1">
                           <Label>SMA 1</Label>
@@ -682,7 +687,7 @@ export const EditTrade = () => {
                   </>
                 )}
 
-                {values?.indexValue == 7 && (
+                {/* {values?.indexValue == 7 && (
                   <>
                     <div className="px-1">
                       <Label>Moving Avg WMA</Label>
@@ -694,63 +699,7 @@ export const EditTrade = () => {
                         type="number"
                       />
                     </div>
-                    {/* <div className="px-1">
-                    <Label>Moving Avg OffSet</Label>
-                    <Input
-                      name="movingAvgOFFSET"
-                      onChange={handleChange}
-                      value={values.movingAvgOFFSET}
-                      className="mt-1"
-                      type="number"
-                    />
-                  </div>
-                 
-                  <div className="px-1">
-                    <Label>Moving Avg OFFSET 1</Label>
-                    <Input
-                      name="movingAvgOFFSET1"
-                      onChange={handleChange}
-                      value={values.movingAvgOFFSET1}
-                      className="mt-1"
-                      type="number"
-                      min={0}
-                    />
-                  </div>
-            
-                  <div className="px-1">
-                    <Label>Moving Avg OFFSET 2</Label>
-                    <Input
-                      name="movingAvgOFFSET2"
-                      onChange={handleChange}
-                      value={values.movingAvgOFFSET2}
-                      className="mt-1"
-                      type="number"
-                      min={0}
-                    />
-                  </div>
-
-                  <div className="px-1">
-                    <Label>TrendLine 1</Label>
-                    <Input
-                      name="trendLine1"
-                      onChange={handleChange}
-                      value={values.trendLine1}
-                      className="mt-1"
-                      type="number"
-                      // min={0}
-                    />
-                  </div>
-                  <div className="px-1">
-                    <Label>TrendLine 2</Label>
-                    <Input
-                      name="trendLine2"
-                      onChange={handleChange}
-                      value={values.trendLine2}
-                      className="mt-1"
-                      type="number"
-                      // min={0}
-                    />
-                  </div> */}
+                   
                     <div className="px-1">
                       <Label>Moving Avg Type</Label>
                       <Select
@@ -777,7 +726,7 @@ export const EditTrade = () => {
                       </Select>
                     </div>
                   </>
-                )}
+                )} */}
 
                 {values?.isMaster == false && values?.indexValue != 4 && (
                   <>
@@ -805,6 +754,53 @@ export const EditTrade = () => {
                     </div>
                   </>
                 )}
+
+                {(values.indexValue == 7 || values.indexValue == 17) && (
+                  <>
+                    <div className="px-1">
+                      <Label> Trend Candle Count</Label>
+                      <Input
+                        name="trendCandleCount"
+                        onChange={handleChange}
+                        value={values.trendCandleCount}
+                        className="mt-1"
+                        type="number"
+                      />
+                    </div>
+                    <div className="px-1">
+                      <Label>Candle Ratio Buy</Label>
+                      <Input
+                        name="candleRatioBuy"
+                        onChange={handleChange}
+                        value={values.candleRatioBuy}
+                        className="mt-1"
+                        type="number"
+                      />
+                    </div>
+                    <div className="px-1">
+                      <Label>Candle Ratio Sell</Label>
+                      <Input
+                        name="candleRatioSell"
+                        onChange={handleChange}
+                        value={values.candleRatioSell}
+                        className="mt-1"
+                        type="number"
+                      />
+                    </div>
+                    <div className="px-1">
+                      <Label>Secondary Sell Target (%)</Label>
+                      <Input
+                        name="secondarySellTarget"
+                        onChange={handleChange}
+                        value={values.secondarySellTarget}
+                        className="mt-1"
+                        type="number"
+                      />
+                    </div>
+                  </>
+                )}
+           
+
 
                 {(values?.indexValue == 5 || values?.indexValue == 7) && (
                   <div className="px-1">
@@ -907,8 +903,7 @@ export const EditTrade = () => {
                     </div>
                   </>
                 )}
-                {
-                (values.isMaster && values.indexValue == 4 ) && (
+                {values.isMaster && values.indexValue == 4 && (
                   <>
                     <div className="px-1">
                       <Label>Max Zone Time</Label>
@@ -922,16 +917,16 @@ export const EditTrade = () => {
                       />
                     </div>
                     <div className="px-1">
-                  <Label>No Trade Zone</Label>
-                  <Input
-                    name="noTradeZone"
-                    onChange={handleChange}
-                    value={values.noTradeZone}
-                    className="mt-1"
-                    type="number"
-                    min={0}
-                  />
-                </div>
+                      <Label>No Trade Zone</Label>
+                      <Input
+                        name="noTradeZone"
+                        onChange={handleChange}
+                        value={values.noTradeZone}
+                        className="mt-1"
+                        type="number"
+                        min={0}
+                      />
+                    </div>
                   </>
                 )}
                 {/* <div className="px-1">
