@@ -378,7 +378,7 @@ const CandleChart = ({
     const [currentText, setCurrentText] = useState("");
     const [chartId, setChartId] = useState(null);
     const canvasNode = useRef(null);
-    
+
     const handleSelections = (interactives, moreProps) => {
       if (enableInteractiveObject) {
         const independentCharts = moreProps.currentCharts.filter(
@@ -557,7 +557,7 @@ const CandleChart = ({
     const logTrendLines = (trends) => {
       // console.log("logTrendLines");
       trends.forEach((trend) => {
-        console.log("TrendLine Start:", trend.start, "End:", trend.end);
+        // console.log("TrendLine Start:", trend.start, "End:", trend.end);
       });
     };
 
@@ -587,7 +587,7 @@ const CandleChart = ({
     };
 
     const onDrawCompleteChart3 = (newTrends) => {
-      setEnableTrendLine(false);
+      // setEnableTrendLine(false);
 
       let coloredNewTrends = newTrends?.map((item, ind) => {
         let startIndex = Math?.min(Math.floor(item.start[0]), data?.length - 1);
@@ -655,7 +655,7 @@ const CandleChart = ({
     };
 
     const onDrawCompleteEntryLine3 = (newAlerts) => {
-      setEnableTrendLine(false);
+      // setEnableTrendLine(false);
 
       let coloredAlerts = newAlerts?.map((item, ind) => {
         let startIndex = Math.min(Math.floor(item.start[0]), data?.length - 1);
