@@ -315,28 +315,14 @@ let trendLineArray = [
 const alertLineArray = [
   { color: "green", name: "Alert Call" },
   { color: "red", name: "Alert Put" },
-  // { color: "orange", name: "Alert Signal 1" },
-  // { color: "purple", name: "Alert Signal 2" },
-  // { color: "teal", name: "Alert Signal 3" },
-  // { color: "gray", name: "Alert Signal 4" },
-  // { color: "red", name: "Alert Warning" },
-  // { color: "blue", name: "Alert Trend" },
-  // { color: "green", name: "Alert Spike" },
-  // { color: "pink", name: "Alert Trigger" },
+
 ];
 const entryLineArray = [
   { color: "green", name: "Resistance" },
   { color: "red", name: "Support" },
   { color: "violet", name: "Call Target Line" },
   { color: "orange", name: "Put Target Line" },
-  // { color: "orange", name: "Alert Signal 1" },
-  // { color: "purple", name: "Alert Signal 2" },
-  // { color: "teal", name: "Alert Signal 3" },
-  // { color: "gray", name: "Alert Signal 4" },
-  // { color: "red", name: "Alert Warning" },
-  // { color: "blue", name: "Alert Trend" },
-  // { color: "green", name: "Alert Spike" },
-  // { color: "pink", name: "Alert Trigger" },
+
 ];
 
 const CandleChart = ({
@@ -423,45 +409,7 @@ const CandleChart = ({
       }
     };
 
-    // const handleTextChange = (text, chartId) => {
-    //   console.log("Updated Text:", text, "ChartId:", chartId , "text postion",text.position);
-    //   const textList = chartId === 1 ? textList1 : textList3;
-    //   const allButLast = textList.slice(0, textList.length - 1);
-
-    //   const lastText = {
-    //     ...last(textList),
-    //     text: text.text, // Ensure you're spreading the whole object and updating text
-    //     position: text.position, // Ensure position is included
-    //   };
-
-    //   if (chartId === 1) {
-    //     setTextList1([...allButLast, lastText]);
-    //   } else {
-    //     setTextList3([...allButLast, lastText]);
-    //   }
-
-    //   setShowModal(false);
-    //   setEnableInteractiveObject(false);
-    // };
-    // const handleChoosePosition = (text, moreProps) => {
-    //   if (!moreProps || !moreProps.chartConfig) {
-    //     console.error('moreProps or chartConfig is undefined');
-    //     return;
-    //   }
-    //   const { id: chartId } = moreProps.chartConfig;
-    //   console.log("Opening Modal with", { currentText, chartId, text });
-    //   setTextList1((prev) => [...prev, text]);
-    //   // setShowModal(true);
-    //   onOpen("dialog-modal", {
-    //     text: text,
-    //     chartId: chartId,
-    //     onSave: handleTextChange,
-    //   });
-    //   setCurrentText(text.text);
-    //   setEnableInteractiveObject(false);
-    //   setChartId(chartId);
-    // };
-
+   
     const handleTextChange = (text, chartId) => {
       // console.log(
       //   "Updated Text:",
@@ -586,29 +534,80 @@ const CandleChart = ({
       setEntryLine(state.entryLine || entryLine)
     };
 
+
+    
+    // const onDrawCompleteChart3 = (newTrends) => {
+    //   // setEnableTrendLine(false);
+
+    //   let coloredNewTrends = newTrends?.map((item, ind) => {
+    //     let startIndex = Math?.min(Math.floor(item.start[0]), data?.length - 1);
+    //     let startTime = data[startIndex].timestamp;
+    //     // let endIndex = Math.min(Math.floor(item?.end[0]), data?.length - 1);
+    //     // let endTime = data[endIndex].timestamp;
+
+    //     // Check if item?.end[0] is within the range of the chart
+    //     let endIndex = Math.floor(item?.end[0]);
+    //     let endTime;
+    //     // Ensure endIndex is within the data bounds
+    //     if (endIndex >= 0 && endIndex < data?.length) {
+    //       // If within bounds, get the timestamp
+    //       endTime = data[endIndex]?.timestamp;
+    //     } else {
+    //       // If out of bounds, set endTime to undefined
+    //       endTime = undefined;
+    //     }
+
+    //     return {
+    //       ...item,
+    //       appearance: {
+    //         ...item.appearance,
+    //         stroke: trendLineArray[ind]?.color || "blue",
+    //         strokeWidth: trendLineArray[ind]?.width || 2,
+    //       },
+    //       startTime,
+    //       endTime,
+    //       name: trendLineArray[ind]?.name || "Trend",
+    //     };
+    //   });
+    //   // console.log({ coloredNewTrends });
+    //   setTrends3(coloredNewTrends);
+    //   logTrendLines(coloredNewTrends);
+    // };
+
+
+
+
+
+
+    const DEGREE_TO_RADIAN = Math.PI / 180;
+    const DEFAULT_ANGLE = 30; // Default angle in degrees
+    const MINUTES_PER_CANDLE = 5; // Assuming 5-minute candles
+    
     const onDrawCompleteChart3 = (newTrends) => {
-      // setEnableTrendLine(false);
-
       let coloredNewTrends = newTrends?.map((item, ind) => {
-        let startIndex = Math?.min(Math.floor(item.start[0]), data?.length - 1);
-        let startTime = data[startIndex].timestamp;
-        // let endIndex = Math.min(Math.floor(item?.end[0]), data?.length - 1);
-        // let endTime = data[endIndex].timestamp;
-
-        // Check if item?.end[0] is within the range of the chart
-        let endIndex = Math.floor(item?.end[0]);
-        let endTime;
-        // Ensure endIndex is within the data bounds
-        if (endIndex >= 0 && endIndex < data?.length) {
-          // If within bounds, get the timestamp
-          endTime = data[endIndex]?.timestamp;
-        } else {
-          // If out of bounds, set endTime to undefined
-          endTime = undefined;
+        // Calculate slope from the angle
+        const slope = Math.tan(DEFAULT_ANGLE * DEGREE_TO_RADIAN);
+    
+        // Start point
+        let startIndex = Math.min(Math.floor(item.start[0]), data?.length - 1);
+        let startPrice = item.start[1];
+        let startTime = data[startIndex]?.timestamp;
+    
+        // Calculate end point (150 candles ahead by default)
+        let endIndex = startIndex + 150;
+        let endPrice = startPrice + slope * (endIndex - startIndex); // y = mx + b
+    
+        // Ensure endIndex stays within data bounds
+        if (endIndex >= data.length) {
+          endIndex = data.length - 1;
+          endPrice = startPrice + slope * (endIndex - startIndex);
         }
-
+        let endTime = data[endIndex]?.timestamp;
+    
+        // Return the new trendline object
         return {
           ...item,
+          end: [endIndex, endPrice],
           appearance: {
             ...item.appearance,
             stroke: trendLineArray[ind]?.color || "blue",
@@ -619,10 +618,12 @@ const CandleChart = ({
           name: trendLineArray[ind]?.name || "Trend",
         };
       });
-      // console.log({ coloredNewTrends });
+    
+      // Set the new trends and log them
       setTrends3(coloredNewTrends);
       logTrendLines(coloredNewTrends);
     };
+    
 
     const onDrawCompleteAlert3 = (newAlerts) => {
       setEnableTrendLine(false);
@@ -902,8 +903,7 @@ const CandleChart = ({
                   onClick={() =>
                     handleCreateTrendLines(
                       trends3,
-                      textList1,
-                     
+                      textList1,                    
                       alert3,
                       entryLine
                     )
@@ -960,6 +960,7 @@ const CandleChart = ({
                   </div>
                 </>
               )}
+              
             </div>
           </>
         )}
