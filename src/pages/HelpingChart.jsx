@@ -43,7 +43,8 @@ const HelpingChart = () => {
   const [peTargetValue, setPeTargetValue] = useState(null);
   const [ceStopLoss, setCeStopLoss] = useState(null);
   const [peStopLoss, setPeStopLoss] = useState(null);
-  const [chartType, setChartType] = useState("canvas");
+  // const [chartType, setChartType] = useState("canvas");
+  const [chartType, setChartType] = useState("svg");
   const [trends3, setTrends3] = useState([]);
   const [alert3, setAlert3] = useState([]);
   const [entryLine, setEntryLine] = useState([]);
@@ -628,13 +629,13 @@ const HelpingChart = () => {
                         {trendLineValue.Support3CurrPrice?.toFixed(1)}
                         &nbsp; &nbsp; S4 :
                         {trendLineValue.Support4CurrPrice?.toFixed(1)}
-                        &nbsp; &nbsp; CE Zone :
-                        {trendLineValue?.zone?.CEZone?.low}-
+                        &nbsp; &nbsp; 
+                        {trendLineValue?.zone?.CEZone?.low } --LTP Zone--
                         {trendLineValue?.zone?.CEZone?.high}
-                        &nbsp; &nbsp; PE Zone :
-                        {trendLineValue?.zone?.PEZone?.low}-
+                        &nbsp; &nbsp;  &nbsp; &nbsp; 
+                        {trendLineValue?.zone?.PEZone?.low} --LTP Zone--
                         {trendLineValue?.zone?.PEZone?.high}
-                        &nbsp; &nbsp;
+                        &nbsp; &nbsp;  &nbsp; &nbsp; 
                         <span className="text-green-600">
                           Call Target Level :
                           {trendLineValue?.callTargetLevelPrice?.toFixed(1)}

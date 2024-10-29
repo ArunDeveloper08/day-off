@@ -56,6 +56,7 @@ import { useModal } from "@/hooks/use-modal";
 
 function tooltipContent(underlyingValue) {
   return ({ currentItem, xAccessor }) => {
+   
     return {
       x: `Time: ${
         currentItem?.timestamp && formatDate(currentItem?.timestamp)
@@ -66,6 +67,11 @@ function tooltipContent(underlyingValue) {
           value:
             currentItem?.underlyingValue &&
             formatPrice(currentItem?.underlyingValue),
+          stroke: "black",
+        },
+        {
+          label: "Candle Index", // Display index instead of length
+          value: currentItem.index,
           stroke: "black",
         },
 
@@ -322,6 +328,8 @@ const entryLineArray = [
   { color: "red", name: "Support" },
   { color: "violet", name: "Call Target Line" },
   { color: "orange", name: "Put Target Line" },
+  { color: "green", name: "CESellLine" },
+  { color: "red", name: "PESellLine" },
 
 ];
 
@@ -535,79 +543,30 @@ const CandleChart = ({
     };
 
 
-    
-    // const onDrawCompleteChart3 = (newTrends) => {
-    //   // setEnableTrendLine(false);
 
-    //   let coloredNewTrends = newTrends?.map((item, ind) => {
-    //     let startIndex = Math?.min(Math.floor(item.start[0]), data?.length - 1);
-    //     let startTime = data[startIndex].timestamp;
-    //     // let endIndex = Math.min(Math.floor(item?.end[0]), data?.length - 1);
-    //     // let endTime = data[endIndex].timestamp;
-
-    //     // Check if item?.end[0] is within the range of the chart
-    //     let endIndex = Math.floor(item?.end[0]);
-    //     let endTime;
-    //     // Ensure endIndex is within the data bounds
-    //     if (endIndex >= 0 && endIndex < data?.length) {
-    //       // If within bounds, get the timestamp
-    //       endTime = data[endIndex]?.timestamp;
-    //     } else {
-    //       // If out of bounds, set endTime to undefined
-    //       endTime = undefined;
-    //     }
-
-    //     return {
-    //       ...item,
-    //       appearance: {
-    //         ...item.appearance,
-    //         stroke: trendLineArray[ind]?.color || "blue",
-    //         strokeWidth: trendLineArray[ind]?.width || 2,
-    //       },
-    //       startTime,
-    //       endTime,
-    //       name: trendLineArray[ind]?.name || "Trend",
-    //     };
-    //   });
-    //   // console.log({ coloredNewTrends });
-    //   setTrends3(coloredNewTrends);
-    //   logTrendLines(coloredNewTrends);
-    // };
-
-
-
-
-
-
-    const DEGREE_TO_RADIAN = Math.PI / 180;
-    const DEFAULT_ANGLE = 30; // Default angle in degrees
-    const MINUTES_PER_CANDLE = 5; // Assuming 5-minute candles
-    
     const onDrawCompleteChart3 = (newTrends) => {
+      // setEnableTrendLine(false);
+
       let coloredNewTrends = newTrends?.map((item, ind) => {
-        // Calculate slope from the angle
-        const slope = Math.tan(DEFAULT_ANGLE * DEGREE_TO_RADIAN);
-    
-        // Start point
-        let startIndex = Math.min(Math.floor(item.start[0]), data?.length - 1);
-        let startPrice = item.start[1];
-        let startTime = data[startIndex]?.timestamp;
-    
-        // Calculate end point (150 candles ahead by default)
-        let endIndex = startIndex + 150;
-        let endPrice = startPrice + slope * (endIndex - startIndex); // y = mx + b
-    
-        // Ensure endIndex stays within data bounds
-        if (endIndex >= data.length) {
-          endIndex = data.length - 1;
-          endPrice = startPrice + slope * (endIndex - startIndex);
+        let startIndex = Math?.min(Math.floor(item.start[0]), data?.length - 1);
+        let startTime = data[startIndex].timestamp;
+        // let endIndex = Math.min(Math.floor(item?.end[0]), data?.length - 1);
+        // let endTime = data[endIndex].timestamp;
+
+        // Check if item?.end[0] is within the range of the chart
+        let endIndex = Math.floor(item?.end[0]);
+        let endTime;
+        // Ensure endIndex is within the data bounds
+        if (endIndex >= 0 && endIndex < data?.length) {
+          // If within bounds, get the timestamp
+          endTime = data[endIndex]?.timestamp;
+        } else {
+          // If out of bounds, set endTime to undefined
+          endTime = undefined;
         }
-        let endTime = data[endIndex]?.timestamp;
-    
-        // Return the new trendline object
+
         return {
           ...item,
-          end: [endIndex, endPrice],
           appearance: {
             ...item.appearance,
             stroke: trendLineArray[ind]?.color || "blue",
@@ -618,11 +577,61 @@ const CandleChart = ({
           name: trendLineArray[ind]?.name || "Trend",
         };
       });
-    
-      // Set the new trends and log them
+      // console.log({ coloredNewTrends });
       setTrends3(coloredNewTrends);
       logTrendLines(coloredNewTrends);
     };
+
+
+  
+
+
+
+    // const DEGREE_TO_RADIAN = Math.PI / 180;
+    // const DEFAULT_ANGLE = 80; // Default angle in degrees
+    // const MINUTES_PER_CANDLE = 5; // Assuming 5-minute candles
+    
+    
+    // const onDrawCompleteChart3 = (newTrends) => {
+    //   let coloredNewTrends = newTrends?.map((item, ind) => {
+    //     // Calculate slope from the angle
+    //     const slope = Math.tan(DEFAULT_ANGLE * DEGREE_TO_RADIAN);
+    
+    //     // Start point
+    //     let startIndex = Math.min(Math.floor(item.start[0]), data?.length - 1);
+    //     let startPrice = item.start[1];
+    //     let startTime = data[startIndex]?.timestamp;
+    
+    //     // Calculate end point (150 candles ahead by default)
+    //     let endIndex = startIndex + 50;
+    //     let endPrice = startPrice + slope * (endIndex - startIndex); // y = mx + b
+    
+    //     // Ensure endIndex stays within data bounds
+    //     if (endIndex >= data.length) {
+    //       endIndex = data.length - 1;
+    //       endPrice = startPrice + slope * (endIndex - startIndex);
+    //     }
+    //     let endTime = data[endIndex]?.timestamp;
+    
+    //     // Return the new trendline object
+    //     return {
+    //       ...item, 
+    //       end: [endIndex, endPrice],
+    //       appearance: {
+    //         ...item.appearance,
+    //         stroke: trendLineArray[ind]?.color || "blue",
+    //         strokeWidth: trendLineArray[ind]?.width || 2,
+    //       },
+    //       startTime, 
+    //       endTime,
+    //       name: trendLineArray[ind]?.name || "Trend",
+    //     };
+    //   });
+    
+    //   // Set the new trends and log them
+    //   setTrends3(coloredNewTrends);
+    //   logTrendLines(coloredNewTrends);
+    // };
     
 
     const onDrawCompleteAlert3 = (newAlerts) => {
@@ -684,7 +693,6 @@ const CandleChart = ({
       setEntryLine(coloredAlerts);
       logTrendLines(coloredAlerts);
     };
-
 
 
     const onFibComplete1 = (newRetracements) => {
@@ -775,9 +783,6 @@ const CandleChart = ({
           break;
       }
     };
-
-
-    
 
 
     useKeyPress(onKeyPress);

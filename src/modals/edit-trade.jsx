@@ -768,7 +768,7 @@ export const EditTrade = () => {
                       />
                     </div>
                     <div className="px-1">
-                      <Label>Candle Ratio Buy</Label>
+                      <Label>CE Deviation</Label>
                       <Input
                         name="candleRatioBuy"
                         onChange={handleChange}
@@ -778,7 +778,7 @@ export const EditTrade = () => {
                       />
                     </div>
                     <div className="px-1">
-                      <Label>Candle Ratio Sell</Label>
+                      <Label>PE Deviation</Label>
                       <Input
                         name="candleRatioSell"
                         onChange={handleChange}
