@@ -328,11 +328,11 @@ const entryLineArray = [
   { color: "red", name: "Support" },
   { color: "violet", name: "Call Target Line" },
   { color: "orange", name: "Put Target Line" },
-  { color: "green", name: "CESellLine" },
-  { color: "red", name: "PESellLine" },
+
 
 ];
-
+  // { color: "green", name: "CESellLine" },
+  // { color: "red", name: "PESellLine" },
 const CandleChart = ({
   handleCreateTrendLines,
   chartType,
@@ -350,7 +350,8 @@ const CandleChart = ({
   alert3,
   setAlert3,
   entryLine,
-  setEntryLine
+  setEntryLine,
+  
   // type = "canvas",
   // type = "svg",
 }) => {
@@ -665,34 +666,53 @@ const CandleChart = ({
     };
 
     const onDrawCompleteEntryLine3 = (newAlerts) => {
-      // setEnableTrendLine(false);
-
+      setEnableEntryLine(false)
       let coloredAlerts = newAlerts?.map((item, ind) => {
         let startIndex = Math.min(Math.floor(item.start[0]), data?.length - 1);
         let startTime = data[startIndex]?.timestamp;
-
+    
         let endIndex = Math.floor(item?.end[0]);
         let endTime =
           endIndex >= 0 && endIndex < data?.length
             ? data[endIndex]?.timestamp
             : undefined;
-
+    
+        // Determine the stroke color
+        let strokeColor;
+    
+        if (item.name === "CESellLine") {
+          strokeColor = "green"; // Fixed color for CESellLine
+        } else if (item.name === "PESellLine") {
+          strokeColor = "red"; // Fixed color for PESellLine
+        } else if (ind < 4) {
+          // Use colors and names from entryLineArray for the first four lines
+          strokeColor = entryLineArray[ind]?.color || "blue";
+        } else {
+          // Default to blue for any additional lines beyond the first four
+          strokeColor = "blue";
+        }
+    
+        // Assign name based on index or fallback to "Unnamed-Line"
+        const lineName = item.name || entryLineArray[ind]?.name || `Unnamed-Line ${ind + 1}`;
+    
         return {
           ...item,
           appearance: {
             ...item.appearance,
-            stroke: entryLineArray[ind]?.color || "blue",
-            strokeWidth: entryLineArray[ind]?.width || 2,
+            stroke: strokeColor,
+            strokeWidth: item.appearance.strokeWidth || 2,
           },
           startTime,
           endTime,
-          name: entryLineArray[ind]?.name || "EntyLine",
+          name: lineName, // Assigning the final name here
         };
       });
-
+    
       setEntryLine(coloredAlerts);
-      logTrendLines(coloredAlerts);
+      logTrendLines(coloredAlerts); // Log trend lines with names and colors for debugging
     };
+    
+    
 
 
     const onFibComplete1 = (newRetracements) => {
@@ -1065,6 +1085,18 @@ const CandleChart = ({
                   strokeWidth={2}
                   stroke="orange"
                   yAccessor={(d) => Number(d.PEStopLoss)}
+                />
+                <LineSeries
+                  strokeDasharray="Dash"
+                  strokeWidth={2}
+                  stroke="blue"
+                  yAccessor={(d) => Number(d.CEStopLossForIndex7)}
+                />
+                <LineSeries
+                  strokeDasharray="Dash"
+                  strokeWidth={2}
+                  stroke="orange"
+                  yAccessor={(d) => Number(d.PEStopLossForIndex7)}
                 />
                 {/* <LineSeries
                 strokeDasharray="Dash"

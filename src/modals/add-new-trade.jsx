@@ -96,6 +96,8 @@ const initialState = {
   trendCandleCount: "",
   candleRatioBuy: "",
   candleRatioSell: "",
+  CESellDeviation: "",
+  PESellDeviation: "",
   secondarySellTarget: "",
   // Min_Order_Qty:"1"
 };
@@ -173,6 +175,8 @@ const alternateInitialState = {
   trendCandleCount: "",
   candleRatioBuy: "",
   candleRatioSell: "",
+  CESellDeviation: "",
+  PESellDeviation: "",
   secondarySellTarget: "",
 };
 // tradeIndex =2
@@ -254,6 +258,8 @@ const gammaBlastInitialState = {
   trendCandleCount: "",
   candleRatioBuy: "",
   candleRatioSell: "",
+  CESellDeviation: "",
+  PESellDeviation: "",
   secondarySellTarget: "",
 };
 // tradeIndex =6
@@ -474,6 +480,8 @@ export const AddNewtrade = () => {
         trendCandleCount: values.trendCandleCount ,
         candleRatioBuy: values.candleRatioBuy,
         candleRatioSell: values.candleRatioSell,
+        CESellDeviation: values.CESellDeviation,
+        PESellDeviation: values.PESellDeviation,
         secondarySellTarget:values.secondarySellTarget,
       });
       alert("Add Successfully");
@@ -1128,7 +1136,7 @@ export const AddNewtrade = () => {
                 />
               </div>
               <div className="px-1">
-                <Label>CE Deviation</Label>
+                <Label>CE Buy Deviation</Label>
                 <Input
                   name="candleRatioBuy"
                   onChange={handleChange}
@@ -1138,11 +1146,31 @@ export const AddNewtrade = () => {
                 />
               </div>
               <div className="px-1">
-                <Label>PE Deviation</Label>
+                <Label>PE Buy Deviation</Label>
                 <Input
                   name="candleRatioSell"
                   onChange={handleChange}
                   value={values.candleRatioSell}
+                  className="mt-1"
+                  type="number"
+                />
+              </div>
+              <div className="px-1">
+                <Label>CE Sell Deviation</Label>
+                <Input
+                  name="CESellDeviation"
+                  onChange={handleChange}
+                  value={values.CESellDeviation}
+                  className="mt-1"
+                  type="number"
+                />
+              </div>
+              <div className="px-1">
+                <Label>PE Sell Deviation</Label>
+                <Input
+                  name="PESellDeviation"
+                  onChange={handleChange}
+                  value={values.PESellDeviation}
                   className="mt-1"
                   type="number"
                 />

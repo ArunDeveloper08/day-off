@@ -1076,6 +1076,8 @@ const Dashboard = () => {
                                   trendCandleCount: item.trendCandleCount ,
                                   candleRatioBuy: item.candleRatioBuy,
                                   candleRatioSell: item.candleRatioSell,
+                                  CESellDeviation: item.CESellDeviation,
+                                  PESellDeviation: item.PESellDeviation,
                                   secondarySellTarget:item.secondarySellTarget,
                                 },
                                 getAllTrades,

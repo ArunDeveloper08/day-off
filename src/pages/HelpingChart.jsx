@@ -48,6 +48,7 @@ const HelpingChart = () => {
   const [trends3, setTrends3] = useState([]);
   const [alert3, setAlert3] = useState([]);
   const [entryLine, setEntryLine] = useState([]);
+  // const [entryLine2, setEntryLine2] = useState([]);
   useEffect(() => {
     setTheme("light");
   }, []);
@@ -64,10 +65,10 @@ const HelpingChart = () => {
 
   const [values, setValues] = useState({
     date: null,
-    WMA: null,
-    interval: null,
-    candleType: null,
-    trendLineActive: null,
+    WMA: 1,
+    interval: "FIVE_MINUTE",
+    candleType: "HeikinAshi",
+    trendLineActive: 1,
     rangeBoundPercent: null,
   });
 
@@ -77,18 +78,18 @@ const HelpingChart = () => {
     }
   }, [data?.data?.identifier]);
 
-  useEffect(() => {
-    if (data.data) {
-      setValues({
-        date: data.data.masterChartPrevDate,
-        WMA: data.data.WMA,
-        interval: data.data.interval,
-        candleType: data.data.candleType,
-        rangeBoundPercent: data.data.rangeBoundPercent,
-        trendLineActive: data.data.trendLineActive,
-      });
-    }
-  }, [data]);
+  // useEffect(() => {
+  //   if (data.data) {
+  //     ({
+  //       date: data.data.masterChartPrevDate,
+  //       WMA: data.data.WMA,
+  //       interval: null,
+  //       candleType: data.data.candleType,
+  //       rangeBoundPercent: data.data.rangeBoundPercent,
+  //       trendLineActive: data.data.trendLineActive,
+  //     });
+  //   }
+  // }, [data]);
 
   const { socket, isConnected } = useLiveSocket();
   // let width = useMemo(() => window.screen.width, []);
@@ -104,7 +105,7 @@ const HelpingChart = () => {
     dynamicExitValue: false,
     dynamicEntryValue: false,
     arrow: false,
-    trendLine: true,
+    trendLine: false,
     initialLow: false,
     Last_Highest_LTP: false,
     rangeBoundLine: false,
@@ -125,7 +126,7 @@ const HelpingChart = () => {
     ceTrendLine: true,
     peTrendLine: true,
     alertLine: false,
-    entryLine: false,
+    entryLine: true,
   });
   const [hideConfig, setHideConfig] = useState(true);
   const [supportTrendLine, setSupportTrendLine] = useState([]);
@@ -147,6 +148,15 @@ const HelpingChart = () => {
         `${BASE_URL_OVERALL}/config/get?id=${id}`
       );
       setData((p) => ({ ...p, data: data.data }));
+      setValues((prev) => {
+        return {
+          ...prev,
+          interval: data.data?.interval,
+          candleType: data.data?.candleType,
+          trendLineActive: data.data?.trendLineActive,
+          WMA: data.data?.WMA,
+        };
+      });
     } catch (error) {
       setData((p) => ({
         ...p,
@@ -204,6 +214,55 @@ const HelpingChart = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const prevHaveTradeOfCE = useRef(false); // Start with false
+  const prevHaveTradeOfPE = useRef(false); // Start with false
+
+  useEffect(() => {
+    const { haveTradeOfCE, haveTradeOfPE } = data?.data || {};
+
+    // Log current and previous values to debug
+    console.log(
+      "Current haveTradeOfCE:",
+      haveTradeOfCE,
+      "Previous haveTradeOfCE:",
+      prevHaveTradeOfCE.current
+    );
+    console.log(
+      "Current haveTradeOfPE:",
+      haveTradeOfPE,
+      "Previous haveTradeOfPE:",
+      prevHaveTradeOfPE.current
+    );
+
+    // Detect transition from false to true (for CE)
+    if (haveTradeOfCE && !prevHaveTradeOfCE.current) {
+      console.log("CE Trade became active");
+      getChartData(); // Call API once when CE becomes true
+    }
+
+    // Detect transition from false to true (for PE)
+    if (haveTradeOfPE && !prevHaveTradeOfPE.current) {
+      console.log("PE Trade became active");
+      getChartData(); // Call API once when PE becomes true
+    }
+
+    // Detect transition from true to false (for CE)
+    if (!haveTradeOfCE && prevHaveTradeOfCE.current) {
+      console.log("CE Trade became inactive");
+      getChartData(); // Call API once when CE becomes false
+    }
+
+    // Detect transition from true to false (for PE)
+    if (!haveTradeOfPE && prevHaveTradeOfPE.current) {
+      console.log("PE Trade became inactive");
+      getChartData(); // Call API once when PE becomes false
+    }
+
+    // Update refs to track the latest values
+    prevHaveTradeOfCE.current = haveTradeOfCE;
+    prevHaveTradeOfPE.current = haveTradeOfPE;
+  }, [data?.data?.haveTradeOfCE, data?.data?.haveTradeOfPE]);
+
   useEffect(() => {
     getChartData();
     // if (!values) return;
@@ -241,7 +300,7 @@ const HelpingChart = () => {
         clearInterval(intervalRef.current);
       } else {
         getChartData();
-        intervalRef.current = setInterval(getChartData, 10 * 1000);
+        intervalRef.current = setInterval(getChartData, 12 * 1000);
       }
     };
 
@@ -354,56 +413,100 @@ const HelpingChart = () => {
     const incompleteLineExists = trendline?.some(
       (line) => line?.endTime === undefined && line?.startTime
     );
+    const incompleteLineExists2 = entryLine?.some(
+      (line) => line?.endTime === undefined && line?.startTime
+    );
 
     // Handle validations for trendline
     if (showRow.trendLine) {
-      if (trendline?.length < 10) {
+      if (trendline?.length  == 0) {
+        return sendDataToAPI({
+          trendLines: trendline,
+          textLabel: JSON.stringify(textList1),
+        });
+
+      
+      }
+      if ( trendline?.length  > 0 && trendline?.length < 10) {
         alert(
-          `You have only ${trendline.length} trend lines. Please add ${
+          `You have only ${trendline.length} Trend lines. Please add ${
             10 - trendline.length
           } more trend lines.`
         );
 
-        if (incompleteLineExists) {
-          alert(
-            "Please ensure all trend lines remain inside the chart. The endpoint cannot be outside the chart."
-          );
-        }
         return; // Exit early if validations fail
+      }
+      if (incompleteLineExists) {
+        alert(
+          "Please ensure all trend lines remain inside the chart. The endpoint cannot be outside the chart."
+        );
+        return;
       }
 
       // Send only trendLine data
-      return sendDataToAPI({
-        trendLines: trendline,
-        textLabel: JSON.stringify(textList1),
-      });
+      // return sendDataToAPI({
+      //   trendLines: trendline,
+      //   textLabel: JSON.stringify(textList1),
+      // });
     }
 
     // Handle alertLine saving
-    if (showRow.alertLine) {
-      return sendDataToAPI({ alertLine: alert3 });
-    }
+    // if (showRow.alertLine) {
+    //   return sendDataToAPI({ alertLine: alert3 });
+    // }
 
     // Handle entryLine saving
     if (showRow.entryLine) {
+      if (entryLine?.length == 0) {
+        sendDataToAPI({ buyTrendLines: entryLine });
+        return; // Exit early if validations fail
+      }
+      if (entryLine?.length > 0 && entryLine?.length < 4) {
+        alert(
+          `You have only ${entryLine.length} Entry lines. Please add ${
+            4 - entryLine.length
+          } more trend lines.`
+        );
+
+        // sendDataToAPI({ buyTrendLines: entryLine });
+        return; // Exit early if validations fail
+      }
+      if (incompleteLineExists2) {
+        alert(
+          "Please ensure all  Entry lines remain inside the chart. The endpoint cannot be outside the chart."
+        );
+        return;
+      }
+
+      // Send only trendLine data
       return sendDataToAPI({ buyTrendLines: entryLine });
     }
+    // if (showRow.entryLine) {
+    //   return sendDataToAPI({ buyTrendLines: entryLine });
+    // }
 
     alert("No valid data to save.");
   };
+
+  const prevTrendLineActive = useRef(values.trendLineActive);
 
   const handleSubmit = () => {
     axios
       .put(`${BASE_URL_OVERALL}/config/editMaster?id=${id}`, { ...values })
       .then((res) => {
-        // setApiData(res.data.data);
-        // setIntractiveData(res.data);
-        alert("successfully Updated");
+        alert("Successfully Updated");
+
+        // Call getChartData only if trendLineActive has NOT changed
+        // if (prevTrendLineActive.current === values.trendLineActive) {
         getChartData();
+        // }
+
+        // Update the previous value to the current value
+        prevTrendLineActive.current = values.trendLineActive;
       })
       .catch((err) => {
         console.log(err);
-        alert(err.response.data.message);
+        alert(err.response?.data?.message || "An error occurred");
       });
   };
 
@@ -412,7 +515,7 @@ const HelpingChart = () => {
   useEffect(() => {
     if (!id) return;
     getTrendLinesValue();
-    const interval = setInterval(getTrendLinesValue, 12 * 1000);
+    const interval = setInterval(getTrendLinesValue, 15 * 1000);
     // intervalRef.current = interval;
 
     return () => clearInterval(interval);
@@ -506,6 +609,8 @@ const HelpingChart = () => {
   // console.log("entryLine", entryLine);
   //  console.log("CEZone",trendLineValue.zone.CEZone.low)
   // console.log("socketdata",socketData)
+  // console.log("values",values)
+  // console.log("apiData",apiData?.[0])
 
   return (
     <div className="p-2">
@@ -516,8 +621,9 @@ const HelpingChart = () => {
           <h2 className="text-center font-semibold text-[18px] font-mono text-red-600 sm:text-[20px] md:text-[24px]">
             Angel-One &nbsp;{" "}
             <button className="text-md text-center font-semibold text-red-700">
-              LTP : {socketData?.last_traded_price} &nbsp; Pivot :{" "}
-              {socketData?.pivotValue?.[0]?.pivotValue?.toFixed(2)} &nbsp;
+              LTP : {socketData?.last_traded_price} &nbsp;
+              {/* Pivot :{" "}
+              {socketData?.pivotValue?.[0]?.pivotValue?.toFixed(2)} &nbsp; */}
             </button>
             &nbsp; &nbsp;
             <Button
@@ -614,7 +720,7 @@ const HelpingChart = () => {
                   
                     "
                       >
-                        R1 :{trendLineValue.Resistance1CurrPrice?.toFixed(1)}
+                        R1 :{trendLineValue?.Resistance1CurrPrice?.toFixed(1)}
                         &nbsp; &nbsp; R2 :
                         {trendLineValue.Resistance2CurrPrice?.toFixed(1)}
                         &nbsp; &nbsp; R3 :
@@ -629,13 +735,13 @@ const HelpingChart = () => {
                         {trendLineValue.Support3CurrPrice?.toFixed(1)}
                         &nbsp; &nbsp; S4 :
                         {trendLineValue.Support4CurrPrice?.toFixed(1)}
-                        &nbsp; &nbsp; 
-                        {trendLineValue?.zone?.CEZone?.low } --LTP Zone--
+                        &nbsp; &nbsp;
+                        {trendLineValue?.zone?.CEZone?.low} --LTP Zone--
                         {trendLineValue?.zone?.CEZone?.high}
-                        &nbsp; &nbsp;  &nbsp; &nbsp; 
+                        &nbsp; &nbsp; &nbsp; &nbsp;
                         {trendLineValue?.zone?.PEZone?.low} --LTP Zone--
                         {trendLineValue?.zone?.PEZone?.high}
-                        &nbsp; &nbsp;  &nbsp; &nbsp; 
+                        &nbsp; &nbsp; &nbsp; &nbsp;
                         <span className="text-green-600">
                           Call Target Level :
                           {trendLineValue?.callTargetLevelPrice?.toFixed(1)}
@@ -645,6 +751,49 @@ const HelpingChart = () => {
                           PE Target Level :
                           {trendLineValue?.putTargetLevelPrice?.toFixed(1)}
                         </span>
+                        &nbsp; &nbsp; Time :
+                        {formatDate(trendLineValue.timestamp)}
+                      </p>
+                    )}
+                  </div>
+                )}
+                {data.data.tradeIndex == 7 && (
+                  <div>
+                    {trendLineValue && (
+                      <p
+                        className="font-semibold text-[13px] md:text-[16px]
+                    
+                  
+                    "
+                      >
+                        Resistance :
+                        {trendLineValue?.dataForIndex7?.ResistancePrice?.toFixed(
+                          1
+                        )}
+                        &nbsp; &nbsp; Support :
+                        {trendLineValue?.dataForIndex7?.SupportPrice?.toFixed(
+                          1
+                        )}
+                        &nbsp; &nbsp; Call Target :
+                        {trendLineValue?.dataForIndex7?.callTargetLevelPrice?.toFixed(
+                          1
+                        )}
+                        &nbsp; &nbsp; Put Target :
+                        {trendLineValue?.dataForIndex7?.putTargetLevelPrice?.toFixed(
+                          1
+                        )}
+                        &nbsp; &nbsp; CE Sell Price :
+                        {trendLineValue?.dataForIndex7?.CESellLinePrice?.toFixed(
+                          1
+                        )}
+                        &nbsp; &nbsp; PE Sell Price :
+                        {trendLineValue?.dataForIndex7?.PESellLinePrice?.toFixed(
+                          1
+                        )}
+                        &nbsp; &nbsp; CE Stop Loss :
+                        {apiData?.[0]?.CEStopLossForIndex7?.toFixed(1)}
+                        &nbsp; &nbsp; PE Stop Loss :
+                        {apiData?.[0]?.PEStopLossForIndex7?.toFixed(1)}
                         &nbsp; &nbsp; Time :
                         {formatDate(trendLineValue.timestamp)}
                       </p>

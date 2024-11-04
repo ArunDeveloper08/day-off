@@ -159,10 +159,12 @@ export const EditTrade = () => {
         putTargetLevel: values.putTargetLevel,
         maxZoneTime: values.maxZoneTime,
         noTradeZone: values.noTradeZone,
-        trendCandleCount: values.trendCandleCount ,
+        trendCandleCount: values.trendCandleCount,
         candleRatioBuy: values.candleRatioBuy,
         candleRatioSell: values.candleRatioSell,
-        secondarySellTarget:values.secondarySellTarget,
+        secondarySellTarget: values.secondarySellTarget,
+        CESellDeviation: values.CESellDeviation,
+        PESellDeviation: values.PESellDeviation,
 
         // targetProfit: values.targetProfit,
       });
@@ -429,7 +431,7 @@ export const EditTrade = () => {
 
                 {values?.indexValue != 6 && (
                   <>
-                    {(values?.indexValue != 4 || values?.indexValue != 7) || (
+                    {values?.indexValue != 4 || values?.indexValue != 7 || (
                       <>
                         <div className="px-1">
                           <Label>Range Bound (%)</Label>
@@ -487,7 +489,7 @@ export const EditTrade = () => {
                         </div>
                       </>
                     )}
-                    {(values?.indexValue != 4 || values?.indexValue != 7) || (
+                    {values?.indexValue != 4 || values?.indexValue != 7 || (
                       <>
                         <div className="px-1">
                           <Label>SMA 1</Label>
@@ -788,6 +790,26 @@ export const EditTrade = () => {
                       />
                     </div>
                     <div className="px-1">
+                      <Label>CE Sell Deviation</Label>
+                      <Input
+                        name="CESellDeviation"
+                        onChange={handleChange}
+                        value={values.CESellDeviation}
+                        className="mt-1"
+                        type="number"
+                      />
+                    </div>
+                    <div className="px-1">
+                      <Label>PE Sell Deviation</Label>
+                      <Input
+                        name="PESellDeviation"
+                        onChange={handleChange}
+                        value={values.PESellDeviation}
+                        className="mt-1"
+                        type="number"
+                      />
+                    </div>
+                    <div className="px-1">
                       <Label>Secondary Sell Target (%)</Label>
                       <Input
                         name="secondarySellTarget"
@@ -799,8 +821,6 @@ export const EditTrade = () => {
                     </div>
                   </>
                 )}
-           
-
 
                 {(values?.indexValue == 5 || values?.indexValue == 7) && (
                   <div className="px-1">
@@ -929,6 +949,7 @@ export const EditTrade = () => {
                     </div>
                   </>
                 )}
+                
                 {/* <div className="px-1">
                 <Label>Micro Profit (%)</Label>
                 <Input
