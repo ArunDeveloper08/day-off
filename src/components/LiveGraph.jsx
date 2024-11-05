@@ -584,6 +584,7 @@ const CandleChart = ({
     };
 
 
+
   
 
 
@@ -636,8 +637,8 @@ const CandleChart = ({
     
 
     const onDrawCompleteAlert3 = (newAlerts) => {
-      setEnableTrendLine(false);
 
+      setEnableTrendLine(false);
       let coloredAlerts = newAlerts?.map((item, ind) => {
         let startIndex = Math.min(Math.floor(item.start[0]), data?.length - 1);
         let startTime = data[startIndex]?.timestamp;
@@ -684,7 +685,14 @@ const CandleChart = ({
           strokeColor = "green"; // Fixed color for CESellLine
         } else if (item.name === "PESellLine") {
           strokeColor = "red"; // Fixed color for PESellLine
-        } else if (ind < 4) {
+        } 
+         else if (item.name === "PEBuyLine") {
+          strokeColor = "red"; // Fixed color for PESellLine
+        } 
+         else if (item.name === "CEBuyLine") {
+          strokeColor = "green"; // Fixed color for PESellLine
+        } 
+        else if (ind < 4) {
           // Use colors and names from entryLineArray for the first four lines
           strokeColor = entryLineArray[ind]?.color || "blue";
         } else {
@@ -713,7 +721,7 @@ const CandleChart = ({
     };
     
     
-
+ 
 
     const onFibComplete1 = (newRetracements) => {
       console.log("onFibComplete1");
@@ -1097,6 +1105,18 @@ const CandleChart = ({
                   strokeWidth={2}
                   stroke="orange"
                   yAccessor={(d) => Number(d.PEStopLossForIndex7)}
+                />
+                <LineSeries
+                  strokeDasharray="Dash"
+                  strokeWidth={2}
+                  stroke="blue"
+                  yAccessor={(d) => Number(d.CEStopLossForIndex17)}
+                />
+                <LineSeries
+                  strokeDasharray="Dash"
+                  strokeWidth={2}
+                  stroke="orange"
+                  yAccessor={(d) => Number(d.PEStopLossForIndex17)}
                 />
                 {/* <LineSeries
                 strokeDasharray="Dash"

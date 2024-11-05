@@ -1188,7 +1188,7 @@ export const AddNewtrade = () => {
               </>
             )}
 
-            {values.indexValue != 4 && values?.isMaster == false && (
+            { values.indexValue != 4 && values?.isMaster == false && (
               <div className="px-1">
                 <Label>Minimum Profit (%)</Label>
                 <Input
@@ -1221,7 +1221,7 @@ export const AddNewtrade = () => {
                 type="time"
               />
             </div>
-            {(values?.indexValue == 5 || values?.indexValue == 7) && (
+            {/* {(values?.indexValue == 5 || values?.indexValue == 7) && (
               <div className="px-1">
                 <Label> Candle Size</Label>
                 <Input
@@ -1232,7 +1232,7 @@ export const AddNewtrade = () => {
                   type="number"
                 />
               </div>
-            )}
+            )} */}
 
             {values.isMaster && (
               <>
@@ -1261,7 +1261,8 @@ export const AddNewtrade = () => {
               </>
             )}
 
-            {values.isMaster && values.indexValue == 4 && (
+            {             
+            values.isMaster && values.indexValue == 4 && (
               <>
                 <div className="px-1">
                   <Label>Max Zone Time</Label>
@@ -1274,6 +1275,7 @@ export const AddNewtrade = () => {
                     min={0}
                   />
                 </div>
+
                 <div className="px-1">
                   <Label>No Trade Zone</Label>
                   <Input
@@ -1283,7 +1285,7 @@ export const AddNewtrade = () => {
                     className="mt-1"
                     type="number"
                     min={0}
-                  />
+                  />                 
                 </div>
               </>
             )}

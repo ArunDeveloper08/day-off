@@ -414,7 +414,6 @@ const Dashboard = () => {
       };
     });
   };
-
   const toggleState = async (itemId, currentState) => {
     const newState = currentState === "ON" ? "OFF" : "ON";
     try {

@@ -770,7 +770,7 @@ export const EditTrade = () => {
                       />
                     </div>
                     <div className="px-1">
-                      <Label>CE Deviation</Label>
+                      <Label>CE Buy  Deviation</Label>
                       <Input
                         name="candleRatioBuy"
                         onChange={handleChange}
@@ -780,7 +780,7 @@ export const EditTrade = () => {
                       />
                     </div>
                     <div className="px-1">
-                      <Label>PE Deviation</Label>
+                      <Label>PE Buy Deviation</Label>
                       <Input
                         name="candleRatioSell"
                         onChange={handleChange}
@@ -822,7 +822,7 @@ export const EditTrade = () => {
                   </>
                 )}
 
-                {(values?.indexValue == 5 || values?.indexValue == 7) && (
+                {/* {(values?.indexValue == 5 || values?.indexValue == 7) && (
                   <div className="px-1">
                     <Label>Candle Size</Label>
                     <Input
@@ -833,7 +833,7 @@ export const EditTrade = () => {
                       type="number"
                     />
                   </div>
-                )}
+                )} */}
 
                 {values?.isMaster == false && (
                   <>
@@ -949,7 +949,7 @@ export const EditTrade = () => {
                     </div>
                   </>
                 )}
-                
+
                 {/* <div className="px-1">
                 <Label>Micro Profit (%)</Label>
                 <Input

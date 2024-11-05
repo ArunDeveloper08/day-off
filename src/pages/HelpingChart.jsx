@@ -182,10 +182,30 @@ const HelpingChart = () => {
         setPeStopLoss(res.data.data?.[0]?.PEStopLoss);
         setIntractiveData(res.data);
         setAlert3(res.data?.alertLine);
-        setEntryLine(res.data?.buyTrendLines);
+
+        // if(res?.data?.buyTrendLines?.length > 0){
+        //   setEntryLine(res.data?.buyTrendLines);
+        // }
+        const apiEntryLines = res.data?.buyTrendLines || [];
+        const mergeEntryLines = (apiLines, stateLines) => {
+          // Create a Set to track existing names in the API data for quick lookup
+          const apiLineNames = new Set(apiLines.map(apiLine => apiLine.name));
+        
+          // Filter user-drawn lines to include only those not present in the API data
+          const uniqueUserLines = stateLines.filter(
+            userLine => !apiLineNames.has(userLine.name)
+          );
+        
+          // Combine API lines and unique user-drawn lines
+          return [...apiLines, ...uniqueUserLines];
+        };
+        
+        // Usage
+        const mergedEntryLines = mergeEntryLines(apiEntryLines, entryLine);
+        setEntryLine(mergedEntryLines);
 
         if (!hasInitializedTrends.current) {
-          console.log("Setting trends for the first time");
+          // console.log("Setting trends for the first time");
           setTrends3(res.data.trendLines); // Set trends3 for the first time
           hasInitializedTrends.current = true; // Mark as initialized
         }
@@ -419,15 +439,13 @@ const HelpingChart = () => {
 
     // Handle validations for trendline
     if (showRow.trendLine) {
-      if (trendline?.length  == 0) {
+      if (trendline?.length == 0) {
         return sendDataToAPI({
           trendLines: trendline,
           textLabel: JSON.stringify(textList1),
         });
-
-      
       }
-      if ( trendline?.length  > 0 && trendline?.length < 10) {
+      if (trendline?.length > 0 && trendline?.length < 10) {
         alert(
           `You have only ${trendline.length} Trend lines. Please add ${
             10 - trendline.length
@@ -495,7 +513,6 @@ const HelpingChart = () => {
       .put(`${BASE_URL_OVERALL}/config/editMaster?id=${id}`, { ...values })
       .then((res) => {
         alert("Successfully Updated");
-
         // Call getChartData only if trendLineActive has NOT changed
         // if (prevTrendLineActive.current === values.trendLineActive) {
         getChartData();
@@ -714,12 +731,7 @@ const HelpingChart = () => {
                 {data.data.tradeIndex == 4 && (
                   <div>
                     {trendLineValue && (
-                      <p
-                        className="font-semibold text-[13px] md:text-[16px]
-                    
-                  
-                    "
-                      >
+                      <p className="font-semibold text-[13px] md:text-[16px] ">
                         R1 :{trendLineValue?.Resistance1CurrPrice?.toFixed(1)}
                         &nbsp; &nbsp; R2 :
                         {trendLineValue.Resistance2CurrPrice?.toFixed(1)}
@@ -760,12 +772,7 @@ const HelpingChart = () => {
                 {data.data.tradeIndex == 7 && (
                   <div>
                     {trendLineValue && (
-                      <p
-                        className="font-semibold text-[13px] md:text-[16px]
-                    
-                  
-                    "
-                      >
+                      <p className="font-semibold text-[13px] md:text-[16px]">
                         Resistance :
                         {trendLineValue?.dataForIndex7?.ResistancePrice?.toFixed(
                           1
@@ -782,28 +789,74 @@ const HelpingChart = () => {
                         {trendLineValue?.dataForIndex7?.putTargetLevelPrice?.toFixed(
                           1
                         )}
-                        &nbsp; &nbsp; CE Sell Price :
-                        {trendLineValue?.dataForIndex7?.CESellLinePrice?.toFixed(
-                          1
+                        &nbsp; &nbsp;
+                        {trendLineValue?.dataForIndex7?.CESellLinePrice && (
+                          <span>
+                            CE Buy Price :
+                            {trendLineValue?.dataForIndex7?.CESellLinePrice?.toFixed(
+                              1
+                            )}
+                          </span>
                         )}
-                        &nbsp; &nbsp; PE Sell Price :
-                        {trendLineValue?.dataForIndex7?.PESellLinePrice?.toFixed(
-                          1
+                        &nbsp; &nbsp;
+                        {trendLineValue?.dataForIndex7?.PESellLinePrice && (
+                          <span>
+                            PE Buy Price :
+                            {trendLineValue?.dataForIndex7?.PESellLinePrice?.toFixed(
+                              1
+                            )}
+                          </span>
                         )}
-                        &nbsp; &nbsp; CE Stop Loss :
-                        {apiData?.[0]?.CEStopLossForIndex7?.toFixed(1)}
-                        &nbsp; &nbsp; PE Stop Loss :
-                        {apiData?.[0]?.PEStopLossForIndex7?.toFixed(1)}
+                        &nbsp; &nbsp;
+                        {trendLineValue?.dataForIndex7?.PEBuyLinePrice && (
+                          <span>
+                            PE Sell Price :
+                            {trendLineValue?.dataForIndex7?.PEBuyLinePrice?.toFixed(
+                              1
+                            )}
+                          </span>
+                        )}
+                        &nbsp; &nbsp;
+                        {trendLineValue?.dataForIndex7?.CEBuyLinePrice && (
+                          <span>
+                            CE Sell Price :
+                            {trendLineValue?.dataForIndex7?.CEBuyLinePrice?.toFixed(
+                              1
+                            )}
+                          </span>
+                        )}
+                        &nbsp; &nbsp;
+                        {apiData?.[0]?.CEStopLossForIndex7 && (
+                          <span>
+                            CE Buy Stop Loss :
+                            {apiData?.[0]?.CEStopLossForIndex7?.toFixed(1)}
+                          </span>
+                        )}
+                        &nbsp; &nbsp;
+                        {apiData?.[0]?.CEStopLossForIndex17 && (
+                          <span>
+                            CE Sell Stop Loss :
+                            {apiData?.[0]?.CEStopLossForIndex17?.toFixed(1)}
+                          </span>
+                        )}
+                        &nbsp; &nbsp;
+                        {apiData?.[0]?.PEStopLossForIndex7 && (
+                          <span>
+                            PE Buy Stop Loss :
+                            {apiData?.[0]?.PEStopLossForIndex7?.toFixed(1)}
+                          </span>
+                        )}
+                        &nbsp; &nbsp;
+                        {apiData?.[0]?.PEStopLossForIndex17 && (
+                          <span>
+                            PE Sell Stop Loss :
+                            {apiData?.[0]?.PEStopLossForIndex17?.toFixed(1)}
+                          </span>
+                        )}
                         &nbsp; &nbsp; Time :
-                        {formatDate(trendLineValue.timestamp)}
+                        {formatDate(trendLineValue?.timestamp)}
                       </p>
                     )}
-                  </div>
-                )}
-
-                {data.data?.tradeIndex == 7 && (
-                  <div>
-                    <p></p>
                   </div>
                 )}
 
