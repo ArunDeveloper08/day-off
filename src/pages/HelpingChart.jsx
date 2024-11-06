@@ -184,25 +184,59 @@ const HelpingChart = () => {
         setAlert3(res.data?.alertLine);
 
         // if(res?.data?.buyTrendLines?.length > 0){
-        //   setEntryLine(res.data?.buyTrendLines);
+        //   // console.log("inside if condition")
+        //   const apiEntryLines = res.data?.buyTrendLines || [];
+        //   const mergeEntryLines = (apiLines, stateLines) => {
+        //     // Create a Set to track existing names in the API data for quick lookup
+        //     const apiLineNames = new Set(apiLines.map(apiLine => apiLine.name));
+          
+        //     // Filter user-drawn lines to include only those not present in the API data
+        //     const uniqueUserLines = stateLines.filter(
+        //       userLine => !apiLineNames.has(userLine.name)
+        //     );
+          
+        //     // Combine API lines and unique user-drawn lines
+        //     return [...apiLines, ...uniqueUserLines];
+        //   };
+          
+        //   // Usage
+        //   // const mergedEntryLines = mergeEntryLines(apiEntryLines, entryLine);
+        //   // setEntryLine(mergedEntryLines);
+        //   setEntryLine(prevEntryLines => {
+        //     const mergedEntryLines = mergeEntryLines(apiEntryLines, prevEntryLines);
+        //     // console.log('Merged entry lines:', mergedEntryLines);
+        //     return mergedEntryLines;
+        //   });
         // }
-        const apiEntryLines = res.data?.buyTrendLines || [];
-        const mergeEntryLines = (apiLines, stateLines) => {
-          // Create a Set to track existing names in the API data for quick lookup
-          const apiLineNames = new Set(apiLines.map(apiLine => apiLine.name));
+        if (res?.data?.buyTrendLines?.length > 0) {
+          const apiEntryLines = res.data?.buyTrendLines || [];
         
-          // Filter user-drawn lines to include only those not present in the API data
-          const uniqueUserLines = stateLines.filter(
-            userLine => !apiLineNames.has(userLine.name)
-          );
+          const mergeEntryLines = (apiLines, stateLines) => {
+            // Create a Set to track existing names in the API data for quick lookup
+            const apiLineNames = new Set(apiLines.map(apiLine => apiLine.name));
         
-          // Combine API lines and unique user-drawn lines
-          return [...apiLines, ...uniqueUserLines];
-        };
+            // Filter user-drawn lines to include only those not present in the API data
+            const uniqueUserLines = stateLines.filter(
+              userLine => !apiLineNames.has(userLine.name)
+            );
         
-        // Usage
-        const mergedEntryLines = mergeEntryLines(apiEntryLines, entryLine);
-        setEntryLine(mergedEntryLines);
+            // Combine API lines and unique user-drawn lines
+            const combinedLines = [...apiLines, ...uniqueUserLines];
+        
+            // Filter out CESellLine and PESellLine if they are not in the API data
+            return combinedLines.filter(line =>
+              line.name !== "CESellLine" && line.name !== "PESellLine" ? true : apiLineNames.has(line.name)
+            );
+          };
+        
+          // Usage
+          setEntryLine(prevEntryLines => {
+            const mergedEntryLines = mergeEntryLines(apiEntryLines, prevEntryLines);
+            return mergedEntryLines;
+          });
+        }
+        
+       
 
         if (!hasInitializedTrends.current) {
           // console.log("Setting trends for the first time");
@@ -241,18 +275,18 @@ const HelpingChart = () => {
     const { haveTradeOfCE, haveTradeOfPE } = data?.data || {};
 
     // Log current and previous values to debug
-    console.log(
-      "Current haveTradeOfCE:",
-      haveTradeOfCE,
-      "Previous haveTradeOfCE:",
-      prevHaveTradeOfCE.current
-    );
-    console.log(
-      "Current haveTradeOfPE:",
-      haveTradeOfPE,
-      "Previous haveTradeOfPE:",
-      prevHaveTradeOfPE.current
-    );
+    // console.log(
+    //   "Current haveTradeOfCE:",
+    //   haveTradeOfCE,
+    //   "Previous haveTradeOfCE:",
+    //   prevHaveTradeOfCE.current
+    // );
+    // console.log(
+    //   "Current haveTradeOfPE:",
+    //   haveTradeOfPE,
+    //   "Previous haveTradeOfPE:",
+    //   prevHaveTradeOfPE.current
+    // );
 
     // Detect transition from false to true (for CE)
     if (haveTradeOfCE && !prevHaveTradeOfCE.current) {
@@ -286,11 +320,11 @@ const HelpingChart = () => {
   useEffect(() => {
     getChartData();
     // if (!values) return;
-    const interval = setInterval(getChartData, 1 * 100 * 1000);
+    const interval = setInterval(getChartData, 60 * 1000);
     //  intervalRef.current = interval;
 
     return () => clearInterval(interval);
-  }, []);
+  }, [apiData?.[0]?.CEStopLossForIndex7 , apiData?.[0]?.PEStopLossForIndex7]);
 
   const memoizedTrendLines = useMemo(() => {
     let supports = [];
