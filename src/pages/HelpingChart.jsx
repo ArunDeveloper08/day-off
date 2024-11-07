@@ -208,25 +208,31 @@ const HelpingChart = () => {
         //     return mergedEntryLines;
         //   });
         // }
+
         if (res?.data?.buyTrendLines?.length > 0) {
           const apiEntryLines = res.data?.buyTrendLines || [];
         
           const mergeEntryLines = (apiLines, stateLines) => {
             // Create a Set to track existing names in the API data for quick lookup
             const apiLineNames = new Set(apiLines.map(apiLine => apiLine.name));
-        
             // Filter user-drawn lines to include only those not present in the API data
             const uniqueUserLines = stateLines.filter(
               userLine => !apiLineNames.has(userLine.name)
             );
+
         
             // Combine API lines and unique user-drawn lines
-            const combinedLines = [...apiLines, ...uniqueUserLines];
-        
+            const combinedLines = [...apiLines, ...uniqueUserLines];      
             // Filter out CESellLine and PESellLine if they are not in the API data
             return combinedLines.filter(line =>
-              line.name !== "CESellLine" && line.name !== "PESellLine" ? true : apiLineNames.has(line.name)
-            );
+              line.name !== "CESellLine" &&
+              line.name !== "PESellLine" &&
+              line.name !== "PEBuyLine" &&
+              line.name !== "CEBuyLine"
+                  ? true
+                  : apiLineNames.has(line.name)
+          );
+          
           };
         
           // Usage
@@ -315,7 +321,12 @@ const HelpingChart = () => {
     // Update refs to track the latest values
     prevHaveTradeOfCE.current = haveTradeOfCE;
     prevHaveTradeOfPE.current = haveTradeOfPE;
-  }, [data?.data?.haveTradeOfCE, data?.data?.haveTradeOfPE]);
+  }, [
+    data?.data?.haveTradeOfCE, 
+    data?.data?.haveTradeOfPE , 
+    data?.data?.haveTradeOfCEBuy ,   
+    data?.data?.haveTradeOfPEBuy
+  ]);
 
   useEffect(() => {
     getChartData();
@@ -467,9 +478,10 @@ const HelpingChart = () => {
     const incompleteLineExists = trendline?.some(
       (line) => line?.endTime === undefined && line?.startTime
     );
-    const incompleteLineExists2 = entryLine?.some(
-      (line) => line?.endTime === undefined && line?.startTime
-    );
+  const incompleteLineExists2 = entryLine
+  ?.slice(0, 4) // Get only the first 4 elements
+  .some((line) => line?.endTime === undefined && line?.startTime);
+
 
     // Handle validations for trendline
     if (showRow.trendLine) {
@@ -725,23 +737,45 @@ const HelpingChart = () => {
                   <p
                     className={`${
                       data.data.haveTradeOfCE
-                        ? "text-red-600 text-[13px] md:text-[16px]"
-                        : "text-green-600 text-[13px] md:text-[16px]"
+                        ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
+                        : "text-green-600 font-bold text-[13px] md:text-[16px]"
                     }`}
                   >
-                    Call Trade Status :
+                   CE Buy Status :
                     {data.data.haveTradeOfCE ? "True" : "False"}
                   </p>
-                  &nbsp;
+                  {/* &nbsp; */}
                   <p
                     className={`${
                       data.data.haveTradeOfPE
-                        ? "text-red-600 text-[13px] md:text-[16px]"
-                        : "text-green-600 text-[13px] md:text-[16px]"
+                        ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
+                        : "text-green-600 font-bold text-[13px] md:text-[16px]"
                     }`}
                   >
-                    Put Trade Status:
+                    PE Buy Status:
                     {data.data.haveTradeOfPE ? "True" : "False"}
+                  </p>
+                  {/* &nbsp; */}
+                  <p
+                    className={`${
+                      data.data.haveTradeOfCEBuy
+                        ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
+                        : "text-green-600  font-bold text-[13px] md:text-[16px]"
+                    }`}
+                  >
+                    CE SELL Status:
+                    {data.data.haveTradeOfCEBuy ? "True" : "False"}
+                  </p>
+                  {/* &nbsp; */}
+                  <p
+                    className={`${
+                      data.data.haveTradeOfPEBuy
+                        ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
+                        : "text-green-600 font-bold text-[13px] md:text-[16px]"
+                    }`}
+                  >
+                    PE SELL Status:
+                    {data.data.haveTradeOfPEBuy ? "True" : "False"}
                   </p>
                   <Button
                     size="xs"
@@ -1575,6 +1609,35 @@ const HelpingChart = () => {
                         <span>Trendline</span>
                       </div>
                     </button>
+
+                      <button
+                    onClick={() =>
+                      setShowRow((prev) => ({
+                        ...prev,
+                        fibonacci: !prev.fibonacci,
+                      }))
+                    }
+                    className={` px-2 py-1 text-xs font-semibold rounded-md duration-300 ${
+                      showRow.fibonacci ? "bg-black text-gray-100" : "bg-white"
+                    }`}
+                  >
+                    <div className="flex items-center">
+                      <svg
+                        width="28"
+                        height="28"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <g fill="currentColor" fillRule="nonzero">
+                          <path d="M3 5h22v-1h-22z"></path>
+                          <path d="M3 17h22v-1h-22z"></path>
+                          <path d="M3 11h19.5v-1h-19.5z"></path>
+                          <path d="M5.5 23h19.5v-1h-19.5z"></path>
+                          <path d="M3.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM24.5 12c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5z"></path>
+                        </g>
+                      </svg>
+                      <span>Fibonacci Retracement</span>
+                    </div>
+                  </button>
                     {/* 
                     <button
                       onClick={() =>
@@ -1672,6 +1735,7 @@ const HelpingChart = () => {
               setTrends3={setTrends3}
             />
           )} */}
+
           {apiData?.length > 0 && (
             <div className="w-full h-auto flex justify-center">
               <CandleChart

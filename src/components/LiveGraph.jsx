@@ -687,10 +687,10 @@ const CandleChart = ({
           strokeColor = "red"; // Fixed color for PESellLine
         } 
          else if (item.name === "PEBuyLine") {
-          strokeColor = "red"; // Fixed color for PESellLine
+          strokeColor = "green"; // Fixed color for PESellLine
         } 
          else if (item.name === "CEBuyLine") {
-          strokeColor = "green"; // Fixed color for PESellLine
+          strokeColor = "red"; // Fixed color for CEBuyLine
         } 
         else if (ind < 4) {
           // Use colors and names from entryLineArray for the first four lines
@@ -763,7 +763,7 @@ const CandleChart = ({
           setTrends1(trends1.filter((each) => !each.selected));
           setTrends3(trends3.filter((each) => !each.selected));
           setAlert3(alert3.filter((each) => !each.selected));
-          setEntryLine(entryLine.filter((each) => !each.selected));
+          // setEntryLine(entryLine.filter((each) => !each.selected));
 
           // Delete selected Fibonacci retracements
           setRetracements1(retracements1.filter((each) => !each.selected));
@@ -1097,25 +1097,25 @@ const CandleChart = ({
                 <LineSeries
                   strokeDasharray="Dash"
                   strokeWidth={2}
-                  stroke="blue"
+                  stroke="green"
                   yAccessor={(d) => Number(d.CEStopLossForIndex7)}
                 />
                 <LineSeries
                   strokeDasharray="Dash"
                   strokeWidth={2}
-                  stroke="orange"
+                  stroke="red"
                   yAccessor={(d) => Number(d.PEStopLossForIndex7)}
                 />
                 <LineSeries
                   strokeDasharray="Dash"
-                  strokeWidth={2}
-                  stroke="blue"
+                  strokeWidth={4}
+                  stroke="red"
                   yAccessor={(d) => Number(d.CEStopLossForIndex17)}
                 />
                 <LineSeries
                   strokeDasharray="Dash"
-                  strokeWidth={2}
-                  stroke="orange"
+                  strokeWidth={4}
+                  stroke="green"
                   yAccessor={(d) => Number(d.PEStopLossForIndex17)}
                 />
                 {/* <LineSeries
