@@ -448,6 +448,7 @@ const CandleChart = ({
       setShowModal(false);
     };
 
+    
     const handleChoosePosition = (text, moreProps) => {
       if (!moreProps || !moreProps.chartConfig) {
         console.error("moreProps or chartConfig is undefined");
@@ -511,10 +512,9 @@ const CandleChart = ({
     const channelNode1Ref = useRef(null);
     const channelNode3Ref = useRef(null);
 
-    const logTrendLines = (trends) => {
-      // console.log("logTrendLines");
+    const logTrendLines = (trends) => {   
       trends.forEach((trend) => {
-        // console.log("TrendLine Start:", trend.start, "End:", trend.end);
+        console.log("TrendLine Start:", trend.start, "End:", trend.end); 
       });
     };
 
@@ -542,8 +542,6 @@ const CandleChart = ({
       setAlert3(state.alert_3 || alert3)
       setEntryLine(state.entryLine || entryLine)
     };
-
-
 
     const onDrawCompleteChart3 = (newTrends) => {
       // setEnableTrendLine(false);

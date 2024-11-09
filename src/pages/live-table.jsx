@@ -27,9 +27,9 @@ const LiveDataTable = ({ id, socketData }) => {
     const total = data?.reduce((acc, item) => {
       if (item.entryPrice !== null && item.exitPrice !== null) {
         const diff =
-          item.OrderType === "Sell"
-            ? item.entryPrice - item.exitPrice
-            : item.exitPrice - item.entryPrice;
+          item.entryOrderType === "SELL"
+            ? item.entryPrice - item?.exitPrice
+            : item.exitPrice - item?.entryPrice;
         return acc + diff;
       }
       return acc;
@@ -46,13 +46,18 @@ const LiveDataTable = ({ id, socketData }) => {
   }, [data, socketData]);
 
   const calculateDiff = (item) => {
-    if (!item || !socketData?.last_traded_price || !item?.entryPivot || item?.exitPivot)
+    if (
+      !item ||
+      !socketData?.last_traded_price ||
+      !item?.entryPivot ||
+      item?.exitPivot
+    )
       return null;
 
     let diff = null;
     if (item.OrderType === "Buy") {
       diff = (socketData.last_traded_price - item.entryPivot)?.toFixed(2);
-    } else if (item.OrderType === "Sell") {
+    } else if (item.OrderType === "SELL") {
       diff = (item.entryPivot - socketData.last_traded_price)?.toFixed(2);
     }
     return { identifier: item.identifier, diff };
@@ -61,14 +66,15 @@ const LiveDataTable = ({ id, socketData }) => {
   return (
     <div className="p-4">
       <div className="ml-3 mt-2 flex justify-around">
-        {lastTwoDiffs.diff1?.diff && (
+        {lastTwoDiffs?.diff1?.diff && (
           <p className="font-semibold font-serif">
-            {lastTwoDiffs.diff1?.identifier} : {lastTwoDiffs.diff1?.diff}
+            {lastTwoDiffs?.diff1?.identifier} : {lastTwoDiffs?.diff1?.diff}
           </p>
         )}
       </div>
 
       {/* Scrollable wrapper for the table */}
+
       <div className="overflow-x-auto">
         <table className="min-w-full mx-auto mb-20 border-collapse border border-gray-300">
           <thead>
@@ -90,10 +96,11 @@ const LiveDataTable = ({ id, socketData }) => {
             </tr>
           </thead>
           <tbody>
-            {data.map((item, index) => {
+            {data?.map((item, index) => {
+              // console.log("item.entryOrderType",item.entryOrderType)
               const priceDiff =
                 item.entryPrice !== null && item.exitPrice !== null
-                  ? item.OrderType === "Sell"
+                  ? item.entryOrderType === "SELL"
                     ? (item.entryPrice - item.exitPrice)?.toFixed(2)
                     : (item.exitPrice - item.entryPrice)?.toFixed(2)
                   : null;

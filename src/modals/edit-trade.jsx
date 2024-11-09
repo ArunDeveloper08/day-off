@@ -897,7 +897,7 @@ export const EditTrade = () => {
                   </div>
                 )}
 
-                {values.isMaster && (
+                {/* {values.isMaster && (
                   <>
                     <div className="px-1">
                       <Label>Put Target Level</Label>
@@ -922,7 +922,7 @@ export const EditTrade = () => {
                       />
                     </div>
                   </>
-                )}
+                )} */}
                 {values.isMaster && values.indexValue == 4 && (
                   <>
                     <div className="px-1">

@@ -172,7 +172,7 @@ export const BackTestingPage = () => {
     }
   }, [data?.data?.identifier]);
   // console.log({ isConnected },socket?.id);
-  console.log(apiData);
+  // console.log(apiData);
 
 
   const handleCreateTrendLines = async (

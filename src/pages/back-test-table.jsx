@@ -43,19 +43,17 @@ const BackTestingTablePage = ({
   }, [updateTrigger, handleOFF]);
 
   useEffect(() => {
-    if (data?.data) {
-      const total = data.data.reduce((acc, item) => {
-        if (item.entryPrice !== null && item.exitPrice !== null) {
-          const diff =
-            item.OrderType === "Sell"
-              ? item.entryPrice - item.exitPrice
-              : item.exitPrice - item.entryPrice;
-          return acc + diff;
-        }
-        return acc;
-      }, 0);
-      setSum(total);
-    }
+    const total = data?.reduce((acc, item) => {
+      if (item.entryPrice !== null && item.exitPrice !== null) {
+        const diff =
+          item.entryOrderType === "SELL"
+            ? item.entryPrice - item?.exitPrice
+            : item.exitPrice - item?.entryPrice;
+        return acc + diff;
+      }
+      return acc;
+    }, 0);
+    setSum(total);
   }, [data]);
 
   return (
@@ -88,13 +86,13 @@ const BackTestingTablePage = ({
             </thead>
             <tbody>
               {data?.data?.map((item, index) => {
-                let priceDiff = null;
-                if (item.entryPrice !== null && item.exitPrice !== null) {
-                  priceDiff =
-                    item.OrderType === "Sell"
-                      ? (item.entryPrice - item.exitPrice)?.toFixed(2)
-                      : (item.exitPrice - item.entryPrice)?.toFixed(2);
-                }
+                // let priceDiff = null;
+                const priceDiff =
+                item.entryPrice !== null && item.exitPrice !== null
+                  ? item.entryOrderType === "SELL"
+                    ? (item.entryPrice - item.exitPrice)?.toFixed(2)
+                    : (item.exitPrice - item.entryPrice)?.toFixed(2)
+                  : null;
                 return (
                   <tr
                     key={index}
@@ -109,7 +107,7 @@ const BackTestingTablePage = ({
                     </td>
                     {/* <td className="border border-gray-300 text-center text-[13px] p-1">
                     {item.identifier}
-                  </td> */}
+                    </td> */}
                     <td className="border border-gray-300 text-center text-[13px] p-1">
                       {formatDate(item.realEntryTime)}
                     </td>
@@ -119,7 +117,7 @@ const BackTestingTablePage = ({
                     <td className="border border-gray-300 text-center text-[13px] p-1">
                       {item.RSI_Value?.toFixed(2)}
                     </td>
-                    <td className="p-1 border border-gray-300 text-center text-[13px]">
+                    <td className="p-1 border border-gray-300 text-center text-[13px]">     
                       {item.dynamicEntryValue}
                     </td>
                     <td className="border border-gray-300 text-center text-[13px] p-1">
@@ -146,9 +144,11 @@ const BackTestingTablePage = ({
                     <td className="p-1 border border-gray-300 text-center text-[13px]">
                       {item.exitRSI_Value}
                     </td>
+
                     {/* <td className="border border-gray-300 text-center text-[13px] p-1">
                       {item.dynamicExitValue?.toFixed(2)}
                     </td> */}
+
                     <td className="p-1 border border-gray-300 text-center text-[13px]">
                       {item.exitReason}
                     </td>
@@ -174,6 +174,7 @@ const BackTestingTablePage = ({
               })}
             </tbody>
           </table>
+          
           {/* <table className="w-fit mx-auto mb-20">
             <thead>
               <tr className="bg-[#3a2d7d] text-white">

@@ -74,7 +74,7 @@ const HelpingChart = () => {
 
   useEffect(() => {
     if (data?.data?.identifier) {
-      document.title = ` Helping:${data?.data?.identifier}`;
+      document.title = `${data?.data?.identifier}`;
     }
   }, [data?.data?.identifier]);
 
@@ -189,16 +189,16 @@ const HelpingChart = () => {
         //   const mergeEntryLines = (apiLines, stateLines) => {
         //     // Create a Set to track existing names in the API data for quick lookup
         //     const apiLineNames = new Set(apiLines.map(apiLine => apiLine.name));
-          
+
         //     // Filter user-drawn lines to include only those not present in the API data
         //     const uniqueUserLines = stateLines.filter(
         //       userLine => !apiLineNames.has(userLine.name)
         //     );
-          
+
         //     // Combine API lines and unique user-drawn lines
         //     return [...apiLines, ...uniqueUserLines];
         //   };
-          
+
         //   // Usage
         //   // const mergedEntryLines = mergeEntryLines(apiEntryLines, entryLine);
         //   // setEntryLine(mergedEntryLines);
@@ -211,38 +211,39 @@ const HelpingChart = () => {
 
         if (res?.data?.buyTrendLines?.length > 0) {
           const apiEntryLines = res.data?.buyTrendLines || [];
-        
+
           const mergeEntryLines = (apiLines, stateLines) => {
             // Create a Set to track existing names in the API data for quick lookup
-            const apiLineNames = new Set(apiLines.map(apiLine => apiLine.name));
+            const apiLineNames = new Set(
+              apiLines?.map((apiLine) => apiLine.name)
+            );
             // Filter user-drawn lines to include only those not present in the API data
-            const uniqueUserLines = stateLines.filter(
-              userLine => !apiLineNames.has(userLine.name)
+            const uniqueUserLines = stateLines?.filter(
+              (userLine) => !apiLineNames?.has(userLine.name)
             );
 
-        
             // Combine API lines and unique user-drawn lines
-            const combinedLines = [...apiLines, ...uniqueUserLines];      
+            const combinedLines = [...apiLines, ...uniqueUserLines];
             // Filter out CESellLine and PESellLine if they are not in the API data
-            return combinedLines.filter(line =>
+            return combinedLines.filter((line) =>
               line.name !== "CESellLine" &&
               line.name !== "PESellLine" &&
               line.name !== "PEBuyLine" &&
-              line.name !== "CEBuyLine"
-                  ? true
-                  : apiLineNames.has(line.name)
-          );
-          
+              line.name !== "CEBuyLine"  
+                ? true
+                : apiLineNames.has(line.name)
+            );
           };
-        
+
           // Usage
-          setEntryLine(prevEntryLines => {
-            const mergedEntryLines = mergeEntryLines(apiEntryLines, prevEntryLines);
+          setEntryLine((prevEntryLines) => {
+            const mergedEntryLines = mergeEntryLines(
+              apiEntryLines,
+              prevEntryLines
+            );
             return mergedEntryLines;
           });
         }
-        
-       
 
         if (!hasInitializedTrends.current) {
           // console.log("Setting trends for the first time");
@@ -322,10 +323,10 @@ const HelpingChart = () => {
     prevHaveTradeOfCE.current = haveTradeOfCE;
     prevHaveTradeOfPE.current = haveTradeOfPE;
   }, [
-    data?.data?.haveTradeOfCE, 
-    data?.data?.haveTradeOfPE , 
-    data?.data?.haveTradeOfCEBuy ,   
-    data?.data?.haveTradeOfPEBuy
+    data?.data?.haveTradeOfCE,
+    data?.data?.haveTradeOfPE,
+    data?.data?.haveTradeOfCEBuy,
+    data?.data?.haveTradeOfPEBuy,
   ]);
 
   useEffect(() => {
@@ -335,7 +336,14 @@ const HelpingChart = () => {
     //  intervalRef.current = interval;
 
     return () => clearInterval(interval);
-  }, [apiData?.[0]?.CEStopLossForIndex7 , apiData?.[0]?.PEStopLossForIndex7]);
+  }, [
+    apiData?.[0]?.CEStopLossForIndex7,
+    apiData?.[0]?.PEStopLossForIndex7,
+    data?.data?.haveTradeOfCE,
+    data?.data?.haveTradeOfPE,
+    data?.data?.haveTradeOfCEBuy,
+    data?.data?.haveTradeOfPEBuy,
+  ]);
 
   const memoizedTrendLines = useMemo(() => {
     let supports = [];
@@ -467,8 +475,8 @@ const HelpingChart = () => {
       try {
         await axios.put(`${BASE_URL_OVERALL}/config/edit`, { id, ...data });
         alert("Successfully saved.");
-        await getChartData();
         await getTrendLinesValue();
+        await getChartData();
       } catch (err) {
         console.error("Error saving data:", err);
       }
@@ -478,10 +486,9 @@ const HelpingChart = () => {
     const incompleteLineExists = trendline?.some(
       (line) => line?.endTime === undefined && line?.startTime
     );
-  const incompleteLineExists2 = entryLine
-  ?.slice(0, 4) // Get only the first 4 elements
-  .some((line) => line?.endTime === undefined && line?.startTime);
-
+    const incompleteLineExists2 = entryLine
+      ?.slice(0, 4) // Get only the first 4 elements
+      .some((line) => line?.endTime === undefined && line?.startTime);
 
     // Handle validations for trendline
     if (showRow.trendLine) {
@@ -682,7 +689,7 @@ const HelpingChart = () => {
       ) : (
         <>
           <h2 className="text-center font-semibold text-[18px] font-mono text-red-600 sm:text-[20px] md:text-[24px]">
-            Angel-One &nbsp;{" "}
+          {data?.data?.identifier} &nbsp;{" "}
             <button className="text-md text-center font-semibold text-red-700">
               LTP : {socketData?.last_traded_price} &nbsp;
               {/* Pivot :{" "}
@@ -711,14 +718,14 @@ const HelpingChart = () => {
                       ? "1 minute"
                       : values?.interval}
                   </p>
-                  <p className=" text-[13px] md:text-[16px]">
+                  {/* <p className=" text-[13px] md:text-[16px]">
                     Identifier:
                     {data?.data?.identifier}
-                  </p>
+                  </p> */}
                   <p className=" text-[13px] md:text-[16px]">
                     Trade Index: {data?.data?.tradeIndex}
                   </p>
-                  {data?.data?.tradeIndex != 4 && (
+                  {(data?.data?.tradeIndex != 4 && data?.data?.tradeIndex != 7) && (
                     <>
                       <p className=" text-[13px] md:text-[16px]">
                         SMA1 : {data?.data?.SMA1}
@@ -741,8 +748,7 @@ const HelpingChart = () => {
                         : "text-green-600 font-bold text-[13px] md:text-[16px]"
                     }`}
                   >
-                   CE Buy Status :
-                    {data.data.haveTradeOfCE ? "True" : "False"}
+                    CE Buy Status :{data.data.haveTradeOfCE ? "True" : "False"}
                   </p>
                   {/* &nbsp; */}
                   <p
@@ -857,8 +863,8 @@ const HelpingChart = () => {
                         {trendLineValue?.dataForIndex7?.putTargetLevelPrice?.toFixed(
                           1
                         )}
-                        &nbsp; &nbsp;
-                        {trendLineValue?.dataForIndex7?.CESellLinePrice && (
+                       &nbsp;
+                        {trendLineValue?.dataForIndex7?.CESellLinePrice > 0 && (
                           <span>
                             CE Buy Price :
                             {trendLineValue?.dataForIndex7?.CESellLinePrice?.toFixed(
@@ -867,7 +873,7 @@ const HelpingChart = () => {
                           </span>
                         )}
                         &nbsp; &nbsp;
-                        {trendLineValue?.dataForIndex7?.PESellLinePrice && (
+                        {trendLineValue?.dataForIndex7?.PESellLinePrice > 0 && (
                           <span>
                             PE Buy Price :
                             {trendLineValue?.dataForIndex7?.PESellLinePrice?.toFixed(
@@ -876,7 +882,7 @@ const HelpingChart = () => {
                           </span>
                         )}
                         &nbsp; &nbsp;
-                        {trendLineValue?.dataForIndex7?.PEBuyLinePrice && (
+                        {trendLineValue?.dataForIndex7?.PEBuyLinePrice > 0 && (
                           <span>
                             PE Sell Price :
                             {trendLineValue?.dataForIndex7?.PEBuyLinePrice?.toFixed(
@@ -885,7 +891,7 @@ const HelpingChart = () => {
                           </span>
                         )}
                         &nbsp; &nbsp;
-                        {trendLineValue?.dataForIndex7?.CEBuyLinePrice && (
+                        {trendLineValue?.dataForIndex7?.CEBuyLinePrice > 0 && (
                           <span>
                             CE Sell Price :
                             {trendLineValue?.dataForIndex7?.CEBuyLinePrice?.toFixed(
@@ -921,7 +927,7 @@ const HelpingChart = () => {
                             {apiData?.[0]?.PEStopLossForIndex17?.toFixed(1)}
                           </span>
                         )}
-                        &nbsp; &nbsp; Time :
+                         Time :
                         {formatDate(trendLineValue?.timestamp)}
                       </p>
                     )}
@@ -1491,7 +1497,7 @@ const HelpingChart = () => {
                         {[
                           { label: "Active", value: true },
                           { label: "Deactive", value: false },
-                        ].map((suggestion) => (
+                        ]?.map((suggestion) => (
                           <SelectItem
                             key={suggestion.value}
                             value={suggestion.value}
@@ -1610,34 +1616,36 @@ const HelpingChart = () => {
                       </div>
                     </button>
 
-                      <button
-                    onClick={() =>
-                      setShowRow((prev) => ({
-                        ...prev,
-                        fibonacci: !prev.fibonacci,
-                      }))
-                    }
-                    className={` px-2 py-1 text-xs font-semibold rounded-md duration-300 ${
-                      showRow.fibonacci ? "bg-black text-gray-100" : "bg-white"
-                    }`}
-                  >
-                    <div className="flex items-center">
-                      <svg
-                        width="28"
-                        height="28"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <g fill="currentColor" fillRule="nonzero">
-                          <path d="M3 5h22v-1h-22z"></path>
-                          <path d="M3 17h22v-1h-22z"></path>
-                          <path d="M3 11h19.5v-1h-19.5z"></path>
-                          <path d="M5.5 23h19.5v-1h-19.5z"></path>
-                          <path d="M3.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM24.5 12c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5z"></path>
-                        </g>
-                      </svg>
-                      <span>Fibonacci Retracement</span>
-                    </div>
-                  </button>
+                    <button
+                      onClick={() =>
+                        setShowRow((prev) => ({
+                          ...prev,
+                          fibonacci: !prev.fibonacci,
+                        }))
+                      }
+                      className={` px-2 py-1 text-xs font-semibold rounded-md duration-300 ${
+                        showRow.fibonacci
+                          ? "bg-black text-gray-100"
+                          : "bg-white"
+                      }`}
+                    >
+                      <div className="flex items-center">
+                        <svg
+                          width="28"
+                          height="28"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <g fill="currentColor" fillRule="nonzero">
+                            <path d="M3 5h22v-1h-22z"></path>
+                            <path d="M3 17h22v-1h-22z"></path>
+                            <path d="M3 11h19.5v-1h-19.5z"></path>
+                            <path d="M5.5 23h19.5v-1h-19.5z"></path>
+                            <path d="M3.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM24.5 12c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5z"></path>
+                          </g>
+                        </svg>
+                        <span>Fibonacci Retracement</span>
+                      </div>
+                    </button>
                     {/* 
                     <button
                       onClick={() =>
