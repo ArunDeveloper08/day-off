@@ -42,19 +42,19 @@ const BackTestingTablePage = ({
     return () => clearInterval(interval);
   }, [updateTrigger, handleOFF]);
 
-  useEffect(() => {
-    const total = data?.reduce((acc, item) => {
-      if (item.entryPrice !== null && item.exitPrice !== null) {
-        const diff =
-          item.entryOrderType === "SELL"
-            ? item.entryPrice - item?.exitPrice
-            : item.exitPrice - item?.entryPrice;
-        return acc + diff;
-      }
-      return acc;
-    }, 0);
-    setSum(total);
-  }, [data]);
+  // useEffect(() => {
+  //   const total = data && data?.reduce((acc, item) => {
+  //     if (item.entryPrice !== null && item.exitPrice !== null) {
+  //       const diff =
+  //         item.entryOrderType === "SELL"
+  //           ? item.entryPrice - item?.exitPrice
+  //           : item.exitPrice - item?.entryPrice;
+  //       return acc + diff;
+  //     }
+  //     return acc;
+  //   }, 0);
+  //   setSum(total);
+  // }, [data]);
 
   return (
     <div className="p-2 overflow-x-auto">

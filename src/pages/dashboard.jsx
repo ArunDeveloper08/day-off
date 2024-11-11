@@ -359,6 +359,9 @@ const Dashboard = () => {
         if (activeFilters.includes("Others") && item.category === "Others") {
           match = true;
         }
+        if (activeFilters.includes("Hedging") && item.isHedging == "1") {
+          match = true;
+        }
         if (item?.isMaster && item.targetAbove && item.targetBelow) {
           const LTP = socketData[item.instrument_token]?.last_traded_price;
 
@@ -461,7 +464,9 @@ const Dashboard = () => {
             Looser/Gainer
           </Button> */}
           <Button
-            onClick={() => navigate("/future/particular-identifier-losser-gainer")}
+            onClick={() =>
+              navigate("/future/particular-identifier-losser-gainer")
+            }
             className="px-5 py-2 rounded-md border-2"
           >
             Looser/Gainer Log
@@ -527,7 +532,6 @@ const Dashboard = () => {
           {/* <ModeToggle /> */}
         </div>
 
-
         <div className="flex flex-wrap justify-center gap-2 md:gap-5 mt-1">
           <Button
             onClick={() => handleButtonClick("isMaster")}
@@ -543,7 +547,7 @@ const Dashboard = () => {
               activeButtons["option"] ? "bg-red-500" : "bg-black"
             }`}
           >
-           Trading Stock
+            Trading Stock
           </Button>
           <Button
             onClick={() => handleButtonClick("Index")}
@@ -559,7 +563,7 @@ const Dashboard = () => {
               activeButtons["Breakout"] ? "bg-red-500" : "bg-black"
             }`}
           >
-         My Today Stock
+            My Today Stock
           </Button>
           <Button
             onClick={() => handleButtonClick("52weakLow")}
@@ -567,7 +571,7 @@ const Dashboard = () => {
               activeButtons["52weakLow"] ? "bg-red-500" : "bg-black"
             }`}
           >
-         My Hot WatchList
+            My Hot WatchList
           </Button>
           <Button
             onClick={() => handleButtonClick("52weakHigh")}
@@ -666,6 +670,14 @@ const Dashboard = () => {
             Others
           </Button>
           <Button
+            onClick={() => handleButtonClick("Hedging")}
+            className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
+              activeButtons["Hedging"] ? "bg-red-500" : "bg-black"
+            }`}
+          >
+            Hedging
+          </Button>
+          <Button
             onClick={() => handleButtonClick("ALL")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
               activeButtons["ALL"] ? "bg-red-500" : "bg-black"
@@ -675,9 +687,9 @@ const Dashboard = () => {
           </Button>
         </div>
         <div className="overflow-x-scroll">
-          <table 
-          className="dashboard-table w-[1400px]  mx-auto"
-          // className={`${!activeFilters.includes("isMaster") ? 'dashboard-table w-[1200px]  mx-auto' : 'dashboard-table w-[1700px]  mx-auto'}`}
+          <table
+            className="dashboard-table w-[1400px]  mx-auto"
+            // className={`${!activeFilters.includes("isMaster") ? 'dashboard-table w-[1200px]  mx-auto' : 'dashboard-table w-[1700px]  mx-auto'}`}
           >
             <thead>
               <tr>
@@ -697,7 +709,7 @@ const Dashboard = () => {
                 )}
 
                 <th>Interval</th>
-                
+
                 <th>Identifier</th>
 
                 {activeFilters.includes("isMaster") && (
@@ -823,12 +835,10 @@ const Dashboard = () => {
                               )}
                             </td>
                             <td>{item.tradeIndex}</td>
-
                           </>
                         )}
 
-                         <td>{item.interval}</td>
-                    
+                        <td>{item.interval}</td>
 
                         <td
                           className={`${
@@ -1072,12 +1082,14 @@ const Dashboard = () => {
                                   putTargetLevel: item.putTargetLevel,
                                   maxZoneTime: item.maxZoneTime,
                                   noTradeZone: item.noTradeZone,
-                                  trendCandleCount: item.trendCandleCount ,
+                                  trendCandleCount: item.trendCandleCount,
                                   candleRatioBuy: item.candleRatioBuy,
                                   candleRatioSell: item.candleRatioSell,
                                   CESellDeviation: item.CESellDeviation,
                                   PESellDeviation: item.PESellDeviation,
-                                  secondarySellTarget:item.secondarySellTarget,
+                                  secondarySellTarget: item.secondarySellTarget,
+                                  isHedging: item.isHedging,
+                                  hedgingIdentifier: item.hedgingIdentifier,
                                 },
                                 getAllTrades,
                                 trades,

@@ -99,6 +99,8 @@ const initialState = {
   CESellDeviation: "",
   PESellDeviation: "",
   secondarySellTarget: "",
+  isHedging: 0,
+  hedgingIdentifier: "",
   // Min_Order_Qty:"1"
 };
 
@@ -178,6 +180,8 @@ const alternateInitialState = {
   CESellDeviation: "",
   PESellDeviation: "",
   secondarySellTarget: "",
+  isHedging: 0,
+  hedgingIdentifier: "",
 };
 // tradeIndex =2
 const gammaBlastInitialState = {
@@ -261,6 +265,8 @@ const gammaBlastInitialState = {
   CESellDeviation: "",
   PESellDeviation: "",
   secondarySellTarget: "",
+  isHedging: 0,
+  hedgingIdentifier: "",
 };
 // tradeIndex =6
 
@@ -401,6 +407,9 @@ export const AddNewtrade = () => {
     if (values?.entryHystresisPercent > 25) {
       return alert("Entry Hystresis Percent Should be less than 25%");
     }
+    if (String(values?.isHedging) === "1" && values.hedgingIdentifier == "") {
+      return alert("This Trade is Hedge Trade . Enter Hedge Identifier");
+    }
     // if (values?.rangeBoundPercent > values?.rangeBoundPercent2) {
     //   return alert(
     //     "Range Bound Percent 2 Should be greater than Range Bound Percent"
@@ -477,12 +486,14 @@ export const AddNewtrade = () => {
         callTargetLevel: values.callTargetLevel,
         maxZoneTime: values.maxZoneTime,
         noTradeZone: values.noTradeZone,
-        trendCandleCount: values.trendCandleCount ,
+        trendCandleCount: values.trendCandleCount,
         candleRatioBuy: values.candleRatioBuy,
         candleRatioSell: values.candleRatioSell,
         CESellDeviation: values.CESellDeviation,
         PESellDeviation: values.PESellDeviation,
-        secondarySellTarget:values.secondarySellTarget,
+        secondarySellTarget: values.secondarySellTarget,
+        isHedging: values.isHedging,
+        hedgingIdentifier: values.hedgingIdentifier,
       });
       alert("Add Successfully");
     } catch (error) {
@@ -572,6 +583,38 @@ export const AddNewtrade = () => {
                 type="text"
               />
             </div>
+            <div className="px-1">
+              <Label>Is Hedging</Label>
+              <Select
+                value={String(values?.isHedging) === "0" ? "NO" : "YES"}
+                name="isHedging"
+                onValueChange={(value) => handleSelect("isHedging", value)}
+              >
+                <SelectTrigger className="w-full mt-1 border-zinc-500">
+                  <SelectValue>
+                    {values?.isHedging === "0" ? "NO" : "YES"}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Hedging</SelectLabel>
+                    <SelectItem value="0">NO</SelectItem>
+                    <SelectItem value="1">YES</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {values?.isHedging == 1 && (
+              <div className="px-1">
+                <Label>Hedging Identifier</Label>
+                <Input
+                  value={values.hedgingIdentifier}
+                  className="mt-1"
+                  type="text"
+                />
+              </div>
+            )}
 
             <div className="px-1">
               <Label>Expiry</Label>
@@ -755,7 +798,7 @@ export const AddNewtrade = () => {
               </div>
             )}
 
-            {(values.indexValue != 6 ||  values?.indexValue != 7) || (
+            {values.indexValue != 6 || values?.indexValue != 7 || (
               <>
                 {values.rangeBound != "Disable" && (
                   <>
@@ -850,10 +893,9 @@ export const AddNewtrade = () => {
                 )}
               </>
             )}
-            {(values.indexValue != 6 ) && (
+            {values.indexValue != 6 && (
               <>
-                {
-                (values?.indexValue != 4 ||  values.indexValue != 7) || (
+                {values?.indexValue != 4 || values.indexValue != 7 || (
                   <>
                     <div className="px-1">
                       <Label>Range Bound (%)</Label>
@@ -1120,75 +1162,71 @@ export const AddNewtrade = () => {
             )}
 
             {(values.indexValue == 7 || values.indexValue == 17) && (
-
               <>
-              
-              
-              
-              <div className="px-1">
-                <Label> Trend Candle Count</Label>
-                <Input
-                  name="trendCandleCount"
-                  onChange={handleChange}
-                  value={values.trendCandleCount}
-                  className="mt-1"
-                  type="number"
-                />
-              </div>
-              <div className="px-1">
-                <Label>CE Buy Deviation</Label>
-                <Input
-                  name="candleRatioBuy"
-                  onChange={handleChange}
-                  value={values.candleRatioBuy}
-                  className="mt-1"
-                  type="number"
-                />
-              </div>
-              <div className="px-1">
-                <Label>PE Buy Deviation</Label>
-                <Input
-                  name="candleRatioSell"
-                  onChange={handleChange}
-                  value={values.candleRatioSell}
-                  className="mt-1"
-                  type="number"
-                />
-              </div>
-              <div className="px-1">
-                <Label>CE Sell Deviation</Label>
-                <Input
-                  name="CESellDeviation"
-                  onChange={handleChange}
-                  value={values.CESellDeviation}
-                  className="mt-1"
-                  type="number"
-                />
-              </div>
-              <div className="px-1">
-                <Label>PE Sell Deviation</Label>
-                <Input
-                  name="PESellDeviation"
-                  onChange={handleChange}
-                  value={values.PESellDeviation}
-                  className="mt-1"
-                  type="number"
-                />
-              </div>
-              <div className="px-1">
-                <Label>Secondary Sell Target (%)</Label>
-                <Input
-                  name="secondarySellTarget"
-                  onChange={handleChange}
-                  value={values.secondarySellTarget}
-                  className="mt-1"
-                  type="number"
-                />
-              </div>
+                <div className="px-1">
+                  <Label> Trend Candle Count</Label>
+                  <Input
+                    name="trendCandleCount"
+                    onChange={handleChange}
+                    value={values.trendCandleCount}
+                    className="mt-1"
+                    type="number"
+                  />
+                </div>
+                <div className="px-1">
+                  <Label>CE Buy Deviation</Label>
+                  <Input
+                    name="candleRatioBuy"
+                    onChange={handleChange}
+                    value={values.candleRatioBuy}
+                    className="mt-1"
+                    type="number"
+                  />
+                </div>
+                <div className="px-1">
+                  <Label>PE Buy Deviation</Label>
+                  <Input
+                    name="candleRatioSell"
+                    onChange={handleChange}
+                    value={values.candleRatioSell}
+                    className="mt-1"
+                    type="number"
+                  />
+                </div>
+                <div className="px-1">
+                  <Label>CE Sell Deviation</Label>
+                  <Input
+                    name="CESellDeviation"
+                    onChange={handleChange}
+                    value={values.CESellDeviation}
+                    className="mt-1"
+                    type="number"
+                  />
+                </div>
+                <div className="px-1">
+                  <Label>PE Sell Deviation</Label>
+                  <Input
+                    name="PESellDeviation"
+                    onChange={handleChange}
+                    value={values.PESellDeviation}
+                    className="mt-1"
+                    type="number"
+                  />
+                </div>
+                <div className="px-1">
+                  <Label>Secondary Sell Target (%)</Label>
+                  <Input
+                    name="secondarySellTarget"
+                    onChange={handleChange}
+                    value={values.secondarySellTarget}
+                    className="mt-1"
+                    type="number"
+                  />
+                </div>
               </>
             )}
 
-            { values.indexValue != 4 && values?.isMaster == false && (
+            {values.indexValue != 4 && values?.isMaster == false && (
               <div className="px-1">
                 <Label>Minimum Profit (%)</Label>
                 <Input
@@ -1261,8 +1299,7 @@ export const AddNewtrade = () => {
               </>
             )} */}
 
-            {             
-            values.isMaster && values.indexValue == 4 && (
+            {values.isMaster && values.indexValue == 4 && (
               <>
                 <div className="px-1">
                   <Label>Max Zone Time</Label>
@@ -1285,7 +1322,7 @@ export const AddNewtrade = () => {
                     className="mt-1"
                     type="number"
                     min={0}
-                  />                 
+                  />
                 </div>
               </>
             )}

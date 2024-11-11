@@ -25,10 +25,12 @@ export const BackTestingPage = () => {
   const { socket, isConnected } = useLiveSocket();
   const [apiData, setApiData] = useState([]);
   const [updateTrigger, setUpdateTrigger] = useState(false);
-  const [chartType, setChartType] = useState("canvas");
+  // const [chartType, setChartType] = useState("canvas");
   const [trends3, setTrends3] = useState([]);
   const [alert3, setAlert3] = useState([]);
   const [intractiveData, setIntractiveData] = useState([]);
+  const [entryLine, setEntryLine] = useState([]);
+  const [chartType, setChartType] = useState("svg");
   const [data, setData] = useState({
     loading: false,
     data: {},
@@ -38,6 +40,7 @@ export const BackTestingPage = () => {
     timestamp1: new Date().toISOString().split("T")[0] + "T09:15",
     timestamp2: new Date().toISOString().split("T")[0] + "T15:30",
   });
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const [showRow, setShowRow] = useState({
     showAvg: false,
@@ -56,6 +59,8 @@ export const BackTestingPage = () => {
     volume: false,
     RangeBoundTargetProfit: false,
     suppRes: false,
+    entryLine: true,
+    toolTip: false,
   });
 
   const [latestValues, setLatestValues] = useState({
@@ -72,7 +77,7 @@ export const BackTestingPage = () => {
         `${BASE_URL_OVERALL}/config/get?id=${id}`
       );
       setData((p) => ({ ...p, data: data.data }));
-      console.log(data.data);
+      // console.log(data.data);
     } catch (error) {
       setData((p) => ({
         ...p,
@@ -97,7 +102,6 @@ export const BackTestingPage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     setDateTime({ ...dateTime, [name]: value });
   };
 
@@ -113,6 +117,7 @@ export const BackTestingPage = () => {
   //     setDateTime({ ...dateTime, [name]: `${datePart}T${fixedTime}` });
   //   }
   // };
+
   const handleStart = () => {
     axios
       .post(`${BASE_URL_OVERALL}/test/startTesting`, {
@@ -128,13 +133,13 @@ export const BackTestingPage = () => {
       });
   };
 
-
   useEffect(() => {
     if (isConnected && socket) {
       socket?.on("sendingTradeData", (message) => {
         const { data } = message;
         // console.log(data);
         const diff = data.close - data.open;
+
         setCumulativeState((prevCumulativeState) => {
           const newCumulativeDiff =
             diff >= 0 ? prevCumulativeState.cumulativeDiff + diff : 0;
@@ -162,7 +167,23 @@ export const BackTestingPage = () => {
     }
   }, [socket, isConnected]);
 
-  const handleRESET = () => {
+  const handleSubmit = async (data) => {
+    try {
+      await axios.put(`${BASE_URL_OVERALL}/config/edit`, {
+        id,
+        ...data,
+      });
+      alert("Successfully saved.");
+      await getTrendLinesValue();
+      await getChartData();
+    } catch (err) {
+      console.error("Error saving data:", err);
+    }
+  };
+
+  const handleRESET = async () => {
+    await setEntryLine([]);
+    await handleSubmit({ testingBuyTrendLines: null });
     window.location.reload();
   };
 
@@ -173,7 +194,6 @@ export const BackTestingPage = () => {
   }, [data?.data?.identifier]);
   // console.log({ isConnected },socket?.id);
   // console.log(apiData);
-
 
   const handleCreateTrendLines = async (
     trendline,
@@ -186,11 +206,13 @@ export const BackTestingPage = () => {
     const incompleteLineExists = trendline?.some(
       (line) => line?.endTime === undefined && line?.startTime
     );
-  
+
     // Check if the user has fewer than 10 trend lines
     if (trendline.length < 10) {
       alert(
-        `You have only ${trendline.length} trend lines. Please add ${10 - trendline.length} more trend lines.`
+        `You have only ${trendline.length} trend lines. Please add ${
+          10 - trendline.length
+        } more trend lines.`
       );
       // If there's an incomplete line, show the alert but still attempt to save `alertLine`
       if (incompleteLineExists) {
@@ -210,7 +232,7 @@ export const BackTestingPage = () => {
       }
       return; // Exit early since trendLine saving isn't allowed
     }
-  
+
     // If all validations pass, save all values
     try {
       const textLabel = JSON.stringify(textList1);
@@ -229,6 +251,13 @@ export const BackTestingPage = () => {
       console.error("Error saving data:", err);
     }
   };
+  const handlePlayPause = () => {
+    const command = isPlaying ? "pauseInterval" : "playInterval";
+    socket.emit(command);
+    console.log(`${command} command sent`);
+    setIsPlaying(!isPlaying); // Toggle the playing state
+  };
+
   return (
     <div>
       {data.loading ? (
@@ -359,7 +388,6 @@ export const BackTestingPage = () => {
             >
               Target Profit
             </button>
-
             {/* 
               &nbsp; &nbsp;
          <button
@@ -375,7 +403,6 @@ export const BackTestingPage = () => {
          >
            <span className="flex">Buy Sell (Arrow)</span>
          </button> */}
-
             &nbsp; &nbsp;
             <button
               onClick={() =>
@@ -409,7 +436,6 @@ export const BackTestingPage = () => {
               Initial Low
             </button>
             &nbsp; &nbsp;
-
             <button
               onClick={() =>
                 setShowRow((p) => ({
@@ -469,11 +495,7 @@ export const BackTestingPage = () => {
             >
               Volume
             </button>
-            &nbsp; &nbsp;
-          
-        
-
-            &nbsp; &nbsp;
+            &nbsp; &nbsp; &nbsp; &nbsp;
           </div>
 
           <div className="flex pt-2 justify-around items-center mt-2">
@@ -494,7 +516,38 @@ export const BackTestingPage = () => {
                 onChange={handleChange}
               />
             </div>
+            <button
+              className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                showRow.entryLine ? "bg-black text-gray-100" : "bg-white"
+              }`}
+            >
+              <div className="flex items-center">
+                <span className="icon-KTgbfaP5" role="img" aria-hidden="true">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 28 28"
+                    width="28"
+                    height="28"
+                  >
+                    <g fill="currentColor" fillRule="nonzero">
+                      <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
+                      <path d="M22.5 7c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM5.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
+                    </g>
+                  </svg>
+                </span>
+                <span>Entry Line</span>
+              </div>
+            </button>
+            <Button
+              onClick={() => handleSubmit({ testingBuyTrendLines: entryLine })}
+            >
+              {" "}
+              Trendline Submit
+            </Button>
             <Button onClick={handleStart}>Start</Button>
+            <Button onClick={handlePlayPause}>
+              {isPlaying ? "Pause" : "Play"}
+            </Button>
             <Button onClick={handleRESET}>Reset</Button>
           </div>
           {apiData?.length > 1 && (
@@ -513,6 +566,8 @@ export const BackTestingPage = () => {
               setAlert3={setAlert3}
               alert3={alert3}
               intractiveData={intractiveData}
+              setEntryLine={setEntryLine}
+              entryLine={entryLine}
             />
           )}
 
