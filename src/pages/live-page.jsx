@@ -277,9 +277,9 @@ export const LivePage = () => {
 //  console.log("socketdata",socketData)
   return (
     <div>
-      {data.error ? (
-        "Some Error Occcured"
-      ) : (
+      {/* {data.error ? ( */}
+        {/* // "Some Error Occcured" */}
+      {/* // ) : ( */}
         <>
           <div>
             <p className="font-semibold text-center font-mono text-[20px] text-green-600">
@@ -560,7 +560,7 @@ export const LivePage = () => {
 
           {id && <LiveDataTable id={id} socketData={socketData} />}
         </>
-      )}
+      {/* // )} */}
     </div>
   );
 };

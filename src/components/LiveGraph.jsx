@@ -53,6 +53,8 @@ import { getMorePropsForChart } from "react-stockcharts/lib/interactive/utils";
 // import { Modal, Button, FormGroup, FormControl } from "react-bootstrap";
 import Dialog from "@/modals/dialog-modal";
 import { useModal } from "@/hooks/use-modal";
+// import isEqual from "lodash/isEqual";
+import debounce from "lodash/debounce";
 
 function tooltipContent(underlyingValue) {
   return ({ currentItem, xAccessor }) => {
@@ -665,6 +667,7 @@ const CandleChart = ({
     };
 
     const onDrawCompleteEntryLine3 = (newAlerts) => {
+      
       setEnableEntryLine(false)
       let coloredAlerts = newAlerts?.map((item, ind) => {
         let startIndex = Math.min(Math.floor(item.start[0]), data?.length - 1);
@@ -690,6 +693,12 @@ const CandleChart = ({
          else if (item.name === "CEBuyLine") {
           strokeColor = "red"; // Fixed color for CEBuyLine
         } 
+         else if (item.name === "FUTSellLine") {
+          strokeColor = "green"; // Fixed color for CEBuyLine
+        } 
+         else if (item.name === "FUTBuyLine") {
+          strokeColor = "red"; // Fixed color for CEBuyLine
+        } 
         else if (ind < 4) {
           // Use colors and names from entryLineArray for the first four lines
           strokeColor = entryLineArray[ind]?.color || "blue";
@@ -713,9 +722,10 @@ const CandleChart = ({
           name: lineName, // Assigning the final name here
         };
       });
-    
+      
       setEntryLine(coloredAlerts);
       logTrendLines(coloredAlerts); // Log trend lines with names and colors for debugging
+ 
     };
     
     
@@ -1110,12 +1120,27 @@ const CandleChart = ({
                   stroke="red"
                   yAccessor={(d) => Number(d.CEStopLossForIndex17)}
                 />
+
                 <LineSeries
                   strokeDasharray="Dash"
                   strokeWidth={4}
                   stroke="green"
                   yAccessor={(d) => Number(d.PEStopLossForIndex17)}
                 />
+                <LineSeries
+                  strokeDasharray="Dash"
+                  strokeWidth={2}
+                  stroke="green"
+                  yAccessor={(d) => Number(d.FUTStopLossForIndex7)}
+                />
+                <LineSeries
+                  strokeDasharray="Dash"
+                  strokeWidth={2}
+                  stroke="red"
+                  yAccessor={(d) => Number(d.FUTStopLossForIndex17)}
+                />
+
+
                 {/* <LineSeries
                 strokeDasharray="Dash"
                 strokeWidth={2}

@@ -645,6 +645,7 @@ const Dashboard = () => {
           >
             Real Estate
           </Button>
+
           <Button
             onClick={() => handleButtonClick("Chemical")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
@@ -652,7 +653,8 @@ const Dashboard = () => {
             }`}
           >
             Chemical
-          </Button>
+          </Button> 
+
           <Button
             onClick={() => handleButtonClick("Defence")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
@@ -669,6 +671,7 @@ const Dashboard = () => {
           >
             Others
           </Button>
+             
           <Button
             onClick={() => handleButtonClick("Hedging")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${

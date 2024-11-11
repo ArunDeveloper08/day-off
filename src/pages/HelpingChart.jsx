@@ -229,28 +229,21 @@ const HelpingChart = () => {
               line.name !== "CESellLine" &&
               line.name !== "PESellLine" &&
               line.name !== "PEBuyLine" &&
-              line.name !== "CEBuyLine"  
+              line.name !== "CEBuyLine" &&
+              line.name !== "FUTSellLine" &&
+              line.name !== "FUTBuyLine"
                 ? true
                 : apiLineNames.has(line.name)
             );
-          };
-
-          // Usage
-          setEntryLine((prevEntryLines) => {
-            const mergedEntryLines = mergeEntryLines(
-              apiEntryLines,
-              prevEntryLines
-            );
-            return mergedEntryLines;
-          });
-        }
 
         if (!hasInitializedTrends.current) {
           // console.log("Setting trends for the first time");
           setTrends3(res.data.trendLines); // Set trends3 for the first time
           hasInitializedTrends.current = true; // Mark as initialized
         }
-      })
+      }
+      }
+  })
 
       .catch((err) => {
         console.log(err);
@@ -684,490 +677,534 @@ const HelpingChart = () => {
 
   return (
     <div className="p-2">
-      {data.error ? (
+      {/* {data.error ? (
         "Some Error Occcured"
-      ) : (
-        <>
-          <h2 className="text-center font-semibold text-[18px] font-mono text-red-600 sm:text-[20px] md:text-[24px]">
+      ) : ( */}
+      <>
+        <h2 className="text-center font-semibold text-[18px] font-mono text-red-600 sm:text-[20px] md:text-[24px]">
           {data?.data?.identifier} &nbsp;{" "}
-            <button className="text-md text-center font-semibold text-red-700">
-              LTP : {socketData?.last_traded_price} &nbsp;
-              {/* Pivot :{" "}
+          <button className="text-md text-center font-semibold text-red-700">
+            LTP : {socketData?.last_traded_price} &nbsp;
+            {/* Pivot :{" "}
               {socketData?.pivotValue?.[0]?.pivotValue?.toFixed(2)} &nbsp; */}
-            </button>
-            &nbsp; &nbsp;
-            <Button
-              size="sm"
-              onClick={() => setHideConfig((prev) => !prev)}
-              className="text-sm md:text-md"
-            >
-              {hideConfig ? "Hide Config Data" : "Show Config Data"}
-            </Button>
-          </h2>
+          </button>
+          &nbsp; &nbsp;
+          <Button
+            size="sm"
+            onClick={() => setHideConfig((prev) => !prev)}
+            className="text-sm md:text-md"
+          >
+            {hideConfig ? "Hide Config Data" : "Show Config Data"}
+          </Button>
+        </h2>
 
-          {hideConfig && (
-            <>
-              <div>
-                <div className="flex flex-wrap gap-x-5 font-semibold py-2">
-                  <p className=" text-[13px] md:text-[16px]">
-                    Trade Terminal : {data?.data?.terminal}
-                  </p>
-                  <p className="text-red-600  text-[13px] md:text-[16px]">
-                    Candle :
-                    {values?.interval === "minute"
-                      ? "1 minute"
-                      : values?.interval}
-                  </p>
-                  {/* <p className=" text-[13px] md:text-[16px]">
+        {hideConfig && (
+          <>
+            <div>
+              <div className="flex flex-wrap gap-x-5 font-semibold py-2">
+                <p className=" text-[13px] md:text-[16px]">
+                  Trade Terminal : {data?.data?.terminal}
+                </p>
+                <p className="text-red-600  text-[13px] md:text-[16px]">
+                  Candle :
+                  {values?.interval === "minute"
+                    ? "1 minute"
+                    : values?.interval}
+                </p>
+                {/* <p className=" text-[13px] md:text-[16px]">
                     Identifier:
                     {data?.data?.identifier}
                   </p> */}
-                  <p className=" text-[13px] md:text-[16px]">
-                    Trade Index: {data?.data?.tradeIndex}
-                  </p>
-                  {(data?.data?.tradeIndex != 4 && data?.data?.tradeIndex != 7) && (
-                    <>
-                      <p className=" text-[13px] md:text-[16px]">
-                        SMA1 : {data?.data?.SMA1}
-                      </p>
-                      <p className=" text-[13px] md:text-[16px]">
-                        SMA2 : {data?.data?.SMA2}
-                      </p>
-                    </>
-                  )}
-                  <p className="text-red-500 text-[13px] md:text-[16px]">
-                    {ceStopLoss && `CE Stop Loss : ${ceStopLoss?.toFixed(1)}`}
-                  </p>
-                  <p className="text-red-500 text-[13px] md:text-[16px]">
-                    {peStopLoss && `PE Stop Loss : ${peStopLoss?.toFixed(1)}`}
-                  </p>
-                  <p
-                    className={`${
-                      data.data.haveTradeOfCE
-                        ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
-                        : "text-green-600 font-bold text-[13px] md:text-[16px]"
-                    }`}
-                  >
-                    CE Buy Status :{data.data.haveTradeOfCE ? "True" : "False"}
-                  </p>
-                  {/* &nbsp; */}
-                  <p
-                    className={`${
-                      data.data.haveTradeOfPE
-                        ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
-                        : "text-green-600 font-bold text-[13px] md:text-[16px]"
-                    }`}
-                  >
-                    PE Buy Status:
-                    {data.data.haveTradeOfPE ? "True" : "False"}
-                  </p>
-                  {/* &nbsp; */}
-                  <p
-                    className={`${
-                      data.data.haveTradeOfCEBuy
-                        ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
-                        : "text-green-600  font-bold text-[13px] md:text-[16px]"
-                    }`}
-                  >
-                    CE SELL Status:
-                    {data.data.haveTradeOfCEBuy ? "True" : "False"}
-                  </p>
-                  {/* &nbsp; */}
-                  <p
-                    className={`${
-                      data.data.haveTradeOfPEBuy
-                        ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
-                        : "text-green-600 font-bold text-[13px] md:text-[16px]"
-                    }`}
-                  >
-                    PE SELL Status:
-                    {data.data.haveTradeOfPEBuy ? "True" : "False"}
-                  </p>
-                  <Button
-                    size="xs"
-                    className="p-1 text-[13px] md:text-[16px]"
-                    onClick={getHighLowLines}
-                  >
-                    High/Low line
-                  </Button>
-                  <button
-                    onClick={toggleTestingMode}
-                    className={`${
-                      testingMode === 1
-                        ? "bg-red-600 text-white"
-                        : "bg-green-600 text-white"
-                    } px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]`}
-                  >
-                    {testingMode === 1 ? "Test Mode ON" : "Test Mode OFF"}
-                  </button>
-                </div>
-
-                {data.data.tradeIndex == 4 && (
-                  <div>
-                    {trendLineValue && (
-                      <p className="font-semibold text-[13px] md:text-[16px] ">
-                        R1 :{trendLineValue?.Resistance1CurrPrice?.toFixed(1)}
-                        &nbsp; &nbsp; R2 :
-                        {trendLineValue.Resistance2CurrPrice?.toFixed(1)}
-                        &nbsp; &nbsp; R3 :
-                        {trendLineValue.Resistance3CurrPrice?.toFixed(1)}
-                        &nbsp; &nbsp; R4 :
-                        {trendLineValue.Resistance4CurrPrice?.toFixed(1)}
-                        &nbsp; &nbsp; S1 :
-                        {trendLineValue.Support1CurrPrice?.toFixed(1)}
-                        &nbsp; &nbsp; S2 :
-                        {trendLineValue.Support2CurrPrice?.toFixed(1)}
-                        &nbsp; &nbsp; S3 :
-                        {trendLineValue.Support3CurrPrice?.toFixed(1)}
-                        &nbsp; &nbsp; S4 :
-                        {trendLineValue.Support4CurrPrice?.toFixed(1)}
-                        &nbsp; &nbsp;
-                        {trendLineValue?.zone?.CEZone?.low} --LTP Zone--
-                        {trendLineValue?.zone?.CEZone?.high}
-                        &nbsp; &nbsp; &nbsp; &nbsp;
-                        {trendLineValue?.zone?.PEZone?.low} --LTP Zone--
-                        {trendLineValue?.zone?.PEZone?.high}
-                        &nbsp; &nbsp; &nbsp; &nbsp;
-                        <span className="text-green-600">
-                          Call Target Level :
-                          {trendLineValue?.callTargetLevelPrice?.toFixed(1)}
-                        </span>
-                        &nbsp; &nbsp;
-                        <span className="text-red-600">
-                          PE Target Level :
-                          {trendLineValue?.putTargetLevelPrice?.toFixed(1)}
-                        </span>
-                        &nbsp; &nbsp; Time :
-                        {formatDate(trendLineValue.timestamp)}
-                      </p>
-                    )}
-                  </div>
+                <p className=" text-[13px] md:text-[16px]">
+                  Trade Index: {data?.data?.tradeIndex}
+                </p>
+                {data?.data?.tradeIndex != 4 && data?.data?.tradeIndex != 7 && (
+                  <>
+                    <p className=" text-[13px] md:text-[16px]">
+                      SMA1 : {data?.data?.SMA1}
+                    </p>
+                    <p className=" text-[13px] md:text-[16px]">
+                      SMA2 : {data?.data?.SMA2}
+                    </p>
+                  </>
                 )}
-                {data.data.tradeIndex == 7 && (
-                  <div>
-                    {trendLineValue && (
-                      <p className="font-semibold text-[13px] md:text-[16px]">
-                        Resistance :
-                        {trendLineValue?.dataForIndex7?.ResistancePrice?.toFixed(
-                          1
-                        )}
-                        &nbsp; &nbsp; Support :
-                        {trendLineValue?.dataForIndex7?.SupportPrice?.toFixed(
-                          1
-                        )}
-                        &nbsp; &nbsp; Call Target :
-                        {trendLineValue?.dataForIndex7?.callTargetLevelPrice?.toFixed(
-                          1
-                        )}
-                        &nbsp; &nbsp; Put Target :
-                        {trendLineValue?.dataForIndex7?.putTargetLevelPrice?.toFixed(
-                          1
-                        )}
-                       &nbsp;
-                        {trendLineValue?.dataForIndex7?.CESellLinePrice > 0 && (
-                          <span>
-                            CE Buy Price :
-                            {trendLineValue?.dataForIndex7?.CESellLinePrice?.toFixed(
-                              1
-                            )}
-                          </span>
-                        )}
-                        &nbsp; &nbsp;
-                        {trendLineValue?.dataForIndex7?.PESellLinePrice > 0 && (
-                          <span>
-                            PE Buy Price :
-                            {trendLineValue?.dataForIndex7?.PESellLinePrice?.toFixed(
-                              1
-                            )}
-                          </span>
-                        )}
-                        &nbsp; &nbsp;
-                        {trendLineValue?.dataForIndex7?.PEBuyLinePrice > 0 && (
-                          <span>
-                            PE Sell Price :
-                            {trendLineValue?.dataForIndex7?.PEBuyLinePrice?.toFixed(
-                              1
-                            )}
-                          </span>
-                        )}
-                        &nbsp; &nbsp;
-                        {trendLineValue?.dataForIndex7?.CEBuyLinePrice > 0 && (
-                          <span>
-                            CE Sell Price :
-                            {trendLineValue?.dataForIndex7?.CEBuyLinePrice?.toFixed(
-                              1
-                            )}
-                          </span>
-                        )}
-                        &nbsp; &nbsp;
-                        {apiData?.[0]?.CEStopLossForIndex7 && (
-                          <span>
-                            CE Buy Stop Loss :
-                            {apiData?.[0]?.CEStopLossForIndex7?.toFixed(1)}
-                          </span>
-                        )}
-                        &nbsp; &nbsp;
-                        {apiData?.[0]?.CEStopLossForIndex17 && (
-                          <span>
-                            CE Sell Stop Loss :
-                            {apiData?.[0]?.CEStopLossForIndex17?.toFixed(1)}
-                          </span>
-                        )}
-                        &nbsp; &nbsp;
-                        {apiData?.[0]?.PEStopLossForIndex7 && (
-                          <span>
-                            PE Buy Stop Loss :
-                            {apiData?.[0]?.PEStopLossForIndex7?.toFixed(1)}
-                          </span>
-                        )}
-                        &nbsp; &nbsp;
-                        {apiData?.[0]?.PEStopLossForIndex17 && (
-                          <span>
-                            PE Sell Stop Loss :
-                            {apiData?.[0]?.PEStopLossForIndex17?.toFixed(1)}
-                          </span>
-                        )}
-                         Time :
-                        {formatDate(trendLineValue?.timestamp)}
-                      </p>
-                    )}
-                  </div>
-                )}
-
-                <div className="flex justify-between flex-wrap gap-1 md:gap-y-1">
-                  <button
-                    onClick={() =>
-                      setShowRow((p) => ({
-                        ...p,
-                        pivot: !p.pivot,
-                      }))
-                    }
-                    className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
-                      showRow.pivot
-                        ? "bg-blue-500 text-gray-100"
-                        : "bg-gray-300 "
-                    }`}
-                  >
-                    Pivot Line
-                  </button>
-
-                  <button
-                    onClick={() =>
-                      setShowRow((p) => ({
-                        ...p,
-                        candle: !p.candle,
-                      }))
-                    }
-                    className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
-                      showRow.candle
-                        ? "bg-blue-500 text-gray-100"
-                        : "bg-gray-300 "
-                    }`}
-                  >
-                    Candle
-                  </button>
-
-                  <button
-                    onClick={() =>
-                      setShowRow((p) => ({
-                        ...p,
-                        dynamicExitValue: !p.dynamicExitValue,
-                      }))
-                    }
-                    className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
-                      showRow.dynamicExitValue
-                        ? "bg-blue-500 text-gray-100"
-                        : "bg-gray-300 "
-                    }`}
-                  >
-                    D_Exit Value
-                  </button>
-
-                  <button
-                    onClick={() =>
-                      setShowRow((p) => ({
-                        ...p,
-                        Last_Highest_LTP: !p.Last_Highest_LTP,
-                      }))
-                    }
-                    className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
-                      showRow.Last_Highest_LTP
-                        ? "bg-blue-500 text-gray-100"
-                        : "bg-gray-300 "
-                    }`}
-                  >
-                    Last High LTP
-                  </button>
-
-                  <button
-                    onClick={() =>
-                      setShowRow((p) => ({
-                        ...p,
-                        rangeBoundLine: !p.rangeBoundLine,
-                      }))
-                    }
-                    className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
-                      showRow.rangeBoundLine
-                        ? "bg-blue-500 text-gray-100"
-                        : "bg-gray-300 "
-                    }`}
-                  >
-                    Range Bound
-                  </button>
-
-                  <button
-                    onClick={() =>
-                      setShowRow((p) => ({
-                        ...p,
-                        movingAvg: !p.movingAvg,
-                      }))
-                    }
-                    className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
-                      showRow.movingAvg
-                        ? "bg-blue-500 text-gray-100"
-                        : "bg-gray-300 "
-                    }`}
-                  >
-                    Moving Avg
-                  </button>
-
-                  <button
-                    onClick={() =>
-                      setShowRow((p) => ({
-                        ...p,
-                        volume: !p.volume,
-                      }))
-                    }
-                    className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
-                      showRow.volume
-                        ? "bg-blue-500 text-gray-100"
-                        : "bg-gray-300 "
-                    }`}
-                  >
-                    volume
-                  </button>
-
-                  <button
-                    onClick={() =>
-                      setShowRow((p) => ({
-                        ...p,
-                        monthlyHigh: !p.monthlyHigh,
-                      }))
-                    }
-                    className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
-                      showRow.monthlyHigh
-                        ? "bg-blue-500 text-gray-100"
-                        : "bg-gray-300 "
-                    }`}
-                  >
-                    Monthly
-                  </button>
-
-                  <button
-                    onClick={() =>
-                      setShowRow((p) => ({
-                        ...p,
-                        weekly: !p.weekly,
-                      }))
-                    }
-                    className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
-                      showRow.weekly
-                        ? "bg-blue-500 text-gray-100"
-                        : "bg-gray-300 "
-                    }`}
-                  >
-                    Weakly
-                  </button>
-
-                  <button
-                    onClick={() =>
-                      setShowRow((p) => ({
-                        ...p,
-                        daily: !p.daily,
-                      }))
-                    }
-                    className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
-                      showRow.daily
-                        ? "bg-blue-500 text-gray-100"
-                        : "bg-gray-300 "
-                    }`}
-                  >
-                    Daily
-                  </button>
-
-                  <button
-                    onClick={() =>
-                      setShowRow((p) => ({
-                        ...p,
-                        fourHourly: !p.fourHourly,
-                      }))
-                    }
-                    className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
-                      showRow.fourHourly
-                        ? "bg-blue-500 text-gray-100"
-                        : "bg-gray-300 "
-                    }`}
-                  >
-                    Four Hourly
-                  </button>
-
-                  <button
-                    onClick={() =>
-                      setShowRow((p) => ({
-                        ...p,
-                        hourly: !p.hourly,
-                      }))
-                    }
-                    className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
-                      showRow.hourly
-                        ? "bg-blue-500 text-gray-100"
-                        : "bg-gray-300 "
-                    }`}
-                  >
-                    Hourly
-                  </button>
-
-                  <button
-                    onClick={() =>
-                      setShowRow((p) => ({
-                        ...p,
-                        toolTip: !p.toolTip,
-                      }))
-                    }
-                    className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
-                      showRow.toolTip
-                        ? "bg-blue-500 text-gray-100"
-                        : "bg-gray-300 "
-                    }`}
-                  >
-                    Tool Tip
-                  </button>
-
-                  <button
-                    onClick={setCETrendLine}
-                    className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
-                      showRow.ceTrendLine
-                        ? "bg-blue-500 text-gray-100"
-                        : "bg-gray-300"
-                    }`}
-                  >
-                    CE TrendLine
-                  </button>
-
-                  <button
-                    onClick={setPETrendLine}
-                    className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
-                      showRow.peTrendLine
-                        ? "bg-blue-500 text-gray-100"
-                        : "bg-gray-300"
-                    }`}
-                  >
-                    PE TrendLine
-                  </button>
-                </div>
+                <p className="text-red-500 text-[13px] md:text-[16px]">
+                  {ceStopLoss && `CE Stop Loss : ${ceStopLoss?.toFixed(1)}`}
+                </p>
+                <p className="text-red-500 text-[13px] md:text-[16px]">
+                  {peStopLoss && `PE Stop Loss : ${peStopLoss?.toFixed(1)}`}
+                </p>
+                <p
+                  className={`${
+                    data.data.haveTradeOfCE
+                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
+                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
+                  }`}
+                >
+                  CE Buy Status :{data.data.haveTradeOfCE ? "True" : "False"}
+                </p>
+                {/* &nbsp; */}
+                <p
+                  className={`${
+                    data.data.haveTradeOfPE
+                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
+                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
+                  }`}
+                >
+                  PE Buy Status:
+                  {data.data.haveTradeOfPE ? "True" : "False"}
+                </p>
+                {/* &nbsp; */}
+                <p
+                  className={`${
+                    data.data.haveTradeOfCEBuy
+                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
+                      : "text-green-600  font-bold text-[13px] md:text-[16px]"
+                  }`}
+                >
+                  CE SELL Status:
+                  {data.data.haveTradeOfCEBuy ? "True" : "False"}
+                </p>
+                {/* &nbsp; */}
+                <p
+                  className={`${
+                    data.data.haveTradeOfPEBuy
+                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
+                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
+                  }`}
+                >
+                  PE SELL Status:
+                  {data.data.haveTradeOfPEBuy ? "True" : "False"}
+                </p>
+                <p
+                  className={`${
+                    data.data.haveTradeOfFUTBuy
+                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
+                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
+                  }`}
+                >
+                  FUT  Buy Status:
+                  {data.data.haveTradeOfFUTBuy ? "True" : "False"}
+                </p>
+                <p
+                  className={`${
+                    data.data.haveTradeOfFUTSell
+                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
+                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
+                  }`}
+                >
+                  FUT Sell Status:
+                  {data.data.haveTradeOfFUTSell ? "True" : "False"}
+                </p>
+                <Button
+                  size="xs"
+                  className="p-1 text-[13px] md:text-[16px]"
+                  onClick={getHighLowLines}
+                >
+                  High/Low line
+                </Button>
+                <button
+                  onClick={toggleTestingMode}
+                  className={`${
+                    testingMode === 1
+                      ? "bg-red-600 text-white"
+                      : "bg-green-600 text-white"
+                  } px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]`}
+                >
+                  {testingMode === 1 ? "Test Mode ON" : "Test Mode OFF"}
+                </button>
               </div>
 
-              {/* <div className="flex flex-wrap items-center mt-2 mb-1 space-x-3">
+              {data.data.tradeIndex == 4 && (
+                <div>
+                  {trendLineValue && (
+                    <p className="font-semibold text-[13px] md:text-[16px] ">
+                      R1 :{trendLineValue?.Resistance1CurrPrice?.toFixed(1)}
+                      &nbsp; &nbsp; R2 :
+                      {trendLineValue.Resistance2CurrPrice?.toFixed(1)}
+                      &nbsp; &nbsp; R3 :
+                      {trendLineValue.Resistance3CurrPrice?.toFixed(1)}
+                      &nbsp; &nbsp; R4 :
+                      {trendLineValue.Resistance4CurrPrice?.toFixed(1)}
+                      &nbsp; &nbsp; S1 :
+                      {trendLineValue.Support1CurrPrice?.toFixed(1)}
+                      &nbsp; &nbsp; S2 :
+                      {trendLineValue.Support2CurrPrice?.toFixed(1)}
+                      &nbsp; &nbsp; S3 :
+                      {trendLineValue.Support3CurrPrice?.toFixed(1)}
+                      &nbsp; &nbsp; S4 :
+                      {trendLineValue.Support4CurrPrice?.toFixed(1)}
+                      &nbsp; &nbsp;
+                      {trendLineValue?.zone?.CEZone?.low} --LTP Zone--
+                      {trendLineValue?.zone?.CEZone?.high}
+                      &nbsp; &nbsp; &nbsp; &nbsp;
+                      {trendLineValue?.zone?.PEZone?.low} --LTP Zone--
+                      {trendLineValue?.zone?.PEZone?.high}
+                      &nbsp; &nbsp; &nbsp; &nbsp;
+                      <span className="text-green-600">
+                        Call Target Level :
+                        {trendLineValue?.callTargetLevelPrice?.toFixed(1)}
+                      </span>
+                      &nbsp; &nbsp;
+                      <span className="text-red-600">
+                        PE Target Level :
+                        {trendLineValue?.putTargetLevelPrice?.toFixed(1)}
+                      </span>
+                      &nbsp; &nbsp; Time :{formatDate(trendLineValue.timestamp)}
+                    </p>
+                  )}
+                </div>
+              )}
+              {data.data.tradeIndex == 7 && (
+                <div>
+                  {trendLineValue && (
+                    <p className="font-semibold text-[13px] md:text-[16px]">
+                      Resistance :
+                      {trendLineValue?.dataForIndex7?.ResistancePrice?.toFixed(
+                        1
+                      )}
+                      &nbsp; &nbsp; Support :
+                      {trendLineValue?.dataForIndex7?.SupportPrice?.toFixed(1)}
+                      &nbsp; &nbsp; Call Target :
+                      {trendLineValue?.dataForIndex7?.callTargetLevelPrice?.toFixed(
+                        1
+                      )}
+                      &nbsp; &nbsp; Put Target :
+                      {trendLineValue?.dataForIndex7?.putTargetLevelPrice?.toFixed(
+                        1
+                      )}
+                      &nbsp;
+                      {trendLineValue?.dataForIndex7?.CESellLinePrice > 0 && (
+                        <span>
+                          CE Buy Price :
+                          {trendLineValue?.dataForIndex7?.CESellLinePrice?.toFixed(
+                            1
+                          )}
+                        </span>
+                      )}
+                      &nbsp; &nbsp;
+                      {trendLineValue?.dataForIndex7?.PESellLinePrice > 0 && (
+                        <span>
+                          PE Buy Price :
+                          {trendLineValue?.dataForIndex7?.PESellLinePrice?.toFixed(
+                            1
+                          )}
+                        </span>
+                      )}
+                      &nbsp; &nbsp;
+                      {trendLineValue?.dataForIndex7?.PEBuyLinePrice > 0 && (
+                        <span>
+                          PE Sell Price :
+                          {trendLineValue?.dataForIndex7?.PEBuyLinePrice?.toFixed(
+                            1
+                          )}
+                        </span>
+                      )}
+                      &nbsp; &nbsp;
+                      {trendLineValue?.dataForIndex7?.CEBuyLinePrice > 0 && (
+                        <span>
+                          CE Sell Price :
+                          {trendLineValue?.dataForIndex7?.CEBuyLinePrice?.toFixed(
+                            1
+                          )}
+                        </span>
+                      )}
+                      &nbsp; &nbsp;
+                      {trendLineValue?.dataForIndex7?.FUTBuyLinePrice > 0 && (
+                        <span>
+                          FUT Sell Price :
+                          {trendLineValue?.dataForIndex7?.FUTBuyLinePrice?.toFixed(
+                            1
+                          )}
+                        </span>
+                      )}
+                      &nbsp; &nbsp;
+                      {trendLineValue?.dataForIndex7?.FUTSellLinePrice > 0 && (
+                        <span>
+                          FUT Buy Price :
+                          {trendLineValue?.dataForIndex7?.FUTSellLinePrice?.toFixed(
+                            1
+                          )}
+                        </span>
+                      )}
+                      &nbsp; &nbsp;
+                      {apiData?.[0]?.CEStopLossForIndex7 && (
+                        <span>
+                          CE Buy Stop Loss :
+                          {apiData?.[0]?.CEStopLossForIndex7?.toFixed(1)}
+                        </span>
+                      )}
+                      &nbsp; &nbsp;
+                      {apiData?.[0]?.CEStopLossForIndex17 && (
+                        <span>
+                          CE Sell Stop Loss :
+                          {apiData?.[0]?.CEStopLossForIndex17?.toFixed(1)}
+                        </span>
+                      )}
+                      &nbsp; &nbsp;
+                      {apiData?.[0]?.PEStopLossForIndex7 && (
+                        <span>
+                          PE Buy Stop Loss :
+                          {apiData?.[0]?.PEStopLossForIndex7?.toFixed(1)}
+                        </span>
+                      )}
+                      &nbsp; &nbsp;
+                      {apiData?.[0]?.PEStopLossForIndex17 && (
+                        <span>
+                          PE Sell Stop Loss :
+                          {apiData?.[0]?.PEStopLossForIndex17?.toFixed(1)}
+                        </span>
+                      )}
+                      &nbsp; &nbsp;
+                      {apiData?.[0]?.FUTStopLossForIndex7 && (
+                        <span>
+                        FUT Buy Stop Loss :
+                          {apiData?.[0]?.FUTStopLossForIndex7?.toFixed(1)}
+                        </span>
+                      )}
+                      &nbsp; &nbsp;
+                      {apiData?.[0]?.FUTStopLossForIndex17 && (
+                        <span>
+                        FUT Sell Stop Loss :
+                          {apiData?.[0]?.FUTStopLossForIndex17?.toFixed(1)}
+                        </span>
+                      )}
+                      Time : {formatDate(trendLineValue?.timestamp)}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              <div className="flex justify-between flex-wrap gap-1 md:gap-y-1">
+                <button
+                  onClick={() =>
+                    setShowRow((p) => ({
+                      ...p,
+                      pivot: !p.pivot,
+                    }))
+                  }
+                  className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
+                    showRow.pivot ? "bg-blue-500 text-gray-100" : "bg-gray-300 "
+                  }`}
+                >
+                  Pivot Line
+                </button>
+
+                <button
+                  onClick={() =>
+                    setShowRow((p) => ({
+                      ...p,
+                      candle: !p.candle,
+                    }))
+                  }
+                  className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
+                    showRow.candle
+                      ? "bg-blue-500 text-gray-100"
+                      : "bg-gray-300 "
+                  }`}
+                >
+                  Candle
+                </button>
+
+                <button
+                  onClick={() =>
+                    setShowRow((p) => ({
+                      ...p,
+                      dynamicExitValue: !p.dynamicExitValue,
+                    }))
+                  }
+                  className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
+                    showRow.dynamicExitValue
+                      ? "bg-blue-500 text-gray-100"
+                      : "bg-gray-300 "
+                  }`}
+                >
+                  D_Exit Value
+                </button>
+
+                <button
+                  onClick={() =>
+                    setShowRow((p) => ({
+                      ...p,
+                      Last_Highest_LTP: !p.Last_Highest_LTP,
+                    }))
+                  }
+                  className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
+                    showRow.Last_Highest_LTP
+                      ? "bg-blue-500 text-gray-100"
+                      : "bg-gray-300 "
+                  }`}
+                >
+                  Last High LTP
+                </button>
+
+                <button
+                  onClick={() =>
+                    setShowRow((p) => ({
+                      ...p,
+                      rangeBoundLine: !p.rangeBoundLine,
+                    }))
+                  }
+                  className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
+                    showRow.rangeBoundLine
+                      ? "bg-blue-500 text-gray-100"
+                      : "bg-gray-300 "
+                  }`}
+                >
+                  Range Bound
+                </button>
+
+                <button
+                  onClick={() =>
+                    setShowRow((p) => ({
+                      ...p,
+                      movingAvg: !p.movingAvg,
+                    }))
+                  }
+                  className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
+                    showRow.movingAvg
+                      ? "bg-blue-500 text-gray-100"
+                      : "bg-gray-300 "
+                  }`}
+                >
+                  Moving Avg
+                </button>
+
+                <button
+                  onClick={() =>
+                    setShowRow((p) => ({
+                      ...p,
+                      volume: !p.volume,
+                    }))
+                  }
+                  className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
+                    showRow.volume
+                      ? "bg-blue-500 text-gray-100"
+                      : "bg-gray-300 "
+                  }`}
+                >
+                  volume
+                </button>
+
+                <button
+                  onClick={() =>
+                    setShowRow((p) => ({
+                      ...p,
+                      monthlyHigh: !p.monthlyHigh,
+                    }))
+                  }
+                  className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
+                    showRow.monthlyHigh
+                      ? "bg-blue-500 text-gray-100"
+                      : "bg-gray-300 "
+                  }`}
+                >
+                  Monthly
+                </button>
+
+                <button
+                  onClick={() =>
+                    setShowRow((p) => ({
+                      ...p,
+                      weekly: !p.weekly,
+                    }))
+                  }
+                  className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
+                    showRow.weekly
+                      ? "bg-blue-500 text-gray-100"
+                      : "bg-gray-300 "
+                  }`}
+                >
+                  Weakly
+                </button>
+
+                <button
+                  onClick={() =>
+                    setShowRow((p) => ({
+                      ...p,
+                      daily: !p.daily,
+                    }))
+                  }
+                  className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
+                    showRow.daily ? "bg-blue-500 text-gray-100" : "bg-gray-300 "
+                  }`}
+                >
+                  Daily
+                </button>
+
+                <button
+                  onClick={() =>
+                    setShowRow((p) => ({
+                      ...p,
+                      fourHourly: !p.fourHourly,
+                    }))
+                  }
+                  className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
+                    showRow.fourHourly
+                      ? "bg-blue-500 text-gray-100"
+                      : "bg-gray-300 "
+                  }`}
+                >
+                  Four Hourly
+                </button>
+
+                <button
+                  onClick={() =>
+                    setShowRow((p) => ({
+                      ...p,
+                      hourly: !p.hourly,
+                    }))
+                  }
+                  className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
+                    showRow.hourly
+                      ? "bg-blue-500 text-gray-100"
+                      : "bg-gray-300 "
+                  }`}
+                >
+                  Hourly
+                </button>
+
+                <button
+                  onClick={() =>
+                    setShowRow((p) => ({
+                      ...p,
+                      toolTip: !p.toolTip,
+                    }))
+                  }
+                  className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
+                    showRow.toolTip
+                      ? "bg-blue-500 text-gray-100"
+                      : "bg-gray-300 "
+                  }`}
+                >
+                  Tool Tip
+                </button>
+
+                <button
+                  onClick={setCETrendLine}
+                  className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
+                    showRow.ceTrendLine
+                      ? "bg-blue-500 text-gray-100"
+                      : "bg-gray-300"
+                  }`}
+                >
+                  CE TrendLine
+                </button>
+
+                <button
+                  onClick={setPETrendLine}
+                  className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
+                    showRow.peTrendLine
+                      ? "bg-blue-500 text-gray-100"
+                      : "bg-gray-300"
+                  }`}
+                >
+                  PE TrendLine
+                </button>
+              </div>
+            </div>
+
+            {/* <div className="flex flex-wrap items-center mt-2 mb-1 space-x-3">
             
 
                 <div className="flex flex-col">
@@ -1390,136 +1427,136 @@ const HelpingChart = () => {
                   </button>
                 </div>
               </div> */}
-              <div className="flex flex-wrap items-center mt-2 mb-1 space-x-3">
-                {/* Date Input */}
-                <div className="flex flex-col w-full sm:w-auto">
-                  <Label>Date</Label>
-                  <Input
-                    type="date"
-                    placeholder="date"
-                    className="w-full sm:w-[140px] border-black border-[1px] rounded-md"
-                    onChange={handleChange}
-                    name="date"
-                    max={today}
-                  />
-                </div>
+            <div className="flex flex-wrap items-center mt-2 mb-1 space-x-3">
+              {/* Date Input */}
+              <div className="flex flex-col w-full sm:w-auto">
+                <Label>Date</Label>
+                <Input
+                  type="date"
+                  placeholder="date"
+                  className="w-full sm:w-[140px] border-black border-[1px] rounded-md"
+                  onChange={handleChange}
+                  name="date"
+                  max={today}
+                />
+              </div>
 
-                {/* Candle Type Select */}
-                <div className="flex flex-col w-full sm:w-auto">
-                  <Label>Candle Type</Label>
-                  <Select
-                    value={values.candleType}
-                    name="candleType"
-                    onValueChange={(value) => handleSelect("candleType", value)}
-                  >
-                    <SelectTrigger className="w-full sm:w-[120px] mt-1 border-zinc-500">
-                      <SelectValue>{values.candleType}</SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>Candle Type</SelectLabel>
-                        {["HeikinAshi", "Normal"].map((suggestion) => (
-                          <SelectItem key={suggestion} value={suggestion}>
-                            {suggestion}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
+              {/* Candle Type Select */}
+              <div className="flex flex-col w-full sm:w-auto">
+                <Label>Candle Type</Label>
+                <Select
+                  value={values.candleType}
+                  name="candleType"
+                  onValueChange={(value) => handleSelect("candleType", value)}
+                >
+                  <SelectTrigger className="w-full sm:w-[120px] mt-1 border-zinc-500">
+                    <SelectValue>{values.candleType}</SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Candle Type</SelectLabel>
+                      {["HeikinAshi", "Normal"].map((suggestion) => (
+                        <SelectItem key={suggestion} value={suggestion}>
+                          {suggestion}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
 
-                {/* Interval Select */}
-                <div className="flex flex-col w-full sm:w-auto">
-                  <Label>Interval</Label>
-                  <Select
-                    value={values.interval}
-                    name="terminal"
-                    onValueChange={(value) => handleSelect("interval", value)}
-                  >
-                    <SelectTrigger className="w-full sm:w-[150px] mt-1 border-zinc-500">
-                      <SelectValue>{values.interval}</SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>Interval</SelectLabel>
-                        {[
-                          { label: "1 minute", value: "ONE_MINUTE" },
-                          { label: "3 minute", value: "THREE_MINUTE" },
-                          { label: "5 minute", value: "FIVE_MINUTE" },
-                          { label: "15 minute", value: "FIFTEEN_MINUTE" },
-                          { label: "30 minute", value: "THIRTY_MINUTE" },
-                          { label: "1 hour", value: "ONE_HOUR" },
-                          { label: "1 day", value: "ONE_DAY" },
-                        ].map((suggestion) => (
-                          <SelectItem
-                            key={suggestion.value}
-                            value={suggestion.value}
-                          >
-                            {suggestion.label}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
+              {/* Interval Select */}
+              <div className="flex flex-col w-full sm:w-auto">
+                <Label>Interval</Label>
+                <Select
+                  value={values.interval}
+                  name="terminal"
+                  onValueChange={(value) => handleSelect("interval", value)}
+                >
+                  <SelectTrigger className="w-full sm:w-[150px] mt-1 border-zinc-500">
+                    <SelectValue>{values.interval}</SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Interval</SelectLabel>
+                      {[
+                        { label: "1 minute", value: "ONE_MINUTE" },
+                        { label: "3 minute", value: "THREE_MINUTE" },
+                        { label: "5 minute", value: "FIVE_MINUTE" },
+                        { label: "15 minute", value: "FIFTEEN_MINUTE" },
+                        { label: "30 minute", value: "THIRTY_MINUTE" },
+                        { label: "1 hour", value: "ONE_HOUR" },
+                        { label: "1 day", value: "ONE_DAY" },
+                      ].map((suggestion) => (
+                        <SelectItem
+                          key={suggestion.value}
+                          value={suggestion.value}
+                        >
+                          {suggestion.label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
 
-                {/* WMA Input */}
-                <div className="flex flex-col w-full sm:w-auto">
-                  <Label>WMA</Label>
-                  <Input
-                    name="WMA"
-                    onChange={handleChange}
-                    value={values.WMA}
-                    className="mt-1"
-                    type="number"
-                    min={0}
-                  />
-                </div>
+              {/* WMA Input */}
+              <div className="flex flex-col w-full sm:w-auto">
+                <Label>WMA</Label>
+                <Input
+                  name="WMA"
+                  onChange={handleChange}
+                  value={values.WMA}
+                  className="mt-1"
+                  type="number"
+                  min={0}
+                />
+              </div>
 
-                {/* Trendline Status */}
-                <div className="flex flex-col w-full sm:w-auto">
-                  <Label>Trendline Status</Label>
-                  <Select
-                    value={values.trendLineActive}
-                    name="trendLineActive"
-                    onValueChange={(value) =>
-                      handleSelect("trendLineActive", value)
-                    }
-                  >
-                    <SelectTrigger className="w-full sm:w-[130px] mt-1 border-zinc-500">
-                      <SelectValue>
-                        {values.trendLineActive ? "Active" : "Deactive"}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>TrendLine Status</SelectLabel>
-                        {[
-                          { label: "Active", value: true },
-                          { label: "Deactive", value: false },
-                        ]?.map((suggestion) => (
-                          <SelectItem
-                            key={suggestion.value}
-                            value={suggestion.value}
-                          >
-                            {suggestion.label}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
+              {/* Trendline Status */}
+              <div className="flex flex-col w-full sm:w-auto">
+                <Label>Trendline Status</Label>
+                <Select
+                  value={values.trendLineActive}
+                  name="trendLineActive"
+                  onValueChange={(value) =>
+                    handleSelect("trendLineActive", value)
+                  }
+                >
+                  <SelectTrigger className="w-full sm:w-[130px] mt-1 border-zinc-500">
+                    <SelectValue>
+                      {values.trendLineActive ? "Active" : "Deactive"}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>TrendLine Status</SelectLabel>
+                      {[
+                        { label: "Active", value: true },
+                        { label: "Deactive", value: false },
+                      ]?.map((suggestion) => (
+                        <SelectItem
+                          key={suggestion.value}
+                          value={suggestion.value}
+                        >
+                          {suggestion.label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
 
-                {/* Buttons Section */}
-                <div className="flex items-center flex-wrap space-x-2 mt-2">
-                  {/* Submit Button */}
-                  <Button onClick={handleSubmit} size="sm">
-                    Submit
-                  </Button>
+              {/* Buttons Section */}
+              <div className="flex items-center flex-wrap space-x-2 mt-2">
+                {/* Submit Button */}
+                <Button onClick={handleSubmit} size="sm">
+                  Submit
+                </Button>
 
-                  {/* Fibonacci Button */}
-                  <>
-                    {/* <button
+                {/* Fibonacci Button */}
+                <>
+                  {/* <button
                     onClick={() =>
                       setShowRow((prev) => ({
                         ...prev,
@@ -1579,74 +1616,70 @@ const HelpingChart = () => {
                     </div>
                   </button> */}
 
-                    <button
-                      onClick={() =>
-                        setShowRow((p) => ({
-                          ...p,
-                          trendLine: true,
-                          alertLine: false, // Ensure alertLine is false when trendLine is true
-                          entryLine: false,
-                        }))
-                      }
-                      className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-                        showRow.trendLine
-                          ? "bg-black text-gray-100"
-                          : "bg-white"
-                      }`}
-                    >
-                      <div className="flex items-center">
-                        <span
-                          className="icon-KTgbfaP5"
-                          role="img"
-                          aria-hidden="true"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 28 28"
-                            width="28"
-                            height="28"
-                          >
-                            <g fill="currentColor" fillRule="nonzero">
-                              <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
-                              <path d="M22.5 7c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM5.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
-                            </g>
-                          </svg>
-                        </span>
-                        <span>Trendline</span>
-                      </div>
-                    </button>
-
-                    <button
-                      onClick={() =>
-                        setShowRow((prev) => ({
-                          ...prev,
-                          fibonacci: !prev.fibonacci,
-                        }))
-                      }
-                      className={` px-2 py-1 text-xs font-semibold rounded-md duration-300 ${
-                        showRow.fibonacci
-                          ? "bg-black text-gray-100"
-                          : "bg-white"
-                      }`}
-                    >
-                      <div className="flex items-center">
+                  <button
+                    onClick={() =>
+                      setShowRow((p) => ({
+                        ...p,
+                        trendLine: true,
+                        alertLine: false, // Ensure alertLine is false when trendLine is true
+                        entryLine: false,
+                      }))
+                    }
+                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                      showRow.trendLine ? "bg-black text-gray-100" : "bg-white"
+                    }`}
+                  >
+                    <div className="flex items-center">
+                      <span
+                        className="icon-KTgbfaP5"
+                        role="img"
+                        aria-hidden="true"
+                      >
                         <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 28 28"
                           width="28"
                           height="28"
-                          xmlns="http://www.w3.org/2000/svg"
                         >
                           <g fill="currentColor" fillRule="nonzero">
-                            <path d="M3 5h22v-1h-22z"></path>
-                            <path d="M3 17h22v-1h-22z"></path>
-                            <path d="M3 11h19.5v-1h-19.5z"></path>
-                            <path d="M5.5 23h19.5v-1h-19.5z"></path>
-                            <path d="M3.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM24.5 12c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5z"></path>
+                            <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
+                            <path d="M22.5 7c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM5.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
                           </g>
                         </svg>
-                        <span>Fibonacci Retracement</span>
-                      </div>
-                    </button>
-                    {/* 
+                      </span>
+                      <span>Trendline</span>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() =>
+                      setShowRow((prev) => ({
+                        ...prev,
+                        fibonacci: !prev.fibonacci,
+                      }))
+                    }
+                    className={` px-2 py-1 text-xs font-semibold rounded-md duration-300 ${
+                      showRow.fibonacci ? "bg-black text-gray-100" : "bg-white"
+                    }`}
+                  >
+                    <div className="flex items-center">
+                      <svg
+                        width="28"
+                        height="28"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <g fill="currentColor" fillRule="nonzero">
+                          <path d="M3 5h22v-1h-22z"></path>
+                          <path d="M3 17h22v-1h-22z"></path>
+                          <path d="M3 11h19.5v-1h-19.5z"></path>
+                          <path d="M5.5 23h19.5v-1h-19.5z"></path>
+                          <path d="M3.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM24.5 12c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5z"></path>
+                        </g>
+                      </svg>
+                      <span>Fibonacci Retracement</span>
+                    </div>
+                  </button>
+                  {/* 
                     <button
                       onClick={() =>
                         setShowRow((p) => ({
@@ -1683,49 +1716,47 @@ const HelpingChart = () => {
                         <span>Alert Line</span>
                       </div>
                     </button> */}
-                    <button
-                      onClick={() =>
-                        setShowRow((p) => ({
-                          ...p,
-                          trendLine: false, // Ensure trendLine is false when alertLine is true
-                          alertLine: false,
-                          entryLine: true,
-                        }))
-                      }
-                      className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-                        showRow.entryLine
-                          ? "bg-black text-gray-100"
-                          : "bg-white"
-                      }`}
-                    >
-                      <div className="flex items-center">
-                        <span
-                          className="icon-KTgbfaP5"
-                          role="img"
-                          aria-hidden="true"
+                  <button
+                    onClick={() =>
+                      setShowRow((p) => ({
+                        ...p,
+                        trendLine: false, // Ensure trendLine is false when alertLine is true
+                        alertLine: false,
+                        entryLine: true,
+                      }))
+                    }
+                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                      showRow.entryLine ? "bg-black text-gray-100" : "bg-white"
+                    }`}
+                  >
+                    <div className="flex items-center">
+                      <span
+                        className="icon-KTgbfaP5"
+                        role="img"
+                        aria-hidden="true"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 28 28"
+                          width="28"
+                          height="28"
                         >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 28 28"
-                            width="28"
-                            height="28"
-                          >
-                            <g fill="currentColor" fillRule="nonzero">
-                              <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
-                              <path d="M22.5 7c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM5.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
-                            </g>
-                          </svg>
-                        </span>
-                        <span>Entry Line</span>
-                      </div>
-                    </button>
-                  </>
-                </div>
+                          <g fill="currentColor" fillRule="nonzero">
+                            <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
+                            <path d="M22.5 7c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM5.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
+                          </g>
+                        </svg>
+                      </span>
+                      <span>Entry Line</span>
+                    </div>
+                  </button>
+                </>
               </div>
-            </>
-          )}
+            </div>
+          </>
+        )}
 
-          {/* {apiData?.length > 0 && (
+        {/* {apiData?.length > 0 && (
             <CandleChart
               data={apiData}
               handleCreateTrendLines={handleCreateTrendLines}
@@ -1744,30 +1775,30 @@ const HelpingChart = () => {
             />
           )} */}
 
-          {apiData?.length > 0 && (
-            <div className="w-full h-auto flex justify-center">
-              <CandleChart
-                data={apiData}
-                handleCreateTrendLines={handleCreateTrendLines}
-                master={data?.data}
-                ratio={1}
-                width={width + 30} // Adjust width dynamically with some margin
-                showRow={showRow}
-                theme={theme}
-                intractiveData={intractiveData}
-                height={height ? (height * 8) / 10 : "60vh"} // Responsive height
-                chartType={chartType}
-                trends3={trends3}
-                setTrends3={setTrends3}
-                setAlert3={setAlert3}
-                alert3={alert3}
-                setEntryLine={setEntryLine}
-                entryLine={entryLine}
-              />
-            </div>
-          )}
-        </>
-      )}
+        {apiData?.length > 0 && (
+          <div className="w-full h-auto flex justify-center">
+            <CandleChart
+              data={apiData}
+              handleCreateTrendLines={handleCreateTrendLines}
+              master={data?.data}
+              ratio={1}
+              width={width + 30} // Adjust width dynamically with some margin
+              showRow={showRow}
+              theme={theme}
+              intractiveData={intractiveData}
+              height={height ? (height * 8) / 10 : "60vh"} // Responsive height
+              chartType={chartType}
+              trends3={trends3}
+              setTrends3={setTrends3}
+              setAlert3={setAlert3}
+              alert3={alert3}
+              setEntryLine={setEntryLine}
+              entryLine={entryLine}
+            />
+          </div>
+        )}
+      </>
+      {/* // )} */}
     </div>
   );
 };

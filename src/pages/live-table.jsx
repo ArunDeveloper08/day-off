@@ -55,9 +55,9 @@ const LiveDataTable = ({ id, socketData }) => {
       return null;
 
     let diff = null;
-    if (item.OrderType === "Buy") {
+    if (item.entryOrderType === "BUY") {
       diff = (socketData.last_traded_price - item.entryPivot)?.toFixed(2);
-    } else if (item.OrderType === "SELL") {
+    } else if (item.entryOrderType === "SELL") {
       diff = (item.entryPivot - socketData.last_traded_price)?.toFixed(2);
     }
     return { identifier: item.identifier, diff };
