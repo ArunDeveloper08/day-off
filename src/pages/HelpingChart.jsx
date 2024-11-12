@@ -711,7 +711,7 @@ const HelpingChart = () => {
             <div>
               <div className="flex flex-wrap gap-x-5 font-semibold py-2">
                 <p className=" text-[13px] md:text-[16px]">
-                  Trade Terminal : {data?.data?.terminal}
+                   Terminal : {data?.data?.terminal}
                 </p>
                 <p className="text-red-600  text-[13px] md:text-[16px]">
                   Candle :
@@ -723,9 +723,9 @@ const HelpingChart = () => {
                     Identifier:
                     {data?.data?.identifier}
                   </p> */}
-                <p className=" text-[13px] md:text-[16px]">
+                {/* <p className=" text-[13px] md:text-[16px]">
                   Trade Index: {data?.data?.tradeIndex}
-                </p>
+                </p> */}
                 {data?.data?.tradeIndex != 4 && data?.data?.tradeIndex != 7 && (
                   <>
                     <p className=" text-[13px] md:text-[16px]">

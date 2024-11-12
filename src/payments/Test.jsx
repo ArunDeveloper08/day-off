@@ -1,353 +1,52 @@
-import React, {
-  memo,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  useImperativeHandle,
-} from "react";
-import { Chart, ChartCanvas, ZoomButtons } from "react-stockcharts";
-import {
-  Annotate,
-  LabelAnnotation,
-  SvgPathAnnotation,
-  buyPath,
-  sellPath,
-} from "react-stockcharts/lib/annotation";
-import { XAxis, YAxis } from "react-stockcharts/lib/axes";
-import {
-  BarSeries,
-  CandlestickSeries,
-  LineSeries,
-  MACDSeries,
-} from "react-stockcharts/lib/series";
-import { discontinuousTimeScaleProvider } from "react-stockcharts/lib/scale";
-import {
-  HoverTooltip,
-  MovingAverageTooltip,
-  MACDTooltip,
-} from "react-stockcharts/lib/tooltip";
-// import { last } from "react-stockcharts/lib/utils";
-import axios from "axios";
-import { useConfig } from "@/hooks/use-config";
-import { formatDate, formatPrice } from "@/lib/utils";
-import { useLiveSocket } from "@/providers/live-socket-provider";
-import {
-  TrendLine,
-  DrawingObjectSelector,
-  FibonacciRetracement,
-  EquidistantChannel,
-  InteractiveText,
-} from "react-stockcharts/lib/interactive";
-import { timeFormat } from "d3-time-format";
-import { format } from "d3-format";
-// import { last, toObject } from "react-stockcharts/lib/utils";
-import { head, last, toObject } from "react-stockcharts/lib/utils";
-import {
-  CrossHairCursor,
-  EdgeIndicator,
-  MouseCoordinateX,
-  MouseCoordinateY,
-} from "react-stockcharts/lib/coordinates";
 
-import { fitWidth } from "react-stockcharts/lib/helper";
-import { ema, macd, sma } from "react-stockcharts/lib/indicator";
-import ErrorBoundary from "@/hooks/error-boundary.jsx";
-import { BASE_URL_OVERALL } from "@/lib/constants";
-import { useInteractiveNodes } from "./interactiveutils";
-import { getMorePropsForChart } from "react-stockcharts/lib/interactive/utils";
-// import { saveInteractiveNodes, getInteractiveNodes } from "./interactiveutils";
-// import { Modal, Button, FormGroup, FormControl } from "react-bootstrap";
-import Dialog from "@/modals/dialog-modal";
-import { useModal } from "@/hooks/use-modal";
-
-function tooltipContent(underlyingValue) {
-  return ({ currentItem, xAccessor }) => {
-    return {
-      x: `Time: ${
-        currentItem?.timestamp && formatDate(currentItem?.timestamp)
-      }`,
-      y: [
-        {
-          label: "Underlying Value",
-          value:
-            currentItem?.underlyingValue &&
-            formatPrice(currentItem?.underlyingValue),
-          stroke: "black",
-        },
-
-        {
-          label: "Last highest LTP",
-          value: currentItem?.Last_Highest_LTP?.toFixed(2),
-          stroke: "black",
-        },
-
-        {
-          label: "Micro Profit",
-          value: currentItem?.microProfit?.toFixed(2),
-          stroke: "black",
-        },
-        {
-          label: "Exit Support",
-          value: currentItem?.exitSupport?.toFixed(2),
-          stroke: "black",
-        },
-        {
-          label: "Candle close",
-          value: currentItem?.close && formatPrice(currentItem?.close),
-          stroke: "black",
-        },
-        {
-          label: "Candle Size",
-          value: (currentItem?.close - currentItem?.open)?.toFixed(2),
-          stroke: currentItem?.close - currentItem?.open < 0 ? "red" : "green",
-        },
-        {
-          label: "Pivot diff",
-          value: currentItem?.pivotDifference?.toFixed(2),
-          stroke: "black",
-        },
-        {
-          label: "Intitial Time",
-          value: currentItem?.initialTime?.slice(11, 19),
-          stroke: "black",
-        },
-
-        {
-          label: "D_Exit_Value",
-          value: currentItem?.dynamicExitValue?.toFixed(2),
-          stroke: "black",
-        },
-        {
-          label: "D_Entry_Value",
-          value: currentItem?.dynamicEntryValue?.toFixed(2),
-          stroke: "black",
-        },
-        {
-          label: "Last Lowest LTP",
-          value: currentItem?.InitialLow?.toFixed(2),
-          stroke: "black",
-        },
-        {
-          label: "Moving Avg WMA",
-          value: currentItem?.movingAvgWMA?.toFixed(2),
-          stroke: "black",
-        },
-        {
-          label: "volume",
-          value: currentItem?.volume?.toFixed(2),
-          stroke: "black",
-        },
-        {
-          label: "Target profit",
-          value: currentItem?.RangeBoundTargetProfit?.toFixed(2),
-          stroke: "black",
-        },
-        {
-          label: "RSI Value",
-          value: currentItem?.RSI_Value?.toFixed(2),
-          stroke: "black",
-        },
-        {
-          label: "Moving Avg 1",
-          value: currentItem?.movingAvgMA1?.toFixed(2),
-          stroke: "black",
-        },
-        {
-          label: "Moving Avg 2",
-          value: currentItem?.movingAvgMA2?.toFixed(2),
-          stroke: "black",
-        },
-      ].filter((line) => line?.value),
-    };
-  };
-}
-
-const useKeyPress = (callback) => {
-  useEffect(() => {
-    document.addEventListener("keyup", callback);
-    return () => {
-      document.removeEventListener("keyup", callback);
-    };
-  }, [callback]);
-};
-
-let trendLineArray = [
-  {
-    width: 2,
-    color: "green",
-    name: "R4",
-  },
-  {
-    width: 2,
-    color: "green",
-    name: "R3",
-  },
-  {
-    width: 2,
-    color: "green",
-    name: "R2",
-  },
-  {
-    width: 2,
-    color: "green",
-    name: "R1",
-  },
-  {
-    width: 2,
-    color: "red",
-    name: "S4",
-  },
-  {
-    width: 2,
-    color: "red",
-    name: "S3",
-  },
-  {
-    width: 2,
-    color: "red",
-    name: "S2",
-  },
-  {
-    width: 2,
-    color: "red",
-    name: "S1",
-  },
-  {
-    width: 2,
-    color: "violet",
-    name: "callTargetLevel",
-  },
-  {
-    width: 2,
-    color: "orange",
-    name: "putTargetLevel",
-  },
-];
 
 const CandleChart = ({
-  handleCreateTrendLines,
   chartType,
   // getChartData,
   data: initialData,
-  intractiveData,
+
   width,
   height,
   showRow,
   ratio,
-  master,
+
   type = chartType,
-  trends3,
-  setTrends3,
-  alert3,
-  setAlert3,
+
   entryLine,
   setEntryLine,
+
   // type = "canvas",
   // type = "svg",
 }) => {
   try {
     const { onOpen } = useModal();
-
-    const [enableInteractiveObject, setEnableInteractiveObject] =
-      useState(false);
-
-    const [textList1, setTextList1] =
-      useState();
-      //JSON.parse(intractiveData?.textLabel)
-
-    const [textList3, setTextList3] = useState([]);
-    const [showModal, setShowModal] = useState(false);
-    const [currentText, setCurrentText] = useState("");
-    const [chartId, setChartId] = useState(null);
-    const canvasNode = useRef(null);
-
-    const handleTextChange = (text, chartId) => {
-      // console.log(
-      //   "Updated Text:",
-      //   text,
-      //   "ChartId:",
-      //   chartId,
-      //   "text position",
-      //   text.position
-      // );
-      const textList = chartId === 1 ? textList1 : textList3;
-      const newText = {
-        ...text, // Keep all the properties of the text including the updated one
-      };
-
-      // Append the new text to the existing list
-      if (chartId === 1) {
-        setTextList1([...textList, newText]); // Add new text without removing previous ones
-      } else {
-        setTextList3([...textList, newText]); // Add new text to textList3
-      }
-
-      setShowModal(false);
-      setEnableInteractiveObject(false);
-    };
-
-    const handleDialogClose = () => {
-      setShowModal(false);
-    };
-
-    const handleChoosePosition = (text, moreProps) => {
-      if (!moreProps || !moreProps.chartConfig) {
-        console.error("moreProps or chartConfig is undefined");
-        return;
-      }
-      const { id: chartId } = moreProps.chartConfig;
-
-      console.log("Opening Modal with", { currentText, chartId, text });
-
-      // Add new text to the correct list before opening the modal
-      if (chartId === 1) {
-        setTextList1((prev) => [...prev, text]); // Add to textList1
-      } else {
-        setTextList3((prev) => [...prev, text]); // Add to textList3
-      }
-
-      // Open the modal for editing
-      onOpen("dialog-modal", {
-        text: text,
-        chartId: chartId,
-        onSave: handleTextChange,
-      });
-      setCurrentText(text.text);
-      setEnableInteractiveObject(false);
-      setChartId(chartId);
-    };
+    const [enableEntryLine, setEnableEntryLine] = useState(false);
 
     const margin = { left: 80, right: 80, top: 30, bottom: 50 };
     const calculatedData = initialData;
     // Trendline state
-    const [enableTrendLine, setEnableTrendLine] = useState(false);
 
-    const [trends1, setTrends1] = useState([
-      {
-        start: [100, 400],
-        end: [150, 500],
-        appearance: { stroke: "green" },
-        type: "XLINE",
-      },
-    ]);
     // const [trends3, setTrends3] = useState(intractiveData?.trendLines);
     const node1Ref = useRef(null);
+
+    const entryLineNodeRef = useRef(null);
 
     const node3Ref = useRef(null);
     //   console.log({ trends3 });
     // Fibonacci state
-    const [enableFib, setEnableFib] = useState(true);
+
+    const fibNode1Ref = useRef(null);
+
+    const fibNode3Ref = useRef(null);
 
     // Equidistant Channel state
-    const [enableEquidistantChannel, setEnableEquidistantChannel] =
-      useState(true);
-    const [channels1, setChannels1] = useState([]);
+
+    const channelNode1Ref = useRef(null);
+    const channelNode3Ref = useRef(null);
 
     const logTrendLines = (trends) => {
-      // console.log("logTrendLines");
       trends.forEach((trend) => {
-        // console.log("TrendLine Start:", trend.start, "End:", trend.end);
+        console.log("TrendLine Start:", trend.start, "End:", trend.end);
       });
     };
 
@@ -356,77 +55,91 @@ const CandleChart = ({
         return [`trends_${each.chartId}`, each.objects];
       });
       // setTrends1(state.trends_1 || trends1);
-      setTrends3(state.trends_3 || trends3);
-      setChannels1(state.channels_1 || channels1);
-      setAlert3(state.alert_3 || alert3);
+
       setEntryLine(state.entryLine || entryLine);
     };
 
-    const onDrawCompleteChart3 = (newTrends) => {
-      // setEnableTrendLine(false);
+    const onDrawCompleteEntryLine3 = (newAlerts) => {
+      setEnableEntryLine(false);
+      let coloredAlerts = newAlerts?.map((item, ind) => {
+        let startIndex = Math.min(Math.floor(item.start[0]), data?.length - 1);
+        let startTime = data[startIndex]?.timestamp;
 
-      let coloredNewTrends = newTrends?.map((item, ind) => {
-        let startIndex = Math?.min(Math.floor(item.start[0]), data?.length - 1);
-        let startTime = data[startIndex].timestamp;
-        // let endIndex = Math.min(Math.floor(item?.end[0]), data?.length - 1);
-        // let endTime = data[endIndex].timestamp;
-
-        // Check if item?.end[0] is within the range of the chart
         let endIndex = Math.floor(item?.end[0]);
-        let endTime;
-        // Ensure endIndex is within the data bounds
-        if (endIndex >= 0 && endIndex < data?.length) {
-          // If within bounds, get the timestamp
-          endTime = data[endIndex]?.timestamp;
+        let endTime =
+          endIndex >= 0 && endIndex < data?.length
+            ? data[endIndex]?.timestamp
+            : undefined;
+
+        // Determine the stroke color
+        let strokeColor;
+
+        if (item.name === "CESellLine") {
+          strokeColor = "green"; // Fixed color for CESellLine
+        } else if (item.name === "PESellLine") {
+          strokeColor = "red"; // Fixed color for PESellLine
+        } else if (item.name === "PEBuyLine") {
+          strokeColor = "green"; // Fixed color for PESellLine
+        } else if (item.name === "CEBuyLine") {
+          strokeColor = "red"; // Fixed color for CEBuyLine
+        } else if (item.name === "FUTSellLine") {
+          strokeColor = "green"; // Fixed color for CEBuyLine
+        } else if (item.name === "FUTBuyLine") {
+          strokeColor = "red"; // Fixed color for CEBuyLine
+        } else if (ind < 4) {
+          // Use colors and names from entryLineArray for the first four lines
+          strokeColor = entryLineArray[ind]?.color || "blue";
         } else {
-          // If out of bounds, set endTime to undefined
-          endTime = undefined;
+          // Default to blue for any additional lines beyond the first four
+          strokeColor = "blue";
         }
+
+        // Assign name based on index or fallback to "Unnamed-Line"
+        const lineName =
+          item.name || entryLineArray[ind]?.name || `Unnamed-Line ${ind + 1}`;
 
         return {
           ...item,
           appearance: {
             ...item.appearance,
-            stroke: trendLineArray[ind]?.color || "blue",
-            strokeWidth: trendLineArray[ind]?.width || 2,
+            stroke: strokeColor,
+            strokeWidth: item.appearance.strokeWidth || 2,
           },
           startTime,
           endTime,
-          name: trendLineArray[ind]?.name || "Trend",
+          name: lineName, // Assigning the final name here
         };
       });
-      // console.log({ coloredNewTrends });
-      setTrends3(coloredNewTrends);
-      logTrendLines(coloredNewTrends);
+
+      setEntryLine(coloredAlerts);
+      logTrendLines(coloredAlerts); // Log trend lines with names and colors for debugging
     };
 
     const onKeyPress = (e) => {
       const keyCode = e.which;
       console.log(keyCode);
       switch (keyCode) {
-        case 46: // DEL
-          setTrends1(trends1.filter((each) => !each.selected));
-          setTrends3(trends3.filter((each) => !each.selected));
-
-          break;
         case 27: // ESC
           node1Ref.current.terminate();
           node3Ref.current.terminate();
+          fibNode1Ref.current.terminate();
+          fibNode3Ref.current.terminate();
+          channelNode1Ref.current.terminate();
+          channelNode3Ref.current.terminate();
 
-          setEnableTrendLine(false);
-          setEnableFib(false);
-          setEnableEquidistantChannel(false);
+          break;
+        case 71: // G - Enable Interactive Text
+          setEnableInteractiveObject(true);
           break;
 
         case 68: // D - Draw Alert Trendline
-          setEnableTrendLine(true);
-
+          setEnableEntryLine(true);
           break;
 
         case 65: // A - Draw Trendline
-          setEnableTrendLine(false);
-
+          setEnableEntryLine(false);
           break;
+
         default:
           break;
       }
@@ -436,6 +149,17 @@ const CandleChart = ({
     const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(
       (d) => new Date(d.date || d.timestamp)
     );
+
+    const macdCalculator = macd()
+      .options({
+        fast: 12,
+        slow: 26,
+        signal: 9,
+      })
+      .merge((d, c) => {
+        d.macd = c;
+      })
+      .accessor((d) => d.macd);
 
     const { data, xScale, xAccessor, displayXAccessor } =
       xScaleProvider(calculatedData);
@@ -483,30 +207,31 @@ const CandleChart = ({
                   />
                 )}
 
-                {showRow.trendLine && (
+                {showRow.entryLine && (
                   <>
                     <TrendLine
                       ref={(node) => {
-                        node3Ref.current = node;
+                        entryLineNodeRef.current = node;
                       }}
-                      enabled={enableTrendLine}
+                      enabled={enableEntryLine}
                       type="LINE"
                       snap={false}
-                      value={trends3}
+                      value={entryLine}
                       snapTo={(d) => [d?.high, d?.low]}
-                      onStart={() => console.log("START")}
-                      onComplete={onDrawCompleteChart3}
-                      trends={trends3}
-                      // strokeColor="#ededed"  // Example color
+                      onStart={() => console.log("Entry Line Line Start")}
+                      onComplete={onDrawCompleteEntryLine3}
+                      trends={entryLine}
                     />
-
                     <DrawingObjectSelector
-                      enabled={!enableTrendLine}
+                      enabled={!enableEntryLine}
                       getInteractiveNodes={() => ({
-                        Trendline: { 1: node1Ref.current, 3: node3Ref.current },
+                        EntryLine: {
+                          1: entryLineNodeRef.current,
+                          3: entryLineNodeRef.current,
+                        },
                       })}
                       drawingObjectMap={{
-                        Trendline: "trends",
+                        EntryLine: "EntryLine",
                       }}
                       onSelect={handleSelection}
                     />
@@ -520,6 +245,7 @@ const CandleChart = ({
     );
   } catch (error) {
     // window.location.reload();
+    console.log("Error" , error)
   }
 };
 const EnhancedCandleChart = fitWidth(CandleChart);

@@ -101,6 +101,7 @@ const initialState = {
   secondarySellTarget: "",
   isHedging: "0",
   hedgingIdentifier: "",
+  FUTDeviation:""
   // Min_Order_Qty:"1"
 };
 
@@ -182,6 +183,7 @@ const alternateInitialState = {
   secondarySellTarget: "",
   isHedging: "0",
   hedgingIdentifier: "",
+  FUTDeviation:""
 };
 // tradeIndex =2
 const gammaBlastInitialState = {
@@ -267,6 +269,7 @@ const gammaBlastInitialState = {
   secondarySellTarget: "",
   isHedging: "0",
   hedgingIdentifier: "",
+  FUTDeviation : ""
 };
 // tradeIndex =6
 
@@ -494,6 +497,7 @@ export const AddNewtrade = () => {
         secondarySellTarget: values.secondarySellTarget,
         isHedging: values.isHedging,
         hedgingIdentifier: values.hedgingIdentifier,
+        FUTDeviation: values.FUTDeviation,
       });
       alert("Add Successfully");
     } catch (error) {
@@ -1212,6 +1216,16 @@ export const AddNewtrade = () => {
                     name="PESellDeviation"
                     onChange={handleChange}
                     value={values.PESellDeviation}
+                    className="mt-1"
+                    type="number"
+                  />
+                </div>
+                <div className="px-1">
+                  <Label>FUT Buy/Sell Deviation</Label>
+                  <Input
+                    name="FUTDeviation"
+                    onChange={handleChange}
+                    value={values.FUTDeviation}
                     className="mt-1"
                     type="number"
                   />

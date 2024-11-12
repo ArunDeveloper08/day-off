@@ -54,7 +54,8 @@ import { getMorePropsForChart } from "react-stockcharts/lib/interactive/utils";
 import Dialog from "@/modals/dialog-modal";
 import { useModal } from "@/hooks/use-modal";
 // import isEqual from "lodash/isEqual";
-import debounce from "lodash/debounce";
+// import debounce from "lodash/debounce";
+import  { forwardRef } from 'react';
 
 function tooltipContent(underlyingValue) {
   return ({ currentItem, xAccessor }) => {
@@ -667,6 +668,7 @@ const CandleChart = ({
     };
 
     const onDrawCompleteEntryLine3 = (newAlerts) => {
+      
       
       setEnableEntryLine(false)
       let coloredAlerts = newAlerts?.map((item, ind) => {
@@ -1624,6 +1626,7 @@ const CandleChart = ({
      
                   </>
                 )}
+
                 {showRow.entryLine && (
                   <>
                     <TrendLine
@@ -1755,6 +1758,7 @@ const CandleChart = ({
     );
   } catch (error) {
     // window.location.reload();
+    console.log("Error" , error)
   }
 };
 const EnhancedCandleChart = fitWidth(CandleChart);
@@ -1763,6 +1767,10 @@ export default memo((props) => (
     <EnhancedCandleChart {...props} />
   </ErrorBoundary>
 ));
+
+
+
+
 
 export const LiveGraph = () => {
   const { config, tradeConfig } = useConfig();

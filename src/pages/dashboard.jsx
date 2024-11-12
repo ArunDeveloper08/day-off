@@ -714,7 +714,7 @@ const Dashboard = () => {
                 <th> Identifier</th>
                 <th>Is Hedge</th>
                 {/* <th>  Hedging Trade</th> */}
-                <th>Master Identifier For Hedge</th>
+                <th> Identifier Under Hedge</th>
 
                 {activeFilters.includes("isMaster") && (
                   <>
@@ -1112,6 +1112,7 @@ const Dashboard = () => {
                                   secondarySellTarget: item.secondarySellTarget,
                                   isHedging: item.isHedging,
                                   hedgingIdentifier: item.hedgingIdentifier,
+                                  FUTDeviation: item.FUTDeviation,
                                 },
                                 getAllTrades,
                                 trades,

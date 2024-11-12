@@ -83,7 +83,6 @@ export const EditTrade = () => {
       return alert("Micro Profit Percent Should be less than 50%");
     }
     if (values?.entryHystresisPercent > 25) {
-      
       return alert("Entry Hystresis Percent Should be less than 25%");
     }
     if (String(values?.isHedging) === "1" && values.hedgingIdentifier == "") {
@@ -170,6 +169,7 @@ export const EditTrade = () => {
         PESellDeviation: values.PESellDeviation,
         isHedging: values.isHedging,
         hedgingIdentifier: values.hedgingIdentifier,
+        FUTDeviation: values.FUTDeviation,
 
         // targetProfit: values.targetProfit,
       });
@@ -281,39 +281,39 @@ export const EditTrade = () => {
                   />
                 </div>
                 <div className="px-1">
-              <Label>Is Hedging</Label>
-              <Select
-                value={String(values?.isHedging) === "0" ? "NO" : "YES"}
-                name="isHedging"
-                onValueChange={(value) => handleSelect("isHedging", value)}
-              >
-                <SelectTrigger className="w-full mt-1 border-zinc-500">
-                  <SelectValue>
-                    {String(values?.isHedging) === "0" ? "NO" : "YES"}
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Hedging</SelectLabel>
-                    <SelectItem value="0">NO</SelectItem>
-                    <SelectItem value="1">YES</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
+                  <Label>Is Hedging</Label>
+                  <Select
+                    value={String(values?.isHedging) === "0" ? "NO" : "YES"}
+                    name="isHedging"
+                    onValueChange={(value) => handleSelect("isHedging", value)}
+                  >
+                    <SelectTrigger className="w-full mt-1 border-zinc-500">
+                      <SelectValue>
+                        {String(values?.isHedging) === "0" ? "NO" : "YES"}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Hedging</SelectLabel>
+                        <SelectItem value="0">NO</SelectItem>
+                        <SelectItem value="1">YES</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-            {values?.isHedging == 1 && (
-              <div className="px-1">
-                <Label>Hedging Identifier</Label>
-                <Input
-                  value={values.hedgingIdentifier}
-                  className="mt-1"
-                  type="text"
-                  name ="hedgingIdentifier"
-                  onChange={handleChange}
-                />
-              </div>
-            )}
+                {values?.isHedging == 1 && (
+                  <div className="px-1">
+                    <Label>Hedging Identifier</Label>
+                    <Input
+                      value={values.hedgingIdentifier}
+                      className="mt-1"
+                      type="text"
+                      name="hedgingIdentifier"
+                      onChange={handleChange}
+                    />
+                  </div>
+                )}
 
                 <div className="px-1">
                   <Label>WMA</Label>
@@ -809,7 +809,7 @@ export const EditTrade = () => {
                       />
                     </div>
                     <div className="px-1">
-                      <Label>CE Buy  Deviation</Label>
+                      <Label>CE Buy Deviation</Label>
                       <Input
                         name="candleRatioBuy"
                         onChange={handleChange}
@@ -849,6 +849,16 @@ export const EditTrade = () => {
                       />
                     </div>
                     <div className="px-1">
+                      <Label>FUT  Buy/Sell Deviation</Label>
+                      <Input
+                        name="FUTDeviation"
+                        onChange={handleChange}
+                        value={values.FUTDeviation}
+                        className="mt-1"
+                        type="number"
+                      />
+                    </div>
+                    <div className="px-1">
                       <Label>Secondary Sell Target (%)</Label>
                       <Input
                         name="secondarySellTarget"
@@ -872,7 +882,7 @@ export const EditTrade = () => {
                       type="number"
                     />
                   </div>
-                )} */}
+                )} */} 
 
                 {values?.isMaster == false && (
                   <>
