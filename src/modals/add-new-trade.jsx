@@ -99,7 +99,7 @@ const initialState = {
   CESellDeviation: "",
   PESellDeviation: "",
   secondarySellTarget: "",
-  isHedging: 0,
+  isHedging: "0",
   hedgingIdentifier: "",
   // Min_Order_Qty:"1"
 };
@@ -118,7 +118,7 @@ const alternateInitialState = {
   tradeOutTime: "15:15",
   wma: "1",
   interval: "THREE_MINUTE",
-  indexValue: "2",
+  indexValue: "7",
   priceIncPercent: "20",
   priceDecPercent: "40",
   earningPercentLimit: "1",
@@ -180,7 +180,7 @@ const alternateInitialState = {
   CESellDeviation: "",
   PESellDeviation: "",
   secondarySellTarget: "",
-  isHedging: 0,
+  isHedging: "0",
   hedgingIdentifier: "",
 };
 // tradeIndex =2
@@ -265,7 +265,7 @@ const gammaBlastInitialState = {
   CESellDeviation: "",
   PESellDeviation: "",
   secondarySellTarget: "",
-  isHedging: 0,
+  isHedging: "0",
   hedgingIdentifier: "",
 };
 // tradeIndex =6
@@ -583,6 +583,7 @@ export const AddNewtrade = () => {
                 type="text"
               />
             </div>
+            
             <div className="px-1">
               <Label>Is Hedging</Label>
               <Select
@@ -592,7 +593,7 @@ export const AddNewtrade = () => {
               >
                 <SelectTrigger className="w-full mt-1 border-zinc-500">
                   <SelectValue>
-                    {values?.isHedging === "0" ? "NO" : "YES"}
+                    {String(values?.isHedging) === "0"  ? "NO" : "YES"}
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
@@ -607,11 +608,13 @@ export const AddNewtrade = () => {
 
             {values?.isHedging == 1 && (
               <div className="px-1">
-                <Label>Hedging Identifier</Label>
+                <Label>Main Identifier</Label>
                 <Input
                   value={values.hedgingIdentifier}
                   className="mt-1"
                   type="text"
+                  name ="hedgingIdentifier"
+                  onChange={handleChange}
                 />
               </div>
             )}

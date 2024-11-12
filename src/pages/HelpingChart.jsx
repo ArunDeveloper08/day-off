@@ -235,6 +235,7 @@ const HelpingChart = () => {
                 ? true
                 : apiLineNames.has(line.name)
             );
+      
 
         if (!hasInitializedTrends.current) {
           // console.log("Setting trends for the first time");
@@ -242,6 +243,13 @@ const HelpingChart = () => {
           hasInitializedTrends.current = true; // Mark as initialized
         }
       }
+      setEntryLine((prevEntryLines) => {
+        const mergedEntryLines = mergeEntryLines(
+          apiEntryLines,
+          prevEntryLines
+        );
+        return mergedEntryLines;
+      });
       }
   })
 
@@ -669,7 +677,7 @@ const HelpingChart = () => {
     getTestMode();
   }, []);
 
-  // console.log("entryLine", entryLine);
+  // console.log("entryLine", entryLine);  
   //  console.log("CEZone",trendLineValue.zone.CEZone.low)
   // console.log("socketdata",socketData)
   // console.log("values",values)

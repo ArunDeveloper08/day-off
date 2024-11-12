@@ -447,7 +447,7 @@ const Dashboard = () => {
 
   // console.log("socketData",socketData)
 
-  return (
+  return ( 
     <>
       <div>
         <div className="text-center">
@@ -700,20 +700,21 @@ const Dashboard = () => {
                   <>
                     <th>Master</th>
                     <th>Customer Grade</th>
-                    <th>Loss Count</th>
+                   {/* <th>Loss Count</th>
                     <th>Candle Size</th>
                     <th>Initial Entry Value</th>
                     <th>Min Profit</th>
-                    <th>Traling stop loss</th>
+                    <th>Traling stop loss</th> */}
                     <th>Have Tarde</th>
-                    <th>WMA</th>
-                    <th>Index</th>
+                    {/* <th>WMA</th> */}
+                    <th>Main Index</th>
                   </>
                 )}
-
-                <th>Interval</th>
-
-                <th>Identifier</th>
+                {/* <th>Interval</th> */}
+                <th> Identifier</th>
+                <th>Is Hedge</th>
+                {/* <th>  Hedging Trade</th> */}
+                <th>Master Identifier For Hedge</th>
 
                 {activeFilters.includes("isMaster") && (
                   <>
@@ -724,17 +725,17 @@ const Dashboard = () => {
                 <th>Alert Below</th>
                 <th>LTP</th>
                 <th>Alert Above</th>
-                <th>Terminal</th>
+                {/* <th>Terminal</th> */}
                 <th>ON/OFF</th>
 
                 {!activeFilters.includes("isMaster") && (
                   <>
-                    <th>Order Type</th>
+                    {/* <th>Order Type</th> */}
                   </>
                 )}
 
                 {/* <th>Have Trade</th> */}
-                <th>Market Trend</th>
+                {/* <th>Market Trend</th> */}
                 <th>Edit</th>
                 <th>Update</th>
                 <th>Live</th>
@@ -767,7 +768,7 @@ const Dashboard = () => {
                               {item.isMaster ? "True" : "False"}
                             </td>
                             <td>{item.customerGrading}</td>
-                            <td>{item.lossLimit}</td>
+                            {/* <td>{item.lossLimit}</td>
 
                             <td>
                               {editMode === item.id ? (
@@ -812,7 +813,7 @@ const Dashboard = () => {
                               )}
                             </td>
 
-                            <td>{item?.dynamicExitValue?.toFixed(2)}</td>
+                            <td>{item?.dynamicExitValue?.toFixed(2)}</td> */}
                             <td
                               className={`${
                                 item?.haveTrade
@@ -822,7 +823,7 @@ const Dashboard = () => {
                             >
                               {item?.haveTrade ? "true" : "false"}
                             </td>
-                            <td>
+                            {/* <td>
                               {editMode === item.id ? (
                                 <input
                                   type="number"
@@ -836,26 +837,44 @@ const Dashboard = () => {
                               ) : (
                                 item.WMA
                               )}
-                            </td>
+                            </td> */}
                             <td>{item.tradeIndex}</td>
                           </>
                         )}
 
-                        <td>{item.interval}</td>
+                        {/* <td>{item.interval}</td> */}
 
                         <td
-                          className={`${
-                            item.isMaster &&
-                            (item.targetAbove || item.targetBelow) &&
-                            (socketData[item.instrument_token]
-                              ?.last_traded_price < item.targetBelow ||
-                              socketData[item.instrument_token]
-                                ?.last_traded_price > item.targetAbove)
-                              ? "text-green-500 w-32 font-bold"
-                              : "w-32"
-                          }`}
+                      className={`w-32  ${
+                        //item.isMaster &&
+                        //(item.targetAbove || item.targetBelow) &&
+                        // (socketData[item.instrument_token]?.last_traded_price < item.targetBelow ||
+                        //   socketData[item.instrument_token]?.last_traded_price > item.targetAbove)
+                          //?
+                           item.isHedging
+                            ? "text-pink-600 font-bold"
+                            : "text-black"
+                          //: "text-black"
+                      }`}
+                      
                         >
                           {item.identifier}
+                        </td>
+                        <td
+                              className={
+                                item.isHedging
+                                  ? "text-green-700 font-bold"
+                                  : "text-red-700 font-semibold"
+                              }
+                            >
+                              {item.isHedging ? "True" : "False"}
+                            </td>
+                        <td
+                         className={
+                          item.isHedging ? "font-bold text-black" : ""
+                         } 
+                        >
+                          {item.hedgingIdentifier}
                         </td>
 
                         {activeFilters.includes("isMaster") && (
@@ -889,7 +908,7 @@ const Dashboard = () => {
                           {item.targetAbove}
                         </td>
 
-                        <td>
+                        {/* <td>
                           {editMode === item.id ? (
                             <select
                               name="terminal"
@@ -914,7 +933,7 @@ const Dashboard = () => {
                                 : item.terminal}
                             </span>
                           )}
-                        </td>
+                        </td> */}
                         <td>
                           <button
                             onClick={() => toggleState(item.id, item.terminal)}
@@ -929,7 +948,7 @@ const Dashboard = () => {
                           </button>
                         </td>
 
-                        {!activeFilters.includes("isMaster") && (
+                        {/* {!activeFilters.includes("isMaster") && (
                           <>
                             <td>
                               {editMode === item.id ? (
@@ -955,10 +974,10 @@ const Dashboard = () => {
                               )}
                             </td>
                           </>
-                        )}
+                        )} */}
 
                         {/* <td>{item.haveTrade === true ? "True" : "False"}</td> */}
-                        <td
+                        {/* <td
                           className={
                             item.orderType === "Bearish"
                               ? "text-red-700 font-semibold"
@@ -969,7 +988,7 @@ const Dashboard = () => {
                           <p className="text-[11px] text-black  ">
                             {item.rangeBound}
                           </p>
-                        </td>
+                        </td> */}
 
                         <td>
                           <Button onClick={() => handleEdit(item)}>Edit</Button>

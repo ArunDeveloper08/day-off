@@ -289,7 +289,7 @@ export const EditTrade = () => {
               >
                 <SelectTrigger className="w-full mt-1 border-zinc-500">
                   <SelectValue>
-                    {values?.isHedging === "0" ? "NO" : "YES"}
+                    {String(values?.isHedging) === "0" ? "NO" : "YES"}
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
@@ -309,6 +309,8 @@ export const EditTrade = () => {
                   value={values.hedgingIdentifier}
                   className="mt-1"
                   type="text"
+                  name ="hedgingIdentifier"
+                  onChange={handleChange}
                 />
               </div>
             )}
