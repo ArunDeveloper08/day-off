@@ -74,7 +74,7 @@ export default function Home() {
         <Route
           path="/future/dashboard"
           element={
-            <ProtectedRoute>           
+            <ProtectedRoute>
               <DashboardPage />
             </ProtectedRoute>
           }
@@ -88,7 +88,15 @@ export default function Home() {
             </ProtectedRoute>
           }
         />
-        <Route path="/future/helping" element={<HelpingPageLayout />} />
+        <Route
+          path="/future/helping"
+          element={
+            <ProtectedRoute>
+              <HelpingPageLayout />
+            </ProtectedRoute>
+          }
+        />
+        
         <Route path="/future/back" element={<BackTestingPageLayout />} />
         <Route path="/future/angel-one" element={<AngelOneLayout />}>
           <Route
@@ -96,9 +104,8 @@ export default function Home() {
             element={<Navigate to="gainer-looser" replace={true} />}
           />
           <Route path="gainer-looser" element={<GainerLosser />} />
-          <Route path="option-greek" element={<OptionGreek />} />          
+          <Route path="option-greek" element={<OptionGreek />} />
           <Route path="other" element={<OtherPage />} />
-
         </Route>
       </Routes>
     </ThemeProvider>

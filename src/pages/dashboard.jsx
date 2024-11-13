@@ -871,7 +871,7 @@ const Dashboard = () => {
                             </td>
                         <td
                          className={
-                          item.isHedging ? "font-bold text-black" : ""
+                          item.isHedging ? "font-bold text-green-600" : "text-black font-bold"
                          } 
                         >
                           {item.hedgingIdentifier}
@@ -1113,6 +1113,8 @@ const Dashboard = () => {
                                   isHedging: item.isHedging,
                                   hedgingIdentifier: item.hedgingIdentifier,
                                   FUTDeviation: item.FUTDeviation,
+                                  hedgeValue: item.hedgeValue,
+                                  hedgeDeviation: item.hedgeDeviation,
                                 },
                                 getAllTrades,
                                 trades,

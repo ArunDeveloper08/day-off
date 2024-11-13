@@ -86,7 +86,7 @@ export const EditTrade = () => {
       return alert("Entry Hystresis Percent Should be less than 25%");
     }
     if (String(values?.isHedging) === "1" && values.hedgingIdentifier == "") {
-      return alert("This Trade is Hedge Trade . Enter Hedge Identifier");
+      return alert("This Trade is Hedge Trade . Enter Main Identifier");
     }
     // if (values?.rangeBoundPercent > values?.rangeBoundPercent2) {
     //   return alert(
@@ -170,6 +170,8 @@ export const EditTrade = () => {
         isHedging: values.isHedging,
         hedgingIdentifier: values.hedgingIdentifier,
         FUTDeviation: values.FUTDeviation,
+        hedgeValue: values.hedgeValue,
+        hedgeDeviation: values.hedgeDeviation,
 
         // targetProfit: values.targetProfit,
       });
@@ -303,16 +305,38 @@ export const EditTrade = () => {
                 </div>
 
                 {values?.isHedging == 1 && (
-                  <div className="px-1">
-                    <Label>Hedging Identifier</Label>
-                    <Input
-                      value={values.hedgingIdentifier}
-                      className="mt-1"
-                      type="text"
-                      name="hedgingIdentifier"
-                      onChange={handleChange}
-                    />
-                  </div>
+                  <>
+                    <div className="px-1">
+                      <Label>Main Identifier</Label>
+                      <Input
+                        value={values.hedgingIdentifier}
+                        className="mt-1"
+                        type="text"
+                        name="hedgingIdentifier"
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div className="px-1">
+                      <Label>Hedge Value</Label>
+                      <Input
+                        value={values.hedgeValue}
+                        className="mt-1"
+                        type="number"
+                        name="hedgeValue"
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div className="px-1">
+                      <Label>Hedge Deviation (%)</Label>
+                      <Input
+                        value={values.hedgeDeviation}
+                        className="mt-1"
+                        type="number"
+                        name="hedgeDeviation"
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </>
                 )}
 
                 <div className="px-1">
@@ -849,7 +873,7 @@ export const EditTrade = () => {
                       />
                     </div>
                     <div className="px-1">
-                      <Label>FUT  Buy/Sell Deviation</Label>
+                      <Label>FUT Buy/Sell Deviation</Label>
                       <Input
                         name="FUTDeviation"
                         onChange={handleChange}
@@ -882,7 +906,7 @@ export const EditTrade = () => {
                       type="number"
                     />
                   </div>
-                )} */} 
+                )} */}
 
                 {values?.isMaster == false && (
                   <>

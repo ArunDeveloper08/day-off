@@ -101,7 +101,9 @@ const initialState = {
   secondarySellTarget: "",
   isHedging: "0",
   hedgingIdentifier: "",
-  FUTDeviation:""
+  FUTDeviation:"",
+  hedgeValue:"",
+  hedgeDeviation:"",
   // Min_Order_Qty:"1"
 };
 
@@ -183,7 +185,9 @@ const alternateInitialState = {
   secondarySellTarget: "",
   isHedging: "0",
   hedgingIdentifier: "",
-  FUTDeviation:""
+  FUTDeviation:"",
+  hedgeValue:"",
+  hedgeDeviation:"",
 };
 // tradeIndex =2
 const gammaBlastInitialState = {
@@ -269,7 +273,9 @@ const gammaBlastInitialState = {
   secondarySellTarget: "",
   isHedging: "0",
   hedgingIdentifier: "",
-  FUTDeviation : ""
+  FUTDeviation : "",
+  hedgeValue:"",
+  hedgeDeviation:"",
 };
 // tradeIndex =6
 
@@ -411,7 +417,7 @@ export const AddNewtrade = () => {
       return alert("Entry Hystresis Percent Should be less than 25%");
     }
     if (String(values?.isHedging) === "1" && values.hedgingIdentifier == "") {
-      return alert("This Trade is Hedge Trade . Enter Hedge Identifier");
+      return alert("This Trade is Hedge Trade . Enter Main Identifier");
     }
     // if (values?.rangeBoundPercent > values?.rangeBoundPercent2) {
     //   return alert(
@@ -498,6 +504,8 @@ export const AddNewtrade = () => {
         isHedging: values.isHedging,
         hedgingIdentifier: values.hedgingIdentifier,
         FUTDeviation: values.FUTDeviation,
+        hedgeValue: values.hedgeValue,
+        hedgeDeviation: values.hedgeDeviation,
       });
       alert("Add Successfully");
     } catch (error) {
@@ -611,6 +619,8 @@ export const AddNewtrade = () => {
             </div>
 
             {values?.isHedging == 1 && (
+              <>
+
               <div className="px-1">
                 <Label>Main Identifier</Label>
                 <Input
@@ -621,6 +631,27 @@ export const AddNewtrade = () => {
                   onChange={handleChange}
                 />
               </div>
+              <div className="px-1">
+                <Label>Hedge Value</Label>
+                <Input
+                  value={values.hedgeValue}
+                  className="mt-1"
+                  type="number"
+                  name ="hedgeValue"
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="px-1">
+                <Label>Hedge Deviation (%)</Label>
+                <Input
+                  value={values.hedgeDeviation}
+                  className="mt-1"
+                  type="number"
+                  name ="hedgeDeviation"
+                  onChange={handleChange}
+                />
+              </div>
+              </>
             )}
 
             <div className="px-1">
