@@ -881,6 +881,7 @@ const CandleChart = ({
         console.log(err);
       }
     };
+   
 
     return (
       <div className="flex flex-col">

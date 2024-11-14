@@ -17,6 +17,7 @@ import { groupBy } from "./dashboard";
 import { ModeToggle } from "@/components/mode-toggle";
 import { useTheme } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
+import { scaleTime, scaleLinear } from "d3-scale";
 
 // import { Button } from "@mui/material";
 
@@ -48,6 +49,11 @@ const HelpingChart = () => {
   const [trends3, setTrends3] = useState([]);
   const [alert3, setAlert3] = useState([]);
   const [entryLine, setEntryLine] = useState([]);
+  const [selectedInterval, setSelectedInterval] = useState("ONE_MINUTE");
+
+
+  const timeScale = useRef(scaleTime().domain([0, 1]));
+  const priceScale = useRef(scaleLinear().domain([0, 1]));
   // const [entryLine2, setEntryLine2] = useState([]);
   useEffect(() => {
     setTheme("light");
@@ -135,6 +141,7 @@ const HelpingChart = () => {
   //   const storedMode = localStorage.getItem(`testingMode_${id}`);
   //   return storedMode === "true";
   // });
+  const [apiResponseReceived, setApiResponseReceived] = useState(false);
 
   const [testingMode, setTestingMode] = useState("");
   const hasInitializedTrends = useRef(false);
@@ -259,6 +266,107 @@ const HelpingChart = () => {
       });
     // }, 1000);
   };
+
+
+  const roundToNearestTime = (time, interval) => {
+    const date = new Date(time);
+    const minutes = date.getMinutes();
+    const hours = date.getHours();
+    let roundedMinutes;
+    let roundedTime;
+  
+    // Define a mapping between intervals and their minute value
+    const intervalMapping = {
+      'ONE_MINUTE': 1,
+      'THREE_MINUTE': 3,
+      'FIVE_MINUTE': 5,
+      'FIFTEEN_MINUTE': 15,
+      'THIRTY_MINUTE': 30,
+      'ONE_HOUR': 60,
+      'ONE_DAY': 1440, // 1 day = 1440 minutes
+      'ONE_WEEK': 10080 // 1 week = 10080 minutes
+    };
+  
+    // Get the interval in minutes
+    const intervalInMinutes = intervalMapping[interval];
+  
+    if (intervalInMinutes) {
+      // For minute-based intervals, round to the nearest interval
+      if (intervalInMinutes < 60) {
+        roundedMinutes = Math.floor(minutes / intervalInMinutes) * intervalInMinutes;
+        date.setMinutes(roundedMinutes, 0, 0);
+      } else {
+        // For hour-based intervals, adjust the hour
+        roundedTime = new Date(date.setMinutes(0, 0, 0)); // Reset minutes and seconds
+        if (interval === 'ONE_HOUR') {
+          // No need to change the date for hourly intervals
+          roundedTime.setHours(Math.floor(roundedTime.getHours() / 1) * 1);
+        } else if (interval === 'ONE_DAY') {
+          roundedTime.setDate(Math.floor(roundedTime.getDate() / 1) * 1); // Reset day if it's daily interval
+        } else if (interval === 'ONE_WEEK') {
+          // Handle weeks if needed
+          roundedTime.setDate(roundedTime.getDate() - roundedTime.getDay()); // Start of the week
+        }
+      }
+    }
+    
+    return date;
+  };
+  
+  const filterAndTransformLines = (trendLines, data, interval) => {
+    return trendLines.map((line) => {
+      const roundedStartTime = roundToNearestTime(line.startTime, interval);
+      const roundedEndTime = roundToNearestTime(line.endTime, interval);
+  
+      if (isNaN(roundedStartTime) || isNaN(roundedEndTime)) {
+        console.error('Invalid rounded start or end time');
+        return line; // Return the original line if there's an error
+      }
+  
+      const startIndex = data.findIndex(candle => new Date(candle.timestamp).getTime() === roundedStartTime.getTime());
+      const endIndex = data.findIndex(candle => new Date(candle.timestamp).getTime() === roundedEndTime.getTime());
+  
+      if (startIndex === -1 || endIndex === -1) {
+        console.error('Could not find corresponding data points for trendline:', line);
+        return line; // Return the original line if indices are not found
+      }
+  
+      const startCandle = data[startIndex];
+      const endCandle = data[endIndex];
+  
+      return {
+        ...line,
+        startTime: roundedStartTime.toISOString(),
+        endTime: roundedEndTime.toISOString(),
+        start: [startIndex, startCandle ? startCandle.close : line.start[1]],
+        end: [endIndex, endCandle ? endCandle.close : line.end[1]],
+      };
+    });
+  };
+  
+  // Adjust the trendline's start and end time when the interval changes
+  useEffect(() => {
+    if (!apiResponseReceived) return;
+  
+    const updatedTrendLines = filterAndTransformLines(entryLine, apiData, values.interval);
+    console.log("Updated Trend Lines:", updatedTrendLines);
+  
+    // Set state only if the calculated trend lines differ from the current state
+    setEntryLine(prev => JSON.stringify(prev) !== JSON.stringify(updatedTrendLines) ? updatedTrendLines : prev);
+  
+  }, [apiResponseReceived, apiData]); // Dependency on apiResponseReceived and apiData only
+  
+  const handleSelect = (key, value) => {
+    setValues((prev) => ({ ...prev, [key]: value }));
+  
+    // Check if the selected key is "interval" and transform the trend lines
+    if (key === "interval" && apiResponseReceived) {
+      const updatedEntryLines = filterAndTransformLines(entryLine, apiData, value);
+      setEntryLine(updatedEntryLines);
+    }
+  };
+  
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -438,9 +546,8 @@ const HelpingChart = () => {
 
   // console.log("socketData",socketData)
 
-  const handleSelect = (key, value) => {
-    setValues((prev) => ({ ...prev, [key]: value }));
-  };
+
+  
 
   const today = new Date().toISOString().split("T")[0];
   const getHighLowLines = async () => {
@@ -562,14 +669,15 @@ const HelpingChart = () => {
 
   const prevTrendLineActive = useRef(values.trendLineActive);
 
-  const handleSubmit = () => {
+  const handleSubmit =() => {
     axios
       .put(`${BASE_URL_OVERALL}/config/editMaster?id=${id}`, { ...values })
       .then((res) => {
         alert("Successfully Updated");
         // Call getChartData only if trendLineActive has NOT changed
         // if (prevTrendLineActive.current === values.trendLineActive) {
-        getChartData();
+         getChartData();
+        setApiResponseReceived(true);
         // }
 
         // Update the previous value to the current value
@@ -704,13 +812,32 @@ const HelpingChart = () => {
           >
             {hideConfig ? "Hide Config Data" : "Show Config Data"}
           </Button>
+          &nbsp; &nbsp;
+          <Button
+                  size="xs"
+                  className="p-1 text-[13px] md:text-[16px]"
+                  onClick={getHighLowLines}
+                >
+                  High/Low line
+                </Button>
+                &nbsp; &nbsp;
+                <button
+                  onClick={toggleTestingMode}
+                  className={`${
+                    testingMode === 1
+                      ? "bg-red-600 text-white"
+                      : "bg-green-600 text-white"
+                  } px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]`}
+                >
+                  {testingMode === 1 ? "Test Mode ON" : "Test Mode OFF"}
+                </button>
         </h2>
 
         {hideConfig && (
           <>
             <div>
-              <div className="flex flex-wrap gap-x-5 font-semibold py-2">
-                <p className=" text-[13px] md:text-[16px]">
+              <div className="flex flex-wrap font-semibold py-2  justify-start">
+                {/* <p className=" text-[13px] md:text-[16px]">
                    Terminal : {data?.data?.terminal}
                 </p>
                 <p className="text-red-600  text-[13px] md:text-[16px]">
@@ -718,7 +845,7 @@ const HelpingChart = () => {
                   {values?.interval === "minute"
                     ? "1 minute"
                     : values?.interval}
-                </p>
+                </p> */}
                 {/* <p className=" text-[13px] md:text-[16px]">
                     Identifier:
                     {data?.data?.identifier}
@@ -751,7 +878,7 @@ const HelpingChart = () => {
                 >
                   CE Buy Status :{data.data.haveTradeOfCE ? "True" : "False"}
                 </p>
-                {/* &nbsp; */}
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                 <p
                   className={`${
                     data.data.haveTradeOfPE
@@ -762,7 +889,7 @@ const HelpingChart = () => {
                   PE Buy Status:
                   {data.data.haveTradeOfPE ? "True" : "False"}
                 </p>
-                {/* &nbsp; */}
+                   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                 <p
                   className={`${
                     data.data.haveTradeOfCEBuy
@@ -773,7 +900,7 @@ const HelpingChart = () => {
                   CE SELL Status:
                   {data.data.haveTradeOfCEBuy ? "True" : "False"}
                 </p>
-                {/* &nbsp; */}
+                   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                 <p
                   className={`${
                     data.data.haveTradeOfPEBuy
@@ -784,6 +911,7 @@ const HelpingChart = () => {
                   PE SELL Status:
                   {data.data.haveTradeOfPEBuy ? "True" : "False"}
                 </p>
+                   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                 <p
                   className={`${
                     data.data.haveTradeOfFUTBuy
@@ -794,6 +922,7 @@ const HelpingChart = () => {
                   FUT  Buy Status:
                   {data.data.haveTradeOfFUTBuy ? "True" : "False"}
                 </p>
+                   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                 <p
                   className={`${
                     data.data.haveTradeOfFUTSell
@@ -804,14 +933,119 @@ const HelpingChart = () => {
                   FUT Sell Status:
                   {data.data.haveTradeOfFUTSell ? "True" : "False"}
                 </p>
-                <Button
+               
+              </div>
+                                                                                                     
+                                                                                                                                                                                                                         
+              <div className="flex flex-wrap   font-semibold py-2  justify-start">
+                {/* <p className=" text-[13px] md:text-[16px]">
+                   Terminal : {data?.data?.terminal}
+                </p>
+                <p className="text-red-600  text-[13px] md:text-[16px]">
+                  Candle :
+                  {values?.interval === "minute"
+                    ? "1 minute"
+                    : values?.interval}
+                </p> */}
+                {/* <p className=" text-[13px] md:text-[16px]">
+                    Identifier:
+                    {data?.data?.identifier}
+                  </p> */}
+                {/* <p className=" text-[13px] md:text-[16px]">
+                  Trade Index: {data?.data?.tradeIndex}
+                </p> */}
+                {data?.data?.tradeIndex != 4 && data?.data?.tradeIndex != 7 && (
+                  <>
+                    <p className=" text-[13px] md:text-[16px]">
+                      SMA1 : {data?.data?.SMA1}
+                    </p>
+                    <p className=" text-[13px] md:text-[16px]">
+                      SMA2 : {data?.data?.SMA2}
+                    </p>
+                  </>
+                )}
+
+                <p className="text-red-500 text-[13px] md:text-[16px]">
+                  {ceStopLoss && `CE Stop Loss : ${ceStopLoss?.toFixed(1)}`}
+                </p>
+                <p className="text-red-500 text-[13px] md:text-[16px]">
+                  {peStopLoss && `PE Stop Loss : ${peStopLoss?.toFixed(1)}`}
+                </p> 
+
+                <p 
+                  className={`${
+                    data.data.haveTradeOfHedgeCE
+                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
+                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
+                  }`}
+                >
+                  CE Buy Hedge  : {data.data.haveTradeOfHedgeCE ? "True" : "False"}
+                </p>
+                                              
+                   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                                    
+                <p
+                  className={`${
+                    data.data.haveTradeOfHedgePE
+                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
+                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
+                  }`}
+                >
+                  PE Buy Hedge :
+                  {data.data.haveTradeOfHedgePE ? "True" : "False"}
+                </p> 
+                   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                <p
+                  className={`${
+                    data.data.haveTradeOfHedgeCESell
+                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
+                      : "text-green-600  font-bold text-[13px] md:text-[16px]"
+                  }`}
+                >
+                  CE SELL Hedge:
+                  {data.data.haveTradeOfHedgeCESell ? "True" : "False"}
+                </p>
+                   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                <p
+                  className={`${
+                    data.data.haveTradeOfHedgePESell
+                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
+                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
+                  }`}
+                >
+                  PE SELL Hedge:
+                  {data.data.haveTradeOfHedgePESell ? "True" : "False"}
+                </p>
+                   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                <p
+                  className={`${
+                    data.data.haveTradeOfHedgeFUTBuy
+                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
+                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
+                  }`}
+                >
+                  FUT  Buy Hedge:
+                  {data.data.haveTradeOfHedgeFUTBuy ? "True" : "False"}
+                </p>
+                   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                <p
+                  className={`${
+                    data.data.haveTradeOfFUTSell
+                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
+                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
+                  }`}
+                >
+                  FUT Sell Hedge:
+                  {data.data.haveTradeOfFUTSell ? "True" : "False"}
+                </p>
+                {/* <Button
                   size="xs"
                   className="p-1 text-[13px] md:text-[16px]"
                   onClick={getHighLowLines}
                 >
                   High/Low line
-                </Button>
-                <button
+                </Button> */}
+                {/* <button
                   onClick={toggleTestingMode}
                   className={`${
                     testingMode === 1
@@ -820,7 +1054,7 @@ const HelpingChart = () => {
                   } px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]`}
                 >
                   {testingMode === 1 ? "Test Mode ON" : "Test Mode OFF"}
-                </button>
+                </button> */}
               </div>
 
               {data.data.tradeIndex == 4 && (
@@ -881,7 +1115,7 @@ const HelpingChart = () => {
                       {trendLineValue?.dataForIndex7?.putTargetLevelPrice?.toFixed(
                         1
                       )}
-                      &nbsp;
+                      &nbsp;   &nbsp; 
                       {trendLineValue?.dataForIndex7?.CESellLinePrice > 0 && (
                         <span>
                           CE Buy Price :
@@ -977,7 +1211,7 @@ const HelpingChart = () => {
                           {apiData?.[0]?.FUTStopLossForIndex17?.toFixed(1)}
                         </span>
                       )}
-                      Time : {formatDate(trendLineValue?.timestamp)}
+                      {/* Time : {formatDate(trendLineValue?.timestamp)} */}
                     </p>
                   )}
                 </div>
@@ -1472,6 +1706,32 @@ const HelpingChart = () => {
                   </SelectContent>
                 </Select>
               </div>
+              {/* <div className="flex flex-col w-full sm:w-auto">
+        <label>Interval</label>
+        <select
+          value={selectedInterval}
+          onChange={(e) => {
+            const interval = e.target.value;
+            handleIntervalChange(interval);
+          }}
+        >
+          {[
+            { label: "1 minute", value: "ONE_MINUTE" },
+            { label: "3 minute", value: "THREE_MINUTE" },
+            { label: "5 minute", value: "FIVE_MINUTE" },
+            { label: "15 minute", value: "FIFTEEN_MINUTE" },
+            { label: "30 minute", value: "THIRTY_MINUTE" },
+            { label: "1 hour", value: "ONE_HOUR" },
+            { label: "1 day", value: "ONE_DAY" },
+          ].map(option => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </div> */}
+
+
 
               {/* Interval Select */}
               <div className="flex flex-col w-full sm:w-auto">
@@ -1479,7 +1739,11 @@ const HelpingChart = () => {
                 <Select
                   value={values.interval}
                   name="terminal"
-                  onValueChange={(value) => handleSelect("interval", value)}
+                  onValueChange={(value) => { 
+                    handleSelect("interval", value);
+                    
+                  }}
+                  
                 >
                   <SelectTrigger className="w-full sm:w-[150px] mt-1 border-zinc-500">
                     <SelectValue>{values.interval}</SelectValue>
@@ -1495,7 +1759,8 @@ const HelpingChart = () => {
                         { label: "30 minute", value: "THIRTY_MINUTE" },
                         { label: "1 hour", value: "ONE_HOUR" },
                         { label: "1 day", value: "ONE_DAY" },
-                      ].map((suggestion) => (
+                        
+                      ]?.map((suggestion) => (
                         <SelectItem
                           key={suggestion.value}
                           value={suggestion.value}

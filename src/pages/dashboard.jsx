@@ -768,6 +768,7 @@ const Dashboard = () => {
                               {item.isMaster ? "True" : "False"}
                             </td>
                             <td>{item.customerGrading}</td>
+                            
                             {/* <td>{item.lossLimit}</td>
 
                             <td>
@@ -812,8 +813,8 @@ const Dashboard = () => {
                                 item.minProfit
                               )}
                             </td>
-
                             <td>{item?.dynamicExitValue?.toFixed(2)}</td> */}
+
                             <td
                               className={`${
                                 item?.haveTrade
