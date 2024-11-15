@@ -137,14 +137,16 @@ const HelpingChart = () => {
   const [hideConfig, setHideConfig] = useState(true);
   const [supportTrendLine, setSupportTrendLine] = useState([]);
   const [resistanceTrendLine, setResistanceTrendLine] = useState([]);
+
   // const [testingMode, setTestingMode] = useState(() => {
   //   const storedMode = localStorage.getItem(`testingMode_${id}`);
   //   return storedMode === "true";
   // });
-  const [apiResponseReceived, setApiResponseReceived] = useState(false);
 
+  const [apiResponseReceived, setApiResponseReceived] = useState(false);
   const [testingMode, setTestingMode] = useState("");
   const hasInitializedTrends = useRef(false);
+
 
   if (!id) return null;
 
@@ -268,103 +270,120 @@ const HelpingChart = () => {
   };
 
 
-  const roundToNearestTime = (time, interval) => {
-    const date = new Date(time);
-    const minutes = date.getMinutes();
-    const hours = date.getHours();
-    let roundedMinutes;
-    let roundedTime;
+ // Refined rounding function
+ const roundToNearestTime = (time, interval) => {
+  const date = new Date(time);
+  const minutes = date.getMinutes();
+
+  const intervalMapping = {
+    'ONE_MINUTE': 1,
+    'THREE_MINUTE': 3,
+    'FIVE_MINUTE': 5,
+    'FIFTEEN_MINUTE': 15,
+    'THIRTY_MINUTE': 30,
+    'ONE_HOUR': 60,
+    'ONE_DAY': 1440,
+    'ONE_WEEK': 10080,
+  };
+
+  const intervalInMinutes = intervalMapping[interval];
+
+  if (intervalInMinutes < 60) {
+    const roundedMinutes = Math.floor(minutes / intervalInMinutes) * intervalInMinutes;
+    date.setMinutes(roundedMinutes, 0, 0);
+  } else {
+    date.setMinutes(0, 0, 0);
+    if (interval === 'ONE_DAY') {
+      date.setHours(0);
+    } else if (interval === 'ONE_WEEK') {
+      const day = date.getDay();
+      date.setDate(date.getDate() - day); // Start of the week
+    }
+  }
+
+  return date;
+};
+
+const filterAndTransformLines = (trendLines, data, interval) => {
+  return trendLines?.map((line) => {
+    const roundedStartTime = roundToNearestTime(line.startTime, interval);
+    const roundedEndTime = roundToNearestTime(line.endTime, interval);
+
+    if (isNaN(roundedStartTime) || isNaN(roundedEndTime)) {
+      console.error('Invalid rounded start or end time');
+      return line; // Return the original line if there's an error
+    }
+
+    // Find closest index for start and end times in the data
+    const startIndex = data?.findIndex(candle => new Date(candle.timestamp).getTime() >= roundedStartTime.getTime());
+    const endIndex = data?.findIndex(candle => new Date(candle.timestamp).getTime() >= roundedEndTime.getTime());
+
+    if (startIndex === -1 || endIndex === -1) {
+      console.error('Could not find corresponding data points for trendline:', line);
+      return line; // Return the original line if indices are not found
+    }
+
+    // If it's the first time the line is being drawn, capture the prices
+    if (!line.originalStartPrice || !line.originalEndPrice) {
+      line.originalStartPrice = line.start[1]; // Store the original price when first drawn
+      line.originalEndPrice = line.end[1];     // Store the original price when first drawn
+    }
+
+    // Use the stored original prices for the trendline
+    return {
+      ...line,
+      startTime: roundedStartTime.toISOString(),
+      endTime: roundedEndTime.toISOString(),
+      start: [startIndex, line.originalStartPrice || startCandle.close], // Use original price if stored
+      end: [endIndex, line.originalEndPrice || endCandle.close],         // Use original price if stored
+    };
+  });
+};
+
+// Adjust the trendline's start and end time when the interval changes
+
+useEffect(() => {
+  if (!apiResponseReceived) return;
+
+  const updatedTrendLines = filterAndTransformLines(entryLine, apiData, values?.interval);
+  setEntryLine((prev) => (JSON.stringify(prev) !== JSON.stringify(updatedTrendLines) ? updatedTrendLines : prev));
+}, [apiResponseReceived, apiData]);
+
+const handleSelect = (key, value) => {
+  setValues((prev) => ({ ...prev, [key]: value }));
+
+  if (key === "interval" && apiResponseReceived) {
+    const updatedEntryLines = filterAndTransformLines(entryLine, apiData, value);
+    setEntryLine(updatedEntryLines);
+    setApiResponseReceived(false);
+  }
+};
+
+
+
+         
+
+    // const prevTrendLineActive = useRef(values.trendLineActive);
+    const handleSubmit =() => {
+      axios
+        .put(`${BASE_URL_OVERALL}/config/editMaster?id=${id}`, { ...values })
+        .then((res) => {
+          alert("Successfully Updated");
+          // Call getChartData only if trendLineActive has NOT changed
+          // if (prevTrendLineActive.current === values.trendLineActive) {
+           getChartData();
+          setApiResponseReceived(true);
+          // }
   
-    // Define a mapping between intervals and their minute value
-    const intervalMapping = {
-      'ONE_MINUTE': 1,
-      'THREE_MINUTE': 3,
-      'FIVE_MINUTE': 5,
-      'FIFTEEN_MINUTE': 15,
-      'THIRTY_MINUTE': 30,
-      'ONE_HOUR': 60,
-      'ONE_DAY': 1440, // 1 day = 1440 minutes
-      'ONE_WEEK': 10080 // 1 week = 10080 minutes
+          // Update the previous value to the current value
+          // prevTrendLineActive.current = values.trendLineActive;
+        })
+        .catch((err) => {
+          console.log(err);
+          alert(err.response?.data?.message || "An error occurred");
+        });
     };
   
-    // Get the interval in minutes
-    const intervalInMinutes = intervalMapping[interval];
-  
-    if (intervalInMinutes) {
-      // For minute-based intervals, round to the nearest interval
-      if (intervalInMinutes < 60) {
-        roundedMinutes = Math.floor(minutes / intervalInMinutes) * intervalInMinutes;
-        date.setMinutes(roundedMinutes, 0, 0);
-      } else {
-        // For hour-based intervals, adjust the hour
-        roundedTime = new Date(date.setMinutes(0, 0, 0)); // Reset minutes and seconds
-        if (interval === 'ONE_HOUR') {
-          // No need to change the date for hourly intervals
-          roundedTime.setHours(Math.floor(roundedTime.getHours() / 1) * 1);
-        } else if (interval === 'ONE_DAY') {
-          roundedTime.setDate(Math.floor(roundedTime.getDate() / 1) * 1); // Reset day if it's daily interval
-        } else if (interval === 'ONE_WEEK') {
-          // Handle weeks if needed
-          roundedTime.setDate(roundedTime.getDate() - roundedTime.getDay()); // Start of the week
-        }
-      }
-    }
-    
-    return date;
-  };
-  
-  const filterAndTransformLines = (trendLines, data, interval) => {
-    return trendLines.map((line) => {
-      const roundedStartTime = roundToNearestTime(line.startTime, interval);
-      const roundedEndTime = roundToNearestTime(line.endTime, interval);
-  
-      if (isNaN(roundedStartTime) || isNaN(roundedEndTime)) {
-        console.error('Invalid rounded start or end time');
-        return line; // Return the original line if there's an error
-      }
-  
-      const startIndex = data.findIndex(candle => new Date(candle.timestamp).getTime() === roundedStartTime.getTime());
-      const endIndex = data.findIndex(candle => new Date(candle.timestamp).getTime() === roundedEndTime.getTime());
-  
-      if (startIndex === -1 || endIndex === -1) {
-        console.error('Could not find corresponding data points for trendline:', line);
-        return line; // Return the original line if indices are not found
-      }
-  
-      const startCandle = data[startIndex];
-      const endCandle = data[endIndex];
-  
-      return {
-        ...line,
-        startTime: roundedStartTime.toISOString(),
-        endTime: roundedEndTime.toISOString(),
-        start: [startIndex, startCandle ? startCandle.close : line.start[1]],
-        end: [endIndex, endCandle ? endCandle.close : line.end[1]],
-      };
-    });
-  };
-  
-  // Adjust the trendline's start and end time when the interval changes
-  useEffect(() => {
-    if (!apiResponseReceived) return;
-  
-    const updatedTrendLines = filterAndTransformLines(entryLine, apiData, values.interval);
-    console.log("Updated Trend Lines:", updatedTrendLines);
-  
-    // Set state only if the calculated trend lines differ from the current state
-    setEntryLine(prev => JSON.stringify(prev) !== JSON.stringify(updatedTrendLines) ? updatedTrendLines : prev);
-  
-  }, [apiResponseReceived, apiData]); // Dependency on apiResponseReceived and apiData only
-  
-  const handleSelect = (key, value) => {
-    setValues((prev) => ({ ...prev, [key]: value }));
-  
-    // Check if the selected key is "interval" and transform the trend lines
-    if (key === "interval" && apiResponseReceived) {
-      const updatedEntryLines = filterAndTransformLines(entryLine, apiData, value);
-      setEntryLine(updatedEntryLines);
-    }
-  };
   
   
 
@@ -375,6 +394,7 @@ const HelpingChart = () => {
       [name]: value,
     }));
   };
+
 
   useEffect(() => {
     getTradeConfig();
@@ -495,6 +515,7 @@ const HelpingChart = () => {
       }
     };
   }, [id, values]);
+  
 
   // useEffect(() => {
   //   if (!isConnected || !data?.data?.instrument_token) return;
@@ -505,6 +526,7 @@ const HelpingChart = () => {
   //     }
   //   });
   // }, [socket, data, isConnected]);
+
 
   useEffect(() => {
     if (!isConnected || !data?.data?.instrument_token) return;
@@ -546,7 +568,17 @@ const HelpingChart = () => {
 
   // console.log("socketData",socketData)
 
-
+useEffect(()=>{
+  if (!isConnected || !data?.data?.instrument_token) return;
+  console.log("Hii")
+  socket.on("tradeUpdate" , (data)=>{
+  
+    console.log("-->",data)
+  });
+  return () => {
+    socket?.off("tradeUpdate"); // Clean up the event listener when the component unmounts
+  };
+},[socket , isConnected])
   
 
   const today = new Date().toISOString().split("T")[0];
@@ -667,27 +699,7 @@ const HelpingChart = () => {
     alert("No valid data to save.");
   };
 
-  const prevTrendLineActive = useRef(values.trendLineActive);
 
-  const handleSubmit =() => {
-    axios
-      .put(`${BASE_URL_OVERALL}/config/editMaster?id=${id}`, { ...values })
-      .then((res) => {
-        alert("Successfully Updated");
-        // Call getChartData only if trendLineActive has NOT changed
-        // if (prevTrendLineActive.current === values.trendLineActive) {
-         getChartData();
-        setApiResponseReceived(true);
-        // }
-
-        // Update the previous value to the current value
-        prevTrendLineActive.current = values.trendLineActive;
-      })
-      .catch((err) => {
-        console.log(err);
-        alert(err.response?.data?.message || "An error occurred");
-      });
-  };
 
   const [trendLineValue, setTrendLineValue] = useState([]);
 
@@ -785,7 +797,7 @@ const HelpingChart = () => {
     getTestMode();
   }, []);
 
-  // console.log("entryLine", entryLine);  
+  console.log("entryLine", entryLine);  
   //  console.log("CEZone",trendLineValue.zone.CEZone.low)
   // console.log("socketdata",socketData)
   // console.log("values",values)

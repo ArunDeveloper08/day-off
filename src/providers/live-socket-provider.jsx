@@ -23,7 +23,7 @@ export const LiveSocketProvider = ({ children }) => {
     //   path: "/socket.io",
     //   // path: "/teststock/socket.io",
     // });
-    console.log("Rerender")
+    // console.log("Rerender")
 
     const socketInstance = manager.socket("/");
     socketInstance.on("connect", () => {
