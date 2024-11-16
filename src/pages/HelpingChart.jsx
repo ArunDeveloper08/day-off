@@ -49,11 +49,11 @@ const HelpingChart = () => {
   const [trends3, setTrends3] = useState([]);
   const [alert3, setAlert3] = useState([]);
   const [entryLine, setEntryLine] = useState([]);
-  const [selectedInterval, setSelectedInterval] = useState("ONE_MINUTE");
+  // const [selectedInterval, setSelectedInterval] = useState("ONE_MINUTE");
 
-
-  const timeScale = useRef(scaleTime().domain([0, 1]));
-  const priceScale = useRef(scaleLinear().domain([0, 1]));
+  let tradeIndex = "";
+  // const timeScale = useRef(scaleTime().domain([0, 1]));
+  // const priceScale = useRef(scaleLinear().domain([0, 1]));
   // const [entryLine2, setEntryLine2] = useState([]);
   useEffect(() => {
     setTheme("light");
@@ -81,6 +81,7 @@ const HelpingChart = () => {
   useEffect(() => {
     if (data?.data?.identifier) {
       document.title = `${data?.data?.identifier}`;
+      tradeIndex = data.data.tradeIndex;
     }
   }, [data?.data?.identifier]);
 
@@ -131,7 +132,7 @@ const HelpingChart = () => {
     allTrendLine: false,
     ceTrendLine: true,
     peTrendLine: true,
-    alertLine: false,
+    alertLine: true,
     entryLine: true,
   });
   const [hideConfig, setHideConfig] = useState(true);
@@ -146,7 +147,7 @@ const HelpingChart = () => {
   const [apiResponseReceived, setApiResponseReceived] = useState(false);
   const [testingMode, setTestingMode] = useState("");
   const hasInitializedTrends = useRef(false);
-
+  const manualIntervalRef = useRef(null);
 
   if (!id) return null;
 
@@ -157,10 +158,16 @@ const HelpingChart = () => {
         `${BASE_URL_OVERALL}/config/get?id=${id}`
       );
       setData((p) => ({ ...p, data: data.data }));
+  
       setValues((prev) => {
+        // Use manualInterval if the user has selected one
+       
+        const interval = manualIntervalRef.current ?? data.data?.interval;
+
+
         return {
           ...prev,
-          interval: data.data?.interval,
+           interval : interval, // Preserve the manually selected interval
           candleType: data.data?.candleType,
           trendLineActive: data.data?.trendLineActive,
           WMA: data.data?.WMA,
@@ -190,7 +197,6 @@ const HelpingChart = () => {
         setCeStopLoss(res.data.data?.[0]?.CEStopLoss);
         setPeStopLoss(res.data.data?.[0]?.PEStopLoss);
         setIntractiveData(res.data);
-        setAlert3(res.data?.alertLine);
 
         // if(res?.data?.buyTrendLines?.length > 0){
         //   // console.log("inside if condition")
@@ -218,6 +224,10 @@ const HelpingChart = () => {
         //   });
         // }
 
+        if (res?.data?.analysisLine?.length > 0) {
+          setAlert3(res.data?.analysisLine);
+        }
+
         if (res?.data?.buyTrendLines?.length > 0) {
           const apiEntryLines = res.data?.buyTrendLines || [];
 
@@ -244,23 +254,22 @@ const HelpingChart = () => {
                 ? true
                 : apiLineNames.has(line.name)
             );
-      
 
-        if (!hasInitializedTrends.current) {
-          // console.log("Setting trends for the first time");
-          setTrends3(res.data.trendLines); // Set trends3 for the first time
-          hasInitializedTrends.current = true; // Mark as initialized
+            // if (!hasInitializedTrends.current) {
+            //   // console.log("Setting trends for the first time");
+            //   setTrends3(res.data.trendLines); // Set trends3 for the first time
+            //   hasInitializedTrends.current = true; // Mark as initialized
+            // }
+          };
+          setEntryLine((prevEntryLines) => {
+            const mergedEntryLines = mergeEntryLines(
+              apiEntryLines,
+              prevEntryLines
+            );
+            return mergedEntryLines;
+          });
         }
-      }
-      setEntryLine((prevEntryLines) => {
-        const mergedEntryLines = mergeEntryLines(
-          apiEntryLines,
-          prevEntryLines
-        );
-        return mergedEntryLines;
-      });
-      }
-  })
+      })
 
       .catch((err) => {
         console.log(err);
@@ -269,123 +278,152 @@ const HelpingChart = () => {
     // }, 1000);
   };
 
+  // Refined rounding function
+  const roundToNearestTime = (time, interval) => {
+    const date = new Date(time);
+    const minutes = date.getMinutes();
 
- // Refined rounding function
- const roundToNearestTime = (time, interval) => {
-  const date = new Date(time);
-  const minutes = date.getMinutes();
+    const intervalMapping = {
+      ONE_MINUTE: 1,
+      THREE_MINUTE: 3,
+      FIVE_MINUTE: 5,
+      FIFTEEN_MINUTE: 15,
+      THIRTY_MINUTE: 30,
+      ONE_HOUR: 60,
+      ONE_DAY: 1440,
+      ONE_WEEK: 10080,
+    };
 
-  const intervalMapping = {
-    'ONE_MINUTE': 1,
-    'THREE_MINUTE': 3,
-    'FIVE_MINUTE': 5,
-    'FIFTEEN_MINUTE': 15,
-    'THIRTY_MINUTE': 30,
-    'ONE_HOUR': 60,
-    'ONE_DAY': 1440,
-    'ONE_WEEK': 10080,
+    const intervalInMinutes = intervalMapping[interval];
+
+    if (intervalInMinutes < 60) {
+      const roundedMinutes =
+        Math.floor(minutes / intervalInMinutes) * intervalInMinutes;
+      date.setMinutes(roundedMinutes, 0, 0);
+    } else {
+      date.setMinutes(0, 0, 0);
+      if (interval === "ONE_DAY") {
+        date.setHours(0);
+      } else if (interval === "ONE_WEEK") {
+        const day = date.getDay();
+        date.setDate(date.getDate() - day); // Start of the week
+      }
+    }
+
+    return date;
   };
 
-  const intervalInMinutes = intervalMapping[interval];
+  const filterAndTransformLines = (trendLines, data, interval) => {
+    return trendLines?.map((line) => {
+      const roundedStartTime = roundToNearestTime(line.startTime, interval);
+      const roundedEndTime = roundToNearestTime(line.endTime, interval);
 
-  if (intervalInMinutes < 60) {
-    const roundedMinutes = Math.floor(minutes / intervalInMinutes) * intervalInMinutes;
-    date.setMinutes(roundedMinutes, 0, 0);
-  } else {
-    date.setMinutes(0, 0, 0);
-    if (interval === 'ONE_DAY') {
-      date.setHours(0);
-    } else if (interval === 'ONE_WEEK') {
-      const day = date.getDay();
-      date.setDate(date.getDate() - day); // Start of the week
+      if (isNaN(roundedStartTime) || isNaN(roundedEndTime)) {
+        console.error("Invalid rounded start or end time");
+        return line; // Return the original line if there's an error
+      }
+
+      // Find closest index for start and end times in the data
+      const startIndex = data?.findIndex(
+        (candle) =>
+          new Date(candle.timestamp).getTime() >= roundedStartTime.getTime()
+      );
+      const endIndex = data?.findIndex(
+        (candle) =>
+          new Date(candle.timestamp).getTime() >= roundedEndTime.getTime()
+      );
+
+      if (startIndex === -1 || endIndex === -1) {
+        console.error(
+          "Could not find corresponding data points for trendline:",
+          line
+        );
+        return line; // Return the original line if indices are not found
+      }
+
+      // If it's the first time the line is being drawn, capture the prices
+      if (!line.originalStartPrice || !line.originalEndPrice) {
+        line.originalStartPrice = line.start[1]; // Store the original price when first drawn
+        line.originalEndPrice = line.end[1]; // Store the original price when first drawn
+      }
+
+      // Use the stored original prices for the trendline
+      return {
+        ...line,
+        startTime: roundedStartTime.toISOString(),
+        endTime: roundedEndTime.toISOString(),
+        start: [startIndex, line.originalStartPrice || startCandle.close], // Use original price if stored
+        end: [endIndex, line.originalEndPrice || endCandle.close], // Use original price if stored
+      };
+    });
+  };
+
+  // Adjust the trendline's start and end time when the interval changes
+
+  useEffect(() => {
+    if (!apiResponseReceived) return;
+
+    const updatedTrendLines = filterAndTransformLines(
+      entryLine,
+      apiData,
+      values?.interval
+    );
+    setEntryLine((prev) =>
+      JSON.stringify(prev) !== JSON.stringify(updatedTrendLines)
+        ? updatedTrendLines
+        : prev
+    );
+    const updatedAlertLines = filterAndTransformLines(
+      alert3,
+      apiData,
+      values?.interval
+    );
+    setAlert3((prev) =>
+      JSON.stringify(prev) !== JSON.stringify(updatedAlertLines)
+        ? updatedAlertLines
+        : prev
+    );
+  }, [apiResponseReceived, apiData]);
+  // console.log("manualTrade", manualInterval)
+  // console.log("interval", values.interval)
+
+  const handleSelect = (key, value) => {
+    setValues((prev) => ({ ...prev, [key]: value }));
+    if (key === "interval") {
+      manualIntervalRef.current = value; 
     }
-  }
-
-  return date;
-};
-
-const filterAndTransformLines = (trendLines, data, interval) => {
-  return trendLines?.map((line) => {
-    const roundedStartTime = roundToNearestTime(line.startTime, interval);
-    const roundedEndTime = roundToNearestTime(line.endTime, interval);
-
-    if (isNaN(roundedStartTime) || isNaN(roundedEndTime)) {
-      console.error('Invalid rounded start or end time');
-      return line; // Return the original line if there's an error
+    if (key === "interval" && apiResponseReceived) {
+      const updatedEntryLines = filterAndTransformLines(
+        entryLine,
+        apiData,
+        value
+      );
+      const updatedAlertLines = filterAndTransformLines(alert3, apiData, value);
+      setEntryLine(updatedEntryLines);
+      setAlert3(updatedAlertLines);
+      setApiResponseReceived(false);
     }
+  };
 
-    // Find closest index for start and end times in the data
-    const startIndex = data?.findIndex(candle => new Date(candle.timestamp).getTime() >= roundedStartTime.getTime());
-    const endIndex = data?.findIndex(candle => new Date(candle.timestamp).getTime() >= roundedEndTime.getTime());
-
-    if (startIndex === -1 || endIndex === -1) {
-      console.error('Could not find corresponding data points for trendline:', line);
-      return line; // Return the original line if indices are not found
-    }
-
-    // If it's the first time the line is being drawn, capture the prices
-    if (!line.originalStartPrice || !line.originalEndPrice) {
-      line.originalStartPrice = line.start[1]; // Store the original price when first drawn
-      line.originalEndPrice = line.end[1];     // Store the original price when first drawn
-    }
-
-    // Use the stored original prices for the trendline
-    return {
-      ...line,
-      startTime: roundedStartTime.toISOString(),
-      endTime: roundedEndTime.toISOString(),
-      start: [startIndex, line.originalStartPrice || startCandle.close], // Use original price if stored
-      end: [endIndex, line.originalEndPrice || endCandle.close],         // Use original price if stored
-    };
-  });
-};
-
-// Adjust the trendline's start and end time when the interval changes
-
-useEffect(() => {
-  if (!apiResponseReceived) return;
-
-  const updatedTrendLines = filterAndTransformLines(entryLine, apiData, values?.interval);
-  setEntryLine((prev) => (JSON.stringify(prev) !== JSON.stringify(updatedTrendLines) ? updatedTrendLines : prev));
-}, [apiResponseReceived, apiData]);
-
-const handleSelect = (key, value) => {
-  setValues((prev) => ({ ...prev, [key]: value }));
-
-  if (key === "interval" && apiResponseReceived) {
-    const updatedEntryLines = filterAndTransformLines(entryLine, apiData, value);
-    setEntryLine(updatedEntryLines);
-    setApiResponseReceived(false);
-  }
-};
-
-
-
-         
-
-    // const prevTrendLineActive = useRef(values.trendLineActive);
-    const handleSubmit =() => {
-      axios
-        .put(`${BASE_URL_OVERALL}/config/editMaster?id=${id}`, { ...values })
-        .then((res) => {
-          alert("Successfully Updated");
-          // Call getChartData only if trendLineActive has NOT changed
-          // if (prevTrendLineActive.current === values.trendLineActive) {
-           getChartData();
-          setApiResponseReceived(true);
-          // }
-  
-          // Update the previous value to the current value
-          // prevTrendLineActive.current = values.trendLineActive;
-        })
-        .catch((err) => {
-          console.log(err);
-          alert(err.response?.data?.message || "An error occurred");
-        });
-    };
-  
-  
-  
+  // const prevTrendLineActive = useRef(values.trendLineActive);
+  const handleSubmit = () => {
+    axios
+      .put(`${BASE_URL_OVERALL}/config/editMaster?id=${id}`, { ...values })
+      .then((res) => {
+        alert("Successfully Updated");
+        // Call getChartData only if trendLineActive has NOT changed
+        // if (prevTrendLineActive.current === values.trendLineActive) {
+        getChartData();
+        setApiResponseReceived(true);
+        // }
+        // Update the previous value to the current value
+        // prevTrendLineActive.current = values.trendLineActive;
+      })
+      .catch((err) => {
+        console.log(err);
+        alert(err.response?.data?.message || "An error occurred");
+      });
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -394,7 +432,6 @@ const handleSelect = (key, value) => {
       [name]: value,
     }));
   };
-
 
   useEffect(() => {
     getTradeConfig();
@@ -515,7 +552,6 @@ const handleSelect = (key, value) => {
       }
     };
   }, [id, values]);
-  
 
   // useEffect(() => {
   //   if (!isConnected || !data?.data?.instrument_token) return;
@@ -526,7 +562,6 @@ const handleSelect = (key, value) => {
   //     }
   //   });
   // }, [socket, data, isConnected]);
-
 
   useEffect(() => {
     if (!isConnected || !data?.data?.instrument_token) return;
@@ -568,18 +603,16 @@ const handleSelect = (key, value) => {
 
   // console.log("socketData",socketData)
 
-useEffect(()=>{
-  if (!isConnected || !data?.data?.instrument_token) return;
-  console.log("Hii")
-  socket.on("tradeUpdate" , (data)=>{
-  
-    console.log("-->",data)
-  });
-  return () => {
-    socket?.off("tradeUpdate"); // Clean up the event listener when the component unmounts
-  };
-},[socket , isConnected])
-  
+  useEffect(() => {
+    if (!isConnected || !data?.data?.instrument_token) return;
+    console.log("Hii");
+    socket.on("tradeUpdate", (data) => {
+      console.log("-->", data);
+    });
+    return () => {
+      socket?.off("tradeUpdate"); // Clean up the event listener when the component unmounts
+    };
+  }, [socket, isConnected]);
 
   const today = new Date().toISOString().split("T")[0];
   const getHighLowLines = async () => {
@@ -606,7 +639,6 @@ useEffect(()=>{
   const handleCreateTrendLines = async (
     trendline,
     textList1,
-
     alert3,
     entryLine
   ) => {
@@ -626,12 +658,15 @@ useEffect(()=>{
     const incompleteLineExists = trendline?.some(
       (line) => line?.endTime === undefined && line?.startTime
     );
+    const incompleteLineExists3 = alert3?.some(
+      (line) => line?.endTime === undefined && line?.startTime
+    );
     const incompleteLineExists2 = entryLine
       ?.slice(0, 4) // Get only the first 4 elements
       .some((line) => line?.endTime === undefined && line?.startTime);
 
     // Handle validations for trendline
-    if (showRow.trendLine) {
+    if (showRow?.trendLine) {
       if (trendline?.length == 0) {
         return sendDataToAPI({
           trendLines: trendline,
@@ -670,8 +705,14 @@ useEffect(()=>{
     if (showRow.entryLine) {
       if (entryLine?.length == 0) {
         sendDataToAPI({ buyTrendLines: entryLine });
+
+        if (alert3?.length == 0) {
+          sendDataToAPI({ analysisLine: alert3 });
+          // Exit early if validations fail
+        }
         return; // Exit early if validations fail
       }
+
       if (entryLine?.length > 0 && entryLine?.length < 4) {
         alert(
           `You have only ${entryLine.length} Entry lines. Please add ${
@@ -692,14 +733,26 @@ useEffect(()=>{
       // Send only trendLine data
       return sendDataToAPI({ buyTrendLines: entryLine });
     }
-    // if (showRow.entryLine) {
-    //   return sendDataToAPI({ buyTrendLines: entryLine });
-    // }
 
+    if (showRow.alertLine) {
+      if (incompleteLineExists3) {
+        alert(
+          "Please ensure all  Analaysis lines remain inside the chart. The endpoint cannot be outside the chart."
+        );
+        return;
+      }
+      if (alert3?.length == 0) {
+        sendDataToAPI({ analysisLine: alert3 });
+        if (entryLine?.length == 0) {
+          sendDataToAPI({ buyTrendLines: entryLine });
+        }
+
+        return; // Exit early if validations fail
+      }
+      return sendDataToAPI({ analysisLine: alert3 });
+    }
     alert("No valid data to save.");
   };
-
-
 
   const [trendLineValue, setTrendLineValue] = useState([]);
 
@@ -797,7 +850,7 @@ useEffect(()=>{
     getTestMode();
   }, []);
 
-  console.log("entryLine", entryLine);  
+  // console.log("ALERT", alert3);
   //  console.log("CEZone",trendLineValue.zone.CEZone.low)
   // console.log("socketdata",socketData)
   // console.log("values",values)
@@ -826,23 +879,23 @@ useEffect(()=>{
           </Button>
           &nbsp; &nbsp;
           <Button
-                  size="xs"
-                  className="p-1 text-[13px] md:text-[16px]"
-                  onClick={getHighLowLines}
-                >
-                  High/Low line
-                </Button>
-                &nbsp; &nbsp;
-                <button
-                  onClick={toggleTestingMode}
-                  className={`${
-                    testingMode === 1
-                      ? "bg-red-600 text-white"
-                      : "bg-green-600 text-white"
-                  } px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]`}
-                >
-                  {testingMode === 1 ? "Test Mode ON" : "Test Mode OFF"}
-                </button>
+            size="xs"
+            className="p-1 text-[13px] md:text-[16px]"
+            onClick={getHighLowLines}
+          >
+            High/Low line
+          </Button>
+          &nbsp; &nbsp;
+          <button
+            onClick={toggleTestingMode}
+            className={`${
+              testingMode === 1
+                ? "bg-red-600 text-white"
+                : "bg-green-600 text-white"
+            } px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]`}
+          >
+            {testingMode === 1 ? "Test Mode ON" : "Test Mode OFF"}
+          </button>
         </h2>
 
         {hideConfig && (
@@ -901,7 +954,7 @@ useEffect(()=>{
                   PE Buy Status:
                   {data.data.haveTradeOfPE ? "True" : "False"}
                 </p>
-                   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                 <p
                   className={`${
                     data.data.haveTradeOfCEBuy
@@ -912,7 +965,7 @@ useEffect(()=>{
                   CE SELL Status:
                   {data.data.haveTradeOfCEBuy ? "True" : "False"}
                 </p>
-                   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                 <p
                   className={`${
                     data.data.haveTradeOfPEBuy
@@ -923,7 +976,7 @@ useEffect(()=>{
                   PE SELL Status:
                   {data.data.haveTradeOfPEBuy ? "True" : "False"}
                 </p>
-                   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                 <p
                   className={`${
                     data.data.haveTradeOfFUTBuy
@@ -931,10 +984,10 @@ useEffect(()=>{
                       : "text-green-600 font-bold text-[13px] md:text-[16px]"
                   }`}
                 >
-                  FUT  Buy Status:
+                  FUT Buy Status:
                   {data.data.haveTradeOfFUTBuy ? "True" : "False"}
                 </p>
-                   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                 <p
                   className={`${
                     data.data.haveTradeOfFUTSell
@@ -945,10 +998,8 @@ useEffect(()=>{
                   FUT Sell Status:
                   {data.data.haveTradeOfFUTSell ? "True" : "False"}
                 </p>
-               
               </div>
-                                                                                                     
-                                                                                                                                                                                                                         
+
               <div className="flex flex-wrap   font-semibold py-2  justify-start">
                 {/* <p className=" text-[13px] md:text-[16px]">
                    Terminal : {data?.data?.terminal}
@@ -976,26 +1027,23 @@ useEffect(()=>{
                     </p>
                   </>
                 )}
-
                 <p className="text-red-500 text-[13px] md:text-[16px]">
                   {ceStopLoss && `CE Stop Loss : ${ceStopLoss?.toFixed(1)}`}
                 </p>
                 <p className="text-red-500 text-[13px] md:text-[16px]">
                   {peStopLoss && `PE Stop Loss : ${peStopLoss?.toFixed(1)}`}
-                </p> 
-
-                <p 
+                </p>
+                <p
                   className={`${
                     data.data.haveTradeOfHedgeCE
                       ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
                       : "text-green-600 font-bold text-[13px] md:text-[16px]"
                   }`}
                 >
-                  CE Buy Hedge  : {data.data.haveTradeOfHedgeCE ? "True" : "False"}
+                  CE Buy Hedge :{" "}
+                  {data.data.haveTradeOfHedgeCE ? "True" : "False"}
                 </p>
-                                              
-                   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-                                    
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                 <p
                   className={`${
                     data.data.haveTradeOfHedgePE
@@ -1005,8 +1053,8 @@ useEffect(()=>{
                 >
                   PE Buy Hedge :
                   {data.data.haveTradeOfHedgePE ? "True" : "False"}
-                </p> 
-                   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                </p>
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                 <p
                   className={`${
                     data.data.haveTradeOfHedgeCESell
@@ -1017,7 +1065,7 @@ useEffect(()=>{
                   CE SELL Hedge:
                   {data.data.haveTradeOfHedgeCESell ? "True" : "False"}
                 </p>
-                   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                 <p
                   className={`${
                     data.data.haveTradeOfHedgePESell
@@ -1028,7 +1076,7 @@ useEffect(()=>{
                   PE SELL Hedge:
                   {data.data.haveTradeOfHedgePESell ? "True" : "False"}
                 </p>
-                   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                 <p
                   className={`${
                     data.data.haveTradeOfHedgeFUTBuy
@@ -1036,10 +1084,10 @@ useEffect(()=>{
                       : "text-green-600 font-bold text-[13px] md:text-[16px]"
                   }`}
                 >
-                  FUT  Buy Hedge:
+                  FUT Buy Hedge:
                   {data.data.haveTradeOfHedgeFUTBuy ? "True" : "False"}
                 </p>
-                   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                 <p
                   className={`${
                     data.data.haveTradeOfFUTSell
@@ -1127,7 +1175,7 @@ useEffect(()=>{
                       {trendLineValue?.dataForIndex7?.putTargetLevelPrice?.toFixed(
                         1
                       )}
-                      &nbsp;   &nbsp; 
+                      &nbsp; &nbsp;
                       {trendLineValue?.dataForIndex7?.CESellLinePrice > 0 && (
                         <span>
                           CE Buy Price :
@@ -1212,14 +1260,14 @@ useEffect(()=>{
                       &nbsp; &nbsp;
                       {apiData?.[0]?.FUTStopLossForIndex7 && (
                         <span>
-                        FUT Buy Stop Loss :
+                          FUT Buy Stop Loss :
                           {apiData?.[0]?.FUTStopLossForIndex7?.toFixed(1)}
                         </span>
                       )}
                       &nbsp; &nbsp;
                       {apiData?.[0]?.FUTStopLossForIndex17 && (
                         <span>
-                        FUT Sell Stop Loss :
+                          FUT Sell Stop Loss :
                           {apiData?.[0]?.FUTStopLossForIndex17?.toFixed(1)}
                         </span>
                       )}
@@ -1743,19 +1791,14 @@ useEffect(()=>{
         </select>
       </div> */}
 
-
-
               {/* Interval Select */}
               <div className="flex flex-col w-full sm:w-auto">
                 <Label>Interval</Label>
                 <Select
                   value={values.interval}
-                  name="terminal"
-                  onValueChange={(value) => { 
+                  onValueChange={(value) => {
                     handleSelect("interval", value);
-                    
                   }}
-                  
                 >
                   <SelectTrigger className="w-full sm:w-[150px] mt-1 border-zinc-500">
                     <SelectValue>{values.interval}</SelectValue>
@@ -1771,7 +1814,6 @@ useEffect(()=>{
                         { label: "30 minute", value: "THIRTY_MINUTE" },
                         { label: "1 hour", value: "ONE_HOUR" },
                         { label: "1 day", value: "ONE_DAY" },
-                        
                       ]?.map((suggestion) => (
                         <SelectItem
                           key={suggestion.value}
@@ -1964,50 +2006,48 @@ useEffect(()=>{
                       <span>Fibonacci Retracement</span>
                     </div>
                   </button>
-                  {/* 
-                    <button
-                      onClick={() =>
-                        setShowRow((p) => ({
-                          ...p,
-                          trendLine: false, // Ensure trendLine is false when alertLine is true
-                          alertLine: true,
-                          entryLine : false,
-                        }))
-                      }
-                      className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-                        showRow.alertLine
-                          ? "bg-black text-gray-100"
-                          : "bg-white"
-                      }`}
-                    >
-                      <div className="flex items-center">
-                        <span
-                          className="icon-KTgbfaP5"
-                          role="img"
-                          aria-hidden="true"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 28 28"
-                            width="28"
-                            height="28"
-                          >
-                            <g fill="currentColor" fillRule="nonzero">
-                              <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
-                              <path d="M22.5 7c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM5.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
-                            </g>
-                          </svg>
-                        </span>
-                        <span>Alert Line</span>
-                      </div>
-                    </button> */}
+
                   <button
                     onClick={() =>
                       setShowRow((p) => ({
                         ...p,
                         trendLine: false, // Ensure trendLine is false when alertLine is true
-                        alertLine: false,
-                        entryLine: true,
+                        alertLine: !p.alertLine,
+                        // entryLine : false,
+                      }))
+                    }
+                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                      showRow.alertLine ? "bg-black text-gray-100" : "bg-white"
+                    }`}
+                  >
+                    <div className="flex items-center">
+                      <span
+                        className="icon-KTgbfaP5"
+                        role="img"
+                        aria-hidden="true"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 28 28"
+                          width="28"
+                          height="28"
+                        >
+                          <g fill="currentColor" fillRule="nonzero">
+                            <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
+                            <path d="M22.5 7c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM5.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
+                          </g>
+                        </svg>
+                      </span>
+                      <span>Alert Line</span>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() =>
+                      setShowRow((p) => ({
+                        ...p,
+                        trendLine: false, // Ensure trendLine is false when alertLine is true
+                        // alertLine: false,
+                        entryLine: !p.entryLine,
                       }))
                     }
                     className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
@@ -2079,6 +2119,8 @@ useEffect(()=>{
               alert3={alert3}
               setEntryLine={setEntryLine}
               entryLine={entryLine}
+              tradeIndex={tradeIndex}
+              
             />
           </div>
         )}

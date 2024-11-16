@@ -321,11 +321,7 @@ let trendLineArray = [
     name: "putTargetLevel",
   },
 ];
-const alertLineArray = [
-  { color: "green", name: "Alert Call" },
-  { color: "red", name: "Alert Put" },
 
-];
 const entryLineArray = [
   { color: "green", name: "Resistance" },
   { color: "red", name: "Support" },
@@ -354,6 +350,7 @@ const CandleChart = ({
   setAlert3,
   entryLine,
   setEntryLine,
+  tradeIndex
   
   // type = "canvas",
   // type = "svg",
@@ -368,7 +365,7 @@ const CandleChart = ({
       useState(false);
 
         const [textList1, setTextList1] = useState(
-          //JSON.parse(intractiveData?.textLabel)
+          JSON.parse(intractiveData?.textLabel)
         );
       
     const [textList3, setTextList3] = useState([]);
@@ -639,7 +636,7 @@ const CandleChart = ({
 
     const onDrawCompleteAlert3 = (newAlerts) => {
 
-      setEnableTrendLine(false);
+      setEnableAlertLine(false);
       let coloredAlerts = newAlerts?.map((item, ind) => {
         let startIndex = Math.min(Math.floor(item.start[0]), data?.length - 1);
         let startTime = data[startIndex]?.timestamp;
@@ -654,12 +651,12 @@ const CandleChart = ({
           ...item,
           appearance: {
             ...item.appearance,
-            stroke: alertLineArray[ind]?.color || "blue",
-            strokeWidth: alertLineArray[ind]?.width || 2,
+            stroke:  "black",
+            strokeWidth:  2,
           },
           startTime,
           endTime,
-          name: alertLineArray[ind]?.name || "Alert",
+          name:  "Alert",
         };
       });
 
@@ -801,13 +798,13 @@ const CandleChart = ({
           break;
 
         case 68: // D - Draw Alert Trendline
-          setEnableAlertLine(true);
+          // setEnableAlertLine(true);
           setEnableTrendLine(true);
           setEnableEntryLine(true);
           break;
 
         case 65: // A - Draw Trendline
-        setEnableAlertLine(false);
+        setEnableAlertLine(true);
         setEnableTrendLine(false);
         setEnableEntryLine(false);
           break;
@@ -824,24 +821,29 @@ const CandleChart = ({
 
 
     useKeyPress(onKeyPress);
+
+
+  
+
+    // const macdCalculator = macd()
+    //   .options({
+    //     fast: 12,
+    //     slow: 26,
+    //     signal: 9,
+    //   })
+    //   .merge((d, c) => {
+    //     d.macd = c;
+    //   })
+    //   .accessor((d) => d.macd);
+
+
     const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(
       (d) => new Date(d.date || d.timestamp)
     );
 
-    const macdCalculator = macd()
-      .options({
-        fast: 12,
-        slow: 26,
-        signal: 9,
-      })
-      .merge((d, c) => {
-        d.macd = c;
-      })
-      .accessor((d) => d.macd);
-
     const { data, xScale, xAccessor, displayXAccessor } =
       xScaleProvider(calculatedData);
-    const start = xAccessor(data[Math.max(0, data.length - 75)]);
+    const start = xAccessor(data[Math.max(0, data.length - 100)]);
     const end = xAccessor(last(data));
     const padding = (end - start) * 0.1;
     const xExtents = [start, end + padding];
@@ -856,10 +858,10 @@ const CandleChart = ({
       setTrends3([]);
       alert("Please press submit button to add change in ");
     };
-    // const handleResetAlertLines = () => {
-    //   setAlert3([]);
-    //   alert("Please press submit button to add change in ");
-    // };
+    const handleResetAlertLine = () => {
+      setAlert3([]);
+      alert("Please press submit button to add change in ");
+    };
     const handleResetEntryLines = () => {
       setEntryLine([]);
       alert("Please press submit button to add change in ");
@@ -935,13 +937,26 @@ const CandleChart = ({
               )}
 
               <div className="flex flex-col gap-2 md:flex-row md:justify-around">
-       
-                <button
+
+                {
+                  tradeIndex == 4 ? 
+                  <button
                   className="bg-red-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
                   onClick={handleResetTrendLines}
                 >
                   Remove TrendLine
                 </button>
+                :
+                <button
+                className="bg-red-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
+                onClick={handleResetAlertLine}
+              >
+              Analiysis TrendLine
+              </button>
+
+                }
+       
+         
                 <button
                   className="bg-green-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
                   onClick={() =>
