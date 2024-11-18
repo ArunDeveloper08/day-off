@@ -936,47 +936,53 @@ const CandleChart = ({
                 </>
               )}
 
-              <div className="flex flex-col gap-2 md:flex-row md:justify-around">
+              {
+                master?.isMaster && (
+                  <div className="flex flex-col gap-2 md:flex-row md:justify-around">
 
-                {
-                  tradeIndex == 4 ? 
+                  {
+                    tradeIndex == 4 ? 
+                    <button
+                    className="bg-red-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
+                    onClick={handleResetTrendLines}
+                  >
+                    Remove TrendLine
+                  </button>
+                  :
                   <button
                   className="bg-red-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
-                  onClick={handleResetTrendLines}
+                  onClick={handleResetAlertLine}
                 >
-                  Remove TrendLine
+                Remove Analiysis 
                 </button>
-                :
-                <button
-                className="bg-red-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
-                onClick={handleResetAlertLine}
-              >
-              Analiysis TrendLine
-              </button>
-
-                }
-       
-         
-                <button
-                  className="bg-green-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
-                  onClick={() =>
-                    handleCreateTrendLines(
-                      trends3,
-                      textList1,                    
-                      alert3,
-                      entryLine
-                    )
+  
                   }
-                >
-                  Submit 
-                </button>
-                <button
-                  className="bg-red-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
-                  onClick={handleResetEntryLines}
-                >
-                  Remove EntryLine
-                </button>
-              </div>
+         
+           
+                  <button
+                    className="bg-green-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
+                    onClick={() =>
+                      handleCreateTrendLines(
+                        trends3,
+                        textList1,                    
+                        alert3,
+                        entryLine
+                      )
+                    }
+                  >
+                    Submit 
+                  </button>
+                  <button
+                    className="bg-red-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
+                    onClick={handleResetEntryLines}
+                  >
+                    Remove EntryLine
+                  </button>
+                </div>
+                )
+              }
+
+             
 
               {master?.isMaster && (
                 <>

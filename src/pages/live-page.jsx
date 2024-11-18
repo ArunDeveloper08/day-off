@@ -117,7 +117,7 @@ export const LivePage = () => {
         setApiData(res.data.data);
         setMasterId(res.data.masterID);
         setLiveTrendValue(res.data.liveTrendValue);
-        setTrends3(res.data.trendLines)
+        setTrends3(res.data.trendLines);
       })
       .catch((err) => {
         console.log("API Fail to get Chart Data");
@@ -220,7 +220,7 @@ export const LivePage = () => {
   };
 
   const handleCreateTrendLines = useCallback(
-    async (trendline, textList1, retracements3, channels1 , alert) => {
+    async (trendline, textList1, retracements3, channels1, alert) => {
       // if (trendline?.some(line => line?.endTime === undefined && line?.startTime)) {
       //   return alert(
       //     "Please ensure the TrendLine remains inside the chart. The TrendLine's endpoint should not go outside the chart"
@@ -242,7 +242,7 @@ export const LivePage = () => {
           textLabel: textLabel,
           retracements: retracements3,
           channels: channels1,
-          alertLine : alert
+          alertLine: alert,
         });
         getChartData(); // Ensure this is defined and working correctly
         alert("Successfully updated trend lines");
@@ -274,64 +274,66 @@ export const LivePage = () => {
       alert("Some error Occured");
     }
   };
-//  console.log("socketdata",socketData)
+  //  console.log("socketdata",socketData)
   return (
     <div>
       {/* {data.error ? ( */}
-        {/* // "Some Error Occcured" */}
+      {/* // "Some Error Occcured" */}
       {/* // ) : ( */}
-        <>
-          <div>
-            <p className="font-semibold text-center font-mono text-[20px] text-green-600">
-              Angel-One(Main Chart)
-              <Button size="sm" onClick={() => setHideConfig((prev) => !prev)}>
-                {hideConfig ? "Hide Config Data" : "Show Config Data"}
-              </Button>
-            </p>
-            {hideConfig && (
-              <div>
-                <UIButton
-                  getHighLowLines={getHighLowLines}
-                  showRow={showRow}
-                  setShowRow={setShowRow}
-                  data={data}
-                  socketData={socketData}
-                  masterId={masterId}
-                  setTrendLineActive={setTrendLineActive}
-                  trendLineActive={trendLineActive}
-                  id={id}
-                  liveTrendValue={liveTrendValue}
-                />
-              </div>
-            )}
+      <>
+        <div>
+          <p className="font-semibold text-center font-mono text-[20px] text-green-600">
+            Angel-One(Main Chart)
+            <Button size="sm" onClick={() => setHideConfig((prev) => !prev)}>
+              {hideConfig ? "Hide Config Data" : "Show Config Data"}
+            </Button>
+          </p>
+          {hideConfig && (
+            <div>
+              <UIButton
+                getHighLowLines={getHighLowLines}
+                showRow={showRow}
+                setShowRow={setShowRow}
+                data={data}
+                socketData={socketData}
+                masterId={masterId}
+                setTrendLineActive={setTrendLineActive}
+                trendLineActive={trendLineActive}
+                id={id}
+                liveTrendValue={liveTrendValue}
+              />
+            </div>
+          )}
 
-<div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-6 p-2">
-  <div className="flex items-center gap-4">
-    <Input
-      type="date"
-      value={prevDate}
-      placeholder="date"
-      className="w-full md:w-[150px] border-black border-[1px] rounded-md"
-      onChange={(e) => setPrevDate(e.target.value)}
-    />
-      <Button onClick={handleSubmit} size="xs" className="p-2">
-      Submit
-    </Button>
-  </div>
- 
-  <button className="text-sm md:text-lg text-center font-semibold text-green-600">
-    LTP : {socketData?.last_traded_price} &nbsp; &nbsp; Master LTP :
-    {socketMastertData?.last_traded_price} &nbsp; &nbsp; RSI Live :{" "}
-    {socketData?.RSI_value} &nbsp; &nbsp;
-  </button>
-  {/* <button onClick={toggleScroll} className="text-lg">
+          <div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-6 p-2">
+            <div className="flex items-center gap-4">
+              <Input
+                type="date"
+                value={prevDate}
+                placeholder="date"
+                className="w-full md:w-[150px] border-black border-[1px] rounded-md"
+                onChange={(e) => setPrevDate(e.target.value)}
+              />
+              <Button onClick={handleSubmit} size="xs" className="p-2">
+                Submit
+              </Button>
+            </div>
+
+            <button className="text-sm md:text-lg text-center font-semibold text-green-600">
+              LTP : {socketData?.last_traded_price} &nbsp; &nbsp; Master LTP :
+              {socketMastertData?.last_traded_price} &nbsp; &nbsp; RSI Live :{" "}
+              {socketData?.RSI_value} &nbsp; &nbsp;
+            </button>
+
+            {/* <button onClick={toggleScroll} className="text-lg">
     {isUserScroll ? (
       <IoPlay className="size-6" />
     ) : (
       <IoPause className="size-6" />
     )}
   </button> */}
-  <div className="flex flex-wrap gap-2 md:gap-4">
+
+            {/* <div className="flex flex-wrap gap-2 md:gap-4">
     <button
       onClick={() =>
         setShowRow((p) => ({
@@ -451,13 +453,12 @@ export const LivePage = () => {
 </button>
 
 
-  </div>
-</div>
-
+  </div> */}
           </div>
+        </div>
 
-          <div className="flex">
-            {/* <div className="w-[10%]">
+        <div className="flex">
+          {/* <div className="w-[10%]">
               <div className=" px-1 items-center space-y-3">
 
                 &nbsp; &nbsp;
@@ -533,33 +534,33 @@ export const LivePage = () => {
                 </div>
               </div>
             </div> */}
-            <div className="w-[100%]">
-              {apiData?.length > 0 && (
-                <CandleChart
-                  //   id={id}
-                  getChartData={getChartData}
-                  handleCreateTrendLines={handleCreateTrendLines}
-                  data={apiData}
-                  intractiveData={intractiveData}
-                  // getMoreData={() => {}}
-                  ratio={1}
-                  width={width}
-                  showRow={showRow}
-                  theme={theme}
-                  // xExtents={xExtents}
-                  height={(height * 7) / 10}
-                  chartType={chartType}
-                  trends3={trends3}
-                  setTrends3={setTrends3}
-                  alert3={alert3}
-                  setAlert3={setAlert3}
-                />
-              )}
-            </div>
+          <div className="w-[100%]">
+            {apiData?.length > 0 && (
+              <CandleChart
+                //   id={id}
+                getChartData={getChartData}
+                handleCreateTrendLines={handleCreateTrendLines}
+                data={apiData}
+                intractiveData={intractiveData}
+                // getMoreData={() => {}}
+                ratio={1}
+                width={width}
+                showRow={showRow}
+                theme={theme}
+                // xExtents={xExtents}
+                height={(height * 7) / 10}
+                chartType={chartType}
+                trends3={trends3}
+                setTrends3={setTrends3}
+                alert3={alert3}
+                setAlert3={setAlert3}
+              />
+            )}
           </div>
+        </div>
 
-          {id && <LiveDataTable id={id} socketData={socketData} />}
-        </>
+        {id && <LiveDataTable id={id} socketData={socketData} />}
+      </>
       {/* // )} */}
     </div>
   );

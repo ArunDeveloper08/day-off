@@ -45,10 +45,11 @@ const HelpingChart = () => {
   const [ceStopLoss, setCeStopLoss] = useState(null);
   const [peStopLoss, setPeStopLoss] = useState(null);
   // const [chartType, setChartType] = useState("canvas");
-  const [chartType, setChartType] = useState("svg");
+  const [chartType, setChartType] = useState( "svg" );
   const [trends3, setTrends3] = useState([]);
   const [alert3, setAlert3] = useState([]);
   const [entryLine, setEntryLine] = useState([]);
+  const [trendLineValue, setTrendLineValue] = useState([]);
   // const [selectedInterval, setSelectedInterval] = useState("ONE_MINUTE");
 
   let tradeIndex = "";
@@ -183,100 +184,62 @@ const HelpingChart = () => {
     }
   };
 
+  const mergeEntryLines = (apiLines, stateLines) => {
+
+    
+    const apiLineNames = new Set(apiLines?.map((apiLine) => apiLine.name));
+    const updatedUserLines = stateLines?.map((userLine) => {
+      const matchingApiLine = apiLines.find(
+        (apiLine) => apiLine.name === userLine.name
+      );
+      return matchingApiLine
+        ? { ...userLine, ...matchingApiLine } // Merge API updates into user-drawn lines
+        : userLine;
+    });
+  
+    const mergedLines = [
+      ...updatedUserLines,
+      ...apiLines.filter((apiLine) => !apiLineNames.has(apiLine.name)),
+    ];
+  
+    console.log("Merged Entry Lines:", mergedLines);
+    return mergedLines;
+  };
+  
+
   const getChartData = () => {
-    // if (debounceRef.current) {
-    //   clearTimeout(debounceRef.current);
-    // }
-    // debounceRef.current = setTimeout(() => {
     axios
       .post(`${BASE_URL_OVERALL}/chart/helper?id=${id}`)
       .then((res) => {
+        // Set other data from the API
         setApiData(res.data.data);
         setCeTargetValue(res.data.data?.[0]?.CETargetLevelValue);
         setPeTargetValue(res.data.data?.[0]?.PETargetLevelValue);
         setCeStopLoss(res.data.data?.[0]?.CEStopLoss);
         setPeStopLoss(res.data.data?.[0]?.PEStopLoss);
         setIntractiveData(res.data);
+  
+        // Log API data for debugging
 
-        // if(res?.data?.buyTrendLines?.length > 0){
-        //   // console.log("inside if condition")
-        //   const apiEntryLines = res.data?.buyTrendLines || [];
-        //   const mergeEntryLines = (apiLines, stateLines) => {
-        //     // Create a Set to track existing names in the API data for quick lookup
-        //     const apiLineNames = new Set(apiLines.map(apiLine => apiLine.name));
-
-        //     // Filter user-drawn lines to include only those not present in the API data
-        //     const uniqueUserLines = stateLines.filter(
-        //       userLine => !apiLineNames.has(userLine.name)
-        //     );
-
-        //     // Combine API lines and unique user-drawn lines
-        //     return [...apiLines, ...uniqueUserLines];
-        //   };
-
-        //   // Usage
-        //   // const mergedEntryLines = mergeEntryLines(apiEntryLines, entryLine);
-        //   // setEntryLine(mergedEntryLines);
-        //   setEntryLine(prevEntryLines => {
-        //     const mergedEntryLines = mergeEntryLines(apiEntryLines, prevEntryLines);
-        //     // console.log('Merged entry lines:', mergedEntryLines);
-        //     return mergedEntryLines;
-        //   });
-        // }
-
+  
+        // Merge entry lines if there are buyTrendLines
+        if (res?.data?.buyTrendLines?.length > 0) {
+    
+          setEntryLine(res?.data?.buyTrendLines)
+          setApiResponseReceived(true); // After state update
+        }
+  
+        // Process alert lines
         if (res?.data?.analysisLine?.length > 0) {
           setAlert3(res.data?.analysisLine);
-        }
-
-        if (res?.data?.buyTrendLines?.length > 0) {
-          const apiEntryLines = res.data?.buyTrendLines || [];
-
-          const mergeEntryLines = (apiLines, stateLines) => {
-            // Create a Set to track existing names in the API data for quick lookup
-            const apiLineNames = new Set(
-              apiLines?.map((apiLine) => apiLine.name)
-            );
-            // Filter user-drawn lines to include only those not present in the API data
-            const uniqueUserLines = stateLines?.filter(
-              (userLine) => !apiLineNames?.has(userLine.name)
-            );
-
-            // Combine API lines and unique user-drawn lines
-            const combinedLines = [...apiLines, ...uniqueUserLines];
-            // Filter out CESellLine and PESellLine if they are not in the API data
-            return combinedLines.filter((line) =>
-              line.name !== "CESellLine" &&
-              line.name !== "PESellLine" &&
-              line.name !== "PEBuyLine" &&
-              line.name !== "CEBuyLine" &&
-              line.name !== "FUTSellLine" &&
-              line.name !== "FUTBuyLine"
-                ? true
-                : apiLineNames.has(line.name)
-            );
-
-            // if (!hasInitializedTrends.current) {
-            //   // console.log("Setting trends for the first time");
-            //   setTrends3(res.data.trendLines); // Set trends3 for the first time
-            //   hasInitializedTrends.current = true; // Mark as initialized
-            // }
-          };
-          setEntryLine((prevEntryLines) => {
-            const mergedEntryLines = mergeEntryLines(
-              apiEntryLines,
-              prevEntryLines
-            );
-            return mergedEntryLines;
-          });
+          setApiResponseReceived(true);
         }
       })
-
       .catch((err) => {
         console.log(err);
-        // alert(err?.response?.data?.message);
       });
-    // }, 1000);
   };
+  
 
   // Refined rounding function
   const roundToNearestTime = (time, interval) => {
@@ -313,17 +276,65 @@ const HelpingChart = () => {
     return date;
   };
 
+  // const filterAndTransformLines = (trendLines, data, interval) => {
+  //   return trendLines?.map((line) => {
+  //     const roundedStartTime = roundToNearestTime(line.startTime, interval);
+  //     const roundedEndTime = roundToNearestTime(line.endTime, interval);
+
+  //     if (isNaN(roundedStartTime) || isNaN(roundedEndTime)) {
+  //       console.error("Invalid rounded start or end time");
+  //       return line; // Return the original line if there's an error
+  //     }
+
+  //     // Find closest index for start and end times in the data
+  //     const startIndex = data?.findIndex(
+  //       (candle) =>
+  //         new Date(candle.timestamp).getTime() >= roundedStartTime.getTime()
+  //     );
+  //     const endIndex = data?.findIndex(
+  //       (candle) =>
+  //         new Date(candle.timestamp).getTime() >= roundedEndTime.getTime()
+  //     );
+
+  //     if (startIndex === -1 || endIndex === -1) {
+  //       console.error(
+  //         "Could not find corresponding data points for trendline:",
+  //         line
+  //       );
+  //       return line; // Return the original line if indices are not found
+  //     }
+
+  //     // If it's the first time the line is being drawn, capture the prices
+  //     if (!line.originalStartPrice || !line.originalEndPrice) {
+  //       line.originalStartPrice = line.start[1]; // Store the original price when first drawn
+  //       line.originalEndPrice = line.end[1]; // Store the original price when first drawn
+  //     }
+
+  //     // Use the stored original prices for the trendline
+  //     return {
+  //       ...line,
+  //       startTime: roundedStartTime.toISOString(),
+  //       endTime: roundedEndTime.toISOString(),
+  //       start: [startIndex, line.originalStartPrice || startCandle.close], // Use original price if stored
+  //       end: [endIndex, line.originalEndPrice || endCandle.close], // Use original price if stored
+  //     };
+  //   });
+  // };
+
+  // Adjust the trendline's start and end time when the interval changes
+
   const filterAndTransformLines = (trendLines, data, interval) => {
+    
+    
     return trendLines?.map((line) => {
       const roundedStartTime = roundToNearestTime(line.startTime, interval);
       const roundedEndTime = roundToNearestTime(line.endTime, interval);
-
+  
       if (isNaN(roundedStartTime) || isNaN(roundedEndTime)) {
-        console.error("Invalid rounded start or end time");
-        return line; // Return the original line if there's an error
+        console.error("Invalid rounded start or end time for line:", line.name);
+        return line; // Return original line if error occurs
       }
-
-      // Find closest index for start and end times in the data
+  
       const startIndex = data?.findIndex(
         (candle) =>
           new Date(candle.timestamp).getTime() >= roundedStartTime.getTime()
@@ -332,47 +343,40 @@ const HelpingChart = () => {
         (candle) =>
           new Date(candle.timestamp).getTime() >= roundedEndTime.getTime()
       );
-
+  
       if (startIndex === -1 || endIndex === -1) {
         console.error(
           "Could not find corresponding data points for trendline:",
-          line
+          line.name
         );
-        return line; // Return the original line if indices are not found
+        return line; // Return original line if indices are not found
       }
-
-      // If it's the first time the line is being drawn, capture the prices
-      if (!line.originalStartPrice || !line.originalEndPrice) {
-        line.originalStartPrice = line.start[1]; // Store the original price when first drawn
-        line.originalEndPrice = line.end[1]; // Store the original price when first drawn
-      }
-
-      // Use the stored original prices for the trendline
+  
       return {
         ...line,
         startTime: roundedStartTime.toISOString(),
         endTime: roundedEndTime.toISOString(),
-        start: [startIndex, line.originalStartPrice || startCandle.close], // Use original price if stored
-        end: [endIndex, line.originalEndPrice || endCandle.close], // Use original price if stored
+        start: [startIndex, line.start[1] || data[startIndex]?.close],
+        end: [endIndex, line.end[1] || data[endIndex]?.close],
       };
     });
   };
 
-  // Adjust the trendline's start and end time when the interval changes
-
+  
   useEffect(() => {
     if (!apiResponseReceived) return;
-
-    const updatedTrendLines = filterAndTransformLines(
+  
+    const updatedEntryLines = filterAndTransformLines(
       entryLine,
       apiData,
       values?.interval
     );
     setEntryLine((prev) =>
-      JSON.stringify(prev) !== JSON.stringify(updatedTrendLines)
-        ? updatedTrendLines
+      JSON.stringify(prev) !== JSON.stringify(updatedEntryLines)
+        ? updatedEntryLines
         : prev
     );
+  
     const updatedAlertLines = filterAndTransformLines(
       alert3,
       apiData,
@@ -383,7 +387,8 @@ const HelpingChart = () => {
         ? updatedAlertLines
         : prev
     );
-  }, [apiResponseReceived, apiData]);
+  }, [apiResponseReceived, apiData, values?.interval]);
+  
   // console.log("manualTrade", manualInterval)
   // console.log("interval", values.interval)
 
@@ -393,17 +398,26 @@ const HelpingChart = () => {
       manualIntervalRef.current = value; 
     }
     if (key === "interval" && apiResponseReceived) {
-      const updatedEntryLines = filterAndTransformLines(
-        entryLine,
-        apiData,
-        value
-      );
+      const updatedEntryLines = filterAndTransformLines(entryLine, apiData, value);
       const updatedAlertLines = filterAndTransformLines(alert3, apiData, value);
-      setEntryLine(updatedEntryLines);
-      setAlert3(updatedAlertLines);
+  
+      setEntryLine((prev) =>
+        JSON.stringify(prev) !== JSON.stringify(updatedEntryLines)
+          ? updatedEntryLines
+          : prev
+      );
+      setAlert3((prev) =>
+        JSON.stringify(prev) !== JSON.stringify(updatedAlertLines)
+          ? updatedAlertLines
+          : prev
+      );
       setApiResponseReceived(false);
     }
   };
+  
+
+
+
 
   // const prevTrendLineActive = useRef(values.trendLineActive);
   const handleSubmit = () => {
@@ -605,7 +619,7 @@ const HelpingChart = () => {
 
   useEffect(() => {
     if (!isConnected || !data?.data?.instrument_token) return;
-    console.log("Hii");
+  
     socket.on("tradeUpdate", (data) => {
       console.log("-->", data);
     });
@@ -653,7 +667,7 @@ const HelpingChart = () => {
         console.error("Error saving data:", err);
       }
     };
-
+  
     // Check if any trend line is incomplete
     const incompleteLineExists = trendline?.some(
       (line) => line?.endTime === undefined && line?.startTime
@@ -664,10 +678,10 @@ const HelpingChart = () => {
     const incompleteLineExists2 = entryLine
       ?.slice(0, 4) // Get only the first 4 elements
       .some((line) => line?.endTime === undefined && line?.startTime);
-
-    // Handle validations for trendline
+  
+    // Handle trendline saving
     if (showRow?.trendLine) {
-      if (trendline?.length == 0) {
+      if (trendline?.length === 0) {
         return sendDataToAPI({
           trendLines: trendline,
           textLabel: JSON.stringify(textList1),
@@ -679,8 +693,7 @@ const HelpingChart = () => {
             10 - trendline.length
           } more trend lines.`
         );
-
-        return; // Exit early if validations fail
+        return;
       }
       if (incompleteLineExists) {
         alert(
@@ -688,73 +701,57 @@ const HelpingChart = () => {
         );
         return;
       }
-
-      // Send only trendLine data
-      // return sendDataToAPI({
-      //   trendLines: trendline,
-      //   textLabel: JSON.stringify(textList1),
-      // });
     }
-
-    // Handle alertLine saving
-    // if (showRow.alertLine) {
-    //   return sendDataToAPI({ alertLine: alert3 });
-    // }
-
+  
     // Handle entryLine saving
-    if (showRow.entryLine) {
-      if (entryLine?.length == 0) {
-        sendDataToAPI({ buyTrendLines: entryLine });
-
-        if (alert3?.length == 0) {
-          sendDataToAPI({ analysisLine: alert3 });
-          // Exit early if validations fail
-        }
-        return; // Exit early if validations fail
+    if (showRow?.entryLine) {
+      if (incompleteLineExists2) {
+        alert(
+          "Please ensure all Entry lines remain inside the chart. The endpoint cannot be outside the chart."
+        );
+        return;
       }
-
-      if (entryLine?.length > 0 && entryLine?.length < 4) {
+  
+      // Only call API for entryLine if conditions are met
+      if (entryLine?.length === 0) {
+        sendDataToAPI({ buyTrendLines: entryLine });
+      } else if (entryLine?.length >= 4) {
+        sendDataToAPI({ buyTrendLines: entryLine });
+      } else if (entryLine?.length > 0 && entryLine.length < 4) {
         alert(
           `You have only ${entryLine.length} Entry lines. Please add ${
             4 - entryLine.length
-          } more trend lines.`
-        );
-
-        // sendDataToAPI({ buyTrendLines: entryLine });
-        return; // Exit early if validations fail
-      }
-      if (incompleteLineExists2) {
-        alert(
-          "Please ensure all  Entry lines remain inside the chart. The endpoint cannot be outside the chart."
+          } more entry lines.`
         );
         return;
       }
-
-      // Send only trendLine data
-      return sendDataToAPI({ buyTrendLines: entryLine });
-    }
-
-    if (showRow.alertLine) {
+    }  
+  
+    // Handle alertLine saving
+    if (showRow?.alertLine) {
       if (incompleteLineExists3) {
         alert(
-          "Please ensure all  Analaysis lines remain inside the chart. The endpoint cannot be outside the chart."
+          "Please ensure all Analysis lines remain inside the chart. The endpoint cannot be outside the chart."
         );
         return;
       }
-      if (alert3?.length == 0) {
+  
+      // Always call API for alert lines if they exist
+      if (alert3?.length > 0 || alert3.length == 0) {
         sendDataToAPI({ analysisLine: alert3 });
-        if (entryLine?.length == 0) {
-          sendDataToAPI({ buyTrendLines: entryLine });
-        }
-
-        return; // Exit early if validations fail
       }
-      return sendDataToAPI({ analysisLine: alert3 });
+  
+      // Ensure entry lines are saved if alert3 exists
+      // if (alert3?.length > 0 || entryLine?.length > 0) {
+      //   sendDataToAPI({ buyTrendLines: entryLine });
+      // }
     }
-    alert("No valid data to save.");
+  
+    // alert("No valid data to save.");
   };
+  
 
-  const [trendLineValue, setTrendLineValue] = useState([]);
+ 
 
   useEffect(() => {
     if (!id) return;
@@ -1942,6 +1939,7 @@ const HelpingChart = () => {
                       <span>Equidistant Channel</span>
                     </div>
                   </button> */}
+                  
 
                   <button
                     onClick={() =>
@@ -2038,7 +2036,7 @@ const HelpingChart = () => {
                           </g>
                         </svg>
                       </span>
-                      <span>Alert Line</span>
+                      <span>Analysis Line</span>
                     </div>
                   </button>
                   <button
