@@ -12,13 +12,13 @@ import { useLocation } from "react-router-dom";
 import CandleChart from "../components/LiveGraph";
 
 import "react-toastify/dist/ReactToastify.css";
-import { groupBy } from "./dashboard";
+// import { groupBy } from "./dashboard";
 
 import { ModeToggle } from "@/components/mode-toggle";
 import { useTheme } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
-import { scaleTime, scaleLinear } from "d3-scale";
 
+// import { scaleTime, scaleLinear } from "d3-scale";
 // import { Button } from "@mui/material";
 
 import {
@@ -39,7 +39,7 @@ const HelpingChart = () => {
   const intervalRef = useRef(null);
   const debounceRef = useRef(null); // Add ref for debouncing
   const [intractiveData, setIntractiveData] = useState([]);
-  const [master, setMaster] = useState("");
+  // const [master, setMaster] = useState("");
   const [ceTargetValue, setCeTargetValue] = useState(null);
   const [peTargetValue, setPeTargetValue] = useState(null);
   const [ceStopLoss, setCeStopLoss] = useState(null);
@@ -50,15 +50,18 @@ const HelpingChart = () => {
   const [alert3, setAlert3] = useState([]);
   const [entryLine, setEntryLine] = useState([]);
   const [trendLineValue, setTrendLineValue] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   // const [selectedInterval, setSelectedInterval] = useState("ONE_MINUTE");
 
   let tradeIndex = "";
   // const timeScale = useRef(scaleTime().domain([0, 1]));
   // const priceScale = useRef(scaleLinear().domain([0, 1]));
   // const [entryLine2, setEntryLine2] = useState([]);
+
   useEffect(() => {
     setTheme("light");
   }, []);
+
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const id = searchParams.get("id");
@@ -331,7 +334,7 @@ const HelpingChart = () => {
       const roundedEndTime = roundToNearestTime(line.endTime, interval);
   
       if (isNaN(roundedStartTime) || isNaN(roundedEndTime)) {
-        console.error("Invalid rounded start or end time for line:", line.name);
+        console.warn("Invalid rounded start or end time for line:", line.name);
         return line; // Return original line if error occurs
       }
   
@@ -567,6 +570,7 @@ const HelpingChart = () => {
     };
   }, [id, values]);
 
+
   // useEffect(() => {
   //   if (!isConnected || !data?.data?.instrument_token) return;
   //   socket?.on("getLiveData", (socketdata) => {
@@ -576,6 +580,7 @@ const HelpingChart = () => {
   //     }
   //   });
   // }, [socket, data, isConnected]);
+
 
   useEffect(() => {
     if (!isConnected || !data?.data?.instrument_token) return;
@@ -618,17 +623,30 @@ const HelpingChart = () => {
   // console.log("socketData",socketData)
 
   useEffect(() => {
-    if (!isConnected || !data?.data?.instrument_token) return;
-  
-    socket.on("tradeUpdate", (data) => {
-      console.log("-->", data);
-    });
-    return () => {
-      socket?.off("tradeUpdate"); // Clean up the event listener when the component unmounts
+    if (!isConnected || !data?.data?.instrument_token) return; 
+    const { instrument_token } = data.data; // Extract instrument token
+    const handleTradeUpdate = (socketData) => {
+      if (Array.isArray(socketData)) {
+        const matchingData = socketData.filter(
+          (item) => Number(item.instrument_token) === instrument_token
+        );
+        if (matchingData.length > 0) { 
+          setFilteredData(matchingData); // Append matching data
+         }
+      } else {
+        console.error("Socket data is not an array");
+      }
     };
-  }, [socket, isConnected]);
+    return () => {
+      socket.off("tradeUpdate", handleTradeUpdate); 
+    };
+  }, [socket, isConnected, data?.data?.instrument_token]);
+
+  //  console.log("filteredData", filteredData);
+  
 
   const today = new Date().toISOString().split("T")[0];
+
   const getHighLowLines = async () => {
     try {
       await axios.get(`${BASE_URL_OVERALL}/chart/makeHighLow?id=${id}`);
@@ -638,6 +656,7 @@ const HelpingChart = () => {
       alert("Some error Occured");
     }
   };
+  
   const getTrendLinesValue = async () => {
     try {
       const response = await axios.get(
@@ -749,9 +768,6 @@ const HelpingChart = () => {
   
     // alert("No valid data to save.");
   };
-  
-
- 
 
   useEffect(() => {
     if (!id) return;
@@ -826,6 +842,7 @@ const HelpingChart = () => {
         console.log(err);
       });
   };
+
   const toggleTestingMode = async () => {
     try {
       const newMode = !testingMode;
@@ -847,8 +864,8 @@ const HelpingChart = () => {
     getTestMode();
   }, []);
 
-  // console.log("ALERT", alert3);
-  //  console.log("CEZone",trendLineValue.zone.CEZone.low)
+  // console.log("entryLine", entryLine);
+  // console.log("CEZone",trendLineValue.zone.CEZone.low)
   // console.log("socketdata",socketData)
   // console.log("values",values)
   // console.log("apiData",apiData?.[0])
@@ -879,8 +896,8 @@ const HelpingChart = () => {
             size="xs"
             className="p-1 text-[13px] md:text-[16px]"
             onClick={getHighLowLines}
-          >
-            High/Low line
+          >       
+             High/Low line  
           </Button>
           &nbsp; &nbsp;
           <button
@@ -931,6 +948,10 @@ const HelpingChart = () => {
                 <p className="text-red-500 text-[13px] md:text-[16px]">
                   {peStopLoss && `PE Stop Loss : ${peStopLoss?.toFixed(1)}`}
                 </p>
+
+
+            {/* Here put socket Data */}
+           
                 <p
                   className={`${
                     data.data.haveTradeOfCE
@@ -1040,7 +1061,8 @@ const HelpingChart = () => {
                   CE Buy Hedge :{" "}
                   {data.data.haveTradeOfHedgeCE ? "True" : "False"}
                 </p>
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                &nbsp; &nbsp; &nbsp; &nbsp; 
+                                         
                 <p
                   className={`${
                     data.data.haveTradeOfHedgePE
@@ -1051,7 +1073,7 @@ const HelpingChart = () => {
                   PE Buy Hedge :
                   {data.data.haveTradeOfHedgePE ? "True" : "False"}
                 </p>
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                &nbsp; &nbsp; &nbsp; &nbsp; 
                 <p
                   className={`${
                     data.data.haveTradeOfHedgeCESell
@@ -1059,10 +1081,10 @@ const HelpingChart = () => {
                       : "text-green-600  font-bold text-[13px] md:text-[16px]"
                   }`}
                 >
-                  CE SELL Hedge:
+                  CE SELL Hedge : 
                   {data.data.haveTradeOfHedgeCESell ? "True" : "False"}
                 </p>
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                &nbsp; &nbsp; &nbsp; &nbsp;
                 <p
                   className={`${
                     data.data.haveTradeOfHedgePESell

@@ -7,18 +7,15 @@ const CandleChart = ({
   height,
   showRow,
   ratio,
-
   type = chartType,
 
-  entryLine,
-  setEntryLine,
+ // entryLine,
+ // setEntryLine,
 
   // type = "canvas",
   // type = "svg",
 }) => {
   try {
-    
-
     const margin = { left: 80, right: 80, top: 30, bottom: 50 };
     const calculatedData = initialData;
     // Trendline state
@@ -47,13 +44,14 @@ const CandleChart = ({
     const end = xAccessor(last(data));
     const padding = (end - start) * 0.1;
     const xExtents = [start, end + padding];
-
     const [suffix, setSuffix] = useState(1);
 
     return (
       <div className="flex flex-col">
         <div>
+          
           {data?.length && (
+
             <ChartCanvas
               id="chartId"
               width={width}
@@ -80,7 +78,7 @@ const CandleChart = ({
                 <XAxis axisAt="bottom" orient="bottom" ticks={10} />
                 <YAxis axisAt="right" orient="right" />
 
-                {showRow.candle && (
+                {showRow.candle && (      
                   <CandlestickSeries
                     opacity={1}
                     fill={(d) => (d.close > d.open ? "green" : "red")}
@@ -97,6 +95,9 @@ const CandleChart = ({
     console.log("Error", error);
   }
 };
+ 
+
+  
 const EnhancedCandleChart = fitWidth(CandleChart);
 export default memo((props) => (
   <ErrorBoundary>
