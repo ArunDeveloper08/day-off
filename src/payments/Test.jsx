@@ -1,3 +1,5 @@
+import { LineSeries } from "react-financial-charts";
+
 const CandleChart = ({
   chartType,
   // getChartData,
@@ -9,9 +11,8 @@ const CandleChart = ({
   ratio,
   type = chartType,
 
- // entryLine,
- // setEntryLine,
-
+  // entryLine,
+  // setEntryLine,
   // type = "canvas",
   // type = "svg",
 }) => {
@@ -20,7 +21,7 @@ const CandleChart = ({
     const calculatedData = initialData;
     // Trendline state
 
-    const entryLineNodeRef = useRef(null);
+    // const entryLineNodeRef = useRef(null);
 
     useKeyPress(onKeyPress);
     const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(
@@ -49,9 +50,7 @@ const CandleChart = ({
     return (
       <div className="flex flex-col">
         <div>
-          
           {data?.length && (
-
             <ChartCanvas
               id="chartId"
               width={width}
@@ -69,7 +68,6 @@ const CandleChart = ({
               <Chart
                 id={1}
                 // margin={{ left: 80, right: 80, top: 30, bottom: 50 }}
-
                 yExtents={[
                   (d) => [d.high, d.low, d.pivot - d.dynamicExitValue],
                 ]}
@@ -77,13 +75,29 @@ const CandleChart = ({
               >
                 <XAxis axisAt="bottom" orient="bottom" ticks={10} />
                 <YAxis axisAt="right" orient="right" />
+                                           
+                {
+                 showRow.CEStopLoss && 
+                 <LineSeries   
+                 strokeWidth={2}    
+                 stroke="blue" 
+                 yAccessor={(d) => Number(d.CEStopLoss)}         
+                />
+                 }
 
-                {showRow.candle && (      
+                 
+                   
+                 
+
+                {showRow.candle && (
                   <CandlestickSeries
                     opacity={1}
-                    fill={(d) => (d.close > d.open ? "green" : "red")}
+                    fill={ (d) => (d.close > d.open ? "green" : "red") }
                   />
-                )}
+                )} 
+
+                
+
               </Chart>
             </ChartCanvas>
           )}
@@ -95,9 +109,7 @@ const CandleChart = ({
     console.log("Error", error);
   }
 };
- 
 
-  
 const EnhancedCandleChart = fitWidth(CandleChart);
 export default memo((props) => (
   <ErrorBoundary>

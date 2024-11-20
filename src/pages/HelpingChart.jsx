@@ -45,7 +45,7 @@ const HelpingChart = () => {
   const [ceStopLoss, setCeStopLoss] = useState(null);
   const [peStopLoss, setPeStopLoss] = useState(null);
   // const [chartType, setChartType] = useState("canvas");
-  const [chartType, setChartType] = useState( "svg" );
+  const [chartType, setChartType] = useState("svg");
   const [trends3, setTrends3] = useState([]);
   const [alert3, setAlert3] = useState([]);
   const [entryLine, setEntryLine] = useState([]);
@@ -162,16 +162,15 @@ const HelpingChart = () => {
         `${BASE_URL_OVERALL}/config/get?id=${id}`
       );
       setData((p) => ({ ...p, data: data.data }));
-  
+
       setValues((prev) => {
         // Use manualInterval if the user has selected one
-       
-        const interval = manualIntervalRef.current ?? data.data?.interval;
 
+        const interval = manualIntervalRef.current ?? data.data?.interval;
 
         return {
           ...prev,
-           interval : interval, // Preserve the manually selected interval
+          interval: interval, // Preserve the manually selected interval
           candleType: data.data?.candleType,
           trendLineActive: data.data?.trendLineActive,
           WMA: data.data?.WMA,
@@ -188,8 +187,6 @@ const HelpingChart = () => {
   };
 
   const mergeEntryLines = (apiLines, stateLines) => {
-
-    
     const apiLineNames = new Set(apiLines?.map((apiLine) => apiLine.name));
     const updatedUserLines = stateLines?.map((userLine) => {
       const matchingApiLine = apiLines.find(
@@ -199,16 +196,15 @@ const HelpingChart = () => {
         ? { ...userLine, ...matchingApiLine } // Merge API updates into user-drawn lines
         : userLine;
     });
-  
+
     const mergedLines = [
       ...updatedUserLines,
       ...apiLines.filter((apiLine) => !apiLineNames.has(apiLine.name)),
     ];
-  
+
     console.log("Merged Entry Lines:", mergedLines);
     return mergedLines;
   };
-  
 
   const getChartData = () => {
     axios
@@ -221,17 +217,15 @@ const HelpingChart = () => {
         setCeStopLoss(res.data.data?.[0]?.CEStopLoss);
         setPeStopLoss(res.data.data?.[0]?.PEStopLoss);
         setIntractiveData(res.data);
-  
+
         // Log API data for debugging
 
-  
         // Merge entry lines if there are buyTrendLines
         if (res?.data?.buyTrendLines?.length > 0) {
-    
-          setEntryLine(res?.data?.buyTrendLines)
+          setEntryLine(res?.data?.buyTrendLines);
           setApiResponseReceived(true); // After state update
         }
-  
+
         // Process alert lines
         if (res?.data?.analysisLine?.length > 0) {
           setAlert3(res.data?.analysisLine);
@@ -242,7 +236,6 @@ const HelpingChart = () => {
         console.log(err);
       });
   };
-  
 
   // Refined rounding function
   const roundToNearestTime = (time, interval) => {
@@ -327,17 +320,15 @@ const HelpingChart = () => {
   // Adjust the trendline's start and end time when the interval changes
 
   const filterAndTransformLines = (trendLines, data, interval) => {
-    
-    
     return trendLines?.map((line) => {
       const roundedStartTime = roundToNearestTime(line.startTime, interval);
       const roundedEndTime = roundToNearestTime(line.endTime, interval);
-  
+
       if (isNaN(roundedStartTime) || isNaN(roundedEndTime)) {
         console.warn("Invalid rounded start or end time for line:", line.name);
         return line; // Return original line if error occurs
       }
-  
+
       const startIndex = data?.findIndex(
         (candle) =>
           new Date(candle.timestamp).getTime() >= roundedStartTime.getTime()
@@ -346,7 +337,7 @@ const HelpingChart = () => {
         (candle) =>
           new Date(candle.timestamp).getTime() >= roundedEndTime.getTime()
       );
-  
+
       if (startIndex === -1 || endIndex === -1) {
         console.error(
           "Could not find corresponding data points for trendline:",
@@ -354,7 +345,7 @@ const HelpingChart = () => {
         );
         return line; // Return original line if indices are not found
       }
-  
+
       return {
         ...line,
         startTime: roundedStartTime.toISOString(),
@@ -365,10 +356,9 @@ const HelpingChart = () => {
     });
   };
 
-  
   useEffect(() => {
     if (!apiResponseReceived) return;
-  
+
     const updatedEntryLines = filterAndTransformLines(
       entryLine,
       apiData,
@@ -379,7 +369,7 @@ const HelpingChart = () => {
         ? updatedEntryLines
         : prev
     );
-  
+
     const updatedAlertLines = filterAndTransformLines(
       alert3,
       apiData,
@@ -391,19 +381,23 @@ const HelpingChart = () => {
         : prev
     );
   }, [apiResponseReceived, apiData, values?.interval]);
-  
+
   // console.log("manualTrade", manualInterval)
   // console.log("interval", values.interval)
 
   const handleSelect = (key, value) => {
     setValues((prev) => ({ ...prev, [key]: value }));
     if (key === "interval") {
-      manualIntervalRef.current = value; 
+      manualIntervalRef.current = value;
     }
     if (key === "interval" && apiResponseReceived) {
-      const updatedEntryLines = filterAndTransformLines(entryLine, apiData, value);
+      const updatedEntryLines = filterAndTransformLines(
+        entryLine,
+        apiData,
+        value
+      );
       const updatedAlertLines = filterAndTransformLines(alert3, apiData, value);
-  
+
       setEntryLine((prev) =>
         JSON.stringify(prev) !== JSON.stringify(updatedEntryLines)
           ? updatedEntryLines
@@ -417,12 +411,9 @@ const HelpingChart = () => {
       setApiResponseReceived(false);
     }
   };
-  
-
-
-
 
   // const prevTrendLineActive = useRef(values.trendLineActive);
+
   const handleSubmit = () => {
     axios
       .put(`${BASE_URL_OVERALL}/config/editMaster?id=${id}`, { ...values })
@@ -460,48 +451,28 @@ const HelpingChart = () => {
 
   const prevHaveTradeOfCE = useRef(false); // Start with false
   const prevHaveTradeOfPE = useRef(false); // Start with false
-
   useEffect(() => {
     const { haveTradeOfCE, haveTradeOfPE } = data?.data || {};
-
-    // Log current and previous values to debug
-    // console.log(
-    //   "Current haveTradeOfCE:",
-    //   haveTradeOfCE,
-    //   "Previous haveTradeOfCE:",
-    //   prevHaveTradeOfCE.current
-    // );
-    // console.log(
-    //   "Current haveTradeOfPE:",
-    //   haveTradeOfPE,
-    //   "Previous haveTradeOfPE:",
-    //   prevHaveTradeOfPE.current
-    // );
-
     // Detect transition from false to true (for CE)
     if (haveTradeOfCE && !prevHaveTradeOfCE.current) {
       console.log("CE Trade became active");
-      getChartData(); // Call API once when CE becomes true
+      getChartData(); // Call API once when CE becomes true 
     }
-
     // Detect transition from false to true (for PE)
     if (haveTradeOfPE && !prevHaveTradeOfPE.current) {
       console.log("PE Trade became active");
       getChartData(); // Call API once when PE becomes true
     }
-
     // Detect transition from true to false (for CE)
     if (!haveTradeOfCE && prevHaveTradeOfCE.current) {
       console.log("CE Trade became inactive");
       getChartData(); // Call API once when CE becomes false
     }
-
     // Detect transition from true to false (for PE)
     if (!haveTradeOfPE && prevHaveTradeOfPE.current) {
       console.log("PE Trade became inactive");
       getChartData(); // Call API once when PE becomes false
     }
-
     // Update refs to track the latest values
     prevHaveTradeOfCE.current = haveTradeOfCE;
     prevHaveTradeOfPE.current = haveTradeOfPE;
@@ -511,7 +482,7 @@ const HelpingChart = () => {
     data?.data?.haveTradeOfCEBuy,
     data?.data?.haveTradeOfPEBuy,
   ]);
-
+  
   useEffect(() => {
     getChartData();
     // if (!values) return;
@@ -570,7 +541,6 @@ const HelpingChart = () => {
     };
   }, [id, values]);
 
-
   // useEffect(() => {
   //   if (!isConnected || !data?.data?.instrument_token) return;
   //   socket?.on("getLiveData", (socketdata) => {
@@ -581,13 +551,12 @@ const HelpingChart = () => {
   //   });
   // }, [socket, data, isConnected]);
 
-
   useEffect(() => {
     if (!isConnected || !data?.data?.instrument_token) return;
-
+    //  console.log("Hii")
     socket?.on("getLiveData", (socketdata) => {
       // console.log(socketdata)
-      // Check if token is a string before applying replace
+      //  Check if token is a string before applying replace
       if (typeof socketdata?.token === "string") {
         socketdata.token = Number(socketdata?.token?.replace(/"/g, ""));
       } else {
@@ -619,31 +588,28 @@ const HelpingChart = () => {
       socket?.off("getLiveData"); // Clean up the event listener when the component unmounts
     };
   }, [socket, data, isConnected]);
-
   // console.log("socketData",socketData)
 
   useEffect(() => {
-    if (!isConnected || !data?.data?.instrument_token) return; 
+    if (!isConnected || !data?.data?.instrument_token) return;
     const { instrument_token } = data.data; // Extract instrument token
     const handleTradeUpdate = (socketData) => {
       if (Array.isArray(socketData)) {
         const matchingData = socketData.filter(
           (item) => Number(item.instrument_token) === instrument_token
         );
-        if (matchingData.length > 0) { 
+        if (matchingData?.length > 0) {
           setFilteredData(matchingData); // Append matching data
-         }
+        }
       } else {
-        console.error("Socket data is not an array");
+        console.warn("Socket Data Is Not An Array");
       }
     };
     return () => {
-      socket.off("tradeUpdate", handleTradeUpdate); 
+      socket.off("tradeUpdate", handleTradeUpdate);
     };
   }, [socket, isConnected, data?.data?.instrument_token]);
-
-  //  console.log("filteredData", filteredData);
-  
+  // console.log("filteredData", filteredData);
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -656,7 +622,7 @@ const HelpingChart = () => {
       alert("Some error Occured");
     }
   };
-  
+
   const getTrendLinesValue = async () => {
     try {
       const response = await axios.get(
@@ -686,7 +652,7 @@ const HelpingChart = () => {
         console.error("Error saving data:", err);
       }
     };
-  
+
     // Check if any trend line is incomplete
     const incompleteLineExists = trendline?.some(
       (line) => line?.endTime === undefined && line?.startTime
@@ -697,7 +663,7 @@ const HelpingChart = () => {
     const incompleteLineExists2 = entryLine
       ?.slice(0, 4) // Get only the first 4 elements
       .some((line) => line?.endTime === undefined && line?.startTime);
-  
+
     // Handle trendline saving
     if (showRow?.trendLine) {
       if (trendline?.length === 0) {
@@ -721,7 +687,7 @@ const HelpingChart = () => {
         return;
       }
     }
-  
+
     // Handle entryLine saving
     if (showRow?.entryLine) {
       if (incompleteLineExists2) {
@@ -730,7 +696,7 @@ const HelpingChart = () => {
         );
         return;
       }
-  
+
       // Only call API for entryLine if conditions are met
       if (entryLine?.length === 0) {
         sendDataToAPI({ buyTrendLines: entryLine });
@@ -744,8 +710,8 @@ const HelpingChart = () => {
         );
         return;
       }
-    }  
-  
+    }
+
     // Handle alertLine saving
     if (showRow?.alertLine) {
       if (incompleteLineExists3) {
@@ -754,18 +720,18 @@ const HelpingChart = () => {
         );
         return;
       }
-  
+
       // Always call API for alert lines if they exist
       if (alert3?.length > 0 || alert3.length == 0) {
         sendDataToAPI({ analysisLine: alert3 });
       }
-  
+
       // Ensure entry lines are saved if alert3 exists
       // if (alert3?.length > 0 || entryLine?.length > 0) {
       //   sendDataToAPI({ buyTrendLines: entryLine });
       // }
     }
-  
+
     // alert("No valid data to save.");
   };
 
@@ -870,6 +836,7 @@ const HelpingChart = () => {
   // console.log("values",values)
   // console.log("apiData",apiData?.[0])
 
+  const getValue = (key) => filteredData?.[0]?.[key] ?? data.data[key];
   return (
     <div className="p-2">
       {/* {data.error ? (
@@ -880,8 +847,12 @@ const HelpingChart = () => {
           {data?.data?.identifier} &nbsp;{" "}
           <button className="text-md text-center font-semibold text-red-700">
             LTP : {socketData?.last_traded_price} &nbsp;
-            {/* Pivot :{" "}
-              {socketData?.pivotValue?.[0]?.pivotValue?.toFixed(2)} &nbsp; */}
+            {/*
+                               
+               Pivot :{" "}
+              {socketData?.pivotValue?.[0]?.pivotValue?.toFixed(2)} &nbsp;
+            
+              */}
           </button>
           &nbsp; &nbsp;
           <Button
@@ -896,8 +867,8 @@ const HelpingChart = () => {
             size="xs"
             className="p-1 text-[13px] md:text-[16px]"
             onClick={getHighLowLines}
-          >       
-             High/Low line  
+          >
+            High/Low line
           </Button>
           &nbsp; &nbsp;
           <button
@@ -911,6 +882,7 @@ const HelpingChart = () => {
             {testingMode === 1 ? "Test Mode ON" : "Test Mode OFF"}
           </button>
         </h2>
+
 
         {hideConfig && (
           <>
@@ -948,192 +920,150 @@ const HelpingChart = () => {
                 <p className="text-red-500 text-[13px] md:text-[16px]">
                   {peStopLoss && `PE Stop Loss : ${peStopLoss?.toFixed(1)}`}
                 </p>
-
-
-            {/* Here put socket Data */}
-           
+                {/* Here put socket Data */}
+                {/* CE Buy Status */}
                 <p
                   className={`${
-                    data.data.haveTradeOfCE
+                    getValue("haveTradeOfCE")
                       ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
                       : "text-green-600 font-bold text-[13px] md:text-[16px]"
                   }`}
                 >
-                  CE Buy Status :{data.data.haveTradeOfCE ? "True" : "False"}
+                  CE Buy Status: {getValue("haveTradeOfCE") ? "True" : "False"}
                 </p>
                 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                {/* PE Buy Status */}
                 <p
                   className={`${
-                    data.data.haveTradeOfPE
+                    getValue("haveTradeOfPE")
                       ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
                       : "text-green-600 font-bold text-[13px] md:text-[16px]"
                   }`}
                 >
-                  PE Buy Status:
-                  {data.data.haveTradeOfPE ? "True" : "False"}
+                  PE Buy Status: {getValue("haveTradeOfPE") ? "True" : "False"}
                 </p>
                 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                {/* CE SELL Status */}
                 <p
                   className={`${
-                    data.data.haveTradeOfCEBuy
-                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
-                      : "text-green-600  font-bold text-[13px] md:text-[16px]"
-                  }`}
-                >
-                  CE SELL Status:
-                  {data.data.haveTradeOfCEBuy ? "True" : "False"}
-                </p>
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-                <p
-                  className={`${
-                    data.data.haveTradeOfPEBuy
+                    getValue("haveTradeOfCEBuy")
                       ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
                       : "text-green-600 font-bold text-[13px] md:text-[16px]"
                   }`}
                 >
-                  PE SELL Status:
-                  {data.data.haveTradeOfPEBuy ? "True" : "False"}
+                  CE SELL Status:{" "}
+                  {getValue("haveTradeOfCEBuy") ? "True" : "False"}
                 </p>
                 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                {/* PE SELL Status */}
                 <p
                   className={`${
-                    data.data.haveTradeOfFUTBuy
+                    getValue("haveTradeOfPEBuy")
                       ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
                       : "text-green-600 font-bold text-[13px] md:text-[16px]"
                   }`}
                 >
-                  FUT Buy Status:
-                  {data.data.haveTradeOfFUTBuy ? "True" : "False"}
+                  PE SELL Status:{" "}
+                  {getValue("haveTradeOfPEBuy") ? "True" : "False"}
                 </p>
                 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                {/* FUT Buy Status */}
                 <p
                   className={`${
-                    data.data.haveTradeOfFUTSell
+                    getValue("haveTradeOfFUTBuy")
                       ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
                       : "text-green-600 font-bold text-[13px] md:text-[16px]"
                   }`}
                 >
-                  FUT Sell Status:
-                  {data.data.haveTradeOfFUTSell ? "True" : "False"}
+                  FUT Buy Status:{" "}
+                  {getValue("haveTradeOfFUTBuy") ? "True" : "False"}
                 </p>
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                {/* FUT Sell Status */}
+                <p
+                  className={`${
+                    getValue("haveTradeOfFUTSell")
+                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
+                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
+                  }`}
+                >
+                  FUT Sell Status:{" "}
+                  {getValue("haveTradeOfFUTSell") ? "True" : "False"}
+                </p>
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
               </div>
 
               <div className="flex flex-wrap   font-semibold py-2  justify-start">
-                {/* <p className=" text-[13px] md:text-[16px]">
-                   Terminal : {data?.data?.terminal}
-                </p>
-                <p className="text-red-600  text-[13px] md:text-[16px]">
-                  Candle :
-                  {values?.interval === "minute"
-                    ? "1 minute"
-                    : values?.interval}
-                </p> */}
-                {/* <p className=" text-[13px] md:text-[16px]">
-                    Identifier:
-                    {data?.data?.identifier}
-                  </p> */}
-                {/* <p className=" text-[13px] md:text-[16px]">
-                  Trade Index: {data?.data?.tradeIndex}
-                </p> */}
-                {data?.data?.tradeIndex != 4 && data?.data?.tradeIndex != 7 && (
-                  <>
-                    <p className=" text-[13px] md:text-[16px]">
-                      SMA1 : {data?.data?.SMA1}
-                    </p>
-                    <p className=" text-[13px] md:text-[16px]">
-                      SMA2 : {data?.data?.SMA2}
-                    </p>
-                  </>
-                )}
-                <p className="text-red-500 text-[13px] md:text-[16px]">
-                  {ceStopLoss && `CE Stop Loss : ${ceStopLoss?.toFixed(1)}`}
-                </p>
-                <p className="text-red-500 text-[13px] md:text-[16px]">
-                  {peStopLoss && `PE Stop Loss : ${peStopLoss?.toFixed(1)}`}
-                </p>
                 <p
                   className={`${
-                    data.data.haveTradeOfHedgeCE
+                    getValue("haveTradeOfHedgeCE")
                       ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
                       : "text-green-600 font-bold text-[13px] md:text-[16px]"
                   }`}
                 >
-                  CE Buy Hedge :{" "}
-                  {data.data.haveTradeOfHedgeCE ? "True" : "False"}
-                </p>
-                &nbsp; &nbsp; &nbsp; &nbsp; 
-                                         
-                <p
-                  className={`${
-                    data.data.haveTradeOfHedgePE
-                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
-                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
-                  }`}
-                >
-                  PE Buy Hedge :
-                  {data.data.haveTradeOfHedgePE ? "True" : "False"}
-                </p>
-                &nbsp; &nbsp; &nbsp; &nbsp; 
-                <p
-                  className={`${
-                    data.data.haveTradeOfHedgeCESell
-                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
-                      : "text-green-600  font-bold text-[13px] md:text-[16px]"
-                  }`}
-                >
-                  CE SELL Hedge : 
-                  {data.data.haveTradeOfHedgeCESell ? "True" : "False"}
-                </p>
-                &nbsp; &nbsp; &nbsp; &nbsp;
-                <p
-                  className={`${
-                    data.data.haveTradeOfHedgePESell
-                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
-                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
-                  }`}
-                >
-                  PE SELL Hedge:
-                  {data.data.haveTradeOfHedgePESell ? "True" : "False"}
+                  CE Buy Hedge:{" "}
+                  {getValue("haveTradeOfHedgeCE") ? "True" : "False"}
                 </p>
                 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                {/* PE Buy Hedge */}
                 <p
                   className={`${
-                    data.data.haveTradeOfHedgeFUTBuy
+                    getValue("haveTradeOfHedgePE")
                       ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
                       : "text-green-600 font-bold text-[13px] md:text-[16px]"
                   }`}
                 >
-                  FUT Buy Hedge:
-                  {data.data.haveTradeOfHedgeFUTBuy ? "True" : "False"}
+                  PE Buy Hedge : {" "}
+                  {getValue("haveTradeOfHedgePE") ? "True" : "False"}
                 </p>
                 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                {/* CE SELL Hedge */}
                 <p
                   className={`${
-                    data.data.haveTradeOfFUTSell
+                    getValue("haveTradeOfHedgeCESell")
                       ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
                       : "text-green-600 font-bold text-[13px] md:text-[16px]"
                   }`}
                 >
-                  FUT Sell Hedge:
-                  {data.data.haveTradeOfFUTSell ? "True" : "False"}
+                  CE SELL Hedge:{" "}
+                  {getValue("haveTradeOfHedgeCESell") ? "True" : "False"}
                 </p>
-                {/* <Button
-                  size="xs"
-                  className="p-1 text-[13px] md:text-[16px]"
-                  onClick={getHighLowLines}
-                >
-                  High/Low line
-                </Button> */}
-                {/* <button
-                  onClick={toggleTestingMode}
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                {/* PE SELL Hedge */}
+                <p
                   className={`${
-                    testingMode === 1
-                      ? "bg-red-600 text-white"
-                      : "bg-green-600 text-white"
-                  } px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]`}
+                    getValue("haveTradeOfHedgePESell")
+                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
+                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
+                  }`}
+                > 
+                  PE SELL Hedge:{" "}
+                  {getValue("haveTradeOfHedgePESell") ? "True" : "False"}
+                </p>
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                {/* FUT Buy Hedge */}
+                <p
+                  className={`${
+                    getValue("haveTradeOfHedgeFUTBuy")
+                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
+                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
+                  }`}
                 >
-                  {testingMode === 1 ? "Test Mode ON" : "Test Mode OFF"}
-                </button> */}
+                  FUT Buy Hedge:{" "}
+                  {getValue("haveTradeOfHedgeFUTBuy") ? "True" : "False"}
+                </p>
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                {/* FUT Sell Hedge */}
+                <p
+                  className={`${
+                    getValue("haveTradeOfHedgeFUTSell")
+                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
+                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
+                  }`}
+                >
+                  FUT Sell Hedge:{" "}
+                  {getValue("haveTradeOfHedgeFUTSell") ? "True" : "False"}
+                </p>
               </div>
 
               {data.data.tradeIndex == 4 && (
@@ -1175,7 +1105,7 @@ const HelpingChart = () => {
                     </p>
                   )}
                 </div>
-              )}
+              )}                                                                                                          
               {data.data.tradeIndex == 7 && (
                 <div>
                   {trendLineValue && (
@@ -1212,6 +1142,7 @@ const HelpingChart = () => {
                           )}
                         </span>
                       )}
+
                       &nbsp; &nbsp;
                       {trendLineValue?.dataForIndex7?.PEBuyLinePrice > 0 && (
                         <span>
@@ -1240,6 +1171,7 @@ const HelpingChart = () => {
                         </span>
                       )}
                       &nbsp; &nbsp;
+
                       {trendLineValue?.dataForIndex7?.FUTSellLinePrice > 0 && (
                         <span>
                           FUT Buy Price :
@@ -1248,46 +1180,49 @@ const HelpingChart = () => {
                           )}
                         </span>
                       )}
+
                       &nbsp; &nbsp;
-                      {apiData?.[0]?.CEStopLossForIndex7 && (
+                      {filteredData?.[0]?.CEStopLossForIndex7 && (
                         <span>
                           CE Buy Stop Loss :
-                          {apiData?.[0]?.CEStopLossForIndex7?.toFixed(1)}
+                          {filteredData?.[0]?.CEStopLossForIndex7?.toFixed(1)}
                         </span>
                       )}
                       &nbsp; &nbsp;
-                      {apiData?.[0]?.CEStopLossForIndex17 && (
+                      {filteredData?.[0]?.CEStopLossForIndex17 && (
                         <span>
                           CE Sell Stop Loss :
-                          {apiData?.[0]?.CEStopLossForIndex17?.toFixed(1)}
+                          {filteredData?.[0]?.CEStopLossForIndex17?.toFixed(1)}
                         </span>
                       )}
                       &nbsp; &nbsp;
-                      {apiData?.[0]?.PEStopLossForIndex7 && (
+                      {filteredData?.[0]?.PEStopLossForIndex7 && (
                         <span>
                           PE Buy Stop Loss :
-                          {apiData?.[0]?.PEStopLossForIndex7?.toFixed(1)}
+                          {filteredData?.[0]?.PEStopLossForIndex7?.toFixed(1)}
                         </span>
                       )}
                       &nbsp; &nbsp;
-                      {apiData?.[0]?.PEStopLossForIndex17 && (
+                      {filteredData?.[0]?.PEStopLossForIndex17 && (
                         <span>
                           PE Sell Stop Loss :
-                          {apiData?.[0]?.PEStopLossForIndex17?.toFixed(1)}
+                          {filteredData?.[0]?.PEStopLossForIndex17?.toFixed(1)}
                         </span>
                       )}
                       &nbsp; &nbsp;
-                      {apiData?.[0]?.FUTStopLossForIndex7 && (
+                      {filteredData?.[0]?.FUTStopLossForIndex7 && (
                         <span>
                           FUT Buy Stop Loss :
-                          {apiData?.[0]?.FUTStopLossForIndex7?.toFixed(1)}
+                          {filteredData?.[0]?.FUTStopLossForIndex7?.toFixed(1)}
                         </span>
                       )}
+
                       &nbsp; &nbsp;
-                      {apiData?.[0]?.FUTStopLossForIndex17 && (
+                      {
+                      filteredData?.[0]?.FUTStopLossForIndex17 && (
                         <span>
                           FUT Sell Stop Loss :
-                          {apiData?.[0]?.FUTStopLossForIndex17?.toFixed(1)}
+                          {filteredData?.[0]?.FUTStopLossForIndex17?.toFixed(1)}
                         </span>
                       )}
                       {/* Time : {formatDate(trendLineValue?.timestamp)} */}
@@ -1296,6 +1231,10 @@ const HelpingChart = () => {
                 </div>
               )}
 
+               
+
+              
+                                               
               <div className="flex justify-between flex-wrap gap-1 md:gap-y-1">
                 <button
                   onClick={() =>
@@ -1523,11 +1462,10 @@ const HelpingChart = () => {
                   PE TrendLine
                 </button>
               </div>
-            </div>
+             </div>
+                 
 
             {/* <div className="flex flex-wrap items-center mt-2 mb-1 space-x-3">
-            
-
                 <div className="flex flex-col">
                   <Label>Date</Label>
                   <Input
@@ -1961,7 +1899,6 @@ const HelpingChart = () => {
                       <span>Equidistant Channel</span>
                     </div>
                   </button> */}
-                  
 
                   <button
                     onClick={() =>
@@ -2140,7 +2077,6 @@ const HelpingChart = () => {
               setEntryLine={setEntryLine}
               entryLine={entryLine}
               tradeIndex={tradeIndex}
-              
             />
           </div>
         )}
