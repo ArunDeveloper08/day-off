@@ -51,6 +51,7 @@ const HelpingChart = () => {
   const [entryLine, setEntryLine] = useState([]);
   const [trendLineValue, setTrendLineValue] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
+  const previousValues = useRef({}); 
   // const [selectedInterval, setSelectedInterval] = useState("ONE_MINUTE");
 
   let tradeIndex = "";
@@ -451,6 +452,7 @@ const HelpingChart = () => {
 
   const prevHaveTradeOfCE = useRef(false); // Start with false
   const prevHaveTradeOfPE = useRef(false); // Start with false
+         
   useEffect(() => {
     const { haveTradeOfCE, haveTradeOfPE } = data?.data || {};
     // Detect transition from false to true (for CE)
@@ -491,8 +493,7 @@ const HelpingChart = () => {
 
     return () => clearInterval(interval);
   }, [
-    apiData?.[0]?.CEStopLossForIndex7,
-    apiData?.[0]?.PEStopLossForIndex7,
+
     data?.data?.haveTradeOfCE,
     data?.data?.haveTradeOfPE,
     data?.data?.haveTradeOfCEBuy,
@@ -591,9 +592,13 @@ const HelpingChart = () => {
   // console.log("socketData",socketData)
 
   useEffect(() => {
+    // console.log("Hiiiiii")
     if (!isConnected || !data?.data?.instrument_token) return;
+    
     const { instrument_token } = data.data; // Extract instrument token
+    // console.log("instrument Token",instrument_token)
     const handleTradeUpdate = (socketData) => {
+      // console.log("socketData",socketData)
       if (Array.isArray(socketData)) {
         const matchingData = socketData.filter(
           (item) => Number(item.instrument_token) === instrument_token
@@ -605,11 +610,41 @@ const HelpingChart = () => {
         console.warn("Socket Data Is Not An Array");
       }
     };
+    socket.on("tradeUpdate", handleTradeUpdate);
     return () => {
       socket.off("tradeUpdate", handleTradeUpdate);
     };
-  }, [socket, isConnected, data?.data?.instrument_token]);
+  }, [socket, isConnected,  data?.data?.instrument_token]);
+
   // console.log("filteredData", filteredData);
+
+  useEffect(() => {
+    if (filteredData?.length > 0) {
+      const currentValues = {
+        CEStopLossForIndex7: filteredData[0]?.CEStopLossForIndex7,
+        CEStopLossForIndex17: filteredData[0]?.CEStopLossForIndex17,
+        PEStopLossForIndex7: filteredData[0]?.PEStopLossForIndex7,
+        PEStopLossForIndex17: filteredData[0]?.PEStopLossForIndex17,
+        FUTStopLossForIndex7: filteredData[0]?.FUTStopLossForIndex7,
+        FUTStopLossForIndex17: filteredData[0]?.FUTStopLossForIndex17,
+      };
+
+      // Iterate through the current values
+      Object.entries(currentValues).forEach(([key, value]) => {
+        const prevValue = previousValues.current[key];
+
+        // If the value transitioned from non-zero to zero, call the API
+        if (prevValue !== undefined && prevValue !== 0 && value === 0) {
+          console.log(`Field ${key} transitioned from ${prevValue} to ${value}`);
+          getChartData(); // Call the API once per valid transition
+        }
+
+        // Update the previous values
+        previousValues.current[key] = value;
+      });
+    }
+  }, [filteredData]);
+
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -830,11 +865,6 @@ const HelpingChart = () => {
     getTestMode();
   }, []);
 
-  // console.log("entryLine", entryLine);
-  // console.log("CEZone",trendLineValue.zone.CEZone.low)
-  // console.log("socketdata",socketData)
-  // console.log("values",values)
-  // console.log("apiData",apiData?.[0])
 
   const getValue = (key) => filteredData?.[0]?.[key] ?? data.data[key];
   return (
@@ -847,12 +877,12 @@ const HelpingChart = () => {
           {data?.data?.identifier} &nbsp;{" "}
           <button className="text-md text-center font-semibold text-red-700">
             LTP : {socketData?.last_traded_price} &nbsp;
-            {/*
-                               
-               Pivot :{" "}
-              {socketData?.pivotValue?.[0]?.pivotValue?.toFixed(2)} &nbsp;
-            
-              */}
+           OI PCR :  {(data?.data?.PCR)?.toFixed(1)} &nbsp;
+           COI PCR :  {(data?.data?.COIPCR)?.toFixed(1)} &nbsp;
+            RSI : {(data?.data?.RSI_Value)?.toFixed(1)}  &nbsp;
+
+           
+
           </button>
           &nbsp; &nbsp;
           <Button
@@ -1182,49 +1212,61 @@ const HelpingChart = () => {
                       )}
 
                       &nbsp; &nbsp;
-                      {filteredData?.[0]?.CEStopLossForIndex7 && (
+                      {filteredData?.[0]?.CEStopLossForIndex7 > 0 ? 
                         <span>
                           CE Buy Stop Loss :
                           {filteredData?.[0]?.CEStopLossForIndex7?.toFixed(1)}
                         </span>
-                      )}
+                        :
+                        <span></span>
+                      }
                       &nbsp; &nbsp;
-                      {filteredData?.[0]?.CEStopLossForIndex17 && (
+                      {filteredData?.[0]?.CEStopLossForIndex17 > 0 ?
                         <span>
                           CE Sell Stop Loss :
                           {filteredData?.[0]?.CEStopLossForIndex17?.toFixed(1)}
                         </span>
-                      )}
+                        :
+                        <span></span>
+                      }
                       &nbsp; &nbsp;
-                      {filteredData?.[0]?.PEStopLossForIndex7 && (
+                      {filteredData?.[0]?.PEStopLossForIndex7 > 0 ? 
                         <span>
                           PE Buy Stop Loss :
                           {filteredData?.[0]?.PEStopLossForIndex7?.toFixed(1)}
                         </span>
-                      )}
+                        :
+                        <span></span>
+                      }
                       &nbsp; &nbsp;
-                      {filteredData?.[0]?.PEStopLossForIndex17 && (
+                      {filteredData?.[0]?.PEStopLossForIndex17 > 0 ?
                         <span>
                           PE Sell Stop Loss :
                           {filteredData?.[0]?.PEStopLossForIndex17?.toFixed(1)}
                         </span>
-                      )}
+                        :
+                        <span></span>
+                      }
                       &nbsp; &nbsp;
-                      {filteredData?.[0]?.FUTStopLossForIndex7 && (
+                      {filteredData?.[0]?.FUTStopLossForIndex7 > 0 ?
                         <span>
                           FUT Buy Stop Loss :
                           {filteredData?.[0]?.FUTStopLossForIndex7?.toFixed(1)}
                         </span>
-                      )}
+                         :
+                        <span></span>
+                      }
 
                       &nbsp; &nbsp;
                       {
-                      filteredData?.[0]?.FUTStopLossForIndex17 && (
+                      filteredData?.[0]?.FUTStopLossForIndex17 > 0 ? 
                         <span>
                           FUT Sell Stop Loss :
                           {filteredData?.[0]?.FUTStopLossForIndex17?.toFixed(1)}
                         </span>
-                      )}
+                        :
+                        <span></span>
+                      }
                       {/* Time : {formatDate(trendLineValue?.timestamp)} */}
                     </p>
                   )}
@@ -1465,163 +1507,10 @@ const HelpingChart = () => {
              </div>
                  
 
-            {/* <div className="flex flex-wrap items-center mt-2 mb-1 space-x-3">
-                <div className="flex flex-col">
-                  <Label>Date</Label>
-                  <Input
-                    type="date"
-                    placeholder="date"
-                    className="w-[150px] border-black border-[1px] rounded-md"
-                    onChange={handleChange}
-                    name="date"
-                    max={today}
-                  />
-                </div>
-
-                
-                <div className="flex flex-col">
-                  <Label>Candle Type</Label>
-                  <Select
-                    value={values.candleType}
-                    name="candleType"
-                    onValueChange={(value) => handleSelect("candleType", value)}
-                  >
-                    <SelectTrigger className="w-[120px] mt-1 border-zinc-500">
-                      <SelectValue>{values.candleType}</SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>Candle Type</SelectLabel>
-                        {["HeikinAshi", "Normal"].map((suggestion) => (
-                          <SelectItem key={suggestion} value={suggestion}>
-                            {suggestion}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
-
            
-                <div className="flex flex-col">
-                  <Label>Interval</Label>
-                  <Select
-                    value={values.interval}
-                    name="terminal"
-                    onValueChange={(value) => handleSelect("interval", value)}
-                  >
-                    <SelectTrigger className="w-[150px] mt-1 border-zinc-500">
-                      <SelectValue>{values.interval}</SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>Interval</SelectLabel>
-                        {[
-                          { label: "1 minute", value: "ONE_MINUTE" },
-                          { label: "3 minute", value: "THREE_MINUTE" },
-                          { label: "5 minute", value: "FIVE_MINUTE" },
-                          { label: "15 minute", value: "FIFTEEN_MINUTE" },
-                          { label: "30 minute", value: "THIRTY_MINUTE" },
-                          { label: "1 hour", value: "ONE_HOUR" },
-                          { label: "1 day", value: "ONE_DAY" },
-                        ].map((suggestion) => (
-                          <SelectItem
-                            key={suggestion.value}
-                            value={suggestion.value}
-                          >
-                            {suggestion.label}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-             
-                <div className="flex flex-col w-[120px]">
-                  <Label>WMA</Label>
-                  <Input
-                    name="WMA"
-                    onChange={handleChange}
-                    value={values.WMA}
-                    className="mt-1"
-                    type="number"
-                    min={0}
-                  />
-                </div>
-
-             
-                <div className="flex flex-col">
-                  <Label>Trendline Status</Label>
-                  <Select
-                    value={values.trendLineActive}
-                    name="trendLineActive"
-                    onValueChange={(value) => {
-                      handleSelect("trendLineActive", value);
-                    }}
-                  >
-                    <SelectTrigger className="w-[130px] mt-1 border-zinc-500">
-                      <SelectValue>
-                        {values.trendLineActive ? "Active" : "Deactive"}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>TrendLine Status</SelectLabel>
-                        {[
-                          { label: "Active", value: true },
-                          { label: "Deactive", value: false },
-                        ].map((suggestion) => (
-                          <SelectItem
-                            key={suggestion.value}
-                            value={suggestion.value}
-                          >
-                            {suggestion.label}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
-              
-                <div className="flex items-center space-x-2 mt-2">
-                
-                  <Button onClick={handleSubmit} size="sm">
-                    Submit
-                  </Button>
-
-             
-                  <button
-                    onClick={() =>
-                      setShowRow((prev) => ({
-                        ...prev,
-                        fibonacci: !prev.fibonacci,
-                      }))
-                    }
-                    className={`px-2 py-1 text-xs font-semibold rounded-md duration-300 ${
-                      showRow.fibonacci ? "bg-black text-gray-100" : "bg-white"
-                    }`}
-                  >
-                    <div className="flex items-center">
-                      <svg
-                        width="28"
-                        height="28"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <g fill="currentColor" fillRule="nonzero">
-                          <path d="M3 5h22v-1h-22z"></path>
-                          <path d="M3 17h22v-1h-22z"></path>
-                          <path d="M3 11h19.5v-1h-19.5z"></path>
-                          <path d="M5.5 23h19.5v-1h-19.5z"></path>
-                          <path d="M3.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM24.5 12c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5z"></path>
-                        </g>
-                      </svg>
-                      <span>Fibonacci Retracement</span>
-                    </div>
-                  </button>
 
                 
-                  <button
+                 {/* <button
                     onClick={() =>
                       setShowRow((p) => ({
                         ...p,
@@ -1652,38 +1541,7 @@ const HelpingChart = () => {
                   </button>
 
            
-                  <button
-                    onClick={() =>
-                      setShowRow((p) => ({
-                        ...p,
-                        trendLine: !p.trendLine,
-                      }))
-                    }
-                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-                      showRow.trendLine ? "bg-black text-gray-100" : "bg-white "
-                    }`}
-                  >
-                    <div className="flex items-center">
-                      <span
-                        className="icon-KTgbfaP5"
-                        role="img"
-                        aria-hidden="true"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 28 28"
-                          width="28"
-                          height="28"
-                        >
-                          <g fill="currentColor" fill-rule="nonzero">
-                            <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
-                            <path d="M22.5 7c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM5.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
-                          </g>
-                        </svg>
-                      </span>
-                      <span>Trendline</span>
-                    </div>
-                  </button>
+      
                 </div>
               </div> */}
             <div className="flex flex-wrap items-center mt-2 mb-1 space-x-3">
@@ -1723,31 +1581,10 @@ const HelpingChart = () => {
                   </SelectContent>
                 </Select>
               </div>
-              {/* <div className="flex flex-col w-full sm:w-auto">
-        <label>Interval</label>
-        <select
-          value={selectedInterval}
-          onChange={(e) => {
-            const interval = e.target.value;
-            handleIntervalChange(interval);
-          }}
-        >
-          {[
-            { label: "1 minute", value: "ONE_MINUTE" },
-            { label: "3 minute", value: "THREE_MINUTE" },
-            { label: "5 minute", value: "FIVE_MINUTE" },
-            { label: "15 minute", value: "FIFTEEN_MINUTE" },
-            { label: "30 minute", value: "THIRTY_MINUTE" },
-            { label: "1 hour", value: "ONE_HOUR" },
-            { label: "1 day", value: "ONE_DAY" },
-          ].map(option => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </div> */}
 
+          
+
+                
               {/* Interval Select */}
               <div className="flex flex-col w-full sm:w-auto">
                 <Label>Interval</Label>
