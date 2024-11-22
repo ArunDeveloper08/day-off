@@ -115,7 +115,7 @@ export const EditTrade = () => {
         priceDecPercent: values.priceDecPercent,
         earningPercentLimit: values.earningPercentLimit,
         dynamicEntryPercentage: values.dynamicEntryPercentage,
-        orderType: values.orderType,
+        // orderType: values.orderType,
         isMaster: values.isMaster,
         lossLimit: values.lossLimit,
         // maxLoss: values.maxLoss,
@@ -820,7 +820,7 @@ export const EditTrade = () => {
                   </>
                 )}
 
-                {(values.indexValue == 7 || values.indexValue == 17) && (
+                {((values.indexValue == 7 || values.indexValue == 17) && values.isMaster) && (
                   <>
                     <div className="px-1">
                       <Label> Trend Candle Count</Label>
@@ -925,7 +925,7 @@ export const EditTrade = () => {
                           </div>
                         )} */}
 
-                        <div className="px-1">
+                        {/* <div className="px-1">
                           <Label>Order Type</Label>
                           <Select
                             // disabled={loading}
@@ -952,7 +952,7 @@ export const EditTrade = () => {
                               </SelectGroup>
                             </SelectContent>
                           </Select>
-                        </div>
+                        </div> */}
                       </>
                     )}
                   </>

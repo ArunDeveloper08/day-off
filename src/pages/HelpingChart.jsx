@@ -51,7 +51,7 @@ const HelpingChart = () => {
   const [entryLine, setEntryLine] = useState([]);
   const [trendLineValue, setTrendLineValue] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const previousValues = useRef({}); 
+  const previousValues = useRef({});
   // const [selectedInterval, setSelectedInterval] = useState("ONE_MINUTE");
 
   let tradeIndex = "";
@@ -139,6 +139,8 @@ const HelpingChart = () => {
     peTrendLine: true,
     alertLine: true,
     entryLine: true,
+    rsi:false,
+    atr:false
   });
   const [hideConfig, setHideConfig] = useState(true);
   const [supportTrendLine, setSupportTrendLine] = useState([]);
@@ -452,13 +454,13 @@ const HelpingChart = () => {
 
   const prevHaveTradeOfCE = useRef(false); // Start with false
   const prevHaveTradeOfPE = useRef(false); // Start with false
-         
+
   useEffect(() => {
     const { haveTradeOfCE, haveTradeOfPE } = data?.data || {};
     // Detect transition from false to true (for CE)
     if (haveTradeOfCE && !prevHaveTradeOfCE.current) {
       console.log("CE Trade became active");
-      getChartData(); // Call API once when CE becomes true 
+      getChartData(); // Call API once when CE becomes true
     }
     // Detect transition from false to true (for PE)
     if (haveTradeOfPE && !prevHaveTradeOfPE.current) {
@@ -484,7 +486,7 @@ const HelpingChart = () => {
     data?.data?.haveTradeOfCEBuy,
     data?.data?.haveTradeOfPEBuy,
   ]);
-  
+
   useEffect(() => {
     getChartData();
     // if (!values) return;
@@ -493,7 +495,6 @@ const HelpingChart = () => {
 
     return () => clearInterval(interval);
   }, [
-
     data?.data?.haveTradeOfCE,
     data?.data?.haveTradeOfPE,
     data?.data?.haveTradeOfCEBuy,
@@ -594,7 +595,7 @@ const HelpingChart = () => {
   useEffect(() => {
     // console.log("Hiiiiii")
     if (!isConnected || !data?.data?.instrument_token) return;
-    
+
     const { instrument_token } = data.data; // Extract instrument token
     // console.log("instrument Token",instrument_token)
     const handleTradeUpdate = (socketData) => {
@@ -614,7 +615,7 @@ const HelpingChart = () => {
     return () => {
       socket.off("tradeUpdate", handleTradeUpdate);
     };
-  }, [socket, isConnected,  data?.data?.instrument_token]);
+  }, [socket, isConnected, data?.data?.instrument_token]);
 
   // console.log("filteredData", filteredData);
 
@@ -635,7 +636,9 @@ const HelpingChart = () => {
 
         // If the value transitioned from non-zero to zero, call the API
         if (prevValue !== undefined && prevValue !== 0 && value === 0) {
-          console.log(`Field ${key} transitioned from ${prevValue} to ${value}`);
+          console.log(
+            `Field ${key} transitioned from ${prevValue} to ${value}`
+          );
           getChartData(); // Call the API once per valid transition
         }
 
@@ -644,7 +647,6 @@ const HelpingChart = () => {
       });
     }
   }, [filteredData]);
-
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -865,7 +867,6 @@ const HelpingChart = () => {
     getTestMode();
   }, []);
 
-
   const getValue = (key) => filteredData?.[0]?.[key] ?? data.data[key];
   return (
     <div className="p-2">
@@ -876,13 +877,10 @@ const HelpingChart = () => {
         <h2 className="text-center font-semibold text-[18px] font-mono text-red-600 sm:text-[20px] md:text-[24px]">
           {data?.data?.identifier} &nbsp;{" "}
           <button className="text-md text-center font-semibold text-red-700">
-            LTP : {socketData?.last_traded_price} &nbsp;
-           OI PCR :  {(data?.data?.PCR)?.toFixed(1)} &nbsp;
-           COI PCR :  {(data?.data?.COIPCR)?.toFixed(1)} &nbsp;
-            RSI : {(data?.data?.RSI_Value)?.toFixed(1)}  &nbsp;
-
-           
-
+            LTP : {socketData?.last_traded_price} &nbsp; OI PCR :{" "}
+            {data?.data?.PCR?.toFixed(1)} &nbsp; COI PCR :{" "}
+            {data?.data?.COIPCR?.toFixed(1)} &nbsp; RSI :{" "}
+            {data?.data?.RSI_Value?.toFixed(1)} &nbsp;
           </button>
           &nbsp; &nbsp;
           <Button
@@ -901,18 +899,7 @@ const HelpingChart = () => {
             High/Low line
           </Button>
           &nbsp; &nbsp;
-          <button
-            onClick={toggleTestingMode}
-            className={`${
-              testingMode === 1
-                ? "bg-red-600 text-white"
-                : "bg-green-600 text-white"
-            } px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]`}
-          >
-            {testingMode === 1 ? "Test Mode ON" : "Test Mode OFF"}
-          </button>
         </h2>
-
 
         {hideConfig && (
           <>
@@ -1021,6 +1008,16 @@ const HelpingChart = () => {
                   {getValue("haveTradeOfFUTSell") ? "True" : "False"}
                 </p>
                 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                <button
+                  onClick={toggleTestingMode}
+                  className={`${
+                    testingMode === 1
+                      ? "bg-red-600 text-white"
+                      : "bg-green-600 text-white"
+                  } px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]`}
+                >
+                  {testingMode === 1 ? "Test Mode ON" : "Test Mode OFF"}
+                </button>
               </div>
 
               <div className="flex flex-wrap   font-semibold py-2  justify-start">
@@ -1043,7 +1040,7 @@ const HelpingChart = () => {
                       : "text-green-600 font-bold text-[13px] md:text-[16px]"
                   }`}
                 >
-                  PE Buy Hedge : {" "}
+                  PE Buy Hedge :{" "}
                   {getValue("haveTradeOfHedgePE") ? "True" : "False"}
                 </p>
                 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
@@ -1066,7 +1063,7 @@ const HelpingChart = () => {
                       ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
                       : "text-green-600 font-bold text-[13px] md:text-[16px]"
                   }`}
-                > 
+                >
                   PE SELL Hedge:{" "}
                   {getValue("haveTradeOfHedgePESell") ? "True" : "False"}
                 </p>
@@ -1135,7 +1132,7 @@ const HelpingChart = () => {
                     </p>
                   )}
                 </div>
-              )}                                                                                                          
+              )}
               {data.data.tradeIndex == 7 && (
                 <div>
                   {trendLineValue && (
@@ -1172,7 +1169,6 @@ const HelpingChart = () => {
                           )}
                         </span>
                       )}
-
                       &nbsp; &nbsp;
                       {trendLineValue?.dataForIndex7?.PEBuyLinePrice > 0 && (
                         <span>
@@ -1201,7 +1197,6 @@ const HelpingChart = () => {
                         </span>
                       )}
                       &nbsp; &nbsp;
-
                       {trendLineValue?.dataForIndex7?.FUTSellLinePrice > 0 && (
                         <span>
                           FUT Buy Price :
@@ -1210,73 +1205,66 @@ const HelpingChart = () => {
                           )}
                         </span>
                       )}
-
                       &nbsp; &nbsp;
-                      {filteredData?.[0]?.CEStopLossForIndex7 > 0 ? 
+                      {filteredData?.[0]?.CEStopLossForIndex7 > 0 ? (
                         <span>
                           CE Buy Stop Loss :
                           {filteredData?.[0]?.CEStopLossForIndex7?.toFixed(1)}
                         </span>
-                        :
+                      ) : (
                         <span></span>
-                      }
+                      )}
                       &nbsp; &nbsp;
-                      {filteredData?.[0]?.CEStopLossForIndex17 > 0 ?
+                      {filteredData?.[0]?.CEStopLossForIndex17 > 0 ? (
                         <span>
                           CE Sell Stop Loss :
                           {filteredData?.[0]?.CEStopLossForIndex17?.toFixed(1)}
                         </span>
-                        :
+                      ) : (
                         <span></span>
-                      }
+                      )}
                       &nbsp; &nbsp;
-                      {filteredData?.[0]?.PEStopLossForIndex7 > 0 ? 
+                      {filteredData?.[0]?.PEStopLossForIndex7 > 0 ? (
                         <span>
                           PE Buy Stop Loss :
                           {filteredData?.[0]?.PEStopLossForIndex7?.toFixed(1)}
                         </span>
-                        :
+                      ) : (
                         <span></span>
-                      }
+                      )}
                       &nbsp; &nbsp;
-                      {filteredData?.[0]?.PEStopLossForIndex17 > 0 ?
+                      {filteredData?.[0]?.PEStopLossForIndex17 > 0 ? (
                         <span>
                           PE Sell Stop Loss :
                           {filteredData?.[0]?.PEStopLossForIndex17?.toFixed(1)}
                         </span>
-                        :
+                      ) : (
                         <span></span>
-                      }
+                      )}
                       &nbsp; &nbsp;
-                      {filteredData?.[0]?.FUTStopLossForIndex7 > 0 ?
+                      {filteredData?.[0]?.FUTStopLossForIndex7 > 0 ? (
                         <span>
                           FUT Buy Stop Loss :
                           {filteredData?.[0]?.FUTStopLossForIndex7?.toFixed(1)}
                         </span>
-                         :
+                      ) : (
                         <span></span>
-                      }
-
+                      )}
                       &nbsp; &nbsp;
-                      {
-                      filteredData?.[0]?.FUTStopLossForIndex17 > 0 ? 
+                      {filteredData?.[0]?.FUTStopLossForIndex17 > 0 ? (
                         <span>
                           FUT Sell Stop Loss :
                           {filteredData?.[0]?.FUTStopLossForIndex17?.toFixed(1)}
                         </span>
-                        :
+                      ) : (
                         <span></span>
-                      }
+                      )}
                       {/* Time : {formatDate(trendLineValue?.timestamp)} */}
                     </p>
                   )}
                 </div>
               )}
 
-               
-
-              
-                                               
               <div className="flex justify-between flex-wrap gap-1 md:gap-y-1">
                 <button
                   onClick={() =>
@@ -1481,36 +1469,66 @@ const HelpingChart = () => {
                 >
                   Tool Tip
                 </button>
-
                 <button
-                  onClick={setCETrendLine}
+                  onClick={() =>
+                    setShowRow((p) => ({
+                      ...p,
+                      rsi: !p.rsi,
+                    }))
+                  }
                   className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
-                    showRow.ceTrendLine
+                    showRow.rsi
                       ? "bg-blue-500 text-gray-100"
-                      : "bg-gray-300"
+                      : "bg-gray-300 "
                   }`}
                 >
-                  CE TrendLine
+                RSI
                 </button>
-
                 <button
-                  onClick={setPETrendLine}
+                  onClick={() =>
+                    setShowRow((p) => ({
+                      ...p,
+                      atr: !p.atr,
+                    }))
+                  }
                   className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
-                    showRow.peTrendLine
+                    showRow.atr
                       ? "bg-blue-500 text-gray-100"
-                      : "bg-gray-300"
+                      : "bg-gray-300 "
                   }`}
                 >
-                  PE TrendLine
+                ATR
                 </button>
+
+                {data?.data?.index == 4 && (
+                  <>
+                    <button
+                      onClick={setCETrendLine}
+                      className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
+                        showRow.ceTrendLine
+                          ? "bg-blue-500 text-gray-100"
+                          : "bg-gray-300"
+                      }`}
+                    >
+                      CE TrendLine
+                    </button> 
+
+                    <button
+                      onClick={setPETrendLine}
+                      className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
+                        showRow.peTrendLine
+                          ? "bg-blue-500 text-gray-100"
+                          : "bg-gray-300"
+                      }`}
+                    >
+                      PE TrendLine
+                    </button>
+                  </>
+                )}
               </div>
-             </div>
-                 
+            </div>
 
-           
-
-                
-                 {/* <button
+            {/* <button
                     onClick={() =>
                       setShowRow((p) => ({
                         ...p,
@@ -1582,9 +1600,6 @@ const HelpingChart = () => {
                 </Select>
               </div>
 
-          
-
-                
               {/* Interval Select */}
               <div className="flex flex-col w-full sm:w-auto">
                 <Label>Interval</Label>
@@ -1898,6 +1913,7 @@ const HelpingChart = () => {
           <div className="w-full h-auto flex justify-center">
             <CandleChart
               data={apiData}
+              //filteredData={filteredData}
               handleCreateTrendLines={handleCreateTrendLines}
               master={data?.data}
               ratio={1}
