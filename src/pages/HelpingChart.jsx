@@ -8,7 +8,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import CandleChart from "../components/LiveGraph";
 
 import "react-toastify/dist/ReactToastify.css";
@@ -64,6 +64,7 @@ const HelpingChart = () => {
   }, []);
 
   const location = useLocation();
+  const navigate = useNavigate()
   const searchParams = new URLSearchParams(location.search);
   const id = searchParams.get("id");
   const [apiData, setApiData] = useState([]);
@@ -868,6 +869,10 @@ const HelpingChart = () => {
   }, []);
 
   const getValue = (key) => filteredData?.[0]?.[key] ?? data.data[key];
+  const openChartInNewTab = () => {
+    // Open the /future/pcrchart route in a new tab
+    window.open("/future/pcrchart", "_blank");
+  };
   return (
     <div className="p-2">
       {/* {data.error ? (
@@ -1017,6 +1022,13 @@ const HelpingChart = () => {
                   } px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]`}
                 >
                   {testingMode === 1 ? "Test Mode ON" : "Test Mode OFF"}
+                </button>
+                &nbsp;
+                <button
+                onClick={openChartInNewTab}
+                  className= "bg-green-600 text-white px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]"
+                >
+                  PCR Chart
                 </button>
               </div>
 
@@ -1499,6 +1511,16 @@ const HelpingChart = () => {
                 >
                 ATR
                 </button>
+                {/* <button
+                    onClick={()=>navigate("/future/pcrchart")}
+                    className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
+                      
+                         "bg-green-500 text-gray-100"
+                        
+                    }`}
+                  >
+                    PCR Chart
+                  </button> */}
 
                 {data?.data?.index == 4 && (
                   <>
@@ -1525,6 +1547,7 @@ const HelpingChart = () => {
                     </button>
                   </>
                 )}
+              
               </div>
             </div>
 

@@ -19,6 +19,7 @@ import AngelLogin from "./pages/AngelLogin";
 import secureLocalStorage from "react-secure-storage";
 import ModalProvider from "./providers/modal-provider";
 import IdentifierLooserGainer from "./pages/IdentifierLooserGainer";
+import PcrChart from "./pages/PcrChart";
 
 export default function Home() {
   // useAuth();
@@ -33,7 +34,8 @@ export default function Home() {
     const isAuthenticated =
       secureLocalStorage.getItem("Authenticate") === "aAg@16&5jNs$%d0*";
     return isAuthenticated ? children : <Navigate to={"/future"} />;
-  };
+   };
+
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <ModalProvider />
@@ -51,6 +53,14 @@ export default function Home() {
           element={
             <ProtectedRoute>
               <HomePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/future/pcrchart"
+          element={
+            <ProtectedRoute>
+              <PcrChart />
             </ProtectedRoute>
           }
         />

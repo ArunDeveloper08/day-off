@@ -332,6 +332,11 @@ const entryLineArray = [
   { color: "violet", name: "Call Target Line" },
   { color: "orange", name: "Put Target Line" },
 ];
+const AlertLineArray = [
+  { color: "purple", name: "AlertLine1" },
+  { color: "purple", name: "AlertLine2" },
+
+];
 
 const CandleChart = ({
   handleCreateTrendLines,
@@ -363,7 +368,7 @@ const CandleChart = ({
       useState(false);
 
     const [textList1, setTextList1] = useState(
-      JSON.parse(intractiveData?.textLabel)
+     // JSON.parse(intractiveData?.textLabel)
     );
 
     const [textList3, setTextList3] = useState([]);
@@ -384,7 +389,7 @@ const CandleChart = ({
           // console.log(moreProps, first);
           const morePropsForChart = getMorePropsForChart(moreProps, first);
 
-          if (
+          if (  
             morePropsForChart.chartConfig &&
             morePropsForChart.chartConfig.origin
           ) {
@@ -625,32 +630,40 @@ const CandleChart = ({
 
     const onDrawCompleteAlert3 = (newAlerts) => {
       setEnableAlertLine(false);
+    
       let coloredAlerts = newAlerts?.map((item, ind) => {
         let startIndex = Math.min(Math.floor(item.start[0]), data?.length - 1);
         let startTime = data[startIndex]?.timestamp;
-
+    
         let endIndex = Math.floor(item?.end[0]);
         let endTime =
           endIndex >= 0 && endIndex < data?.length
             ? data[endIndex]?.timestamp
             : undefined;
-
+    
+        // Check if the index is within the AlertLineArray bounds
+        let color = ind < AlertLineArray.length ? AlertLineArray[ind]?.color : "black";
+        let name = ind < AlertLineArray.length ? AlertLineArray[ind]?.name : "Alert";
+    
         return {
           ...item,
           appearance: {
             ...item.appearance,
-            stroke: "black",
+            stroke: color,
             strokeWidth: 2,
           },
           startTime,
           endTime,
-          name: "Alert",
+          name,
         };
       });
-
+    
       setAlert3(coloredAlerts);
       logTrendLines(coloredAlerts);
     };
+    
+
+
 
     const onDrawCompleteEntryLine3 = (newAlerts) => {
       setEnableEntryLine(false);
@@ -1750,6 +1763,7 @@ const CandleChart = ({
                     />
                   )}
                 </Chart>
+
                 <Chart
                   id={3}
                   yExtents={[0, 100]} // RSI range
