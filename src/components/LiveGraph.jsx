@@ -335,7 +335,6 @@ const entryLineArray = [
 const AlertLineArray = [
   { color: "purple", name: "AlertLine1" },
   { color: "purple", name: "AlertLine2" },
-
 ];
 
 const CandleChart = ({
@@ -357,7 +356,8 @@ const CandleChart = ({
   entryLine,
   setEntryLine,
   tradeIndex,
-
+  id, 
+  
 }) => {
   try {
     const { onOpen } = useModal();
@@ -367,15 +367,15 @@ const CandleChart = ({
     const [enableInteractiveObject, setEnableInteractiveObject] =
       useState(false);
 
-    const [textList1, setTextList1] = useState(
-     // JSON.parse(intractiveData?.textLabel)
-    );
+    const [textList1, setTextList1] =
+      useState();
+      // JSON.parse(intractiveData?.textLabel)
 
     const [textList3, setTextList3] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [currentText, setCurrentText] = useState("");
     const [chartId, setChartId] = useState(null);
-    
+
     // const canvasNode = useRef(null);
 
     const handleSelections = (interactives, moreProps) => {
@@ -389,7 +389,7 @@ const CandleChart = ({
           // console.log(moreProps, first);
           const morePropsForChart = getMorePropsForChart(moreProps, first);
 
-          if (  
+          if (
             morePropsForChart.chartConfig &&
             morePropsForChart.chartConfig.origin
           ) {
@@ -578,6 +578,7 @@ const CandleChart = ({
           name: trendLineArray[ind]?.name || "Trend",
         };
       });
+
       // console.log({ coloredNewTrends });
       setTrends3(coloredNewTrends);
       logTrendLines(coloredNewTrends);
@@ -628,23 +629,40 @@ const CandleChart = ({
     //   logTrendLines(coloredNewTrends);
     // };
 
+
+    const sendDataToAPI = async (data, endpoint, alertMessage = "Successfully saved.") => {    
+      try {
+        await axios.put(`${BASE_URL_OVERALL}/config/edit`, { id, ...data });
+      //  console.log(alertMessage, data); // Log instead of alert for debugging
+        await getTrendLinesValue();
+        await getChartData();
+      
+      } catch (error) {
+        console.error("Error saving data:", error);
+      }
+    };
+    
+    
+
     const onDrawCompleteAlert3 = (newAlerts) => {
       setEnableAlertLine(false);
-    
+
       let coloredAlerts = newAlerts?.map((item, ind) => {
         let startIndex = Math.min(Math.floor(item.start[0]), data?.length - 1);
         let startTime = data[startIndex]?.timestamp;
-    
+
         let endIndex = Math.floor(item?.end[0]);
         let endTime =
           endIndex >= 0 && endIndex < data?.length
             ? data[endIndex]?.timestamp
             : undefined;
-    
+
         // Check if the index is within the AlertLineArray bounds
-        let color = ind < AlertLineArray.length ? AlertLineArray[ind]?.color : "black";
-        let name = ind < AlertLineArray.length ? AlertLineArray[ind]?.name : "Alert";
-    
+        let color =
+          ind < AlertLineArray.length ? AlertLineArray[ind]?.color : "black";
+        let name =
+          ind < AlertLineArray.length ? AlertLineArray[ind]?.name : "Alert";
+
         return {
           ...item,
           appearance: {
@@ -657,13 +675,11 @@ const CandleChart = ({
           name,
         };
       });
-    
+
       setAlert3(coloredAlerts);
       logTrendLines(coloredAlerts);
+      sendDataToAPI({ analysisLine: coloredAlerts }, "/config/edit", "Alert lines saved.");
     };
-    
-
-
 
     const onDrawCompleteEntryLine3 = (newAlerts) => {
       setEnableEntryLine(false);
@@ -719,6 +735,7 @@ const CandleChart = ({
 
       setEntryLine(coloredAlerts);
       logTrendLines(coloredAlerts); // Log trend lines with names and colors for debugging
+      sendDataToAPI({ buyTrendLines: coloredAlerts }, "/config/edit", "Entry lines saved.");
     };
 
     const onFibComplete1 = (newRetracements) => {
@@ -843,7 +860,7 @@ const CandleChart = ({
       xScaleProvider(dataWithIndicators);
     // xScaleProvider(calculatedData);
 
-    const start = xAccessor(data[Math.max(0, data.length - 100)]);
+    const start = xAccessor(data[Math.max(0, data.length - 180)]);
     const end = xAccessor(last(data));
     const padding = (end - start) * 0.1;
     const xExtents = [start, end + padding];
@@ -1058,18 +1075,25 @@ const CandleChart = ({
                   <YAxis axisAt="right" orient="right" />
 
                   {showRow.candle && (
+
+                    // <CandlestickSeries
+                    //   opacity={1}
+                    //   // fill={(d) =>
+                    //   //   d.close > d.open
+                    //   //     ? d.low >= d.open
+                    //   //       ? "green"
+                    //   //       : "#70e078"
+                    //   //     : d.high <= d.open
+                    //   //     ? "red"
+                    //   //     : "#edbdb8"
+                    //   // }
+                    //   fill={(d) => (d.close > d.open ? "green" : "red")}
+                    // />
+
                     <CandlestickSeries
                       opacity={1}
-                      // fill={(d) =>
-                      //   d.close > d.open
-                      //     ? d.low >= d.open
-                      //       ? "green"
-                      //       : "#70e078"
-                      //     : d.high <= d.open
-                      //     ? "red"
-                      //     : "#edbdb8"
-                      // }
-                      fill={(d) => (d.close > d.open ? "green" : "red")}
+                      fill={(d) => (d.close > d.open ? "#089981" : "#f23645")}
+                      widthRatio={0.6} // Adjust this value to control candle width and spacing
                     />
                   )}
 
@@ -1800,7 +1824,6 @@ const CandleChart = ({
                   origin={(w, h) => [0, h - 150]} // Place this chart at the bottom
                   padding={{ top: 10, bottom: 10 }}
                 >
-                
                   {showRow?.atr && (
                     <>
                       <LineSeries

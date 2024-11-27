@@ -172,6 +172,7 @@ export const EditTrade = () => {
         FUTDeviation: values.FUTDeviation,
         hedgeValue: values.hedgeValue,
         hedgeDeviation: values.hedgeDeviation,
+        dynamicExitPercent: values.dynamicExitPercent,
 
         // targetProfit: values.targetProfit,
       });
@@ -822,7 +823,18 @@ export const EditTrade = () => {
 
                 {((values.indexValue == 7 || values.indexValue == 17) && values.isMaster) && (
                   <>
+            
                     <div className="px-1">
+                    <Label>D_Exit (%)</Label>
+                    <Input
+                      name="dynamicExitPercent"
+                      onChange={handleChange}
+                      value={values.dynamicExitPercent}
+                      className="mt-1"
+                      type="number"
+                    />
+                  </div>
+                  <div className="px-1">
                       <Label> Trend Candle Count</Label>
                       <Input
                         name="trendCandleCount"

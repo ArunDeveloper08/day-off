@@ -64,7 +64,7 @@ const HelpingChart = () => {
   }, []);
 
   const location = useLocation();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
   const id = searchParams.get("id");
   const [apiData, setApiData] = useState([]);
@@ -140,8 +140,8 @@ const HelpingChart = () => {
     peTrendLine: true,
     alertLine: true,
     entryLine: true,
-    rsi:false,
-    atr:false
+    rsi: false,
+    atr: false,
   });
   const [hideConfig, setHideConfig] = useState(true);
   const [supportTrendLine, setSupportTrendLine] = useState([]);
@@ -363,16 +363,25 @@ const HelpingChart = () => {
   useEffect(() => {
     if (!apiResponseReceived) return;
 
-    const updatedEntryLines = filterAndTransformLines(
-      entryLine,
-      apiData,
-      values?.interval
-    );
-    setEntryLine((prev) =>
-      JSON.stringify(prev) !== JSON.stringify(updatedEntryLines)
-        ? updatedEntryLines
-        : prev
-    );
+    if (
+      !data?.data?.haveTradeOfPEBuy &&
+      !data?.data?.haveTradeOfCEBuy &&
+      !data?.data?.haveTradeOfPE &&
+      !data?.data?.haveTradeOfCE &&
+      !data?.data?.haveTradeOfFUTBuy &&
+      !data?.data?.haveTradeOfFUTSell
+    ) {
+      const updatedEntryLines = filterAndTransformLines(
+        entryLine,
+        apiData,
+        values?.interval
+      );
+      setEntryLine((prev) =>
+        JSON.stringify(prev) !== JSON.stringify(updatedEntryLines)
+          ? updatedEntryLines
+          : prev
+      );
+    }
 
     const updatedAlertLines = filterAndTransformLines(
       alert3,
@@ -500,29 +509,31 @@ const HelpingChart = () => {
     data?.data?.haveTradeOfPE,
     data?.data?.haveTradeOfCEBuy,
     data?.data?.haveTradeOfPEBuy,
+    data?.data?.haveTradeOfFUTSell,
+    data?.data?.haveTradeOfFUTBuy,
   ]);
 
-  const memoizedTrendLines = useMemo(() => {
-    let supports = [];
-    let resistances = [];
+  // const memoizedTrendLines = useMemo(() => {
+  //   let supports = [];
+  //   let resistances = [];
 
-    intractiveData?.trendLines?.forEach((trendLine) => {
-      const stroke = trendLine.appearance.stroke;
+  //   intractiveData?.trendLines?.forEach((trendLine) => {
+  //     const stroke = trendLine.appearance.stroke;
 
-      if (stroke === "green" || stroke === "violet") {
-        resistances.push(trendLine);
-      } else if (stroke === "red" || stroke === "orange") {
-        supports.push(trendLine);
-      }
-    });
+  //     if (stroke === "green" || stroke === "violet") {
+  //       resistances.push(trendLine);
+  //     } else if (stroke === "red" || stroke === "orange") {
+  //       supports.push(trendLine);
+  //     }
+  //   });
 
-    return { supports, resistances };
-  }, [intractiveData.trendLines]);
+  //   return { supports, resistances };
+  // }, [intractiveData.trendLines]);
 
-  useEffect(() => {
-    setSupportTrendLine(memoizedTrendLines.supports);
-    setResistanceTrendLine(memoizedTrendLines.resistances);
-  }, [memoizedTrendLines]);
+  // useEffect(() => {
+  //   setSupportTrendLine(memoizedTrendLines.supports);
+  //   setResistanceTrendLine(memoizedTrendLines.resistances);
+  // }, [memoizedTrendLines]);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -680,6 +691,7 @@ const HelpingChart = () => {
     entryLine
   ) => {
     // Helper to send data to the API
+    // console.log(alert3)
     const sendDataToAPI = async (data) => {
       try {
         await axios.put(`${BASE_URL_OVERALL}/config/edit`, { id, ...data });
@@ -879,13 +891,27 @@ const HelpingChart = () => {
         "Some Error Occcured"
       ) : ( */}
       <>
-        <h2 className="text-center font-semibold text-[18px] font-mono text-red-600 sm:text-[20px] md:text-[24px]">
+        <h2 className="text-center font-semibold text-[18px] font-mono text-red-600 sm:text-[20px] md:text-[20px]">
           {data?.data?.identifier} &nbsp;{" "}
-          <button className="text-md text-center font-semibold text-red-700">
+          <button className="text-[20px] text-center font-semibold text-red-700">
             LTP : {socketData?.last_traded_price} &nbsp; OI PCR :{" "}
-            {data?.data?.PCR?.toFixed(1)} &nbsp; COI PCR :{" "}
-            {data?.data?.COIPCR?.toFixed(1)} &nbsp; RSI :{" "}
-            {data?.data?.RSI_Value?.toFixed(1)} &nbsp;
+            {id == 1405 && (
+              <span>
+                {data?.data?.PCR?.toFixed(1)} &nbsp; COI PCR :{" "}
+                {data?.data?.COIPCR?.toFixed(1)} &nbsp; RSI :{" "}
+                {data?.data?.RSI_Value?.toFixed(1)} &nbsp;
+              </span>
+            )}
+            {(data?.data?.haveTradeOfCEBuy ||
+              data?.data?.haveTradeOfCE ||
+              data?.data?.haveTradeOfFUTBuy) && (
+              <span>Last High LTP : {data?.data?.lastHighestLTP}</span>
+            )}
+            {(data?.data?.haveTradeOfPEBuy ||
+              data?.data?.haveTradeOfPE ||
+              data?.data?.haveTradeOfFUTSell) && (
+              <span>Last Lowest LTP : {data?.data?.lastLowestLTP}</span>
+            )}
           </button>
           &nbsp; &nbsp;
           <Button
@@ -1024,12 +1050,14 @@ const HelpingChart = () => {
                   {testingMode === 1 ? "Test Mode ON" : "Test Mode OFF"}
                 </button>
                 &nbsp;
-                <button
-                onClick={openChartInNewTab}
-                  className= "bg-green-600 text-white px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]"
-                >
-                  PCR Chart
-                </button>
+                {id == 1405 && (
+                  <button
+                    onClick={openChartInNewTab}
+                    className="bg-green-600 text-white px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]"
+                  >
+                    PCR Chart
+                  </button>
+                )}
               </div>
 
               <div className="flex flex-wrap   font-semibold py-2  justify-start">
@@ -1040,7 +1068,7 @@ const HelpingChart = () => {
                       : "text-green-600 font-bold text-[13px] md:text-[16px]"
                   }`}
                 >
-                  CE Buy Hedge:{" "}
+                  CE Buy Hedge :{" "}
                   {getValue("haveTradeOfHedgeCE") ? "True" : "False"}
                 </p>
                 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
@@ -1489,12 +1517,10 @@ const HelpingChart = () => {
                     }))
                   }
                   className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
-                    showRow.rsi
-                      ? "bg-blue-500 text-gray-100"
-                      : "bg-gray-300 "
+                    showRow.rsi ? "bg-blue-500 text-gray-100" : "bg-gray-300 "
                   }`}
                 >
-                RSI
+                  RSI
                 </button>
                 <button
                   onClick={() =>
@@ -1504,12 +1530,10 @@ const HelpingChart = () => {
                     }))
                   }
                   className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
-                    showRow.atr
-                      ? "bg-blue-500 text-gray-100"
-                      : "bg-gray-300 "
+                    showRow.atr ? "bg-blue-500 text-gray-100" : "bg-gray-300 "
                   }`}
                 >
-                ATR
+                  ATR
                 </button>
                 {/* <button
                     onClick={()=>navigate("/future/pcrchart")}
@@ -1533,7 +1557,7 @@ const HelpingChart = () => {
                       }`}
                     >
                       CE TrendLine
-                    </button> 
+                    </button>
 
                     <button
                       onClick={setPETrendLine}
@@ -1547,7 +1571,6 @@ const HelpingChart = () => {
                     </button>
                   </>
                 )}
-              
               </div>
             </div>
 
@@ -1585,6 +1608,7 @@ const HelpingChart = () => {
       
                 </div>
               </div> */}
+
             <div className="flex flex-wrap items-center mt-2 mb-1 space-x-3">
               {/* Date Input */}
               <div className="flex flex-col w-full sm:w-auto">
@@ -1774,41 +1798,44 @@ const HelpingChart = () => {
                       <span>Equidistant Channel</span>
                     </div>
                   </button> */}
-
-                  <button
-                    onClick={() =>
-                      setShowRow((p) => ({
-                        ...p,
-                        trendLine: true,
-                        alertLine: false, // Ensure alertLine is false when trendLine is true
-                        entryLine: false,
-                      }))
-                    }
-                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-                      showRow.trendLine ? "bg-black text-gray-100" : "bg-white"
-                    }`}
-                  >
-                    <div className="flex items-center">
-                      <span
-                        className="icon-KTgbfaP5"
-                        role="img"
-                        aria-hidden="true"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 28 28"
-                          width="28"
-                          height="28"
+                  {data?.data?.tradeIndex == 4 && (
+                    <button
+                      onClick={() =>
+                        setShowRow((p) => ({
+                          ...p,
+                          trendLine: true,
+                          alertLine: false, // Ensure alertLine is false when trendLine is true
+                          entryLine: false,
+                        }))
+                      }
+                      className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                        showRow.trendLine
+                          ? "bg-black text-gray-100"
+                          : "bg-white"
+                      }`}
+                    >
+                      <div className="flex items-center">
+                        <span
+                          className="icon-KTgbfaP5"
+                          role="img"
+                          aria-hidden="true"
                         >
-                          <g fill="currentColor" fillRule="nonzero">
-                            <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
-                            <path d="M22.5 7c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM5.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
-                          </g>
-                        </svg>
-                      </span>
-                      <span>Trendline</span>
-                    </div>
-                  </button>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 28 28"
+                            width="28"
+                            height="28"
+                          >
+                            <g fill="currentColor" fillRule="nonzero">
+                              <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
+                              <path d="M22.5 7c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM5.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
+                            </g>
+                          </svg>
+                        </span>
+                        <span>Trendline</span>
+                      </div>
+                    </button>
+                  )}
 
                   <button
                     onClick={() =>
@@ -1953,6 +1980,7 @@ const HelpingChart = () => {
               setEntryLine={setEntryLine}
               entryLine={entryLine}
               tradeIndex={tradeIndex}
+              id={id}
             />
           </div>
         )}

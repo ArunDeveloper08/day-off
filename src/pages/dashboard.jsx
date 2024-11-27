@@ -1116,6 +1116,7 @@ const Dashboard = () => {
                                   FUTDeviation: item.FUTDeviation,
                                   hedgeValue: item.hedgeValue,
                                   hedgeDeviation: item.hedgeDeviation,
+                                  dynamicExitPercent: item.dynamicExitPercent,
                                 },
                                 getAllTrades,
                                 trades,

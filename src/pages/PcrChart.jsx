@@ -32,7 +32,7 @@ const PcrAndCoiPcrChart = () => {
     return [
       {
         id: `${field} Data`,
-        data: data.map((point) => ({
+        data: data?.map((point) => ({
           x: new Date(point.createdAt),
           y: point[field], // Dynamically use either 'pcrRatio' or 'coiPCRatio'
         })),
@@ -59,22 +59,31 @@ const PcrAndCoiPcrChart = () => {
     return [];
   };
 
-  const customTooltip = ({ point }) => {
-    const formattedTime = point.data.x.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const formattedValue = point.data.y.toFixed(1);
-    return (
-      <div style={{ padding: '10px', backgroundColor: 'rgba(0, 0, 0, 0.8)', color: 'white', borderRadius: '4px' }}>
-        <div>Time: {formattedTime}</div>
-        <div>Value: {formattedValue}</div>
-      </div>
-    );
-  };
+ const customTooltip = ({ point }) => {
+  const dateTime = new Date(point.data.x); // Ensure `x` is a Date object
+  const formattedDateTime = dateTime.toLocaleString([], {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+  const formattedValue = point.data.y.toFixed(2);
+
+  return (
+    <div style={{ padding: '10px', backgroundColor: 'rgba(0, 0, 0, 0.8)', color: 'white', borderRadius: '4px' }}>
+      <div>Date & Time: {formattedDateTime}</div>
+      <div>Value: {formattedValue}</div>
+    </div>
+  );
+};
+
 
   return (
     <div>
     
       <div style={{ height: 400 }}>
-        <p className="text-center font-bold text-[22px]">OI PCR  Chart</p>
+        <p className="text-center font-bold text-[22px]">OI PCR  CHART</p>
         {pcrData?.length > 0 ? (
           <ResponsiveLine
             data={pcrData}
@@ -104,7 +113,7 @@ const PcrAndCoiPcrChart = () => {
               legendOffset: -40,
               legendPosition: "middle",
             }}
-            pointSize={10}
+            pointSize={5}
             pointColor={{ theme: "background" }}
             pointBorderWidth={2}
             pointBorderColor={{ from: "serieColor" }}
@@ -145,7 +154,7 @@ const PcrAndCoiPcrChart = () => {
 
       <div style={{ height: 400, marginTop:25 }}>
       
-        <p className="text-center font-bold text-[22px]">COI PCR  Chart</p>
+        <p className="text-center font-bold text-[22px]">COI  PCR   CHART</p>
         {coiPcrData?.length > 0 ? (
           <ResponsiveLine
             data={coiPcrData}
@@ -175,7 +184,7 @@ const PcrAndCoiPcrChart = () => {
               legendOffset: -40,
               legendPosition: "middle",
             }}
-            pointSize={10}
+            pointSize={5}
             pointColor={{ theme: "background" }}
             pointBorderWidth={2}
             pointBorderColor={{ from: "serieColor" }}

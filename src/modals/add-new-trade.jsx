@@ -94,6 +94,7 @@ const initialState = {
   maxZoneTime: "",
   noTradeZone: "",
   trendCandleCount: "",
+  dynamicExitPercent: "",
   candleRatioBuy: "",
   candleRatioSell: "",
   CESellDeviation: "",
@@ -178,6 +179,7 @@ const alternateInitialState = {
   maxZoneTime: "",
   noTradeZone: "",
   trendCandleCount: "",
+  dynamicExitPercent: "",
   candleRatioBuy: "",
   candleRatioSell: "",
   CESellDeviation: "",
@@ -266,6 +268,7 @@ const gammaBlastInitialState = {
   maxZoneTime: "",
   noTradeZone: "",
   trendCandleCount: "",
+  dynamicExitPercent:"",
   candleRatioBuy: "",
   candleRatioSell: "",
   CESellDeviation: "",
@@ -496,6 +499,7 @@ export const AddNewtrade = () => {
         maxZoneTime: values.maxZoneTime,
         noTradeZone: values.noTradeZone,
         trendCandleCount: values.trendCandleCount,
+        dynamicExitPercent: values.dynamicExitPercent,
         candleRatioBuy: values.candleRatioBuy,
         candleRatioSell: values.candleRatioSell,
         CESellDeviation: values.CESellDeviation,
@@ -1155,6 +1159,16 @@ export const AddNewtrade = () => {
             {(values.indexValue == 7 || values.indexValue == 17) &&
               values.isMaster && (
                 <>
+                           <div className="px-1">
+                    <Label>D_Exit (%)</Label>
+                    <Input
+                      name="dynamicExitPercent"
+                      onChange={handleChange}
+                      value={values.dynamicExitPercent}
+                      className="mt-1"
+                      type="number"
+                    />
+                  </div>
                   <div className="px-1">
                     <Label> Trend Candle Count</Label>
                     <Input
@@ -1165,6 +1179,7 @@ export const AddNewtrade = () => {
                       type="number"
                     />
                   </div>
+       
                   <div className="px-1">
                     <Label>CE Buy Deviation</Label>
                     <Input
