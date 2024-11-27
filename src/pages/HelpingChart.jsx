@@ -902,14 +902,15 @@ const HelpingChart = () => {
                 {data?.data?.RSI_Value?.toFixed(1)} &nbsp;
               </span>
             )}
-            {(data?.data?.haveTradeOfCEBuy ||
-              data?.data?.haveTradeOfCE ||
-              data?.data?.haveTradeOfFUTBuy) && (
-              <span>Last High LTP : {data?.data?.lastHighestLTP}</span>
-            )}
-            {(data?.data?.haveTradeOfPEBuy ||
-              data?.data?.haveTradeOfPE ||
-              data?.data?.haveTradeOfFUTSell) && (
+            {
+              data?.data?.lastHighestLTP > 0 && (
+                <span>Last High LTP : {data?.data?.lastHighestLTP}</span>
+              )}
+            {
+              // (data?.data?.haveTradeOfPEBuy ||
+              //   data?.data?.haveTradeOfPE ||
+              //   data?.data?.haveTradeOfFUTSell) &&
+              data?.data?.lastLowestLTP > 0 && (
               <span>Last Lowest LTP : {data?.data?.lastLowestLTP}</span>
             )}
           </button>

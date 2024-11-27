@@ -633,10 +633,10 @@ const CandleChart = ({
     const sendDataToAPI = async (data, endpoint, alertMessage = "Successfully saved.") => {    
       try {
         await axios.put(`${BASE_URL_OVERALL}/config/edit`, { id, ...data });
-      //  console.log(alertMessage, data); // Log instead of alert for debugging
+      // console.log(alertMessage, data); // Log instead of alert for debugging
         await getTrendLinesValue();
-        await getChartData();
-      
+        await getChartData();    
+
       } catch (error) {
         console.error("Error saving data:", error);
       }
@@ -653,7 +653,7 @@ const CandleChart = ({
 
         let endIndex = Math.floor(item?.end[0]);
         let endTime =
-          endIndex >= 0 && endIndex < data?.length
+          endIndex >= 0 && endIndex < data?.length 
             ? data[endIndex]?.timestamp
             : undefined;
 
@@ -803,7 +803,7 @@ const CandleChart = ({
 
         case 68: // D - Draw Alert Trendline
           // setEnableAlertLine(true);
-          setEnableTrendLine(true);
+         // setEnableTrendLine(true);
           setEnableEntryLine(true);
           break;
 

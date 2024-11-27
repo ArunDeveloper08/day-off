@@ -268,7 +268,7 @@ const gammaBlastInitialState = {
   maxZoneTime: "",
   noTradeZone: "",
   trendCandleCount: "",
-  dynamicExitPercent:"",
+  dynamicExitPercent: "",
   candleRatioBuy: "",
   candleRatioSell: "",
   CESellDeviation: "",
@@ -1159,7 +1159,7 @@ export const AddNewtrade = () => {
             {(values.indexValue == 7 || values.indexValue == 17) &&
               values.isMaster && (
                 <>
-                           <div className="px-1">
+                  <div className="px-1">
                     <Label>D_Exit (%)</Label>
                     <Input
                       name="dynamicExitPercent"
@@ -1179,7 +1179,7 @@ export const AddNewtrade = () => {
                       type="number"
                     />
                   </div>
-       
+
                   <div className="px-1">
                     <Label>CE Buy Deviation</Label>
                     <Input
