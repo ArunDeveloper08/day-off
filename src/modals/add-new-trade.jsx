@@ -94,7 +94,7 @@ const initialState = {
   maxZoneTime: "",
   noTradeZone: "",
   trendCandleCount: "",
-  dynamicExitPercent: "",
+  dynamicExitPercent: "1",
   candleRatioBuy: "",
   candleRatioSell: "",
   CESellDeviation: "",
@@ -179,7 +179,7 @@ const alternateInitialState = {
   maxZoneTime: "",
   noTradeZone: "",
   trendCandleCount: "",
-  dynamicExitPercent: "",
+  dynamicExitPercent: "1",
   candleRatioBuy: "",
   candleRatioSell: "",
   CESellDeviation: "",
@@ -268,7 +268,7 @@ const gammaBlastInitialState = {
   maxZoneTime: "",
   noTradeZone: "",
   trendCandleCount: "",
-  dynamicExitPercent: "",
+  dynamicExitPercent: "1",
   candleRatioBuy: "",
   candleRatioSell: "",
   CESellDeviation: "",
@@ -760,7 +760,11 @@ export const AddNewtrade = () => {
               </div>
             )}
 
-            <div className="px-1">
+        
+
+            {values?.isMaster == true && (
+              <>
+                  <div className="px-1">
               <Label>Category</Label>
               <Select
                 value={values?.category}
@@ -801,9 +805,16 @@ export const AddNewtrade = () => {
                 type="number"
               />
             </div>
-
-            {values?.isMaster == true && (
-              <>
+            <div className="px-1">
+              <Label>Min Exit %</Label>
+              <Input
+                name="minExitPercent"
+                onChange={handleChange}
+                value={values.minExitPercent}
+                className="mt-1"
+                type="text"
+              />
+            </div>
                 <div className="px-1">
                   <Label>Alert Above</Label>
                   <Input
@@ -1103,16 +1114,7 @@ export const AddNewtrade = () => {
               </>
             )} */}
 
-            <div className="px-1">
-              <Label>Min Exit %</Label>
-              <Input
-                name="minExitPercent"
-                onChange={handleChange}
-                value={values.minExitPercent}
-                className="mt-1"
-                type="text"
-              />
-            </div>
+          
 
             {values.indexValue != 6 && values.indexValue != 4 && (
               <>
@@ -1131,7 +1133,7 @@ export const AddNewtrade = () => {
               </>
             )}
 
-            {values?.isMaster == false && values?.indexValue != 4 && (
+            {(values?.isMaster == true && values?.indexValue != 4 )&& (
               <>
                 <div className="px-1">
                   <Label>Initial Entry (%)</Label>
@@ -1243,7 +1245,7 @@ export const AddNewtrade = () => {
                 </>
               )}
 
-            {values.indexValue != 4 && values?.isMaster == false && (
+            {values.indexValue != 4 && values?.isMaster == true && (
               <div className="px-1">
                 <Label>Minimum Profit (%)</Label>
                 <Input

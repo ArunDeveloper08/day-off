@@ -357,6 +357,7 @@ const CandleChart = ({
   setEntryLine,
   tradeIndex,
   id, 
+  getChartData
   
 }) => {
   try {
@@ -634,7 +635,7 @@ const CandleChart = ({
       try {
         await axios.put(`${BASE_URL_OVERALL}/config/edit`, { id, ...data });
       // console.log(alertMessage, data); // Log instead of alert for debugging
-        await getTrendLinesValue();
+       // await getTrendLinesValue();
         await getChartData();    
 
       } catch (error) {
@@ -875,13 +876,18 @@ const CandleChart = ({
       setTrends3([]);
       alert("Please press submit button to add change in ");
     };
-    const handleResetAlertLine = () => {
-      setAlert3([]);
-      alert("Please press submit button to add change in ");
-    };
+
+const handleResetAlertLine = () => {
+  const updatedAlert3 = []; // Define the updated value
+  setAlert3(updatedAlert3); // Update the state
+  sendDataToAPI({ analysisLine: updatedAlert3 }, "/config/edit", "Alert lines saved.");
+};
+
+
     const handleResetEntryLines = () => {
-      setEntryLine([]);
-      alert("Please press submit button to add change in ");
+      const updatedAlert3 = [];
+      setEntryLine(updatedAlert3);
+      sendDataToAPI({ buyTrendLines: updatedAlert3 }, "/config/edit", "Alert lines saved.");
     };
 
     const MannualTrade = async (id, EntryType, Signal) => {
@@ -909,7 +915,7 @@ const CandleChart = ({
           <>
             <hr />
             <div className="flex flex-col gap-4 md:flex-row justify-evenly mt-1">
-              {master?.isMaster && (
+              {(master?.isMaster && tradeIndex == 4)&& (
                 <>
                   <div className="flex flex-col gap-2 md:flex-row md:justify-around">
                     <button
@@ -930,7 +936,7 @@ const CandleChart = ({
                 </>
               )}
 
-              {master?.isMaster && (
+              {(master?.isMaster &&  tradeIndex == 4) && (
                 <>
                   <div className="flex flex-col gap-2 md:flex-row md:justify-around">
                     <button
@@ -969,7 +975,7 @@ const CandleChart = ({
                     </button>
                   )}
 
-                  <button
+                  {/* <button
                     className="bg-green-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
                     onClick={() =>
                       handleCreateTrendLines(
@@ -981,7 +987,7 @@ const CandleChart = ({
                     }
                   >
                     Submit
-                  </button>
+                  </button> */}
                   <button
                     className="bg-red-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
                     onClick={handleResetEntryLines}
@@ -991,7 +997,7 @@ const CandleChart = ({
                 </div>
               )}
 
-              {master?.isMaster && (
+              {(master?.isMaster && tradeIndex == 4) && (
                 <>
                   <div className="flex flex-col gap-2 md:flex-row md:justify-around">
                     <button
@@ -1012,7 +1018,7 @@ const CandleChart = ({
                 </>
               )}
 
-              {master?.isMaster && (
+              {(master?.isMaster && tradeIndex == 4) && (
                 <>
                   <div className="flex flex-col gap-2 md:flex-row md:justify-around">
                     <button

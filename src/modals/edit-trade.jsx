@@ -459,39 +459,47 @@ export const EditTrade = () => {
                     </Select>
                   </div>
                 )}
-                <div className="px-1">
-                  <Label>Category</Label>
-                  <Select
-                    value={values?.category}
-                    name="category"
-                    onValueChange={(value) => handleSelect("category", value)}
-                  >
-                    <SelectTrigger className="w-full mt-1 border-zinc-500">
-                      <SelectValue>{values?.category}</SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>category</SelectLabel>
-                        <SelectItem value="Breakout">My Today Stock</SelectItem>
-                        <SelectItem value="52weakLow">
-                          My Hot WatchList
-                        </SelectItem>
-                        <SelectItem value="52weakHigh">52 Weak High</SelectItem>
-                        <SelectItem value="Index">Index</SelectItem>
-                        <SelectItem value="Banking">Banking</SelectItem>
-                        <SelectItem value="Pharma">Pharma</SelectItem>
-                        <SelectItem value="IT">IT</SelectItem>
-                        <SelectItem value="Energy">Energy</SelectItem>
-                        <SelectItem value="Auto">Auto</SelectItem>
-                        <SelectItem value="RangeBound">RangeBound</SelectItem>
-                        <SelectItem value="Chemical">Chemical</SelectItem>
-                        <SelectItem value="Defence">Defence</SelectItem>
-                        <SelectItem value="RealEstate">Real Estate</SelectItem>
-                        <SelectItem value="Others">Others</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
+                {values.isMaster == true && (
+                  <div className="px-1">
+                    <Label>Category</Label>
+                    <Select
+                      value={values?.category}
+                      name="category"
+                      onValueChange={(value) => handleSelect("category", value)}
+                    >
+                      <SelectTrigger className="w-full mt-1 border-zinc-500">
+                        <SelectValue>{values?.category}</SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>category</SelectLabel>
+                          <SelectItem value="Breakout">
+                            My Today Stock
+                          </SelectItem>
+                          <SelectItem value="52weakLow">
+                            My Hot WatchList
+                          </SelectItem>
+                          <SelectItem value="52weakHigh">
+                            52 Weak High
+                          </SelectItem>
+                          <SelectItem value="Index">Index</SelectItem>
+                          <SelectItem value="Banking">Banking</SelectItem>
+                          <SelectItem value="Pharma">Pharma</SelectItem>
+                          <SelectItem value="IT">IT</SelectItem>
+                          <SelectItem value="Energy">Energy</SelectItem>
+                          <SelectItem value="Auto">Auto</SelectItem>
+                          <SelectItem value="RangeBound">RangeBound</SelectItem>
+                          <SelectItem value="Chemical">Chemical</SelectItem>
+                          <SelectItem value="Defence">Defence</SelectItem>
+                          <SelectItem value="RealEstate">
+                            Real Estate
+                          </SelectItem>
+                          <SelectItem value="Others">Others</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
 
                 {values?.indexValue != 6 && (
                   <>
@@ -724,17 +732,18 @@ export const EditTrade = () => {
                     )} */}
                   </>
                 )}
-
-                <div className="px-1">
-                  <Label>Min Exit %</Label>
-                  <Input
-                    name="minExitPercent"
-                    onChange={handleChange}
-                    value={values.minExitPercent}
-                    className="mt-1"
-                    type="text"
-                  />
-                </div>
+                {values?.isMaster == true && (
+                  <div className="px-1">
+                    <Label>Min Exit %</Label>
+                    <Input
+                      name="minExitPercent"
+                      onChange={handleChange}
+                      value={values.minExitPercent}
+                      className="mt-1"
+                      type="text"
+                    />
+                  </div>
+                )}
 
                 {values.indexValue != 6 && values.indexValue != 4 && (
                   <>
@@ -794,7 +803,7 @@ export const EditTrade = () => {
                   </>
                 )} */}
 
-                {values?.isMaster == false && values?.indexValue != 4 && (
+                {values?.isMaster == true && values?.indexValue != 4 && (
                   <>
                     <div className="px-1">
                       <Label>Initial Entry (%)</Label>
@@ -821,91 +830,91 @@ export const EditTrade = () => {
                   </>
                 )}
 
-                {((values.indexValue == 7 || values.indexValue == 17) && values.isMaster) && (
-                  <>
-            
-                    <div className="px-1">
-                    <Label>D_Exit (%)</Label>
-                    <Input
-                      name="dynamicExitPercent"
-                      onChange={handleChange}
-                      value={values.dynamicExitPercent}
-                      className="mt-1"
-                      type="number"
-                    />
-                  </div>
-                  <div className="px-1">
-                      <Label> Trend Candle Count</Label>
-                      <Input
-                        name="trendCandleCount"
-                        onChange={handleChange}
-                        value={values.trendCandleCount}
-                        className="mt-1"
-                        type="number"
-                      />
-                    </div>
-                    <div className="px-1">
-                      <Label>CE Buy Deviation</Label>
-                      <Input
-                        name="candleRatioBuy"
-                        onChange={handleChange}
-                        value={values.candleRatioBuy}
-                        className="mt-1"
-                        type="number"
-                      />
-                    </div>
-                    <div className="px-1">
-                      <Label>PE Buy Deviation</Label>
-                      <Input
-                        name="candleRatioSell"
-                        onChange={handleChange}
-                        value={values.candleRatioSell}
-                        className="mt-1"
-                        type="number"
-                      />
-                    </div>
-                    <div className="px-1">
-                      <Label>CE Sell Deviation</Label>
-                      <Input
-                        name="CESellDeviation"
-                        onChange={handleChange}
-                        value={values.CESellDeviation}
-                        className="mt-1"
-                        type="number"
-                      />
-                    </div>
-                    <div className="px-1">
-                      <Label>PE Sell Deviation</Label>
-                      <Input
-                        name="PESellDeviation"
-                        onChange={handleChange}
-                        value={values.PESellDeviation}
-                        className="mt-1"
-                        type="number"
-                      />
-                    </div>
-                    <div className="px-1">
-                      <Label>FUT Buy/Sell Deviation</Label>
-                      <Input
-                        name="FUTDeviation"
-                        onChange={handleChange}
-                        value={values.FUTDeviation}
-                        className="mt-1"
-                        type="number"
-                      />
-                    </div>
-                    <div className="px-1">
-                      <Label>Secondary Sell Target (%)</Label>
-                      <Input
-                        name="secondarySellTarget"
-                        onChange={handleChange}
-                        value={values.secondarySellTarget}
-                        className="mt-1"
-                        type="number"
-                      />
-                    </div>
-                  </>
-                )}
+                {(values.indexValue == 7 || values.indexValue == 17) &&
+                  values.isMaster && (
+                    <>
+                      <div className="px-1">
+                        <Label>D_Exit (%)</Label>
+                        <Input
+                          name="dynamicExitPercent"
+                          onChange={handleChange}
+                          value={values.dynamicExitPercent}
+                          className="mt-1"
+                          type="number"
+                        />
+                      </div>
+                      <div className="px-1">
+                        <Label> Trend Candle Count</Label>
+                        <Input
+                          name="trendCandleCount"
+                          onChange={handleChange}
+                          value={values.trendCandleCount}
+                          className="mt-1"
+                          type="number"
+                        />
+                      </div>
+                      <div className="px-1">
+                        <Label>CE Buy Deviation</Label>
+                        <Input
+                          name="candleRatioBuy"
+                          onChange={handleChange}
+                          value={values.candleRatioBuy}
+                          className="mt-1"
+                          type="number"
+                        />
+                      </div>
+                      <div className="px-1">
+                        <Label>PE Buy Deviation</Label>
+                        <Input
+                          name="candleRatioSell"
+                          onChange={handleChange}
+                          value={values.candleRatioSell}
+                          className="mt-1"
+                          type="number"
+                        />
+                      </div>
+                      <div className="px-1">
+                        <Label>CE Sell Deviation</Label>
+                        <Input
+                          name="CESellDeviation"
+                          onChange={handleChange}
+                          value={values.CESellDeviation}
+                          className="mt-1"
+                          type="number"
+                        />
+                      </div>
+                      <div className="px-1">
+                        <Label>PE Sell Deviation</Label>
+                        <Input
+                          name="PESellDeviation"
+                          onChange={handleChange}
+                          value={values.PESellDeviation}
+                          className="mt-1"
+                          type="number"
+                        />
+                      </div>
+                      <div className="px-1">
+                        <Label>FUT Buy/Sell Deviation</Label>
+                        <Input
+                          name="FUTDeviation"
+                          onChange={handleChange}
+                          value={values.FUTDeviation}
+                          className="mt-1"
+                          type="number"
+                        />
+                      </div>
+                      <div className="px-1">
+                        <Label>Secondary Sell Target (%)</Label>
+                        <Input
+                          name="secondarySellTarget"
+                          onChange={handleChange}
+                          value={values.secondarySellTarget}
+                          className="mt-1"
+                          type="number"
+                        />
+                      </div>
+                    </>
+                  )}
 
                 {/* {(values?.indexValue == 5 || values?.indexValue == 7) && (
                   <div className="px-1">
@@ -969,7 +978,7 @@ export const EditTrade = () => {
                     )}
                   </>
                 )}
-                {values.indexValue != 4 && values?.isMaster == false && (
+                {values.indexValue != 4 && values?.isMaster == true && (
                   <div className="px-1">
                     <Label>Minimum Profit (%)</Label>
                     <Input

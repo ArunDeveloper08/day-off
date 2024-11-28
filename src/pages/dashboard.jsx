@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { ModeToggle } from "../components/mode-toggle";
 import { useTheme } from "@/components/theme-provider";
 import secureLocalStorage from "react-secure-storage";
+import { Input } from "@/components/ui/input";
 
 export const groupBy = function (xs, key) {
   return xs?.reduce(function (rv, x) {
@@ -41,6 +42,7 @@ const Dashboard = () => {
   const [filter, setFilter] = useState("ALL");
   const [filteredTrades, setFilteredTrades] = useState([]);
   const [activeFilters, setActiveFilters] = useState(["ALL"]);
+  const [filterIdentifier, setFilterIdentifier] = useState("");
 
   const showNotification = (message) => {
     alert(message); // Basic popup. You can replace this with a custom notification component if needed.
@@ -445,9 +447,10 @@ const Dashboard = () => {
     }
   };
 
-  // console.log("socketData",socketData)
+ // Ensure trades data is properly initialized
+//  console.log("filter" , filterIdentifier)
 
-  return ( 
+  return (
     <>
       <div>
         <div className="text-center">
@@ -653,7 +656,7 @@ const Dashboard = () => {
             }`}
           >
             Chemical
-          </Button> 
+          </Button>
 
           <Button
             onClick={() => handleButtonClick("Defence")}
@@ -671,7 +674,7 @@ const Dashboard = () => {
           >
             Others
           </Button>
-             
+
           <Button
             onClick={() => handleButtonClick("Hedging")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
@@ -688,6 +691,15 @@ const Dashboard = () => {
           >
             All
           </Button>
+          <Input
+            type="text"
+            value={filterIdentifier}
+            onChange={(e) => setFilterIdentifier(e.target.value)}
+            placeholder="Filter by identifier"
+            className= "p-1 w-[200px]"
+          />
+
+          
         </div>
         <div className="overflow-x-scroll">
           <table
@@ -700,7 +712,7 @@ const Dashboard = () => {
                   <>
                     <th>Master</th>
                     <th>Customer Grade</th>
-                   {/* <th>Loss Count</th>
+                    {/* <th>Loss Count</th>
                     <th>Candle Size</th>
                     <th>Initial Entry Value</th>
                     <th>Min Profit</th>
@@ -729,9 +741,7 @@ const Dashboard = () => {
                 <th>ON/OFF</th>
 
                 {!activeFilters.includes("isMaster") && (
-                  <>
-                    {/* <th>Order Type</th> */}
-                  </>
+                  <>{/* <th>Order Type</th> */}</>
                 )}
 
                 {/* <th>Have Trade</th> */}
@@ -750,9 +760,11 @@ const Dashboard = () => {
                 </tr>
               ) : (
                 filteredTrades
-                  ?.filter(
-                    (item) => showOffTerminals || item.terminal !== "OFF"
-                  )
+                ?.filter(
+                  (item) =>
+                    (showOffTerminals || item.terminal !== "OFF") &&
+                  (item.identifier && item.identifier.toLowerCase().includes(filterIdentifier.toLowerCase()))
+                )
                   ?.map((item, index) => {
                     return (
                       <tr key={index}>
@@ -768,7 +780,7 @@ const Dashboard = () => {
                               {item.isMaster ? "True" : "False"}
                             </td>
                             <td>{item.customerGrading}</td>
-                            
+
                             {/* <td>{item.lossLimit}</td>
 
                             <td>
@@ -846,34 +858,35 @@ const Dashboard = () => {
                         {/* <td>{item.interval}</td> */}
 
                         <td
-                      className={`w-32  ${
-                        //item.isMaster &&
-                        //(item.targetAbove || item.targetBelow) &&
-                        // (socketData[item.instrument_token]?.last_traded_price < item.targetBelow ||
-                        //   socketData[item.instrument_token]?.last_traded_price > item.targetAbove)
-                          //?
-                           item.isHedging
-                            ? "text-pink-600 font-bold"
-                            : "text-black"
-                          //: "text-black"
-                      }`}
-                      
+                          className={`w-32  ${
+                            //item.isMaster &&
+                            //(item.targetAbove || item.targetBelow) &&
+                            // (socketData[item.instrument_token]?.last_traded_price < item.targetBelow ||
+                            //   socketData[item.instrument_token]?.last_traded_price > item.targetAbove)
+                            //?
+                            item.isHedging
+                              ? "text-pink-600 font-bold"
+                              : "text-black"
+                            //: "text-black"
+                          }`}
                         >
                           {item.identifier}
                         </td>
                         <td
-                              className={
-                                item.isHedging
-                                  ? "text-green-700 font-bold"
-                                  : "text-red-700 font-semibold"
-                              }
-                            >
-                              {item.isHedging ? "True" : "False"}
-                            </td>
+                          className={
+                            item.isHedging
+                              ? "text-green-700 font-bold"
+                              : "text-red-700 font-semibold"
+                          }
+                        >
+                          {item.isHedging ? "True" : "False"}
+                        </td>
                         <td
-                         className={
-                          item.isHedging ? "font-bold text-green-600" : "text-black font-bold"
-                         } 
+                          className={
+                            item.isHedging
+                              ? "font-bold text-green-600"
+                              : "text-black font-bold"
+                          }
                         >
                           {item.hedgingIdentifier}
                         </td>

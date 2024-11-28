@@ -363,14 +363,14 @@ const HelpingChart = () => {
   useEffect(() => {
     if (!apiResponseReceived) return;
 
-    if (
-      !data?.data?.haveTradeOfPEBuy &&
-      !data?.data?.haveTradeOfCEBuy &&
-      !data?.data?.haveTradeOfPE &&
-      !data?.data?.haveTradeOfCE &&
-      !data?.data?.haveTradeOfFUTBuy &&
-      !data?.data?.haveTradeOfFUTSell
-    ) {
+    // if (
+    //   !data?.data?.haveTradeOfPEBuy &&
+    //   !data?.data?.haveTradeOfCEBuy &&
+    //   !data?.data?.haveTradeOfPE &&
+    //   !data?.data?.haveTradeOfCE &&
+    //   !data?.data?.haveTradeOfFUTBuy &&
+    //   !data?.data?.haveTradeOfFUTSell
+    // ) {
       const updatedEntryLines = filterAndTransformLines(
         entryLine,
         apiData,
@@ -381,7 +381,7 @@ const HelpingChart = () => {
           ? updatedEntryLines
           : prev
       );
-    }
+    // }
 
     const updatedAlertLines = filterAndTransformLines(
       alert3,
@@ -904,8 +904,9 @@ const HelpingChart = () => {
             )}
             {
               data?.data?.lastHighestLTP > 0 && (
-                <span>Last High LTP : {data?.data?.lastHighestLTP}</span>
+                <span>Last High LTP : {data?.data?.lastHighestLTP}</span> 
               )}
+              &nbsp;
             {
               // (data?.data?.haveTradeOfPEBuy ||
               //   data?.data?.haveTradeOfPE ||
@@ -1656,6 +1657,14 @@ const HelpingChart = () => {
                   onValueChange={(value) => {
                     handleSelect("interval", value);
                   }}
+                  disabled={
+                    data?.data?.haveTradeOfCE ||
+                    data?.data?.haveTradeOfPE ||
+                    data?.data?.haveTradeOfCEBuy ||
+                    data?.data?.haveTradeOfPEBuy ||
+                    data?.data?.haveTradeOfFUTSell ||
+                    data?.data?.haveTradeOfFUTBuy
+                  }
                 >
                   <SelectTrigger className="w-full sm:w-[150px] mt-1 border-zinc-500">
                     <SelectValue>{values.interval}</SelectValue>
@@ -1964,7 +1973,7 @@ const HelpingChart = () => {
           <div className="w-full h-auto flex justify-center">
             <CandleChart
               data={apiData}
-              //filteredData={filteredData}
+             getChartData={getChartData}
               handleCreateTrendLines={handleCreateTrendLines}
               master={data?.data}
               ratio={1}
