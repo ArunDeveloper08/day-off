@@ -49,9 +49,12 @@ const HelpingChart = () => {
   const [trends3, setTrends3] = useState([]);
   const [alert3, setAlert3] = useState([]);
   const [entryLine, setEntryLine] = useState([]);
+  const [bearishLine , setBearishLine ] = useState([])
   const [trendLineValue, setTrendLineValue] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const previousValues = useRef({});
+  const [checkButtonBull , setCheckButtonBull] = useState(false);
+  const [checkButtonBear , setCheckButtonBear] = useState(false);
   // const [selectedInterval, setSelectedInterval] = useState("ONE_MINUTE");
 
   let tradeIndex = "";
@@ -142,6 +145,7 @@ const HelpingChart = () => {
     entryLine: true,
     rsi: false,
     atr: false,
+    bearishLine:false
   });
   const [hideConfig, setHideConfig] = useState(true);
   const [supportTrendLine, setSupportTrendLine] = useState([]);
@@ -226,6 +230,21 @@ const HelpingChart = () => {
 
         // Merge entry lines if there are buyTrendLines
         if (res?.data?.buyTrendLines?.length > 0) {
+       
+          // const hasResistance = res?.data?.buyTrendLines?.some(item => item.name === "Resistance");
+          // const hasSupport = res?.data?.buyTrendLines?.some(item => item.name === "Support");
+          
+          // if (hasResistance) {
+          //     setCheckButtonBull(true);
+          //     setEntryLine(res?.data?.buyTrendLines);
+          // }
+          
+          // if (hasSupport) {
+          //     setCheckButtonBear(true);
+          //     setBearishLine(res?.data?.buyTrendLines)
+          // }
+
+          
           setEntryLine(res?.data?.buyTrendLines);
           setApiResponseReceived(true); // After state update
         }
@@ -511,6 +530,10 @@ const HelpingChart = () => {
     data?.data?.haveTradeOfPEBuy,
     data?.data?.haveTradeOfFUTSell,
     data?.data?.haveTradeOfFUTBuy,
+    trendLineValue?.dataForIndex7?.CESellLinePrice,
+    trendLineValue?.dataForIndex7?.PESellLinePrice
+   
+
   ]);
 
   // const memoizedTrendLines = useMemo(() => {
@@ -658,7 +681,7 @@ const HelpingChart = () => {
         previousValues.current[key] = value;
       });
     }
-  }, [filteredData]);
+  }, [filteredData ]);
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -788,7 +811,7 @@ const HelpingChart = () => {
   useEffect(() => {
     if (!id) return;
     getTrendLinesValue();
-    const interval = setInterval(getTrendLinesValue, 15 * 1000);
+    const interval = setInterval(getTrendLinesValue, 7 * 1000);
     // intervalRef.current = interval;
 
     return () => clearInterval(interval);
@@ -1915,13 +1938,14 @@ const HelpingChart = () => {
                       setShowRow((p) => ({
                         ...p,
                         trendLine: false, // Ensure trendLine is false when alertLine is true
-                        // alertLine: false,
+                         bearishLine: false,
                         entryLine: !p.entryLine,
                       }))
                     }
                     className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
                       showRow.entryLine ? "bg-black text-gray-100" : "bg-white"
                     }`}
+                    // disabled={checkButtonBear}
                   >
                     <div className="flex items-center">
                       <span
@@ -1944,6 +1968,42 @@ const HelpingChart = () => {
                       <span>Entry Line</span>
                     </div>
                   </button>
+                  {/* <button
+                    onClick={() =>
+                      setShowRow((p) => ({
+                        ...p,
+                        entryLine : false, // Ensure trendLine is false when alertLine is true
+                        // alertLine: false,
+                        bearishLine: !p.bearishLine,
+                      }))
+                    }
+                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                      showRow.bearishLine ? "bg-black text-gray-100" : "bg-white"
+                    }`}
+                    // disabled={checkButtonBull}
+                  >
+                    <div className="flex items-center">
+
+                      <span
+                        className="icon-KTgbfaP5"
+                        role="img"
+                        aria-hidden="true"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 28 28"
+                          width="28"
+                          height="28"
+                        >
+                          <g fill="currentColor" fillRule="nonzero">
+                            <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
+                            <path d="M22.5 7c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM5.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
+                          </g>
+                        </svg>
+                      </span>
+                      <span>Bearish Line</span>
+                    </div>
+                  </button> */}
                 </>
               </div>
             </div>
@@ -1990,6 +2050,8 @@ const HelpingChart = () => {
               setEntryLine={setEntryLine}
               entryLine={entryLine}
               tradeIndex={tradeIndex}
+              setBearishLine={setBearishLine}
+              bearishLine={bearishLine}
               id={id}
             />
           </div>

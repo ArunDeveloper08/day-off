@@ -298,7 +298,10 @@ const Dashboard = () => {
         if (activeFilters.includes("isMaster") && item.isMaster) {
           match = true;
         }
-        if (activeFilters.includes("option") && !item.isMaster) {
+        if (activeFilters.includes("tradingStockCE") && item.tradingOptions == "CE") {
+          match = true;
+        }
+        if (activeFilters.includes("tradingStockPE") && item.tradingOptions == "PE") {
           match = true;
         }
         if (
@@ -415,7 +418,7 @@ const Dashboard = () => {
       return {
         ...prevState,
         ALL: false,
-        [filterType]: !prevState[filterType], // Toggle the clicked filter
+        [filterType]: !prevState[filterType] , 
       };
     });
   };
@@ -431,7 +434,7 @@ const Dashboard = () => {
         // Update the local state in both trades and filteredTrades
         setTrades((prevTrades) => ({
           ...prevTrades,
-          data: prevTrades.data.map((trade) =>
+          data: prevTrades?.data?.map((trade) =>
             trade.id === itemId ? { ...trade, terminal: newState } : trade
           ),
         }));
@@ -447,8 +450,10 @@ const Dashboard = () => {
     }
   };
 
- // Ensure trades data is properly initialized
-//  console.log("filter" , filterIdentifier)
+  // Ensure trades data is properly initialized
+ //  console.log("filter" , filterIdentifier)
+
+
 
   return (
     <>
@@ -474,7 +479,6 @@ const Dashboard = () => {
           >
             Looser/Gainer Log
           </Button>
-
           <Button
             onClick={() => navigate("/future/sop")}
             className="px-5 py-2 rounded-md border-2"
@@ -494,6 +498,7 @@ const Dashboard = () => {
             className="px-5 py-2 rounded-md border-2"
           >
             Reset Data on server
+
           </Button>
 
           <Button
@@ -523,7 +528,7 @@ const Dashboard = () => {
             onClick={toggleShowOffTerminals}
             className="px-5 py-2 rounded-md border-2"
           >
-            {showOffTerminals ? "Hide" : "Show"}
+            {showOffTerminals ? "Show" : "Hide"}
           </Button>
           <Button
             onClick={clearNotification}
@@ -545,12 +550,20 @@ const Dashboard = () => {
             Master
           </Button>
           <Button
-            onClick={() => handleButtonClick("option")}
+            onClick={() => handleButtonClick("tradingStockCE")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["option"] ? "bg-red-500" : "bg-black"
+              activeButtons["tradingStockCE"] ? "bg-red-500" : "bg-black"
             }`}
           >
-            Trading Stock
+            Trading Stock CE
+          </Button>
+          <Button
+            onClick={() => handleButtonClick("tradingStockPE")}
+            className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
+              activeButtons["tradingStockPE"] ? "bg-red-500" : "bg-black"
+            }`}
+          >
+            Trading Stock PE
           </Button>
           <Button
             onClick={() => handleButtonClick("Index")}
@@ -566,7 +579,7 @@ const Dashboard = () => {
               activeButtons["Breakout"] ? "bg-red-500" : "bg-black"
             }`}
           >
-            My Today Stock
+            My Bullish Master
           </Button>
           <Button
             onClick={() => handleButtonClick("52weakLow")}
@@ -574,7 +587,7 @@ const Dashboard = () => {
               activeButtons["52weakLow"] ? "bg-red-500" : "bg-black"
             }`}
           >
-            My Hot WatchList
+            My Bearish Master
           </Button>
           <Button
             onClick={() => handleButtonClick("52weakHigh")}
@@ -648,7 +661,6 @@ const Dashboard = () => {
           >
             Real Estate
           </Button>
-
           <Button
             onClick={() => handleButtonClick("Chemical")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
@@ -657,7 +669,6 @@ const Dashboard = () => {
           >
             Chemical
           </Button>
-
           <Button
             onClick={() => handleButtonClick("Defence")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
@@ -674,7 +685,6 @@ const Dashboard = () => {
           >
             Others
           </Button>
-
           <Button
             onClick={() => handleButtonClick("Hedging")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
@@ -691,16 +701,18 @@ const Dashboard = () => {
           >
             All
           </Button>
+ 
           <Input
             type="text"
             value={filterIdentifier}
             onChange={(e) => setFilterIdentifier(e.target.value)}
-            placeholder="Filter by identifier"
-            className= "p-1 w-[200px]"
-          />
+            placeholder="Filter By Identifier"
+            className= "p-1 mb-1 w-[250px]"
+          /> 
 
-          
+
         </div>
+        
         <div className="overflow-x-scroll">
           <table
             className="dashboard-table w-[1400px]  mx-auto"
@@ -732,6 +744,7 @@ const Dashboard = () => {
                   <>
                     <th>Call Target Level</th>
                     <th>Put Target Level</th>
+                    <th>Lot Size</th>
                   </>
                 )}
                 <th>Alert Below</th>
@@ -768,7 +781,7 @@ const Dashboard = () => {
                   ?.map((item, index) => {
                     return (
                       <tr key={index}>
-                        {!activeFilters.includes("isMaster") && (
+                        {!activeFilters?.includes("isMaster") && (
                           <>
                             <td
                               className={
@@ -836,6 +849,8 @@ const Dashboard = () => {
                             >
                               {item?.haveTrade ? "true" : "false"}
                             </td>
+                            
+
                             {/* <td>
                               {editMode === item.id ? (
                                 <input
@@ -895,6 +910,7 @@ const Dashboard = () => {
                           <>
                             <td>{item.callTargetLevel}</td>
                             <td>{item.putTargetLevel}</td>
+                            <td>{item.lotSize}</td>
                           </>
                         )}
                         <td
@@ -1130,6 +1146,7 @@ const Dashboard = () => {
                                   hedgeValue: item.hedgeValue,
                                   hedgeDeviation: item.hedgeDeviation,
                                   dynamicExitPercent: item.dynamicExitPercent,
+                                  tradingOptions: item.tradingOptions,
                                 },
                                 getAllTrades,
                                 trades,

@@ -105,6 +105,7 @@ const initialState = {
   FUTDeviation: "",
   hedgeValue: "",
   hedgeDeviation: "",
+  tradingOptions:""
   // Min_Order_Qty:"1"
 };
 
@@ -190,6 +191,7 @@ const alternateInitialState = {
   FUTDeviation: "",
   hedgeValue: "",
   hedgeDeviation: "",
+  tradingOptions:""
 };
 // tradeIndex =2
 const gammaBlastInitialState = {
@@ -279,6 +281,7 @@ const gammaBlastInitialState = {
   FUTDeviation: "",
   hedgeValue: "",
   hedgeDeviation: "",
+  tradingOptions:""
 };
 // tradeIndex =6
 
@@ -422,6 +425,10 @@ export const AddNewtrade = () => {
     if (String(values?.isHedging) === "1" && values.hedgingIdentifier == "") {
       return alert("This Trade is Hedge Trade . Enter Main Identifier");
     }
+
+    if(!values.isMaster  && values.tradingOptions == ""){
+      return alert("Please select Trading Option");
+    }
     // if (values?.rangeBoundPercent > values?.rangeBoundPercent2) {
     //   return alert(
     //     "Range Bound Percent 2 Should be greater than Range Bound Percent"
@@ -510,6 +517,7 @@ export const AddNewtrade = () => {
         FUTDeviation: values.FUTDeviation,
         hedgeValue: values.hedgeValue,
         hedgeDeviation: values.hedgeDeviation,
+        tradingOptions: values.tradingOptions
       });
       alert("Add Successfully");
     } catch (error) {
@@ -733,6 +741,7 @@ export const AddNewtrade = () => {
             )}
 
             {values?.isMaster == false && (
+              <>             
               <div className="px-1">
                 <Label>Master Name</Label>
                 <Select
@@ -758,6 +767,30 @@ export const AddNewtrade = () => {
                   </SelectContent>
                 </Select>
               </div>
+
+              <div className="px-1">
+              <Label>Trading CE/PE</Label>
+              <Select
+                value={values?.tradingOptions}
+                name="tradingOptions"
+                onValueChange={(value) => handleSelect("tradingOptions", value)}
+              >
+                <SelectTrigger className="w-full mt-1 border-zinc-500">
+                  <SelectValue>{values?.tradingOptions}</SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Trading Option</SelectLabel>
+                    <SelectItem value="CE">CE</SelectItem>
+                    <SelectItem value="PE">PE</SelectItem>
+             
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+              </>
+
+              
             )}
 
         
@@ -777,8 +810,8 @@ export const AddNewtrade = () => {
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>category</SelectLabel>
-                    <SelectItem value="Breakout">My Today Stock</SelectItem>
-                    <SelectItem value="52weakLow">My Hot WatchList</SelectItem>
+                    <SelectItem value="Breakout">My Bullish Master</SelectItem>
+                    <SelectItem value="52weakLow">My Bearish Master</SelectItem>
                     <SelectItem value="52weakHigh">52 Weak High</SelectItem>
                     <SelectItem value="Index">Index</SelectItem>
                     <SelectItem value="Banking">Banking</SelectItem>
@@ -795,7 +828,7 @@ export const AddNewtrade = () => {
                 </SelectContent>
               </Select>
             </div>
-            <div className="px-1">
+            {/* <div className="px-1">
               <Label>WMA</Label>
               <Input
                 name="wma"
@@ -804,7 +837,7 @@ export const AddNewtrade = () => {
                 className="mt-1"
                 type="number"
               />
-            </div>
+            </div> */}
             <div className="px-1">
               <Label>Min Exit %</Label>
               <Input
@@ -815,7 +848,7 @@ export const AddNewtrade = () => {
                 type="text"
               />
             </div>
-                <div className="px-1">
+                {/* <div className="px-1">
                   <Label>Alert Above</Label>
                   <Input
                     name="targetAbove"
@@ -824,8 +857,8 @@ export const AddNewtrade = () => {
                     className="mt-1"
                     type="text"
                   />
-                </div>
-                <div className="px-1">
+                </div> */}
+                {/* <div className="px-1">
                   <Label>Alert Below</Label>
                   <Input
                     name="targetBelow"
@@ -834,7 +867,7 @@ export const AddNewtrade = () => {
                     className="mt-1"
                     type="text"
                   />
-                </div>
+                </div> */}
               </>
             )}
             {values?.isMaster && (
@@ -1021,7 +1054,7 @@ export const AddNewtrade = () => {
                   </>
                 )}
 
-                <div className="px-1">
+                {/* <div className="px-1">
                   <Label>Candle Type</Label>
                   <Select
                     // disabled={loading}
@@ -1043,7 +1076,7 @@ export const AddNewtrade = () => {
                       </SelectGroup>
                     </SelectContent>
                   </Select>
-                </div>
+                </div> */}
 
                 {/* {values.isMaster == false && (
                   <div className="px-1">
@@ -1118,7 +1151,7 @@ export const AddNewtrade = () => {
 
             {values.indexValue != 6 && values.indexValue != 4 && (
               <>
-                {values?.isMaster == false && (
+                {values?.isMaster == true && (
                   <div className="px-1">
                     <Label>Max Exit %</Label>
                     <Input
@@ -1133,7 +1166,8 @@ export const AddNewtrade = () => {
               </>
             )}
 
-            {(values?.isMaster == true && values?.indexValue != 4 )&& (
+
+            {(values?.isMaster == true && values?.indexValue != 4 ) && (
               <>
                 <div className="px-1">
                   <Label>Initial Entry (%)</Label>
@@ -1245,7 +1279,7 @@ export const AddNewtrade = () => {
                 </>
               )}
 
-            {values.indexValue != 4 && values?.isMaster == true && (
+            {/* {values.indexValue != 4 && values?.isMaster == true && (
               <div className="px-1">
                 <Label>Minimum Profit (%)</Label>
                 <Input
@@ -1256,7 +1290,7 @@ export const AddNewtrade = () => {
                   type="number"
                 />
               </div>
-            )}
+            )} */}
 
             <div className="px-1">
               <Label>Trade In Time</Label>
@@ -1347,7 +1381,7 @@ export const AddNewtrade = () => {
               </>
             )}
 
-            <div className="px-1">
+            {/* <div className="px-1">
               <Label>Terminal</Label>
               <Select
                 value={values.terminal}
@@ -1368,9 +1402,9 @@ export const AddNewtrade = () => {
                   </SelectGroup>
                 </SelectContent>
               </Select>
-            </div>
+            </div> */}
 
-            <div className="px-1">
+            {/* <div className="px-1">
               <Label>Interval</Label>
               <Select
                 value={values.interval}
@@ -1424,7 +1458,7 @@ export const AddNewtrade = () => {
                   </SelectGroup>
                 </SelectContent>
               </Select>
-            </div>
+            </div> */}
 
             <div className="px-1">
               <Label>Customer Grading</Label>

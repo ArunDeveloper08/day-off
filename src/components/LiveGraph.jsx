@@ -328,8 +328,8 @@ let trendLineArray = [
 
 const entryLineArray = [
   { color: "green", name: "Resistance" },
-  { color: "red", name: "Support" },
   { color: "violet", name: "Call Target Line" },
+  { color: "red", name: "Support" },
   { color: "orange", name: "Put Target Line" },
 ];
 const AlertLineArray = [
