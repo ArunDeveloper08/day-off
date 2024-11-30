@@ -314,7 +314,7 @@ export const AddNewtrade = () => {
 
     // Check if isMaster is true and set indexValue to 4
     if (values.isMaster) {
-      newState = { ...values, indexValue: "4" };
+      newState = { ...values, indexValue: "7" };
     } else if (values.indexValue === 2) {
       newState = alternateInitialState;
     } else if (values.indexValue === 6) {
@@ -870,6 +870,7 @@ export const AddNewtrade = () => {
                 </div> */}
               </>
             )}
+            
             {values?.isMaster && (
               <div className="px-1">
                 <Label>Lot Size</Label>
@@ -1149,7 +1150,7 @@ export const AddNewtrade = () => {
 
           
 
-            {values.indexValue != 6 && values.indexValue != 4 && (
+            {/* {values.indexValue != 6 && values.indexValue != 4 && (
               <>
                 {values?.isMaster == true && (
                   <div className="px-1">
@@ -1164,10 +1165,10 @@ export const AddNewtrade = () => {
                   </div>
                 )}
               </>
-            )}
+            )} */}
 
 
-            {(values?.isMaster == true && values?.indexValue != 4 ) && (
+            {/* {(values?.isMaster == true && values?.indexValue != 4 ) && (
               <>
                 <div className="px-1">
                   <Label>Initial Entry (%)</Label>
@@ -1190,7 +1191,7 @@ export const AddNewtrade = () => {
                   />
                 </div>
               </>
-            )}
+            )} */}
 
             {(values.indexValue == 7 || values.indexValue == 17) &&
               values.isMaster && (

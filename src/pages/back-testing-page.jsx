@@ -38,9 +38,9 @@ export const BackTestingPage = () => {
   });
   const [dateTime, setDateTime] = useState({
     timestamp1: new Date().toISOString().split("T")[0] + "T09:15",
-    timestamp2: new Date().toISOString().split("T")[0] + "T15:30",
+    timestamp2: new Date().toISOString().split("T")[0] + "T23:30",
   });
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
 
   const [showRow, setShowRow] = useState({
     showAvg: false,
@@ -77,7 +77,7 @@ export const BackTestingPage = () => {
         `${BASE_URL_OVERALL}/config/get?id=${id}`
       );
       setData((p) => ({ ...p, data: data.data }));
-      // console.log(data.data);
+    
     } catch (error) {
       setData((p) => ({
         ...p,
@@ -126,6 +126,7 @@ export const BackTestingPage = () => {
         socketID: socket?.id,
       })
       .then((res) => {
+      
         console.log("response", res.data);
       })
       .catch((err) => {
@@ -179,12 +180,13 @@ export const BackTestingPage = () => {
     } catch (err) {
       console.error("Error saving data:", err);
     }
-  };
-
+  };           
+      
   const handleRESET = async () => {
     await setEntryLine([]);
+    socket.emit("playInterval");
     await handleSubmit({ testingBuyTrendLines: null });
-    window.location.reload();
+   window.location.reload();
   };
 
   useEffect(() => {
@@ -192,8 +194,8 @@ export const BackTestingPage = () => {
       document.title = `BackTest ${data?.data?.identifier}`;
     }
   }, [data?.data?.identifier]);
-  // console.log({ isConnected },socket?.id);
-  // console.log(apiData);
+
+  
 
   const handleCreateTrendLines = async (
     trendline,
@@ -251,23 +253,28 @@ export const BackTestingPage = () => {
       console.error("Error saving data:", err);
     }
   };
-  const handlePlayPause = () => {
+
+
+  const handlePlayPause = () => {  
     const command = isPlaying ? "pauseInterval" : "playInterval";
     socket.emit(command);
-    console.log(`${command} command sent`);
-    setIsPlaying(!isPlaying); // Toggle the playing state
+   // console.log(`${command} command sent`);
+    setIsPlaying((prev) => !prev); 
+  // Toggle the playing state
   };
+    
+  
 
-  return (
+  return (  
     <div>
       {data.loading ? (
         "Loading"
       ) : (
         <>
-          <p className="font-semibold text-center font-mono text-[20px] text-green-600">
+          <p className="font-serif text-center  text-[20px] text-green-600" >
             Angel-One(Back Testing Chart)
           </p>
-          <div className="flex flex-wrap gap-x-10 font-semibold py-2">
+          <div className="flex flex-wrap gap-x-10 font-serif py-2">
             <p className="text-[14px]">
               Trade Terminal :{" "}
               {data?.data?.terminal === "manualIn"
@@ -314,7 +321,8 @@ export const BackTestingPage = () => {
             <p className="text-[14px]">RSI Min : {data?.data?.rsiMin}</p>
             <p className="text-[14px]">Order Type : {data?.data?.orderType}</p>
           </div>
-          <div>
+
+           <div>
             <button
               onClick={() =>
                 setShowRow((p) => ({
@@ -496,7 +504,7 @@ export const BackTestingPage = () => {
               Volume
             </button>
             &nbsp; &nbsp; &nbsp; &nbsp;
-          </div>
+           </div>
 
           <div className="flex pt-2 justify-around items-center mt-2">
             <div className="flex ">
@@ -507,7 +515,8 @@ export const BackTestingPage = () => {
                 className="border-black border-2 w-full max-w-[200px] rounded-md"
                 onChange={handleChange}
               />
-              <p className="text-xl w-20">--To--</p>
+              
+              <p className="text-xl font-serif"> --To-- </p>
               <input
                 value={dateTime.timestamp2}
                 name="timestamp2"
@@ -568,6 +577,7 @@ export const BackTestingPage = () => {
               intractiveData={intractiveData}
               setEntryLine={setEntryLine}
               entryLine={entryLine}
+              // id={id}
             />
           )}
 

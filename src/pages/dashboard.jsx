@@ -298,10 +298,16 @@ const Dashboard = () => {
         if (activeFilters.includes("isMaster") && item.isMaster) {
           match = true;
         }
-        if (activeFilters.includes("tradingStockCE") && item.tradingOptions == "CE") {
+        if (
+          activeFilters.includes("tradingStockCE") &&
+          item.tradingOptions == "CE"
+        ) {
           match = true;
         }
-        if (activeFilters.includes("tradingStockPE") && item.tradingOptions == "PE") {
+        if (
+          activeFilters.includes("tradingStockPE") &&
+          item.tradingOptions == "PE"
+        ) {
           match = true;
         }
         if (
@@ -418,7 +424,7 @@ const Dashboard = () => {
       return {
         ...prevState,
         ALL: false,
-        [filterType]: !prevState[filterType] , 
+        [filterType]: !prevState[filterType],
       };
     });
   };
@@ -440,7 +446,7 @@ const Dashboard = () => {
         }));
         // Update filteredTrades if it's being used separately
         setFilteredTrades((prevFilteredTrades) =>
-          prevFilteredTrades.map((trade) =>
+          prevFilteredTrades?.map((trade) =>
             trade.id === itemId ? { ...trade, terminal: newState } : trade
           )
         );
@@ -451,13 +457,12 @@ const Dashboard = () => {
   };
 
   // Ensure trades data is properly initialized
- //  console.log("filter" , filterIdentifier)
-
-
+  //  console.log("filter" , filterIdentifier)
 
   return (
     <>
-      <div>
+      <React.Fragment>
+
         <div className="text-center">
           <Button
             onClick={() => onOpen("add-new-trade", { getAllTrades, trades })}
@@ -498,7 +503,6 @@ const Dashboard = () => {
             className="px-5 py-2 rounded-md border-2"
           >
             Reset Data on server
-
           </Button>
 
           <Button
@@ -701,18 +705,16 @@ const Dashboard = () => {
           >
             All
           </Button>
- 
+
           <Input
             type="text"
             value={filterIdentifier}
             onChange={(e) => setFilterIdentifier(e.target.value)}
             placeholder="Filter By Identifier"
-            className= "p-1 mb-1 w-[250px]"
-          /> 
-
-
+            className="p-1 mb-1 w-[250px]"
+          />
         </div>
-        
+
         <div className="overflow-x-scroll">
           <table
             className="dashboard-table w-[1400px]  mx-auto"
@@ -744,9 +746,9 @@ const Dashboard = () => {
                   <>
                     <th>Call Target Level</th>
                     <th>Put Target Level</th>
-                    <th>Lot Size</th>
                   </>
                 )}
+                <th>Lot Size</th>
                 <th>Alert Below</th>
                 <th>LTP</th>
                 <th>Alert Above</th>
@@ -759,8 +761,8 @@ const Dashboard = () => {
 
                 {/* <th>Have Trade</th> */}
                 {/* <th>Market Trend</th> */}
-                <th>Edit</th>
-                <th>Update</th>
+                {/* <th>Edit</th>
+                <th>Update</th> */}
                 <th>Live</th>
                 <th>Testing</th>
                 <th>Action</th>
@@ -773,11 +775,14 @@ const Dashboard = () => {
                 </tr>
               ) : (
                 filteredTrades
-                ?.filter(
-                  (item) =>
-                    (showOffTerminals || item.terminal !== "OFF") &&
-                  (item.identifier && item.identifier.toLowerCase().includes(filterIdentifier.toLowerCase()))
-                )
+                  ?.filter(
+                    (item) =>
+                      (showOffTerminals || item.terminal !== "OFF") &&
+                      item.identifier &&
+                      item.identifier
+                        .toLowerCase()
+                        .includes(filterIdentifier.toLowerCase())
+                  )
                   ?.map((item, index) => {
                     return (
                       <tr key={index}>
@@ -849,7 +854,6 @@ const Dashboard = () => {
                             >
                               {item?.haveTrade ? "true" : "false"}
                             </td>
-                            
 
                             {/* <td>
                               {editMode === item.id ? (
@@ -910,9 +914,9 @@ const Dashboard = () => {
                           <>
                             <td>{item.callTargetLevel}</td>
                             <td>{item.putTargetLevel}</td>
-                            <td>{item.lotSize}</td>
                           </>
                         )}
+                        <td>{item.lotSize}</td>
                         <td
                           className={`${
                             socketData[item.instrument_token]
@@ -1019,7 +1023,7 @@ const Dashboard = () => {
                             {item.rangeBound}
                           </p>
                         </td> */}
-
+                        {/* 
                         <td>
                           <Button onClick={() => handleEdit(item)}>Edit</Button>
                         </td>
@@ -1027,7 +1031,7 @@ const Dashboard = () => {
                           {editMode === item.id && (
                             <Button onClick={handleUpdate}>Update</Button>
                           )}
-                        </td>
+                        </td> */}
                         <td>
                           <Button
                             size="icon"
@@ -1170,7 +1174,8 @@ const Dashboard = () => {
             </tbody>
           </table>
         </div>
-      </div>
+
+      </React.Fragment>
       {showGainer && <GainerLosser />}
     </>
   );

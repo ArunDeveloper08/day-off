@@ -769,7 +769,7 @@ export const EditTrade = () => {
                   </div>
                 )}
 
-                {values.indexValue != 6 && values.indexValue != 4 && (
+                {/* {values.indexValue != 6 && values.indexValue != 4 && (
                   <>
                     {values?.isMaster == true && (
                       <div className="px-1">
@@ -784,7 +784,7 @@ export const EditTrade = () => {
                       </div>
                     )}
                   </>
-                )}
+                )} */}
 
                 {/* {values?.indexValue == 7 && (
                   <>
@@ -827,7 +827,7 @@ export const EditTrade = () => {
                   </>
                 )} */}
 
-                {values?.isMaster == true && values?.indexValue != 4 && (
+                {/* {values?.isMaster == true && values?.indexValue != 4 && (
                   <>
                     <div className="px-1">
                       <Label>Initial Entry (%)</Label>
@@ -852,7 +852,7 @@ export const EditTrade = () => {
                       />
                     </div>
                   </>
-                )}
+                )} */}
 
                 {(values.indexValue == 7 || values.indexValue == 17) &&
                   values.isMaster && (

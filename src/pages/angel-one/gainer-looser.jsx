@@ -19,6 +19,7 @@ const GainerLosser = () => {
   const [error, setError] = useState("");
   const [prevDate, setPrevDate] = useState([]);
   const [logDate, setLogDate] = useState("");
+  // console.log("loosergainer")
 
   const getPrevDate = async () => {
     try {
