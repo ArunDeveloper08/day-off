@@ -188,7 +188,7 @@ export const BackTestingPage = () => {
     await handleSubmit({ testingBuyTrendLines: null });
    window.location.reload();
   };
-
+ 
   useEffect(() => {
     if (data?.data?.identifier) {
       document.title = `BackTest ${data?.data?.identifier}`;
@@ -196,6 +196,7 @@ export const BackTestingPage = () => {
   }, [data?.data?.identifier]);
 
   
+
 
   const handleCreateTrendLines = async (
     trendline,
@@ -518,7 +519,7 @@ export const BackTestingPage = () => {
               
               <p className="text-xl font-serif"> --To-- </p>
               <input
-                value={dateTime.timestamp2}
+                value={dateTime.timestamp2} 
                 name="timestamp2"
                 type="datetime-local"
                 className="border-black border-2 w-full max-w-[200px] rounded-md"
@@ -535,8 +536,8 @@ export const BackTestingPage = () => {
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 28 28"
-                    width="28"
-                    height="28"
+                    width="28"                                                                 
+                    height="28"                                              
                   >
                     <g fill="currentColor" fillRule="nonzero">
                       <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
@@ -550,7 +551,6 @@ export const BackTestingPage = () => {
             <Button
               onClick={() => handleSubmit({ testingBuyTrendLines: entryLine })}
             >
-              {" "}
               Trendline Submit
             </Button>
             <Button onClick={handleStart}>Start</Button>

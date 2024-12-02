@@ -311,8 +311,8 @@ const Dashboard = () => {
           match = true;
         }
         if (
-          activeFilters.includes("Breakout") &&
-          item.category === "Breakout"
+          activeFilters.includes("MyBullishMaster") &&
+          item.category === "MyBullishMaster"
         ) {
           match = true;
         }
@@ -320,14 +320,14 @@ const Dashboard = () => {
           match = true;
         }
         if (
-          activeFilters.includes("52weakLow") &&
-          item.category === "52weakLow"
+          activeFilters.includes("MyBearishMaster") &&
+          item.category === "MyBearishMaster"
         ) {
           match = true;
         }
         if (
-          activeFilters.includes("52weakHigh") &&
-          item.category === "52weakHigh"
+          activeFilters.includes("MyCommonMaster") &&
+          item.category === "MyCommonMaster"
         ) {
           match = true;
         }
@@ -578,28 +578,28 @@ const Dashboard = () => {
             Index
           </Button>
           <Button
-            onClick={() => handleButtonClick("Breakout")}
+            onClick={() => handleButtonClick("MyBullishMaster")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["Breakout"] ? "bg-red-500" : "bg-black"
+              activeButtons["MyBullishMaster"] ? "bg-red-500" : "bg-black"
             }`}
           >
             My Bullish Master
           </Button>
           <Button
-            onClick={() => handleButtonClick("52weakLow")}
+            onClick={() => handleButtonClick("MyBearishMaster")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["52weakLow"] ? "bg-red-500" : "bg-black"
+              activeButtons["MyBearishMaster"] ? "bg-red-500" : "bg-black"
             }`}
           >
             My Bearish Master
           </Button>
           <Button
-            onClick={() => handleButtonClick("52weakHigh")}
+            onClick={() => handleButtonClick("MyCommonMaster")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["52weakHigh"] ? "bg-red-500" : "bg-black"
+              activeButtons["MyCommonMaster"] ? "bg-red-500" : "bg-black"
             }`}
           >
-            52 Weak High
+           My Common Master
           </Button>
           <Button
             onClick={() => handleButtonClick("Banking")}

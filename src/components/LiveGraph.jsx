@@ -356,9 +356,8 @@ const CandleChart = ({
   entryLine,
   setEntryLine,
   tradeIndex,
-  id, 
-  getChartData
-  
+  id,
+  getChartData,
 }) => {
   try {
     const { onOpen } = useModal();
@@ -368,9 +367,8 @@ const CandleChart = ({
     const [enableInteractiveObject, setEnableInteractiveObject] =
       useState(false);
 
-    const [textList1, setTextList1] =
-      useState();
-      // JSON.parse(intractiveData?.textLabel)
+    const [textList1, setTextList1] = useState();
+    // JSON.parse(intractiveData?.textLabel)
 
     const [textList3, setTextList3] = useState([]);
     const [showModal, setShowModal] = useState(false);
@@ -514,6 +512,7 @@ const CandleChart = ({
     const [channels1, setChannels1] = useState([]);
     const channelNode1Ref = useRef(null);
     const channelNode3Ref = useRef(null);
+    const [activeLineType, setActiveLineType] = useState(null); // 'entryLine' | 'alertLine' | null
 
     const logTrendLines = (trends) => {
       trends.forEach((trend) => {
@@ -630,20 +629,20 @@ const CandleChart = ({
     //   logTrendLines(coloredNewTrends);
     // };
 
-
-    const sendDataToAPI = async (data, endpoint, alertMessage = "Successfully saved.") => {    
+    const sendDataToAPI = async (
+      data,
+      endpoint,
+      alertMessage = "Successfully saved."
+    ) => {
       try {
         await axios.put(`${BASE_URL_OVERALL}/config/edit`, { id, ...data });
-      // console.log(alertMessage, data); // Log instead of alert for debugging
-       // await getTrendLinesValue();
-        await getChartData();    
-
+        // console.log(alertMessage, data); // Log instead of alert for debugging
+        // await getTrendLinesValue();
+        await getChartData();
       } catch (error) {
         console.error("Error saving data:", error);
       }
     };
-    
-    
 
     const onDrawCompleteAlert3 = (newAlerts) => {
       setEnableAlertLine(false);
@@ -654,7 +653,7 @@ const CandleChart = ({
 
         let endIndex = Math.floor(item?.end[0]);
         let endTime =
-          endIndex >= 0 && endIndex < data?.length 
+          endIndex >= 0 && endIndex < data?.length
             ? data[endIndex]?.timestamp
             : undefined;
 
@@ -679,7 +678,12 @@ const CandleChart = ({
 
       setAlert3(coloredAlerts);
       logTrendLines(coloredAlerts);
-      sendDataToAPI({ analysisLine: coloredAlerts }, "/config/edit", "Alert lines saved.");
+      setActiveLineType(null);
+      sendDataToAPI(
+        { analysisLine: coloredAlerts },
+        "/config/edit",
+        "Alert lines saved."
+      );
     };
 
     const onDrawCompleteEntryLine3 = (newAlerts) => {
@@ -736,7 +740,12 @@ const CandleChart = ({
 
       setEntryLine(coloredAlerts);
       logTrendLines(coloredAlerts); // Log trend lines with names and colors for debugging
-      sendDataToAPI({ buyTrendLines: coloredAlerts }, "/config/edit", "Entry lines saved.");
+      setActiveLineType(null);
+      sendDataToAPI(
+        { buyTrendLines: coloredAlerts },
+        "/config/edit",
+        "Entry lines saved."
+      );
     };
 
     const onFibComplete1 = (newRetracements) => {
@@ -804,14 +813,16 @@ const CandleChart = ({
 
         case 68: // D - Draw Alert Trendline
           // setEnableAlertLine(true);
-         // setEnableTrendLine(true);
+          // setEnableTrendLine(true);
+          handleActivateEntryLine();
           setEnableEntryLine(true);
           break;
 
         case 65: // A - Draw Trendline
-          setEnableAlertLine(true);
-          setEnableTrendLine(false);
-          setEnableEntryLine(false);
+         setEnableAlertLine(true);
+          // setEnableTrendLine(false);
+          // setEnableEntryLine(false);
+          handleActivateAlertLine();
           break;
         case 69: // E - Enable Fibonacci
           setEnableFib(true);
@@ -877,17 +888,24 @@ const CandleChart = ({
       alert("Please press submit button to add change in ");
     };
 
-const handleResetAlertLine = () => {
-  const updatedAlert3 = []; // Define the updated value
-  setAlert3(updatedAlert3); // Update the state
-  sendDataToAPI({ analysisLine: updatedAlert3 }, "/config/edit", "Alert lines saved.");
-};
-
+    const handleResetAlertLine = () => {
+      const updatedAlert3 = []; // Define the updated value
+      setAlert3(updatedAlert3); // Update the state
+      sendDataToAPI(
+        { analysisLine: updatedAlert3 },
+        "/config/edit",
+        "Alert lines saved."
+      );
+    };
 
     const handleResetEntryLines = () => {
       const updatedAlert3 = [];
       setEntryLine(updatedAlert3);
-      sendDataToAPI({ buyTrendLines: updatedAlert3 }, "/config/edit", "Alert lines saved.");
+      sendDataToAPI(
+        { buyTrendLines: updatedAlert3 },
+        "/config/edit",
+        "Alert lines saved."
+      );
     };
 
     const MannualTrade = async (id, EntryType, Signal) => {
@@ -907,15 +925,50 @@ const handleResetAlertLine = () => {
       }
     };
 
+    const handleActivateEntryLine = () => {
+      setActiveLineType("entryLine");
+      setEnableEntryLine(true);
+      setEnableAlertLine(false);
+    };
+
+    const handleActivateAlertLine = () => {
+      setActiveLineType("alertLine");
+      setEnableAlertLine(true);
+      setEnableEntryLine(false);
+    };
+
     return (
       <div className="flex flex-col">
         {window.location.pathname == "/future/back" ? (
-          <> </>
+          <>
+              {/* <div className="flex flex-col gap-2 md:flex-row md:justify-around mt-2">
+                    <button
+                      className={`px-2 py-1 rounded-sm w-full md:w-fit mx-auto ${
+                        activeLineType === "entryLine"
+                          ? "bg-green-600 text-white"
+                          : "bg-gray-600 text-black"
+                      }`}
+                      onClick={handleActivateEntryLine}
+                    >
+                      Activate Entry Line
+                    </button>
+                    <button
+                      className={`px-2 py-1 rounded-sm w-full md:w-fit mx-auto ${
+                        activeLineType === "alertLine"
+                          ? "bg-green-600 text-white"
+                          : "bg-gray-600 text-black"
+                      }`}
+                      onClick={handleActivateAlertLine}
+                    >
+                      Activate Analiysis Line
+                    </button>
+                  </div> */} 
+           </>
         ) : (
           <>
             <hr />
             <div className="flex flex-col gap-4 md:flex-row justify-evenly mt-1">
-              {(master?.isMaster && tradeIndex == 4)&& (
+              {master?.isMaster && tradeIndex == 4 && (
                 <>
                   <div className="flex flex-col gap-2 md:flex-row md:justify-around">
                     <button
@@ -936,7 +989,7 @@ const handleResetAlertLine = () => {
                 </>
               )}
 
-              {(master?.isMaster &&  tradeIndex == 4) && (
+              {master?.isMaster && tradeIndex == 4 && (
                 <>
                   <div className="flex flex-col gap-2 md:flex-row md:justify-around">
                     <button
@@ -994,10 +1047,33 @@ const handleResetAlertLine = () => {
                   >
                     Remove EntryLine
                   </button>
+
+                  <div className="flex flex-col gap-2 md:flex-row md:justify-around">
+                    <button
+                      className={`px-2 py-1 rounded-sm w-full md:w-fit mx-auto ${
+                        activeLineType === "entryLine"
+                          ? "bg-green-600 text-white"
+                          : "bg-gray-600 text-white"
+                      }`}
+                      onClick={handleActivateEntryLine}
+                    >
+                      Activate Entry Line
+                    </button>
+                    <button
+                      className={`px-2 py-1 rounded-sm w-full md:w-fit mx-auto ${
+                        activeLineType === "alertLine"
+                          ? "bg-green-600 text-white"
+                          : "bg-gray-600 text-white"
+                      }`}
+                      onClick={handleActivateAlertLine}
+                    >
+                      Activate Analiysis Line
+                    </button>
+                  </div>
                 </div>
               )}
 
-              {(master?.isMaster && tradeIndex == 4) && (
+              {master?.isMaster && tradeIndex == 4 && (
                 <>
                   <div className="flex flex-col gap-2 md:flex-row md:justify-around">
                     <button
@@ -1018,7 +1094,7 @@ const handleResetAlertLine = () => {
                 </>
               )}
 
-              {(master?.isMaster && tradeIndex == 4) && (
+              {master?.isMaster && tradeIndex == 4 && (
                 <>
                   <div className="flex flex-col gap-2 md:flex-row md:justify-around">
                     <button
@@ -1081,7 +1157,6 @@ const handleResetAlertLine = () => {
                   <YAxis axisAt="right" orient="right" />
 
                   {showRow.candle && (
-
                     // <CandlestickSeries
                     //   opacity={1}
                     //   // fill={(d) =>

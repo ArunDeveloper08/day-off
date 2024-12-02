@@ -810,9 +810,9 @@ export const AddNewtrade = () => {
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>category</SelectLabel>
-                    <SelectItem value="Breakout">My Bullish Master</SelectItem>
-                    <SelectItem value="52weakLow">My Bearish Master</SelectItem>
-                    <SelectItem value="52weakHigh">52 Weak High</SelectItem>
+                    <SelectItem value="MyBullishMaster">My Bullish Master</SelectItem>
+                    <SelectItem value="MyBearishMaster">My Bearish Master</SelectItem>
+                    <SelectItem value="MyCommonMaster">My Common Master</SelectItem>
                     <SelectItem value="Index">Index</SelectItem>
                     <SelectItem value="Banking">Banking</SelectItem>
                     <SelectItem value="Pharma">Pharma</SelectItem>

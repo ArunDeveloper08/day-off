@@ -88,7 +88,7 @@ export const EditTrade = () => {
     if (String(values?.isHedging) === "1" && values.hedgingIdentifier == "") {
       return alert("This Trade is Hedge Trade . Enter Main Identifier");
     }
-    if(!values.isMaster  && values.tradingOptions == ""){
+    if (!values.isMaster && values.tradingOptions == "") {
       return alert("Please select Trading Option");
     }
     // if (values?.rangeBoundPercent > values?.rangeBoundPercent2) {
@@ -436,56 +436,56 @@ export const EditTrade = () => {
 
                 {values?.isMaster == false && (
                   <>
-                     <div className="px-1">
-                    <Label>Master Name</Label>
-                    <Select
-                      value={values?.master}
-                      name="master"
-                      onValueChange={(value) => handleSelect("master", value)}
-                    >
-                      <SelectTrigger className="w-full mt-1 border-zinc-500">
-                        <SelectValue>
-                          {values?.master?.masterName || "Select Master"}
-                        </SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>Master Name</SelectLabel>
-                          {/* <SelectItem value={{ masterName: "self" }}>
+                    <div className="px-1">
+                      <Label>Master Name</Label>
+                      <Select
+                        value={values?.master}
+                        name="master"
+                        onValueChange={(value) => handleSelect("master", value)}
+                      >
+                        <SelectTrigger className="w-full mt-1 border-zinc-500">
+                          <SelectValue>
+                            {values?.master?.masterName || "Select Master"}
+                          </SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Master Name</SelectLabel>
+                            {/* <SelectItem value={{ masterName: "self" }}>
                             Self
                           </SelectItem> */}
-                          {trades?.map((item, index) => (
-                            <SelectItem key={index} value={item}>
-                              {item.masterName}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div className="px-1">
-              <Label>Trading CE/PE</Label>
-              <Select
-                value={values?.tradingOptions}
-                name="tradingOptions"
-                onValueChange={(value) => handleSelect("tradingOptions", value)}
-              >
-                <SelectTrigger className="w-full mt-1 border-zinc-500">
-                  <SelectValue>{values?.tradingOptions}</SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Trading Option</SelectLabel>
-                    <SelectItem value="CE">CE</SelectItem>
-                    <SelectItem value="PE">PE</SelectItem>
-             
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
+                            {trades?.map((item, index) => (
+                              <SelectItem key={index} value={item}>
+                                {item.masterName}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="px-1">
+                      <Label>Trading CE/PE</Label>
+                      <Select
+                        value={values?.tradingOptions}
+                        name="tradingOptions"
+                        onValueChange={(value) =>
+                          handleSelect("tradingOptions", value)
+                        }
+                      >
+                        <SelectTrigger className="w-full mt-1 border-zinc-500">
+                          <SelectValue>{values?.tradingOptions}</SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Trading Option</SelectLabel>
+                            <SelectItem value="CE">CE</SelectItem>
+                            <SelectItem value="PE">PE</SelectItem>
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </>
-                
                 )}
                 {values.isMaster == true && (
                   <div className="px-1">
@@ -501,10 +501,14 @@ export const EditTrade = () => {
                       <SelectContent>
                         <SelectGroup>
                           <SelectLabel>category</SelectLabel>
-                          <SelectItem value="Breakout">My Bullish Master</SelectItem>
-                          <SelectItem value="52weakLow">My Bearish Master</SelectItem>
-                          <SelectItem value="52weakHigh">
-                            52 Weak High
+                          <SelectItem value="MyBullishMaster">
+                            My Bullish Master
+                          </SelectItem>
+                          <SelectItem value="MyBearishMaster">
+                            My Bearish Master
+                          </SelectItem>
+                          <SelectItem value="MyCommonMaster">
+                            My Common Master
                           </SelectItem>
                           <SelectItem value="Index">Index</SelectItem>
                           <SelectItem value="Banking">Banking</SelectItem>

@@ -70,6 +70,7 @@ const BackTestingTablePage = ({
                 <th className="p-1 border border-gray-300">Entry RSI Value</th>
                 <th className="p-1 border border-gray-300">D_Entry Value</th>
                 <th className="p-1 border border-gray-300">Entry Price</th>
+                <th className="p-1 border border-gray-300">Call Type</th>
                 &nbsp; &nbsp; &nbsp;
                 <th className="p-1 border border-gray-300">Exit Time</th>
                 <th className="p-1 border border-gray-300">Exit Ref Value</th>
@@ -122,6 +123,9 @@ const BackTestingTablePage = ({
                     </td>
                     <td className="border border-gray-300 text-center text-[13px] p-1">
                       {item.entryPivot?.toFixed(2)}
+                    </td>
+                    <td className="border border-gray-300 text-center text-[13px] p-1">
+                      {item.CallType}
                     </td>
                     &nbsp; &nbsp; &nbsp;
                     <td className="border border-gray-300 text-center text-[13px] p-1">

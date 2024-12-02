@@ -1219,7 +1219,7 @@ const HelpingChart = () => {
                       &nbsp; &nbsp;
                       {trendLineValue?.dataForIndex7?.CESellLinePrice > 0 && (
                         <span>
-                          CE Buy Price :
+                          CE  Buy TrendLine Price :
                           {trendLineValue?.dataForIndex7?.CESellLinePrice?.toFixed(
                             1
                           )}
@@ -1228,7 +1228,7 @@ const HelpingChart = () => {
                       &nbsp; &nbsp;
                       {trendLineValue?.dataForIndex7?.PESellLinePrice > 0 && (
                         <span>
-                          PE Buy Price :
+                          PE  Buy TrendLine Price :
                           {trendLineValue?.dataForIndex7?.PESellLinePrice?.toFixed(
                             1
                           )}
@@ -1237,7 +1237,7 @@ const HelpingChart = () => {
                       &nbsp; &nbsp;
                       {trendLineValue?.dataForIndex7?.PEBuyLinePrice > 0 && (
                         <span>
-                          PE Sell Price :
+                          PE  Sell TrendLine Price :
                           {trendLineValue?.dataForIndex7?.PEBuyLinePrice?.toFixed(
                             1
                           )}
@@ -1246,12 +1246,13 @@ const HelpingChart = () => {
                       &nbsp; &nbsp;
                       {trendLineValue?.dataForIndex7?.CEBuyLinePrice > 0 && (
                         <span>
-                          CE Sell Price :
+                          CE Sell TrendLine Price :
                           {trendLineValue?.dataForIndex7?.CEBuyLinePrice?.toFixed(
                             1
                           )}
                         </span>
                       )}
+
                       &nbsp; &nbsp;
                       {trendLineValue?.dataForIndex7?.FUTBuyLinePrice > 0 && (
                         <span>
@@ -1327,7 +1328,10 @@ const HelpingChart = () => {
                       {/* Time : {formatDate(trendLineValue?.timestamp)} */}
                     </p>
                   )}
+                  
                 </div>
+
+              
               )}
 
               <div className="flex justify-between flex-wrap gap-1 md:gap-y-1">
@@ -1628,9 +1632,6 @@ const HelpingChart = () => {
                       <span>Equidistant Channel</span>
                     </div>
                   </button>
-
-           
-      
                 </div>
               </div> */}
 
