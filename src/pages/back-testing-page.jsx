@@ -13,6 +13,8 @@ import CandleChart from "../components/LiveGraph";
 import BackTestingTablePage from "./back-test-table";
 import { useLiveSocket } from "@/providers/live-socket-provider";
 import { useTheme } from "@/components/theme-provider";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 export const BackTestingPage = () => {
   const { theme, setTheme } = useTheme();
 
@@ -41,6 +43,9 @@ export const BackTestingPage = () => {
     timestamp2: new Date().toISOString().split("T")[0] + "T23:30",
   });
   const [isPlaying, setIsPlaying] = useState(true);
+  const [values , setValues] = useState({
+    interval :"FIVE_MINUTE"
+  })
 
   const [showRow, setShowRow] = useState({
     showAvg: false,
@@ -264,6 +269,9 @@ export const BackTestingPage = () => {
   // Toggle the playing state
   };
     
+  const handleSelect = (key, value) => {
+    setValues((prev) => ({ ...prev, [key]: value }));
+  }
   
 
   return (  
@@ -506,6 +514,7 @@ export const BackTestingPage = () => {
             </button>
             &nbsp; &nbsp; &nbsp; &nbsp;
            </div>
+           
 
           <div className="flex pt-2 justify-around items-center mt-2">
             <div className="flex ">
@@ -526,6 +535,41 @@ export const BackTestingPage = () => {
                 onChange={handleChange}
               />
             </div>
+            <div className="flex flex-col w-full sm:w-auto">
+                <Label>Interval</Label>
+                <Select
+                  value={values.interval}
+                  onValueChange={(value) => {
+                    handleSelect("interval", value);
+                  }}
+          
+                >
+                  <SelectTrigger className="w-full sm:w-[150px] mt-1 border-zinc-500">
+                    <SelectValue>{values.interval}</SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Interval</SelectLabel>
+                      {[
+                        { label: "1 minute", value: "ONE_MINUTE" },
+                        { label: "3 minute", value: "THREE_MINUTE" },
+                        { label: "5 minute", value: "FIVE_MINUTE" },
+                        { label: "15 minute", value: "FIFTEEN_MINUTE" },
+                        { label: "30 minute", value: "THIRTY_MINUTE" },
+                        { label: "1 hour", value: "ONE_HOUR" },
+                        { label: "1 day", value: "ONE_DAY" },
+                      ]?.map((suggestion) => (
+                        <SelectItem
+                          key={suggestion.value}
+                          value={suggestion.value}
+                        >
+                          {suggestion.label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
             <button
               className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
                 showRow.entryLine ? "bg-black text-gray-100" : "bg-white"

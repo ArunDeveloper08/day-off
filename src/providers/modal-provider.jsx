@@ -4,6 +4,7 @@ import { EditTrade } from "@/modals/edit-trade";
 import ConditionModal from "@/modals/condition-modal";
 import React from "react";
 import Dialog from "@/modals/dialog-modal";
+import AddChildTrade from "@/modals/add-child-trade";
 
 const ModalProvider = () => {
   return (
@@ -13,6 +14,7 @@ const ModalProvider = () => {
       <EditTrade />
       <ConditionModal />
       <Dialog/>
+      <AddChildTrade/>
     </>
   );
 };

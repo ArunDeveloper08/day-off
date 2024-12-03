@@ -1389,11 +1389,11 @@ const CandleChart = ({
                     </>
                   )}
 
-                  <LineSeries
+                  {/* <LineSeries
                     strokeWidth={"3"}
                     stroke="brown"
                     yAccessor={(d) => d.movingAvgWMA}
-                  />
+                  /> */}
 
                   {showRow.pivot && (
                     <LineSeries

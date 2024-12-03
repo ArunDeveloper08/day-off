@@ -45,7 +45,7 @@ const Dashboard = () => {
   const [filterIdentifier, setFilterIdentifier] = useState("");
 
   const showNotification = (message) => {
-    alert(message); // Basic popup. You can replace this with a custom notification component if needed.
+    // alert(message); // Basic popup. You can replace this with a custom notification component if needed.
   };
 
   // useEffect(() => {
@@ -103,53 +103,53 @@ const Dashboard = () => {
           };
 
           // Trades loop to check LTP against targetAbove and targetBelow
-          trades?.data?.forEach((trade) => {
-            const LTP =
-              updatedSocketData[trade.instrument_token]?.last_traded_price;
-            if (trade.isMaster && trade.targetAbove && trade.targetBelow) {
-              if (LTP) {
-                const notificationKeyAbove = `${trade.identifier}-above`;
-                const notificationKeyBelow = `${trade.identifier}-below`;
+          // trades?.data?.forEach((trade) => {
+          //   const LTP =
+          //     updatedSocketData[trade.instrument_token]?.last_traded_price;
+          //   if (trade.isMaster && trade.targetAbove && trade.targetBelow) {
+          //     if (LTP) {
+          //       const notificationKeyAbove = `${trade.identifier}-above`;
+          //       const notificationKeyBelow = `${trade.identifier}-below`;
 
-                // Ensure targetAbove is a valid number
-                const targetAboveValid =
-                  trade.targetAbove !== null &&
-                  trade.targetAbove !== "" &&
-                  !isNaN(trade.targetAbove);
-                // Ensure targetBelow is a valid number
-                const targetBelowValid =
-                  trade.targetBelow !== null &&
-                  trade.targetBelow !== "" &&
-                  !isNaN(trade.targetBelow);
+          //       // Ensure targetAbove is a valid number
+          //       const targetAboveValid =
+          //         trade.targetAbove !== null &&
+          //         trade.targetAbove !== "" &&
+          //         !isNaN(trade.targetAbove);
+          //       // Ensure targetBelow is a valid number
+          //       const targetBelowValid =
+          //         trade.targetBelow !== null &&
+          //         trade.targetBelow !== "" &&
+          //         !isNaN(trade.targetBelow);
 
-                // Check if targetAbove is a valid number and if LTP crosses the target
-                if (
-                  targetAboveValid &&
-                  LTP > trade.targetAbove &&
-                  !shownNotificationsRef.current.has(notificationKeyAbove)
-                ) {
-                  showNotification(
-                    `${trade.identifier} Current Price: ${LTP} Target Price Hit Above: ${trade.targetAbove}`
-                  );
-                  shownNotificationsRef.current.add(notificationKeyAbove); // Mark notification as shown
-                  shownNotificationsRef.current.delete(notificationKeyBelow); // Reset below notification state
-                }
+          //       // Check if targetAbove is a valid number and if LTP crosses the target
+          //       if (
+          //         targetAboveValid &&
+          //         LTP > trade.targetAbove &&
+          //         !shownNotificationsRef.current.has(notificationKeyAbove)
+          //       ) {
+          //         showNotification(
+          //           `${trade.identifier} Current Price: ${LTP} Target Price Hit Above: ${trade.targetAbove}`
+          //         );
+          //         shownNotificationsRef.current.add(notificationKeyAbove); // Mark notification as shown
+          //         shownNotificationsRef.current.delete(notificationKeyBelow); // Reset below notification state
+          //       }
 
-                // Check if targetBelow is a valid number and if LTP drops below the target
-                if (
-                  targetBelowValid &&
-                  LTP < trade.targetBelow &&
-                  !shownNotificationsRef.current.has(notificationKeyBelow)
-                ) {
-                  showNotification(
-                    `${trade.identifier} Current Price: ${LTP} Target Price Hit Below: ${trade.targetBelow}`
-                  );
-                  shownNotificationsRef.current.add(notificationKeyBelow); // Mark notification as shown
-                  shownNotificationsRef.current.delete(notificationKeyAbove); // Reset above notification state
-                }
-              }
-            }
-          });
+          //       // Check if targetBelow is a valid number and if LTP drops below the target
+          //       if (
+          //         targetBelowValid &&
+          //         LTP < trade.targetBelow &&
+          //         !shownNotificationsRef.current.has(notificationKeyBelow)
+          //       ) {
+          //         showNotification(
+          //           `${trade.identifier} Current Price: ${LTP} Target Price Hit Below: ${trade.targetBelow}`
+          //         );
+          //         shownNotificationsRef.current.add(notificationKeyBelow); // Mark notification as shown
+          //         shownNotificationsRef.current.delete(notificationKeyAbove); // Reset above notification state
+          //       }
+          //     }
+          //   }
+          // });
 
           return updatedSocketData; // Update the socketData state with the new message
         });
@@ -462,7 +462,6 @@ const Dashboard = () => {
   return (
     <>
       <React.Fragment>
-
         <div className="text-center">
           <Button
             onClick={() => onOpen("add-new-trade", { getAllTrades, trades })}
@@ -599,7 +598,7 @@ const Dashboard = () => {
               activeButtons["MyCommonMaster"] ? "bg-red-500" : "bg-black"
             }`}
           >
-           My Common Master
+            My Common Master
           </Button>
           <Button
             onClick={() => handleButtonClick("Banking")}
@@ -731,21 +730,32 @@ const Dashboard = () => {
                     <th>Initial Entry Value</th>
                     <th>Min Profit</th>
                     <th>Traling stop loss</th> */}
-                    <th>Have Tarde</th>
+
                     {/* <th>WMA</th> */}
                     <th>Main Index</th>
                   </>
                 )}
                 {/* <th>Interval</th> */}
+                <th>Have Tarde</th>
                 <th> Identifier</th>
                 <th>Is Hedge</th>
                 {/* <th>  Hedging Trade</th> */}
                 <th> Identifier Under Hedge</th>
 
-                {activeFilters.includes("isMaster") && (
+                {/* {activeFilters.includes("isMaster") && (
                   <>
                     <th>Call Target Level</th>
                     <th>Put Target Level</th>
+                  </>
+                )} */}
+                {(activeFilters.includes("isMaster") ||
+                  activeFilters.includes("MyBullishMaster") ||
+                  activeFilters.includes("MyBearishMaster")) && (
+                  <>
+                    <th>Looser/Gainer</th>
+                    <th>Date Loss/Gain</th>
+                    <th>Call Entry Value</th>
+                    <th>Put Entry Value</th>
                   </>
                 )}
                 <th>Lot Size</th>
@@ -783,6 +793,19 @@ const Dashboard = () => {
                         .toLowerCase()
                         .includes(filterIdentifier.toLowerCase())
                   )
+                  ?.sort((a, b) => {
+                    // Priority 1: Rows with haveTrade: true come first
+                    if (a.haveTrade && !b.haveTrade) return -1;
+                    if (!a.haveTrade && b.haveTrade) return 1;
+
+                    // Priority 2: Rows with valid dateOfLooserGainer come next
+                    if (a.dateOfLooserGainer && !b.dateOfLooserGainer)
+                      return -1;
+                    if (!a.dateOfLooserGainer && b.dateOfLooserGainer) return 1;
+
+                    // Default: No specific ordering, maintain the existing order
+                    return 0;
+                  })
                   ?.map((item, index) => {
                     return (
                       <tr key={index}>
@@ -845,16 +868,6 @@ const Dashboard = () => {
                             </td>
                             <td>{item?.dynamicExitValue?.toFixed(2)}</td> */}
 
-                            <td
-                              className={`${
-                                item?.haveTrade
-                                  ? "text-red-500 font-bold"
-                                  : "text-green-500 font-bold"
-                              }`}
-                            >
-                              {item?.haveTrade ? "true" : "false"}
-                            </td>
-
                             {/* <td>
                               {editMode === item.id ? (
                                 <input
@@ -875,7 +888,15 @@ const Dashboard = () => {
                         )}
 
                         {/* <td>{item.interval}</td> */}
-
+                        <td
+                          className={`${
+                            item?.haveTrade
+                              ? "text-red-500 font-bold"
+                              : "text-green-500 font-bold"
+                          }`}
+                        >
+                          {item?.haveTrade ? "true" : "false"}
+                        </td>
                         <td
                           className={`w-32  ${
                             //item.isMaster &&
@@ -910,10 +931,42 @@ const Dashboard = () => {
                           {item.hedgingIdentifier}
                         </td>
 
-                        {activeFilters.includes("isMaster") && (
+                        {/* {activeFilters.includes("isMaster") && (
                           <>
                             <td>{item.callTargetLevel}</td>
                             <td>{item.putTargetLevel}</td>
+                          </>
+                        )} */}
+                        {(activeFilters.includes("isMaster") ||
+                          activeFilters.includes("MyBullishMaster") ||
+                          activeFilters.includes("MyBearishMaster")) && (
+                          <>
+                            <td
+                              className={`${
+                                item.looserGainer == "Looser"
+                                  ? "text-red-500 font-semibold"
+                                  : "text-green-500 font-semibold"
+                              }`}
+                            >
+                              {item.looserGainer}
+                            </td>
+                            <td>{item.dateOfLooserGainer?.slice(0, 10)}</td>
+                            <td
+                              className={`${
+                                item.ResistancePrice &&
+                                "text-green-500 font-semibold"
+                              }`}
+                            >
+                              {item.ResistancePrice?.toFixed(1)}
+                            </td>
+                            <td
+                              className={`${
+                                item.SupportPrice &&
+                                "text-red-500 font-semibold"
+                              }`}
+                            >
+                              {item.SupportPrice?.toFixed(1)}
+                            </td>
                           </>
                         )}
                         <td>{item.lotSize}</td>
@@ -1174,7 +1227,6 @@ const Dashboard = () => {
             </tbody>
           </table>
         </div>
-
       </React.Fragment>
       {showGainer && <GainerLosser />}
     </>

@@ -33,6 +33,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { formatDate } from "@/lib/utils";
+import { useModal } from "@/hooks/use-modal";
 
 const HelpingChart = () => {
   const { theme, setTheme } = useTheme();
@@ -150,6 +151,7 @@ const HelpingChart = () => {
   const [hideConfig, setHideConfig] = useState(true);
   const [supportTrendLine, setSupportTrendLine] = useState([]);
   const [resistanceTrendLine, setResistanceTrendLine] = useState([]);
+  const { onOpen } = useModal();
 
   // const [testingMode, setTestingMode] = useState(() => {
   //   const storedMode = localStorage.getItem(`testingMode_${id}`);
@@ -935,7 +937,7 @@ const HelpingChart = () => {
               //   data?.data?.haveTradeOfPE ||
               //   data?.data?.haveTradeOfFUTSell) &&
               data?.data?.lastLowestLTP > 0 && (
-              <span>Last Lowest LTP : {data?.data?.lastLowestLTP}</span>
+              <span>  Last Lowest LTP : {data?.data?.lastLowestLTP} </span>
             )}
           </button>
           &nbsp; &nbsp;
@@ -1203,17 +1205,17 @@ const HelpingChart = () => {
                   {trendLineValue && (
                     <p className="font-semibold text-[13px] md:text-[16px]">
                       Resistance :
-                      {trendLineValue?.dataForIndex7?.ResistancePrice?.toFixed(
+                      {filteredData?.[0]?.resistance?.toFixed(
                         1
                       )}
                       &nbsp; &nbsp; Support :
-                      {trendLineValue?.dataForIndex7?.SupportPrice?.toFixed(1)}
+                      {filteredData?.[0]?.support?.toFixed(1)}
                       &nbsp; &nbsp; Call Target :
-                      {trendLineValue?.dataForIndex7?.callTargetLevelPrice?.toFixed(
+                      {filteredData?.[0]?.callTarget?.toFixed(
                         1
                       )}
                       &nbsp; &nbsp; Put Target :
-                      {trendLineValue?.dataForIndex7?.putTargetLevelPrice?.toFixed(
+                      {filteredData?.[0]?.putTarget?.toFixed(
                         1
                       )}
                       &nbsp; &nbsp;
@@ -1731,7 +1733,7 @@ const HelpingChart = () => {
               </div>
 
               {/* Trendline Status */}
-              <div className="flex flex-col w-full sm:w-auto">
+              {/* <div className="flex flex-col w-full sm:w-auto">
                 <Label>Trendline Status</Label>
                 <Select
                   value={values.trendLineActive}
@@ -1762,7 +1764,7 @@ const HelpingChart = () => {
                     </SelectGroup>
                   </SelectContent>
                 </Select>
-              </div>
+              </div> */}
 
               {/* Buttons Section */}
               <div className="flex items-center flex-wrap space-x-2 mt-2">
@@ -1770,6 +1772,19 @@ const HelpingChart = () => {
                 <Button onClick={handleSubmit} size="sm">
                   Submit
                 </Button>
+
+                <Button
+            onClick={() => onOpen("child-modal", { symbol :"CE" })}
+            className="px-5 py-2 rounded-md border-2"
+          >
+            Add  Trade CE
+          </Button>
+                <Button
+            onClick={() => onOpen("child-modal", { symbol :"PE" })}
+            className="px-5 py-2 rounded-md border-2"
+          >
+            Add  Trade PE
+          </Button>
 
                 {/* Fibonacci Button */}
                 <>

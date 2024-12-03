@@ -40,6 +40,7 @@ const ConditionModal = () => {
 
 
   return (
+    
     <Dialog width={1200} onOpenChange={onClose} open={isModalOpen}>
       <DialogContent className="max-w-4xl px-2">
         <DialogHeader>
