@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useModal } from "@/hooks/use-modal";
 import axios from "axios";
-import { BASE_URL_OVERALL } from "@/lib/constants";
+import { BASE_URL_OVERALL, BASE_URL_OVERALL2 } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { FilePenLine, SquareArrowOutUpRight, Trash } from "lucide-react";
 import { useLiveSocket } from "@/providers/live-socket-provider";
@@ -11,6 +11,16 @@ import { ModeToggle } from "../components/mode-toggle";
 import { useTheme } from "@/components/theme-provider";
 import secureLocalStorage from "react-secure-storage";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
 export const groupBy = function (xs, key) {
   return xs?.reduce(function (rv, x) {
@@ -43,6 +53,7 @@ const Dashboard = () => {
   const [filteredTrades, setFilteredTrades] = useState([]);
   const [activeFilters, setActiveFilters] = useState(["ALL"]);
   const [filterIdentifier, setFilterIdentifier] = useState("");
+  const [tradeIdentification, setTradeIdentification] = useState(2);
 
   const showNotification = (message) => {
     // alert(message); // Basic popup. You can replace this with a custom notification component if needed.
@@ -84,7 +95,7 @@ const Dashboard = () => {
   //   };
   // }, [socket, isConnected]);
 
-  const shownNotificationsRef = useRef(new Set()); // Move this out of useEffect to avoid re-creation on every render
+  //const shownNotificationsRef = useRef(new Set()); // Move this out of useEffect to avoid re-creation on every render
 
   useEffect(() => {
     if (!socket || !isConnected) return;
@@ -169,7 +180,7 @@ const Dashboard = () => {
       const { data } = await axios.get(`${BASE_URL_OVERALL}/config/get`);
       setTrades((p) => ({ ...p, data: data.data }));
     } catch (error) {
-      setTrades((p) => ({ ...p, error: error.message }));
+      // setTrades((p) => ({ ...p, error: error.message }));
     } finally {
       setTrades((p) => ({ ...p, loading: false }));
     }
@@ -206,49 +217,49 @@ const Dashboard = () => {
     }
   };
 
-  const handleEdit = (item) => {
-    setEditMode(item.id);
-    setEditValues({
-      id: item.id,
-      terminal: item.terminal,
-      tradeEntryPercent: item.tradeEntryPercent,
-      minExitPercent: item.minExitPercent,
-      maxExitPercent: item.maxExitPercent,
-      priceIncPercent: item.priceIncPercent,
-      // priceDecPercent: item.priceDecPercent,
-      WMA: item.WMA,
-      // wmaLtp: item.wmaLtp,
-      orderType: item.orderType,
-      dynamicEntryPercentage: item.dynamicEntryPercentage,
-      minProfit: item.minProfit,
-      candleSize: item.candleSize,
-      lossLimit: item.lossLimit,
-      tradeIndex: item.tradeIndex,
-    });
-  };
+  // const handleEdit = (item) => {
+  //   setEditMode(item.id);
+  //   setEditValues({
+  //     id: item.id,
+  //     terminal: item.terminal,
+  //     tradeEntryPercent: item.tradeEntryPercent,
+  //     minExitPercent: item.minExitPercent,
+  //     maxExitPercent: item.maxExitPercent,
+  //     priceIncPercent: item.priceIncPercent,
+  //     // priceDecPercent: item.priceDecPercent,
+  //     WMA: item.WMA,
+  //     // wmaLtp: item.wmaLtp,
+  //     orderType: item.orderType,
+  //     dynamicEntryPercentage: item.dynamicEntryPercentage,
+  //     minProfit: item.minProfit,
+  //     candleSize: item.candleSize,
+  //     lossLimit: item.lossLimit,
+  //     tradeIndex: item.tradeIndex,
+  //   });
+  // };
 
-  const handleUpdate = async () => {
-    confirm("Are you sure to update configuration");
-    try {
-      await axios.put(`${BASE_URL_OVERALL}/config/edit`, editValues);
-      alert("Update Successfully");
-    } catch (error) {
-      alert(
-        "Something went wrong! " + error.response.data.message || error.message
-      );
-    } finally {
-      getAllTrades();
-      setEditMode(null);
-    }
-  };
+  // const handleUpdate = async () => {
+  //   confirm("Are you sure to update configuration");
+  //   try {
+  //     await axios.put(`${BASE_URL_OVERALL}/config/edit`, editValues);
+  //     alert("Update Successfully");
+  //   } catch (error) {
+  //     alert(
+  //       "Something went wrong! " + error.response.data.message || error.message
+  //     );
+  //   } finally {
+  //     getAllTrades();
+  //     setEditMode(null);
+  //   }
+  // };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setEditValues((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  // const handleInputChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setEditValues((prev) => ({
+  //     ...prev,
+  //     [name]: value,
+  //   }));
+  // };
 
   const toggleShowOffTerminals = () => {
     setShowOffTerminals((prev) => !prev);
@@ -456,8 +467,26 @@ const Dashboard = () => {
     }
   };
 
-  // Ensure trades data is properly initialized
-  //  console.log("filter" , filterIdentifier)
+  const tradeOptions = [
+    { label: "Bullish", value: 0 },
+    { label: "Bearish", value: 1 },
+    { label: "Both", value: 2 },
+  ];
+
+  const handleSubmit = async () => {
+    try {
+      const response = await axios.post(`${BASE_URL_OVERALL2}`, {
+        tradeIdentification,
+      });
+      alert(response.data.message);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  // console.log("Trade Identification" , tradeIdentification)
+  const a =
+    tradeOptions.find((option) => option.value === tradeIdentification)
+      ?.label || "";
 
   return (
     <>
@@ -640,14 +669,14 @@ const Dashboard = () => {
           >
             Auto
           </Button>
-          <Button
+          {/* <Button
             onClick={() => handleButtonClick("RangeBound")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
               activeButtons["RangeBound"] ? "bg-red-500" : "bg-black"
             }`}
           >
             RangeBound
-          </Button>
+          </Button> */}
           <Button
             onClick={() => handleButtonClick("Energy")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
@@ -710,8 +739,38 @@ const Dashboard = () => {
             value={filterIdentifier}
             onChange={(e) => setFilterIdentifier(e.target.value)}
             placeholder="Filter By Identifier"
-            className="p-1 mb-1 w-[250px]"
+            className="p-1 mb-1 w-[150px]"
           />
+
+          <div className=" mb-1 ">
+            <Select
+              className="w-[150px] "
+              value={tradeIdentification}
+              onValueChange={(value) => setTradeIdentification(value)}
+            >
+              <SelectTrigger className="w-full mt-1 border-zinc-500">
+                <SelectValue>
+                  {tradeOptions.find(
+                    (option) => option.value === tradeIdentification
+                  )?.label || ""}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Trade Identification</SelectLabel>
+
+                  {tradeOptions?.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Button onClick={handleSubmit}>Submit</Button>
+          </div>
         </div>
 
         <div className="overflow-x-scroll">
@@ -721,10 +780,12 @@ const Dashboard = () => {
           >
             <thead>
               <tr>
+                <th>Sr. No.</th>
+                <th>Trade Type</th>
                 {!activeFilters.includes("isMaster") && (
                   <>
                     <th>Master</th>
-                    <th>Customer Grade</th>
+                    {/* <th>Customer Grade</th> */}
                     {/* <th>Loss Count</th>
                     <th>Candle Size</th>
                     <th>Initial Entry Value</th>
@@ -758,6 +819,7 @@ const Dashboard = () => {
                     <th>Put Entry Value</th>
                   </>
                 )}
+
                 <th>Lot Size</th>
                 <th>Alert Below</th>
                 <th>LTP</th>
@@ -765,9 +827,9 @@ const Dashboard = () => {
                 {/* <th>Terminal</th> */}
                 <th>ON/OFF</th>
 
-                {!activeFilters.includes("isMaster") && (
-                  <>{/* <th>Order Type</th> */}</>
-                )}
+                {/* {!activeFilters.includes("isMaster") && (
+                 
+                )} */}
 
                 {/* <th>Have Trade</th> */}
                 {/* <th>Market Trend</th> */}
@@ -809,6 +871,18 @@ const Dashboard = () => {
                   ?.map((item, index) => {
                     return (
                       <tr key={index}>
+                        <td>{index + 1}</td>
+                        <td
+                          className={`${
+                            a === "Bullish"
+                              ? "text-green-600 font-semibold"
+                              : a === "Bearish"
+                              ? "text-red-600 font-semibold"
+                              : "font-semibold"
+                          }`}
+                        >
+                          {a}
+                        </td>
                         {!activeFilters?.includes("isMaster") && (
                           <>
                             <td
@@ -820,7 +894,7 @@ const Dashboard = () => {
                             >
                               {item.isMaster ? "True" : "False"}
                             </td>
-                            <td>{item.customerGrading}</td>
+                            {/* <td>{item.customerGrading}</td> */}
 
                             {/* <td>{item.lossLimit}</td>
 
@@ -969,6 +1043,7 @@ const Dashboard = () => {
                             </td>
                           </>
                         )}
+
                         <td>{item.lotSize}</td>
                         <td
                           className={`${
@@ -980,10 +1055,10 @@ const Dashboard = () => {
                         >
                           {item.targetBelow}
                         </td>
-
                         <td className="w-32">
                           {socketData[item.instrument_token]?.last_traded_price}
                         </td>
+
                         <td
                           className={`${
                             socketData[item.instrument_token]

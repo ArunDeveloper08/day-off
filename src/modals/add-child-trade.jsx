@@ -2,14 +2,14 @@ import {
   Dialog,
   DialogContent,
   DialogHeader,
-  DialogTitle,
+
 } from "@/components/ui/dialog";
 import { useModal } from "@/hooks/use-modal";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
 import { BASE_URL_OVERALL } from "../lib/constants";
 import { useEffect, useRef, useState } from "react";
-import { formatDate } from "@/lib/utils";
+
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -27,14 +27,13 @@ const AddChildTrade = () => {
   const [values, setValues] = useState({
     childTrade: "",
     indexValue: "7",
-
   });
 
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const [apiData, setApiData] = useState([]);
   const id = searchParams.get("id");
-  const intervalRef = useRef(null);
+
   const isModalOpen = isOpen && type === "child-modal";
 
   const getIdentifier = async () => {
@@ -55,6 +54,7 @@ const AddChildTrade = () => {
     }
     getIdentifier();
   }, [data]);
+  
 
   const handleSelect = (key, value) => {
     setValues((prev) => ({ ...prev, [key]: value }));
@@ -67,7 +67,7 @@ const AddChildTrade = () => {
     try {
       const response = await axios.post(
         `${BASE_URL_OVERALL}/child/createChild`,
-        { ...values , id , tradingOptions:data?.symbol}
+        { ...values, id, tradingOptions: data?.symbol }
       );
       alert(response.data.message);
     } catch (error) {
@@ -80,7 +80,7 @@ const AddChildTrade = () => {
     <Dialog width={1200} onOpenChange={onClose} open={isModalOpen} height={500}>
       <DialogContent className="max-w-4xl px-2">
         <DialogHeader className="flex justify-center font-bold">
-          ADD CHILD TRADE
+          ADD CHILD TRADE  {data.symbol}
         </DialogHeader>
 
         <div className="px-1">
@@ -97,7 +97,7 @@ const AddChildTrade = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectLabel>Add Child</SelectLabel>
+                <SelectLabel>Add  {data.symbol} Child</SelectLabel>
                 {apiData &&
                   apiData.map((suggestion) => (
                     <SelectItem

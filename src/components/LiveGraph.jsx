@@ -333,8 +333,8 @@ const entryLineArray = [
   { color: "orange", name: "Put Target Line" },
 ];
 const AlertLineArray = [
-  { color: "purple", name: "AlertLine1" },
-  { color: "purple", name: "AlertLine2" },
+  { color: "green", name: "AlertLine1" , strokeWidth : 3 },
+  { color: "red", name: "AlertLine2"  , strokeWidth : 3},
 ];
 
 const CandleChart = ({
@@ -662,13 +662,14 @@ const CandleChart = ({
           ind < AlertLineArray.length ? AlertLineArray[ind]?.color : "black";
         let name =
           ind < AlertLineArray.length ? AlertLineArray[ind]?.name : "Alert";
+          let width = ind < AlertLineArray.length ? AlertLineArray[ind].strokeWidth : 2
 
         return {
           ...item,
           appearance: {
             ...item.appearance,
             stroke: color,
-            strokeWidth: 2,
+            strokeWidth: width,
           },
           startTime,
           endTime,
@@ -747,6 +748,7 @@ const CandleChart = ({
         "Entry lines saved."
       );
     };
+
 
     const onFibComplete1 = (newRetracements) => {
       console.log("onFibComplete1");
@@ -1024,7 +1026,7 @@ const CandleChart = ({
                       className="bg-red-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
                       onClick={handleResetAlertLine}
                     >
-                      Remove Analiysis
+                      Remove EntryLine2
                     </button>
                   )}
 
@@ -1067,7 +1069,7 @@ const CandleChart = ({
                       }`}
                       onClick={handleActivateAlertLine}
                     >
-                      Activate Analiysis Line
+                      Activate Entry Line2
                     </button>
                   </div>
                 </div>

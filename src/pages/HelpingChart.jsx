@@ -50,12 +50,12 @@ const HelpingChart = () => {
   const [trends3, setTrends3] = useState([]);
   const [alert3, setAlert3] = useState([]);
   const [entryLine, setEntryLine] = useState([]);
-  const [bearishLine , setBearishLine ] = useState([])
+  const [bearishLine, setBearishLine] = useState([]);
   const [trendLineValue, setTrendLineValue] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const previousValues = useRef({});
-  const [checkButtonBull , setCheckButtonBull] = useState(false);
-  const [checkButtonBear , setCheckButtonBear] = useState(false);
+  // const [checkButtonBull , setCheckButtonBull] = useState(false);
+  // const [checkButtonBear , setCheckButtonBear] = useState(false);
   // const [selectedInterval, setSelectedInterval] = useState("ONE_MINUTE");
 
   let tradeIndex = "";
@@ -68,7 +68,7 @@ const HelpingChart = () => {
   }, []);
 
   const location = useLocation();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
   const id = searchParams.get("id");
   const [apiData, setApiData] = useState([]);
@@ -146,11 +146,11 @@ const HelpingChart = () => {
     entryLine: true,
     rsi: false,
     atr: false,
-    bearishLine:false
+    bearishLine: false,
   });
   const [hideConfig, setHideConfig] = useState(true);
-  const [supportTrendLine, setSupportTrendLine] = useState([]);
-  const [resistanceTrendLine, setResistanceTrendLine] = useState([]);
+  // const [supportTrendLine, setSupportTrendLine] = useState([]);
+  // const [resistanceTrendLine, setResistanceTrendLine] = useState([]);
   const { onOpen } = useModal();
 
   // const [testingMode, setTestingMode] = useState(() => {
@@ -160,7 +160,7 @@ const HelpingChart = () => {
 
   const [apiResponseReceived, setApiResponseReceived] = useState(false);
   const [testingMode, setTestingMode] = useState("");
-  const hasInitializedTrends = useRef(false);
+  // const hasInitializedTrends = useRef(false);
   const manualIntervalRef = useRef(null);
 
   if (!id) return null;
@@ -232,21 +232,19 @@ const HelpingChart = () => {
 
         // Merge entry lines if there are buyTrendLines
         if (res?.data?.buyTrendLines?.length > 0) {
-       
           // const hasResistance = res?.data?.buyTrendLines?.some(item => item.name === "Resistance");
           // const hasSupport = res?.data?.buyTrendLines?.some(item => item.name === "Support");
-          
+
           // if (hasResistance) {
           //     setCheckButtonBull(true);
           //     setEntryLine(res?.data?.buyTrendLines);
           // }
-          
+
           // if (hasSupport) {
           //     setCheckButtonBear(true);
           //     setBearishLine(res?.data?.buyTrendLines)
           // }
 
-          
           setEntryLine(res?.data?.buyTrendLines);
           setApiResponseReceived(true); // After state update
         }
@@ -392,16 +390,16 @@ const HelpingChart = () => {
     //   !data?.data?.haveTradeOfFUTBuy &&
     //   !data?.data?.haveTradeOfFUTSell
     // ) {
-      const updatedEntryLines = filterAndTransformLines(
-        entryLine,
-        apiData,
-        values?.interval
-      );
-      setEntryLine((prev) =>
-        JSON.stringify(prev) !== JSON.stringify(updatedEntryLines)
-          ? updatedEntryLines
-          : prev
-      );
+    const updatedEntryLines = filterAndTransformLines(
+      entryLine,
+      apiData,
+      values?.interval
+    );
+    setEntryLine((prev) =>
+      JSON.stringify(prev) !== JSON.stringify(updatedEntryLines)
+        ? updatedEntryLines
+        : prev
+    );
     // }
 
     const updatedAlertLines = filterAndTransformLines(
@@ -533,9 +531,7 @@ const HelpingChart = () => {
     data?.data?.haveTradeOfFUTSell,
     data?.data?.haveTradeOfFUTBuy,
     trendLineValue?.dataForIndex7?.CESellLinePrice,
-    trendLineValue?.dataForIndex7?.PESellLinePrice
-   
-
+    trendLineValue?.dataForIndex7?.PESellLinePrice,
   ]);
 
   // const memoizedTrendLines = useMemo(() => {
@@ -659,12 +655,12 @@ const HelpingChart = () => {
   useEffect(() => {
     if (filteredData?.length > 0) {
       const currentValues = {
-        CEStopLossForIndex7: filteredData[0]?.CEStopLossForIndex7,
-        CEStopLossForIndex17: filteredData[0]?.CEStopLossForIndex17,
-        PEStopLossForIndex7: filteredData[0]?.PEStopLossForIndex7,
-        PEStopLossForIndex17: filteredData[0]?.PEStopLossForIndex17,
-        FUTStopLossForIndex7: filteredData[0]?.FUTStopLossForIndex7,
-        FUTStopLossForIndex17: filteredData[0]?.FUTStopLossForIndex17,
+        CEStopLossForIndex7: filteredData?.[0]?.CEStopLossForIndex7,
+        CEStopLossForIndex17: filteredData?.[0]?.CEStopLossForIndex17,
+        PEStopLossForIndex7: filteredData?.[0]?.PEStopLossForIndex7,
+        PEStopLossForIndex17: filteredData?.[0]?.PEStopLossForIndex17,
+        FUTStopLossForIndex7: filteredData?.[0]?.FUTStopLossForIndex7,
+        FUTStopLossForIndex17: filteredData?.[0]?.FUTStopLossForIndex17,
       };
 
       // Iterate through the current values
@@ -683,7 +679,7 @@ const HelpingChart = () => {
         previousValues.current[key] = value;
       });
     }
-  }, [filteredData ]);
+  }, [filteredData]);
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -702,7 +698,6 @@ const HelpingChart = () => {
       const response = await axios.get(
         `${BASE_URL_OVERALL}/trendLinesValues/get?id=${id}`
       );
-
       setTrendLineValue(response.data.data);
     } catch (err) {
       console.log(err);
@@ -910,6 +905,7 @@ const HelpingChart = () => {
     // Open the /future/pcrchart route in a new tab
     window.open("/future/pcrchart", "_blank");
   };
+  //console.log("filtered", filteredData)
   return (
     <div className="p-2">
       {/* {data.error ? (
@@ -927,18 +923,18 @@ const HelpingChart = () => {
                 {data?.data?.RSI_Value?.toFixed(1)} &nbsp;
               </span>
             )}
-            {
-              data?.data?.lastHighestLTP > 0 && (
-                <span>Last High LTP : {data?.data?.lastHighestLTP}</span> 
-              )}
-              &nbsp;
+            {data?.data?.lastHighestLTP > 0 && (
+              <span>Last High LTP : {data?.data?.lastHighestLTP}</span>
+            )}
+            &nbsp;
             {
               // (data?.data?.haveTradeOfPEBuy ||
               //   data?.data?.haveTradeOfPE ||
               //   data?.data?.haveTradeOfFUTSell) &&
               data?.data?.lastLowestLTP > 0 && (
-              <span>  Last Lowest LTP : {data?.data?.lastLowestLTP} </span>
-            )}
+                <span> Last Lowest LTP : {data?.data?.lastLowestLTP} </span>
+              )
+            }
           </button>
           &nbsp; &nbsp;
           <Button
@@ -1205,23 +1201,19 @@ const HelpingChart = () => {
                   {trendLineValue && (
                     <p className="font-semibold text-[13px] md:text-[16px]">
                       Resistance :
-                      {filteredData?.[0]?.resistance?.toFixed(
-                        1
-                      )}
+                      {filteredData &&
+                        filteredData?.[0]?.resistance?.toFixed(1)}
                       &nbsp; &nbsp; Support :
-                      {filteredData?.[0]?.support?.toFixed(1)}
+                      {filteredData && filteredData?.[0]?.support?.toFixed(1)}
                       &nbsp; &nbsp; Call Target :
-                      {filteredData?.[0]?.callTarget?.toFixed(
-                        1
-                      )}
+                      {filteredData &&
+                        filteredData?.[0]?.callTarget?.toFixed(1)}
                       &nbsp; &nbsp; Put Target :
-                      {filteredData?.[0]?.putTarget?.toFixed(
-                        1
-                      )}
+                      {filteredData && filteredData?.[0]?.putTarget?.toFixed(1)}
                       &nbsp; &nbsp;
                       {trendLineValue?.dataForIndex7?.CESellLinePrice > 0 && (
                         <span>
-                          CE  Buy TrendLine Price :
+                          CE Buy TrendLine Price :
                           {trendLineValue?.dataForIndex7?.CESellLinePrice?.toFixed(
                             1
                           )}
@@ -1230,7 +1222,7 @@ const HelpingChart = () => {
                       &nbsp; &nbsp;
                       {trendLineValue?.dataForIndex7?.PESellLinePrice > 0 && (
                         <span>
-                          PE  Buy TrendLine Price :
+                          PE Buy TrendLine Price :
                           {trendLineValue?.dataForIndex7?.PESellLinePrice?.toFixed(
                             1
                           )}
@@ -1239,7 +1231,7 @@ const HelpingChart = () => {
                       &nbsp; &nbsp;
                       {trendLineValue?.dataForIndex7?.PEBuyLinePrice > 0 && (
                         <span>
-                          PE  Sell TrendLine Price :
+                          PE Sell TrendLine Price :
                           {trendLineValue?.dataForIndex7?.PEBuyLinePrice?.toFixed(
                             1
                           )}
@@ -1254,7 +1246,6 @@ const HelpingChart = () => {
                           )}
                         </span>
                       )}
-
                       &nbsp; &nbsp;
                       {trendLineValue?.dataForIndex7?.FUTBuyLinePrice > 0 && (
                         <span>
@@ -1330,10 +1321,7 @@ const HelpingChart = () => {
                       {/* Time : {formatDate(trendLineValue?.timestamp)} */}
                     </p>
                   )}
-                  
                 </div>
-
-              
               )}
 
               <div className="flex justify-between flex-wrap gap-1 md:gap-y-1">
@@ -1720,7 +1708,7 @@ const HelpingChart = () => {
               </div>
 
               {/* WMA Input */}
-              <div className="flex flex-col w-full sm:w-auto">
+              {/* <div className="flex flex-col w-full sm:w-auto">
                 <Label>WMA</Label>
                 <Input
                   name="WMA"
@@ -1730,7 +1718,7 @@ const HelpingChart = () => {
                   type="number"
                   min={0}
                 />
-              </div>
+              </div> */}
 
               {/* Trendline Status */}
               {/* <div className="flex flex-col w-full sm:w-auto">
@@ -1774,17 +1762,19 @@ const HelpingChart = () => {
                 </Button>
 
                 <Button
-            onClick={() => onOpen("child-modal", { symbol :"CE" })}
-            className="px-5 py-2 rounded-md border-2"
-          >
-            Add  Trade CE
-          </Button>
+                  onClick={() => onOpen("child-modal", { symbol: "CE" })}
+                  className="px-5 py-2 rounded-md border-2"
+                  size="sm"
+                >
+                  Add Trade CE
+                </Button>
                 <Button
-            onClick={() => onOpen("child-modal", { symbol :"PE" })}
-            className="px-5 py-2 rounded-md border-2"
-          >
-            Add  Trade PE
-          </Button>
+                  onClick={() => onOpen("child-modal", { symbol: "PE" })}
+                  className="px-5 py-2 rounded-md border-2"
+                  size="sm"
+                >
+                  Add Trade PE
+                </Button>
 
                 {/* Fibonacci Button */}
                 <>
@@ -1946,7 +1936,7 @@ const HelpingChart = () => {
                           </g>
                         </svg>
                       </span>
-                      <span>Analysis Line</span>
+                      <span>Entry Line 2</span>
                     </div>
                   </button>
                   <button
@@ -1954,7 +1944,7 @@ const HelpingChart = () => {
                       setShowRow((p) => ({
                         ...p,
                         trendLine: false, // Ensure trendLine is false when alertLine is true
-                         bearishLine: false,
+                        bearishLine: false,
                         entryLine: !p.entryLine,
                       }))
                     }
@@ -2049,7 +2039,7 @@ const HelpingChart = () => {
           <div className="w-full h-auto flex justify-center">
             <CandleChart
               data={apiData}
-             getChartData={getChartData}
+              getChartData={getChartData}
               handleCreateTrendLines={handleCreateTrendLines}
               master={data?.data}
               ratio={1}
