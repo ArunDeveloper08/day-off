@@ -54,6 +54,7 @@ const HelpingChart = () => {
   const [trendLineValue, setTrendLineValue] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const previousValues = useRef({});
+  const [buyTrendLineDate, setBuyTrendLineDate] = useState();
   // const [checkButtonBull , setCheckButtonBull] = useState(false);
   // const [checkButtonBear , setCheckButtonBear] = useState(false);
   // const [selectedInterval, setSelectedInterval] = useState("ONE_MINUTE");
@@ -172,6 +173,11 @@ const HelpingChart = () => {
         `${BASE_URL_OVERALL}/config/get?id=${id}`
       );
       setData((p) => ({ ...p, data: data.data }));
+      if (data?.data?.buyTrendLineDate == null) {
+        setBuyTrendLineDate(new Date().toISOString().split("T")[0]);
+      } else {
+        setBuyTrendLineDate(data?.data?.buyTrendLineDate);
+      }
 
       setValues((prev) => {
         // Use manualInterval if the user has selected one
@@ -259,6 +265,7 @@ const HelpingChart = () => {
         console.log(err);
       });
   };
+  //console.log("buyTrendline", buyTrendLineDate);
 
   // Refined rounding function
   const roundToNearestTime = (time, interval) => {
@@ -448,12 +455,16 @@ const HelpingChart = () => {
 
   const handleSubmit = () => {
     axios
-      .put(`${BASE_URL_OVERALL}/config/editMaster?id=${id}`, { ...values })
+      .put(`${BASE_URL_OVERALL}/config/editMaster?id=${id}`, {
+        ...values,
+        buyTrendLineDate,
+      })
       .then((res) => {
         alert("Successfully Updated");
         // Call getChartData only if trendLineActive has NOT changed
         // if (prevTrendLineActive.current === values.trendLineActive) {
         getChartData();
+        getTradeConfig();
         setApiResponseReceived(true);
         // }
         // Update the previous value to the current value
@@ -1755,6 +1766,18 @@ const HelpingChart = () => {
               </div> */}
 
               {/* Buttons Section */}
+              <div className="flex flex-col w-full sm:w-auto">
+                <Label>TrendLine Date</Label>
+                <Input
+                  type="date"
+                  className="border-[1px] border-black rounded-sm"
+                  min={new Date().toISOString().split("T")[0]} // Set today's date as the minimum
+                  onChange={(e) => setBuyTrendLineDate(e.target.value)}
+                  value={
+                    buyTrendLineDate ? buyTrendLineDate?.split("T")?.[0] : ""
+                  }
+                />
+              </div>
               <div className="flex items-center flex-wrap space-x-2 mt-2">
                 {/* Submit Button */}
                 <Button onClick={handleSubmit} size="sm">
@@ -1971,9 +1994,10 @@ const HelpingChart = () => {
                           </g>
                         </svg>
                       </span>
-                      <span>Entry Line</span>
+                      <span>Entry Line 1</span>
                     </div>
                   </button>
+
                   {/* <button
                     onClick={() =>
                       setShowRow((p) => ({

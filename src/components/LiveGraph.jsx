@@ -681,7 +681,7 @@ const CandleChart = ({
       logTrendLines(coloredAlerts);
       setActiveLineType(null);
       sendDataToAPI(
-        { analysisLine: coloredAlerts },
+        { analysisLine: coloredAlerts},
         "/config/edit",
         "Alert lines saved."
       );
@@ -743,7 +743,7 @@ const CandleChart = ({
       logTrendLines(coloredAlerts); // Log trend lines with names and colors for debugging
       setActiveLineType(null);
       sendDataToAPI(
-        { buyTrendLines: coloredAlerts },
+        { buyTrendLines: coloredAlerts  },
         "/config/edit",
         "Entry lines saved."
       );
@@ -894,7 +894,7 @@ const CandleChart = ({
       const updatedAlert3 = []; // Define the updated value
       setAlert3(updatedAlert3); // Update the state
       sendDataToAPI(
-        { analysisLine: updatedAlert3 },
+        { analysisLine: updatedAlert3 , buyTrendLineDate : null },
         "/config/edit",
         "Alert lines saved."
       );
@@ -904,7 +904,7 @@ const CandleChart = ({
       const updatedAlert3 = [];
       setEntryLine(updatedAlert3);
       sendDataToAPI(
-        { buyTrendLines: updatedAlert3 },
+        { buyTrendLines: updatedAlert3 , buyTrendLineDate : null },
         "/config/edit",
         "Alert lines saved."
       );
@@ -1047,7 +1047,7 @@ const CandleChart = ({
                     className="bg-red-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
                     onClick={handleResetEntryLines}
                   >
-                    Remove EntryLine
+                    Remove EntryLine1
                   </button>
 
                   <div className="flex flex-col gap-2 md:flex-row md:justify-around">
@@ -1059,7 +1059,7 @@ const CandleChart = ({
                       }`}
                       onClick={handleActivateEntryLine}
                     >
-                      Activate Entry Line
+                      Activate Entry Line1
                     </button>
                     <button
                       className={`px-2 py-1 rounded-sm w-full md:w-fit mx-auto ${

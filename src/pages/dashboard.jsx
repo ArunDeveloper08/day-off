@@ -45,15 +45,17 @@ const Dashboard = () => {
     data: [],
     error: "",
   });
-  const [editMode, setEditMode] = useState(null); // State to manage edit mode
-  const [editValues, setEditValues] = useState({}); // State to manage the current values being edited
+  //const [editMode, setEditMode] = useState(null); // State to manage edit mode
+ // const [editValues, setEditValues] = useState({}); // State to manage the current values being edited
   const lastExecutionTimeRef = useRef(0);
   const [showOffTerminals, setShowOffTerminals] = useState(true);
-  const [filter, setFilter] = useState("ALL");
+  //const [filter, setFilter] = useState("ALL");
   const [filteredTrades, setFilteredTrades] = useState([]);
   const [activeFilters, setActiveFilters] = useState(["ALL"]);
   const [filterIdentifier, setFilterIdentifier] = useState("");
   const [tradeIdentification, setTradeIdentification] = useState(2);
+  const debounceRef = useRef(null);
+  const intervalRef = useRef(null);
 
   const showNotification = (message) => {
     // alert(message); // Basic popup. You can replace this with a custom notification component if needed.
@@ -110,7 +112,7 @@ const Dashboard = () => {
         setSocketData((prev) => {
           const updatedSocketData = {
             ...prev,
-            [message.token]: message,
+            [message.token]:  { ...message },
           };
 
           // Trades loop to check LTP against targetAbove and targetBelow
@@ -174,11 +176,16 @@ const Dashboard = () => {
     };
   }, [socket, isConnected, trades]);
 
+
+ //console.log("socket Data" , socketData)
+
+
   const getAllTrades = async () => {
     try {
       setTrades((p) => ({ ...p, loading: true }));
       const { data } = await axios.get(`${BASE_URL_OVERALL}/config/get`);
       setTrades((p) => ({ ...p, data: data.data }));
+      setTradeIdentification(data?.data?.[0]?.tradeIdentification)
     } catch (error) {
       // setTrades((p) => ({ ...p, error: error.message }));
     } finally {
@@ -190,6 +197,27 @@ const Dashboard = () => {
     getAllTrades();
     const interval = setInterval(getAllTrades, 60 * 1000);
     return () => clearInterval(interval);
+  }, []);
+
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        clearInterval(intervalRef.current);
+      } else {
+        getAllTrades();
+        intervalRef.current = setInterval(getAllTrades, 12 * 1000);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      clearInterval(intervalRef.current);
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
   }, []);
 
   const handleOpenNewTab = (url, item) => {
@@ -471,19 +499,21 @@ const Dashboard = () => {
     { label: "Bullish", value: 0 },
     { label: "Bearish", value: 1 },
     { label: "Both", value: 2 },
+    { label: "None", value: 3 },
   ];
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.post(`${BASE_URL_OVERALL2}`, {
+      const response = await axios.put(`${BASE_URL_OVERALL}/config/updateAllTradeIdentification`, {
         tradeIdentification,
       });
       alert(response.data.message);
+      await getAllTrades();
     } catch (error) {
       console.log(error);
     }
   };
-  // console.log("Trade Identification" , tradeIdentification)
+  // console.log("Trade Identification" , trades)       
   const a =
     tradeOptions.find((option) => option.value === tradeIdentification)
       ?.label || "";
@@ -815,15 +845,16 @@ const Dashboard = () => {
                   <>
                     <th>Looser/Gainer</th>
                     <th>Date Loss/Gain</th>
-                    <th>Call Entry Value</th>
-                    <th>Put Entry Value</th>
+                    <th>TrendLine Update Date</th>
                   </>
                 )}
+                <th>Call Entry Value</th>
+                <th>Put Entry Value</th>
 
                 <th>Lot Size</th>
-                <th>Alert Below</th>
+                <th>Entry Line Below</th>
                 <th>LTP</th>
-                <th>Alert Above</th>
+                <th>Entry Line Above</th>
                 {/* <th>Terminal</th> */}
                 <th>ON/OFF</th>
 
@@ -1011,9 +1042,11 @@ const Dashboard = () => {
                             <td>{item.putTargetLevel}</td>
                           </>
                         )} */}
+
                         {(activeFilters.includes("isMaster") ||
                           activeFilters.includes("MyBullishMaster") ||
                           activeFilters.includes("MyBearishMaster")) && (
+
                           <>
                             <td
                               className={`${
@@ -1025,25 +1058,24 @@ const Dashboard = () => {
                               {item.looserGainer}
                             </td>
                             <td>{item.dateOfLooserGainer?.slice(0, 10)}</td>
-                            <td
-                              className={`${
-                                item.ResistancePrice &&
-                                "text-green-500 font-semibold"
-                              }`}
-                            >
-                              {item.ResistancePrice?.toFixed(1)}
-                            </td>
-                            <td
-                              className={`${
-                                item.SupportPrice &&
-                                "text-red-500 font-semibold"
-                              }`}
-                            >
-                              {item.SupportPrice?.toFixed(1)}
-                            </td>
+                            <td>{item.buyTrendLineDate?.slice(0,10)}</td>
                           </>
                         )}
-
+                        <td
+                          className={`${
+                            item.ResistancePrice &&
+                            "text-green-500 font-semibold"
+                          }`}
+                        >
+                          {item.ResistancePrice?.toFixed(1)}
+                        </td>
+                        <td
+                          className={`${
+                            item.SupportPrice && "text-red-500 font-semibold"
+                          }`}
+                        >
+                          {item.SupportPrice?.toFixed(1)}
+                        </td>
                         <td>{item.lotSize}</td>
                         <td
                           className={`${
