@@ -30,10 +30,10 @@ export const groupBy = function (xs, key) {
 };
 
 const Dashboard = () => {
-  const { theme, setTheme } = useTheme();
-  useEffect(() => {
-    setTheme("light");
-  }, []);
+  // const { theme, setTheme } = useTheme();
+  // useEffect(() => {
+  //   setTheme("light");
+  // }, []);
 
   const navigate = useNavigate();
   const { onOpen } = useModal();
@@ -45,8 +45,9 @@ const Dashboard = () => {
     data: [],
     error: "",
   });
+  const [narration, setNarration] = useState(false);
   //const [editMode, setEditMode] = useState(null); // State to manage edit mode
- // const [editValues, setEditValues] = useState({}); // State to manage the current values being edited
+  // const [editValues, setEditValues] = useState({}); // State to manage the current values being edited
   const lastExecutionTimeRef = useRef(0);
   const [showOffTerminals, setShowOffTerminals] = useState(true);
   //const [filter, setFilter] = useState("ALL");
@@ -57,9 +58,9 @@ const Dashboard = () => {
   const debounceRef = useRef(null);
   const intervalRef = useRef(null);
 
-  const showNotification = (message) => {
-    // alert(message); // Basic popup. You can replace this with a custom notification component if needed.
-  };
+  //const showNotification = (message) => {
+  // alert(message); // Basic popup. You can replace this with a custom notification component if needed.
+  //  };
 
   // useEffect(() => {
   //   if (!socket || !isConnected) return;
@@ -112,7 +113,7 @@ const Dashboard = () => {
         setSocketData((prev) => {
           const updatedSocketData = {
             ...prev,
-            [message.token]:  { ...message },
+            [message.token]: { ...message },
           };
 
           // Trades loop to check LTP against targetAbove and targetBelow
@@ -176,16 +177,14 @@ const Dashboard = () => {
     };
   }, [socket, isConnected, trades]);
 
-
- //console.log("socket Data" , socketData)
-
+  //console.log("socket Data" , socketData)
 
   const getAllTrades = async () => {
     try {
       setTrades((p) => ({ ...p, loading: true }));
       const { data } = await axios.get(`${BASE_URL_OVERALL}/config/get`);
       setTrades((p) => ({ ...p, data: data.data }));
-      setTradeIdentification(data?.data?.[0]?.tradeIdentification)
+      setTradeIdentification(data?.data?.[0]?.tradeIdentification);
     } catch (error) {
       // setTrades((p) => ({ ...p, error: error.message }));
     } finally {
@@ -198,7 +197,6 @@ const Dashboard = () => {
     const interval = setInterval(getAllTrades, 60 * 1000);
     return () => clearInterval(interval);
   }, []);
-
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -438,6 +436,7 @@ const Dashboard = () => {
   // Function to handle the filter toggle
 
   const toggleFilter = (filterType) => {
+    //console.log(filterType)
     setActiveFilters((prevFilters) => {
       if (filterType === "ALL") {
         return ["ALL"]; // Reset to "ALL"
@@ -450,6 +449,14 @@ const Dashboard = () => {
 
       return updatedFilters.length === 0 ? ["ALL"] : updatedFilters;
     });
+
+    if (
+      filterType !== "isMaster" &&
+      filterType !== "MyBullishMaster" &&
+      filterType !== "MyBearishMaster"
+    ) {
+      setNarration(!narration); // Reset narration automatically
+    }
   };
   const handleButtonClick = (filterType) => {
     toggleFilter(filterType);
@@ -504,16 +511,19 @@ const Dashboard = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.put(`${BASE_URL_OVERALL}/config/updateAllTradeIdentification`, {
-        tradeIdentification,
-      });
+      const response = await axios.put(
+        `${BASE_URL_OVERALL}/config/updateAllTradeIdentification`,
+        {
+          tradeIdentification,
+        }
+      );
       alert(response.data.message);
       await getAllTrades();
     } catch (error) {
       console.log(error);
     }
   };
-  // console.log("Trade Identification" , trades)       
+  // console.log("Trade Identification" , trades)
   const a =
     tradeOptions.find((option) => option.value === tradeIdentification)
       ?.label || "";
@@ -606,15 +616,31 @@ const Dashboard = () => {
           <Button
             onClick={() => handleButtonClick("isMaster")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["isMaster"] ? "bg-red-500" : "bg-black"
+              activeButtons["isMaster"]
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-black"
             }`}
           >
             Master
           </Button>
+          {(activeFilters.includes("isMaster") ||
+            activeFilters.includes("MyBullishMaster") ||
+            activeFilters.includes("MyBearishMaster")) && (
+            <>
+              <Button
+                onClick={() => setNarration(!narration)}
+                className={`${narration ? "bg-red-600 hover:bg-red-600" : " "}`}
+              >
+                Narration
+              </Button>
+            </>
+          )}
           <Button
             onClick={() => handleButtonClick("tradingStockCE")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["tradingStockCE"] ? "bg-red-500" : "bg-black"
+              activeButtons["tradingStockCE"]
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-black"
             }`}
           >
             Trading Stock CE
@@ -630,7 +656,9 @@ const Dashboard = () => {
           <Button
             onClick={() => handleButtonClick("Index")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["Index"] ? "bg-red-500" : "bg-black"
+              activeButtons["Index"]
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-black"
             }`}
           >
             Index
@@ -638,7 +666,9 @@ const Dashboard = () => {
           <Button
             onClick={() => handleButtonClick("MyBullishMaster")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["MyBullishMaster"] ? "bg-red-500" : "bg-black"
+              activeButtons["MyBullishMaster"]
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-black"
             }`}
           >
             My Bullish Master
@@ -646,7 +676,9 @@ const Dashboard = () => {
           <Button
             onClick={() => handleButtonClick("MyBearishMaster")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["MyBearishMaster"] ? "bg-red-500" : "bg-black"
+              activeButtons["MyBearishMaster"]
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-black"
             }`}
           >
             My Bearish Master
@@ -654,7 +686,9 @@ const Dashboard = () => {
           <Button
             onClick={() => handleButtonClick("MyCommonMaster")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["MyCommonMaster"] ? "bg-red-500" : "bg-black"
+              activeButtons["MyCommonMaster"]
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-black"
             }`}
           >
             My Common Master
@@ -662,7 +696,9 @@ const Dashboard = () => {
           <Button
             onClick={() => handleButtonClick("Banking")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["Banking"] ? "bg-red-500" : "bg-black"
+              activeButtons["Banking"]
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-black"
             }`}
           >
             Banking
@@ -670,7 +706,9 @@ const Dashboard = () => {
           <Button
             onClick={() => handleButtonClick("Pharma")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["Pharma"] ? "bg-red-500" : "bg-black"
+              activeButtons["Pharma"]
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-black"
             }`}
           >
             Pharma
@@ -678,7 +716,7 @@ const Dashboard = () => {
           <Button
             onClick={() => handleButtonClick("IT")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["IT"] ? "bg-red-500" : "bg-black"
+              activeButtons["IT"] ? "bg-red-500 hover:bg-red-600" : "bg-black"
             }`}
           >
             IT
@@ -686,7 +724,9 @@ const Dashboard = () => {
           <Button
             onClick={() => handleButtonClick("targetHit")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["targetHit"] ? "bg-red-500" : "bg-black"
+              activeButtons["targetHit"]
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-black"
             }`}
           >
             Target Hit
@@ -694,7 +734,7 @@ const Dashboard = () => {
           <Button
             onClick={() => handleButtonClick("Auto")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["Auto"] ? "bg-red-500" : "bg-black"
+              activeButtons["Auto"] ? "bg-red-500 hover:bg-red-600" : "bg-black"
             }`}
           >
             Auto
@@ -718,7 +758,9 @@ const Dashboard = () => {
           <Button
             onClick={() => handleButtonClick("RealEstate")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["RealEstate"] ? "bg-red-500" : "bg-black"
+              activeButtons["RealEstate"]
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-black"
             }`}
           >
             Real Estate
@@ -726,7 +768,9 @@ const Dashboard = () => {
           <Button
             onClick={() => handleButtonClick("Chemical")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["Chemical"] ? "bg-red-500" : "bg-black"
+              activeButtons["Chemical"]
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-black"
             }`}
           >
             Chemical
@@ -734,7 +778,9 @@ const Dashboard = () => {
           <Button
             onClick={() => handleButtonClick("Defence")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["Defence"] ? "bg-red-500" : "bg-black"
+              activeButtons["Defence"]
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-black"
             }`}
           >
             Defence
@@ -742,7 +788,9 @@ const Dashboard = () => {
           <Button
             onClick={() => handleButtonClick("Others")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["Others"] ? "bg-red-500" : "bg-black"
+              activeButtons["Others"]
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-black"
             }`}
           >
             Others
@@ -750,7 +798,9 @@ const Dashboard = () => {
           <Button
             onClick={() => handleButtonClick("Hedging")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["Hedging"] ? "bg-red-500" : "bg-black"
+              activeButtons["Hedging"]
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-black"
             }`}
           >
             Hedging
@@ -758,7 +808,7 @@ const Dashboard = () => {
           <Button
             onClick={() => handleButtonClick("ALL")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["ALL"] ? "bg-red-500" : "bg-black"
+              activeButtons["ALL"] ? "bg-red-500 hover:bg-red-600" : "bg-black"
             }`}
           >
             All
@@ -811,7 +861,8 @@ const Dashboard = () => {
             <thead>
               <tr>
                 <th>Sr. No.</th>
-                <th>Trade Type</th>
+
+                {narration && <th>Narration</th>}
                 {!activeFilters.includes("isMaster") && (
                   <>
                     <th>Master</th>
@@ -827,11 +878,6 @@ const Dashboard = () => {
                   </>
                 )}
                 {/* <th>Interval</th> */}
-                <th>Have Tarde</th>
-                <th> Identifier</th>
-                <th>Is Hedge</th>
-                {/* <th>  Hedging Trade</th> */}
-                <th> Identifier Under Hedge</th>
 
                 {/* {activeFilters.includes("isMaster") && (
                   <>
@@ -841,22 +887,33 @@ const Dashboard = () => {
                 )} */}
                 {(activeFilters.includes("isMaster") ||
                   activeFilters.includes("MyBullishMaster") ||
-                  activeFilters.includes("MyBearishMaster")) && (
+                  activeFilters.includes("MyBearishMaster")) &&
+                  !narration && (
+                    <>
+                      <th>Looser/Gainer</th>
+                      <th>Date Loss/Gain</th>
+                      <th>TrendLine Update Date</th>
+                    </>
+                  )}
+                {!narration && (
                   <>
-                    <th>Looser/Gainer</th>
-                    <th>Date Loss/Gain</th>
-                    <th>TrendLine Update Date</th>
+                    <th>Trade Type</th>
+                    <th>Have Tarde</th>
+                    <th> Identifier</th>
+                    <th>Is Hedge</th>
+                    {/* <th>  Hedging Trade</th> */}
+                    <th> Identifier Under Hedge</th>
+                    <th>Call Entry Value</th>
+                    <th>Put Entry Value</th>
+
+                    <th>Lot Size</th>
+                    <th>Entry Line Below</th>
+                    <th>LTP</th>
+                    <th>Entry Line Above</th>
+                    {/* <th>Terminal</th> */}
+                    <th>ON/OFF</th>
                   </>
                 )}
-                <th>Call Entry Value</th>
-                <th>Put Entry Value</th>
-
-                <th>Lot Size</th>
-                <th>Entry Line Below</th>
-                <th>LTP</th>
-                <th>Entry Line Above</th>
-                {/* <th>Terminal</th> */}
-                <th>ON/OFF</th>
 
                 {/* {!activeFilters.includes("isMaster") && (
                  
@@ -903,17 +960,8 @@ const Dashboard = () => {
                     return (
                       <tr key={index}>
                         <td>{index + 1}</td>
-                        <td
-                          className={`${
-                            a === "Bullish"
-                              ? "text-green-600 font-semibold"
-                              : a === "Bearish"
-                              ? "text-red-600 font-semibold"
-                              : "font-semibold"
-                          }`}
-                        >
-                          {a}
-                        </td>
+
+                        {narration && <td>{item.narration}</td>}
                         {!activeFilters?.includes("isMaster") && (
                           <>
                             <td
@@ -993,48 +1041,6 @@ const Dashboard = () => {
                         )}
 
                         {/* <td>{item.interval}</td> */}
-                        <td
-                          className={`${
-                            item?.haveTrade
-                              ? "text-red-500 font-bold"
-                              : "text-green-500 font-bold"
-                          }`}
-                        >
-                          {item?.haveTrade ? "true" : "false"}
-                        </td>
-                        <td
-                          className={`w-32  ${
-                            //item.isMaster &&
-                            //(item.targetAbove || item.targetBelow) &&
-                            // (socketData[item.instrument_token]?.last_traded_price < item.targetBelow ||
-                            //   socketData[item.instrument_token]?.last_traded_price > item.targetAbove)
-                            //?
-                            item.isHedging
-                              ? "text-pink-600 font-bold"
-                              : "text-black"
-                            //: "text-black"
-                          }`}
-                        >
-                          {item.identifier}
-                        </td>
-                        <td
-                          className={
-                            item.isHedging
-                              ? "text-green-700 font-bold"
-                              : "text-red-700 font-semibold"
-                          }
-                        >
-                          {item.isHedging ? "True" : "False"}
-                        </td>
-                        <td
-                          className={
-                            item.isHedging
-                              ? "font-bold text-green-600"
-                              : "text-black font-bold"
-                          }
-                        >
-                          {item.hedgingIdentifier}
-                        </td>
 
                         {/* {activeFilters.includes("isMaster") && (
                           <>
@@ -1045,102 +1051,165 @@ const Dashboard = () => {
 
                         {(activeFilters.includes("isMaster") ||
                           activeFilters.includes("MyBullishMaster") ||
-                          activeFilters.includes("MyBearishMaster")) && (
-
+                          activeFilters.includes("MyBearishMaster")) &&
+                          !narration && (
+                            <>
+                              <td
+                                className={`${
+                                  item.looserGainer == "Looser"
+                                    ? "text-red-500 font-semibold"
+                                    : "text-green-500 font-semibold"
+                                }`}
+                              >
+                                {item.looserGainer}
+                              </td>
+                              <td>{item.dateOfLooserGainer?.slice(0, 10)}</td>
+                              <td>{item.buyTrendLineDate?.slice(0, 10)}</td>
+                            </>
+                          )}
+                        {!narration && (
                           <>
                             <td
                               className={`${
-                                item.looserGainer == "Looser"
-                                  ? "text-red-500 font-semibold"
-                                  : "text-green-500 font-semibold"
+                                a === "Bullish"
+                                  ? "text-green-600 font-semibold"
+                                  : a === "Bearish"
+                                  ? "text-red-600 font-semibold"
+                                  : "font-semibold"
                               }`}
                             >
-                              {item.looserGainer}
+                              {a}
                             </td>
-                            <td>{item.dateOfLooserGainer?.slice(0, 10)}</td>
-                            <td>{item.buyTrendLineDate?.slice(0,10)}</td>
-                          </>
-                        )}
-                        <td
-                          className={`${
-                            item.ResistancePrice &&
-                            "text-green-500 font-semibold"
-                          }`}
-                        >
-                          {item.ResistancePrice?.toFixed(1)}
-                        </td>
-                        <td
-                          className={`${
-                            item.SupportPrice && "text-red-500 font-semibold"
-                          }`}
-                        >
-                          {item.SupportPrice?.toFixed(1)}
-                        </td>
-                        <td>{item.lotSize}</td>
-                        <td
-                          className={`${
-                            socketData[item.instrument_token]
-                              ?.last_traded_price < item.targetBelow
-                              ? "text-green-500 w-32 font-bold"
-                              : "w-32"
-                          }`}
-                        >
-                          {item.targetBelow}
-                        </td>
-                        <td className="w-32">
-                          {socketData[item.instrument_token]?.last_traded_price}
-                        </td>
-
-                        <td
-                          className={`${
-                            socketData[item.instrument_token]
-                              ?.last_traded_price > item.targetAbove
-                              ? "text-green-500 w-32 font-bold"
-                              : "w-32"
-                          }`}
-                        >
-                          {item.targetAbove}
-                        </td>
-
-                        {/* <td>
-                          {editMode === item.id ? (
-                            <select
-                              name="terminal"
-                              value={editValues.terminal}
-                              onChange={handleInputChange}
-                              className="w-full border-[1px] border-black p-2 rounded-md"
+                            <td
+                              className={`${
+                                item?.haveTrade
+                                  ? "text-red-500 font-bold"
+                                  : "text-green-500 font-bold"
+                              }`}
                             >
-                              <option value="ON">ON</option>
-                              <option value="OFF">OFF</option>
-                              <option value="manualIn">Manual In</option>
-                            </select>
-                          ) : (
-                            <span
+                              {item?.haveTrade ? "true" : "false"}
+                            </td>
+                            <td
+                              className={`w-32  ${
+                                //item.isMaster &&
+                                //(item.targetAbove || item.targetBelow) &&
+                                // (socketData[item.instrument_token]?.last_traded_price < item.targetBelow ||
+                                //   socketData[item.instrument_token]?.last_traded_price > item.targetAbove)
+                                //?
+                                item.isHedging
+                                  ? "text-pink-600 font-bold"
+                                  : "text-black"
+                                //: "text-black"
+                              }`}
+                            >
+                              {item.identifier}
+                            </td>
+                            <td
                               className={
-                                item.terminal === "ON"
-                                  ? "text-red-700 font-semibold"
-                                  : "text-green-700 font-semibold"
+                                item.isHedging
+                                  ? "text-green-700 font-bold"
+                                  : "text-red-700 font-semibold"
                               }
                             >
-                              {item.terminal === "manualIn"
-                                ? "Manual In"
-                                : item.terminal}
-                            </span>
-                          )}
-                        </td> */}
-                        <td>
-                          <button
-                            onClick={() => toggleState(item.id, item.terminal)}
-                            className={`${
-                              item.terminal == "ON"
-                                ? "bg-red-500  text-white "
-                                : "bg-green-500  text-white"
-                            } "cursor-pointer font-bold px-2 py-1 rounded-sm "`}
-                          >
-                            {" "}
-                            {item.terminal}
-                          </button>
-                        </td>
+                              {item.isHedging ? "True" : "False"}
+                            </td>
+                            <td
+                              className={
+                                item.isHedging
+                                  ? "font-bold text-green-600"
+                                  : "text-black font-bold"
+                              }
+                            >
+                              {item.hedgingIdentifier}
+                            </td>
+                            <td
+                              className={`${
+                                item.ResistancePrice &&
+                                "text-green-500 font-semibold"
+                              }`}
+                            >
+                              {item.ResistancePrice?.toFixed(1)}
+                            </td>
+                            <td
+                              className={`${
+                                item.SupportPrice &&
+                                "text-red-500 font-semibold"
+                              }`}
+                            >
+                              {item.SupportPrice?.toFixed(1)}
+                            </td>
+                            <td>{item.lotSize}</td>
+                            <td
+                              className={`${
+                                socketData[item.instrument_token]
+                                  ?.last_traded_price < item.targetBelow
+                                  ? "text-green-500 w-32 font-bold"
+                                  : "w-32"
+                              }`}
+                            >
+                              {item.targetBelow}
+                            </td>
+                            <td className="w-32">
+                              {
+                                socketData[item.instrument_token]
+                                  ?.last_traded_price
+                              }
+                            </td>
+
+                            <td
+                              className={`${
+                                socketData[item.instrument_token]
+                                  ?.last_traded_price > item.targetAbove
+                                  ? "text-green-500 w-32 font-bold"
+                                  : "w-32"
+                              }`}
+                            >
+                              {item.targetAbove}
+                            </td>
+
+                            {/* <td>
+                              {editMode === item.id ? (
+                                <select
+                                  name="terminal"
+                                  value={editValues.terminal}
+                                  onChange={handleInputChange}
+                                  className="w-full border-[1px] border-black p-2 rounded-md"
+                                >
+                                  <option value="ON">ON</option>
+                                  <option value="OFF">OFF</option>
+                                  <option value="manualIn">Manual In</option>
+                                </select>
+                              ) : (
+                                <span
+                                  className={
+                                    item.terminal === "ON"
+                                      ? "text-red-700 font-semibold"
+                                      : "text-green-700 font-semibold"
+                                  }
+                                >
+                                  {item.terminal === "manualIn"
+                                    ? "Manual In"
+                                    : item.terminal}
+                                </span>
+                              )}
+                            </td> */}
+                            <td>
+                              <button
+                                onClick={() =>
+                                  toggleState(item.id, item.terminal)
+                                }
+                                className={`${
+                                  item.terminal == "ON"
+                                    ? "bg-red-500  text-white "
+                                    : "bg-green-500  text-white"
+                                } "cursor-pointer font-bold px-2 py-1 rounded-sm "`}
+                              >
+                                {" "}
+                                {item.terminal}
+                              </button>
+                            </td>
+                          </>
+                        )}
 
                         {/* {!activeFilters.includes("isMaster") && (
                           <>

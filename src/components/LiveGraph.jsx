@@ -355,9 +355,10 @@ const CandleChart = ({
   setAlert3,
   entryLine,
   setEntryLine,
-  tradeIndex,
+
   id,
   getChartData,
+  buyTrendLineDate
 }) => {
   try {
     const { onOpen } = useModal();
@@ -681,7 +682,7 @@ const CandleChart = ({
       logTrendLines(coloredAlerts);
       setActiveLineType(null);
       sendDataToAPI(
-        { analysisLine: coloredAlerts},
+        { analysisLine: coloredAlerts , buyTrendLineDate:buyTrendLineDate},
         "/config/edit",
         "Alert lines saved."
       );
@@ -743,7 +744,7 @@ const CandleChart = ({
       logTrendLines(coloredAlerts); // Log trend lines with names and colors for debugging
       setActiveLineType(null);
       sendDataToAPI(
-        { buyTrendLines: coloredAlerts  },
+        { buyTrendLines: coloredAlerts , buyTrendLineDate: buyTrendLineDate  },
         "/config/edit",
         "Entry lines saved."
       );
@@ -970,7 +971,7 @@ const CandleChart = ({
           <>
             <hr />
             <div className="flex flex-col gap-4 md:flex-row justify-evenly mt-1">
-              {master?.isMaster && tradeIndex == 4 && (
+              {master?.isMaster && master?.tradeIndex == 4 && (
                 <>
                   <div className="flex flex-col gap-2 md:flex-row md:justify-around">
                     <button
@@ -991,7 +992,7 @@ const CandleChart = ({
                 </>
               )}
 
-              {master?.isMaster && tradeIndex == 4 && (
+              {master?.isMaster && master?.tradeIndex == 4 && (
                 <>
                   <div className="flex flex-col gap-2 md:flex-row md:justify-around">
                     <button
@@ -1014,7 +1015,7 @@ const CandleChart = ({
 
               {master?.isMaster && (
                 <div className="flex flex-col gap-2 md:flex-row md:justify-around">
-                  {tradeIndex == 4 ? (
+                  {master?.tradeIndex == 4 ? (
                     <button
                       className="bg-red-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
                       onClick={handleResetTrendLines}
@@ -1075,7 +1076,7 @@ const CandleChart = ({
                 </div>
               )}
 
-              {master?.isMaster && tradeIndex == 4 && (
+              {master?.isMaster &&  master?.tradeIndex == 4 && (
                 <>
                   <div className="flex flex-col gap-2 md:flex-row md:justify-around">
                     <button
@@ -1096,7 +1097,7 @@ const CandleChart = ({
                 </>
               )}
 
-              {master?.isMaster && tradeIndex == 4 && (
+              {master?.isMaster && master?.tradeIndex == 4 && (
                 <>
                   <div className="flex flex-col gap-2 md:flex-row md:justify-around">
                     <button

@@ -41,8 +41,8 @@ const HelpingChart = () => {
   const debounceRef = useRef(null); // Add ref for debouncing
   const [intractiveData, setIntractiveData] = useState([]);
   // const [master, setMaster] = useState("");
-  const [ceTargetValue, setCeTargetValue] = useState(null);
-  const [peTargetValue, setPeTargetValue] = useState(null);
+ // const [ceTargetValue, setCeTargetValue] = useState(null);
+  // const [peTargetValue, setPeTargetValue] = useState(null);
   const [ceStopLoss, setCeStopLoss] = useState(null);
   const [peStopLoss, setPeStopLoss] = useState(null);
   // const [chartType, setChartType] = useState("canvas");
@@ -59,7 +59,7 @@ const HelpingChart = () => {
   // const [checkButtonBear , setCheckButtonBear] = useState(false);
   // const [selectedInterval, setSelectedInterval] = useState("ONE_MINUTE");
 
-  let tradeIndex = "";
+ // let tradeIndex = "";
   // const timeScale = useRef(scaleTime().domain([0, 1]));
   // const priceScale = useRef(scaleLinear().domain([0, 1]));
   // const [entryLine2, setEntryLine2] = useState([]);
@@ -92,7 +92,7 @@ const HelpingChart = () => {
   useEffect(() => {
     if (data?.data?.identifier) {
       document.title = `${data?.data?.identifier}`;
-      tradeIndex = data.data.tradeIndex;
+      //tradeIndex = data.data.tradeIndex;
     }
   }, [data?.data?.identifier]);
 
@@ -228,8 +228,8 @@ const HelpingChart = () => {
       .then((res) => {
         // Set other data from the API
         setApiData(res.data.data);
-        setCeTargetValue(res.data.data?.[0]?.CETargetLevelValue);
-        setPeTargetValue(res.data.data?.[0]?.PETargetLevelValue);
+      //  setCeTargetValue(res.data.data?.[0]?.CETargetLevelValue);
+        //setPeTargetValue(res.data.data?.[0]?.PETargetLevelValue);
         setCeStopLoss(res.data.data?.[0]?.CEStopLoss);
         setPeStopLoss(res.data.data?.[0]?.PEStopLoss);
         setIntractiveData(res.data);
@@ -700,7 +700,7 @@ const HelpingChart = () => {
       alert("High Low Reset !");
       getChartData();
     } catch (error) {
-      alert("Some error Occured");
+      alert("Some error Occured" , error);
     }
   };
 
@@ -917,6 +917,7 @@ const HelpingChart = () => {
     window.open("/future/pcrchart", "_blank");
   };
   //console.log("filtered", filteredData)
+  console.log("buyTrendLineDate " , buyTrendLineDate)
   return (
     <div className="p-2">
       {/* {data.error ? (
@@ -1492,7 +1493,7 @@ const HelpingChart = () => {
                   Daily
                 </button>
 
-                <button
+                {/* <button
                   onClick={() =>
                     setShowRow((p) => ({
                       ...p,
@@ -1506,7 +1507,7 @@ const HelpingChart = () => {
                   }`}
                 >
                   Four Hourly
-                </button>
+                </button> */}
 
                 <button
                   onClick={() =>
@@ -2079,10 +2080,11 @@ const HelpingChart = () => {
               alert3={alert3}
               setEntryLine={setEntryLine}
               entryLine={entryLine}
-              tradeIndex={tradeIndex}
+            //  tradeIndex={tradeIndex}
               setBearishLine={setBearishLine}
               bearishLine={bearishLine}
               id={id}
+              buyTrendLineDate={buyTrendLineDate}
             />
           </div>
         )}
