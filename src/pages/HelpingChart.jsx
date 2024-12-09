@@ -397,6 +397,7 @@ const HelpingChart = () => {
     //   !data?.data?.haveTradeOfFUTBuy &&
     //   !data?.data?.haveTradeOfFUTSell
     // ) {
+
     const updatedEntryLines = filterAndTransformLines(
       entryLine,
       apiData,
@@ -421,16 +422,16 @@ const HelpingChart = () => {
     );
   }, [apiResponseReceived, apiData, values?.interval]);
 
-  // console.log("manualTrade", manualInterval)
-  // console.log("interval", values.interval)
 
   const handleSelect = (key, value) => {
+
     setValues((prev) => ({ ...prev, [key]: value }));
     if (key === "interval") {
       manualIntervalRef.current = value;
     }
+            
     if (key === "interval" && apiResponseReceived) {
-      const updatedEntryLines = filterAndTransformLines(
+      const updatedEntryLines = filterAndTransformLines( 
         entryLine,
         apiData,
         value
@@ -777,7 +778,6 @@ const HelpingChart = () => {
         );
         return;
       }
-
       // Only call API for entryLine if conditions are met
       if (entryLine?.length === 0) {
         sendDataToAPI({ buyTrendLines: entryLine });
@@ -916,8 +916,7 @@ const HelpingChart = () => {
     // Open the /future/pcrchart route in a new tab
     window.open("/future/pcrchart", "_blank");
   };
-  //console.log("filtered", filteredData)
-  console.log("buyTrendLineDate " , buyTrendLineDate)
+
   return (
     <div className="p-2">
       {/* {data.error ? (
@@ -1665,7 +1664,7 @@ const HelpingChart = () => {
                   <SelectContent>
                     <SelectGroup>
                       <SelectLabel>Candle Type</SelectLabel>
-                      {["HeikinAshi", "Normal"].map((suggestion) => (
+                      {["HeikinAshi", "Normal"]?.map((suggestion) => (
                         <SelectItem key={suggestion} value={suggestion}>
                           {suggestion}
                         </SelectItem>
@@ -1683,17 +1682,17 @@ const HelpingChart = () => {
                   onValueChange={(value) => {
                     handleSelect("interval", value);
                   }}
-                  disabled={
-                    data?.data?.haveTradeOfCE ||
-                    data?.data?.haveTradeOfPE ||
-                    data?.data?.haveTradeOfCEBuy ||
-                    data?.data?.haveTradeOfPEBuy ||
-                    data?.data?.haveTradeOfFUTSell ||
-                    data?.data?.haveTradeOfFUTBuy
-                  }
+                  // disabled={
+                  //   data?.data?.haveTradeOfCE ||
+                  //   data?.data?.haveTradeOfPE ||
+                  //   data?.data?.haveTradeOfCEBuy ||
+                  //   data?.data?.haveTradeOfPEBuy ||
+                  //   data?.data?.haveTradeOfFUTSell ||
+                  //   data?.data?.haveTradeOfFUTBuy
+                  // }
                 >
                   <SelectTrigger className="w-full sm:w-[150px] mt-1 border-zinc-500">
-                    <SelectValue>{values.interval}</SelectValue>
+                    <SelectValue>{values?.interval}</SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
@@ -1718,6 +1717,7 @@ const HelpingChart = () => {
                   </SelectContent>
                 </Select>
               </div>
+
 
               {/* WMA Input */}
               {/* <div className="flex flex-col w-full sm:w-auto">
@@ -1772,7 +1772,7 @@ const HelpingChart = () => {
                 <Input
                   type="date"
                   className="border-[1px] border-black rounded-sm"
-                  min={new Date().toISOString().split("T")[0]} // Set today's date as the minimum
+                  min={today} // Set today's date as the minimum
                   onChange={(e) => setBuyTrendLineDate(e.target.value)}
                   value={
                     buyTrendLineDate ? buyTrendLineDate?.split("T")?.[0] : ""
@@ -2041,24 +2041,7 @@ const HelpingChart = () => {
           </>
         )}
 
-        {/* {apiData?.length > 0 && (
-            <CandleChart
-              data={apiData}
-              handleCreateTrendLines={handleCreateTrendLines}
-              // getMoreData={() => {}}
-              master={data?.data}
-              ratio={1}
-              width={width + 150}
-              showRow={showRow}
-              theme={theme}
-              // xExtents={xExtents}
-              intractiveData={intractiveData}
-              height={(height * 8) / 10}
-              chartType={chartType}
-              trends3={trends3}
-              setTrends3={setTrends3}
-            />
-          )} */}
+
 
         {apiData?.length > 0 && (
           <div className="w-full h-auto flex justify-center">
@@ -2078,7 +2061,7 @@ const HelpingChart = () => {
               setTrends3={setTrends3}
               setAlert3={setAlert3}
               alert3={alert3}
-              setEntryLine={setEntryLine}
+              setEntryLine={setEntryLine} 
               entryLine={entryLine}
             //  tradeIndex={tradeIndex}
               setBearishLine={setBearishLine}

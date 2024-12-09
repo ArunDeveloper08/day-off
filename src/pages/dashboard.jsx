@@ -30,6 +30,7 @@ export const groupBy = function (xs, key) {
 };
 
 const Dashboard = () => {
+
   // const { theme, setTheme } = useTheme();
   // useEffect(() => {
   //   setTheme("light");
@@ -177,7 +178,7 @@ const Dashboard = () => {
     };
   }, [socket, isConnected, trades]);
 
-  //console.log("socket Data" , socketData)
+  
 
   const getAllTrades = async () => {
     try {
@@ -353,9 +354,9 @@ const Dashboard = () => {
         ) {
           match = true;
         }
-        if (activeFilters.includes("Index") && item.category === "Index") {
-          match = true;
-        }
+        // if (activeFilters.includes("Index") && item.category === "Index") {
+        //   match = true;
+        // }
         if (
           activeFilters.includes("MyBearishMaster") &&
           item.category === "MyBearishMaster"
@@ -368,48 +369,48 @@ const Dashboard = () => {
         ) {
           match = true;
         }
-        if (activeFilters.includes("Banking") && item.category === "Banking") {
-          match = true;
-        }
-        if (activeFilters.includes("Pharma") && item.category === "Pharma") {
-          match = true;
-        }
-        if (activeFilters.includes("IT") && item.category === "IT") {
-          match = true;
-        }
-        if (activeFilters.includes("Energy") && item.category === "Energy") {
-          match = true;
-        }
-        if (activeFilters.includes("Auto") && item.category === "Auto") {
-          match = true;
-        }
-        if (activeFilters.includes("Defence") && item.category === "Defence") {
-          match = true;
-        }
-        if (
-          activeFilters.includes("Chemical") &&
-          item.category === "Chemical"
-        ) {
-          match = true;
-        }
-        if (
-          activeFilters.includes("RealEstate") &&
-          item.category === "RealEstate"
-        ) {
-          match = true;
-        }
-        if (
-          activeFilters.includes("RangeBound") &&
-          item.category === "RangeBound"
-        ) {
-          match = true;
-        }
-        if (activeFilters.includes("Others") && item.category === "Others") {
-          match = true;
-        }
-        if (activeFilters.includes("Hedging") && item.isHedging == "1") {
-          match = true;
-        }
+        // if (activeFilters.includes("Banking") && item.category === "Banking") {
+        //   match = true;
+        // }
+        // if (activeFilters.includes("Pharma") && item.category === "Pharma") {
+        //   match = true;
+        // }
+        // if (activeFilters.includes("IT") && item.category === "IT") {
+        //   match = true;
+        // }
+        // if (activeFilters.includes("Energy") && item.category === "Energy") {
+        //   match = true;
+        // }
+        // if (activeFilters.includes("Auto") && item.category === "Auto") {
+        //   match = true;
+        // }
+        // if (activeFilters.includes("Defence") && item.category === "Defence") {
+        //   match = true;
+        // }
+        // if (
+        //   activeFilters.includes("Chemical") &&
+        //   item.category === "Chemical"
+        // ) {
+        //   match = true;
+        // }
+        // if (
+        //   activeFilters.includes("RealEstate") &&
+        //   item.category === "RealEstate"
+        // ) {
+        //   match = true;
+        // }
+        // if (
+        //   activeFilters.includes("RangeBound") &&
+        //   item.category === "RangeBound"
+        // ) {
+        //   match = true;
+        // }
+        // if (activeFilters.includes("Others") && item.category === "Others") {
+        //   match = true;
+        // }
+        // if (activeFilters.includes("Hedging") && item.isHedging == "1") {
+        //   match = true;
+        // }
         if (item?.isMaster && item.targetAbove && item.targetBelow) {
           const LTP = socketData[item.instrument_token]?.last_traded_price;
 
@@ -455,7 +456,7 @@ const Dashboard = () => {
       filterType !== "MyBullishMaster" &&
       filterType !== "MyBearishMaster"
     ) {
-      setNarration(!narration); // Reset narration automatically
+      setNarration(false); // Reset narration automatically
     }
   };
   const handleButtonClick = (filterType) => {
@@ -653,7 +654,7 @@ const Dashboard = () => {
           >
             Trading Stock PE
           </Button>
-          <Button
+          {/* <Button
             onClick={() => handleButtonClick("Index")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
               activeButtons["Index"]
@@ -662,7 +663,7 @@ const Dashboard = () => {
             }`}
           >
             Index
-          </Button>
+          </Button> */}
           <Button
             onClick={() => handleButtonClick("MyBullishMaster")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
@@ -693,7 +694,7 @@ const Dashboard = () => {
           >
             My Common Master
           </Button>
-          <Button
+          {/* <Button
             onClick={() => handleButtonClick("Banking")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
               activeButtons["Banking"]
@@ -738,7 +739,7 @@ const Dashboard = () => {
             }`}
           >
             Auto
-          </Button>
+          </Button> */}
           {/* <Button
             onClick={() => handleButtonClick("RangeBound")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
@@ -747,7 +748,7 @@ const Dashboard = () => {
           >
             RangeBound
           </Button> */}
-          <Button
+          {/* <Button
             onClick={() => handleButtonClick("Energy")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
               activeButtons["Energy"] ? "bg-red-500" : "bg-black"
@@ -794,8 +795,8 @@ const Dashboard = () => {
             }`}
           >
             Others
-          </Button>
-          <Button
+          </Button> */}
+          {/* <Button
             onClick={() => handleButtonClick("Hedging")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
               activeButtons["Hedging"]
@@ -804,7 +805,7 @@ const Dashboard = () => {
             }`}
           >
             Hedging
-          </Button>
+          </Button> */}
           <Button
             onClick={() => handleButtonClick("ALL")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
@@ -861,6 +862,7 @@ const Dashboard = () => {
             <thead>
               <tr>
                 <th>Sr. No.</th>
+                <th>Identifier</th>
 
                 {narration && <th>Narration</th>}
                 {!activeFilters.includes("isMaster") && (
@@ -899,7 +901,7 @@ const Dashboard = () => {
                   <>
                     <th>Trade Type</th>
                     <th>Have Tarde</th>
-                    <th> Identifier</th>
+                   
                     <th>Is Hedge</th>
                     {/* <th>  Hedging Trade</th> */}
                     <th> Identifier Under Hedge</th>
@@ -960,6 +962,21 @@ const Dashboard = () => {
                     return (
                       <tr key={index}>
                         <td>{index + 1}</td>
+                        <td
+                              className={`w-32  ${
+                                //item.isMaster &&
+                                //(item.targetAbove || item.targetBelow) &&
+                                // (socketData[item.instrument_token]?.last_traded_price < item.targetBelow ||
+                                //   socketData[item.instrument_token]?.last_traded_price > item.targetAbove)
+                                //?
+                                item.isHedging
+                                  ? "text-pink-600 font-bold"
+                                  : "text-black"
+                                //: "text-black"
+                              }`}
+                            >
+                              {item.identifier}
+                            </td>
 
                         {narration && <td>{item.narration}</td>}
                         {!activeFilters?.includes("isMaster") && (
@@ -1089,21 +1106,7 @@ const Dashboard = () => {
                             >
                               {item?.haveTrade ? "true" : "false"}
                             </td>
-                            <td
-                              className={`w-32  ${
-                                //item.isMaster &&
-                                //(item.targetAbove || item.targetBelow) &&
-                                // (socketData[item.instrument_token]?.last_traded_price < item.targetBelow ||
-                                //   socketData[item.instrument_token]?.last_traded_price > item.targetAbove)
-                                //?
-                                item.isHedging
-                                  ? "text-pink-600 font-bold"
-                                  : "text-black"
-                                //: "text-black"
-                              }`}
-                            >
-                              {item.identifier}
-                            </td>
+                        
                             <td
                               className={
                                 item.isHedging

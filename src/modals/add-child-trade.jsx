@@ -59,7 +59,9 @@ const AddChildTrade = () => {
   const handleSelect = (key, value) => {
     setValues((prev) => ({ ...prev, [key]: value }));
   };
+
   if (!isModalOpen) return null;
+  
   const handleSubmit = async () => {
     if (!values.childTrade) {
       return alert("Please Enter Child Indentifier");
@@ -114,7 +116,7 @@ const AddChildTrade = () => {
         <div className="px-1">
           <Label>Index Value (Please fill this first )</Label>
           <Select
-            disabled={values.isMaster}
+           // disabled={values.isMaster}
             value={values.indexValue}
             name="indexValue"
             onValueChange={(value) => handleSelect("indexValue", value)}
