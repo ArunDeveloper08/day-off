@@ -21,6 +21,7 @@ import {
   LineSeries,
   MACDSeries,
   RSISeries,
+  BollingerSeries,
 } from "react-stockcharts/lib/series";
 import { discontinuousTimeScaleProvider } from "react-stockcharts/lib/scale";
 import {
@@ -52,7 +53,7 @@ import {
 } from "react-stockcharts/lib/coordinates";
 
 import { fitWidth } from "react-stockcharts/lib/helper";
-import { ema, macd, sma } from "react-stockcharts/lib/indicator";
+import { ema, macd, sma, bollingerBand } from "react-stockcharts/lib/indicator";
 import ErrorBoundary from "@/hooks/error-boundary.jsx";
 import { BASE_URL_OVERALL } from "@/lib/constants";
 import { useInteractiveNodes } from "./interactiveutils";
@@ -62,7 +63,11 @@ import { getMorePropsForChart } from "react-stockcharts/lib/interactive/utils";
 import Dialog from "@/modals/dialog-modal";
 import { useModal } from "@/hooks/use-modal";
 import { rsi, atr } from "react-stockcharts/lib/indicator";
-import { RSITooltip, SingleValueTooltip } from "react-stockcharts/lib/tooltip";
+import {
+  RSITooltip,
+  SingleValueTooltip,
+  BollingerBandTooltip,
+} from "react-stockcharts/lib/tooltip";
 
 function tooltipContent(underlyingValue) {
   return ({ currentItem, xAccessor }) => {
@@ -171,6 +176,13 @@ function tooltipContent(underlyingValue) {
   };
 }
 
+const bbStroke = {
+  top: "#964B00",
+  middle: "#000000",
+  bottom: "#964B00",
+};
+
+const bbFill = "#4682B4";
 // const Dialog = ({ showModal, text, chartId, onClose, onSave }) => {
 //   const [localText, setLocalText] = useState(text);
 
@@ -333,8 +345,8 @@ const entryLineArray = [
   { color: "orange", name: "Put Target Line" },
 ];
 const AlertLineArray = [
-  { color: "green", name: "AlertLine1" , strokeWidth : 3 },
-  { color: "red", name: "AlertLine2"  , strokeWidth : 3},
+  { color: "green", name: "AlertLine1", strokeWidth: 3 },
+  { color: "red", name: "AlertLine2", strokeWidth: 3 },
 ];
 
 const CandleChart = ({
@@ -358,7 +370,7 @@ const CandleChart = ({
 
   id,
   getChartData,
-  buyTrendLineDate
+  buyTrendLineDate,
 }) => {
   try {
     const { onOpen } = useModal();
@@ -635,10 +647,28 @@ const CandleChart = ({
       endpoint,
       alertMessage = "Successfully saved."
     ) => {
+      const trendLineNames = [
+        "Support",
+        "Resistance",
+        "Call Target Line",
+        "Put Target Line",
+        "AlertLine1",
+        "AlertLine2"
+      ];
+    
+      // Check if any trend line matches the condition
+      const incompleteLineExists = data?.buyTrendLines?.some(
+        (line) =>
+          trendLineNames.includes(line?.name) && (line?.endTime === null || line?.endTime === undefined)
+      );
+       if(incompleteLineExists){
+         alert("Please Draw Line Inside The Chart");
+         await getChartData();
+         return
+       }
+
       try {
         await axios.put(`${BASE_URL_OVERALL}/config/edit`, { id, ...data });
-        // console.log(alertMessage, data); // Log instead of alert for debugging
-        // await getTrendLinesValue();
         await getChartData();
       } catch (error) {
         console.error("Error saving data:", error);
@@ -663,7 +693,8 @@ const CandleChart = ({
           ind < AlertLineArray.length ? AlertLineArray[ind]?.color : "black";
         let name =
           ind < AlertLineArray.length ? AlertLineArray[ind]?.name : "Alert";
-          let width = ind < AlertLineArray.length ? AlertLineArray[ind].strokeWidth : 2
+        let width =
+          ind < AlertLineArray.length ? AlertLineArray[ind].strokeWidth : 2;
 
         return {
           ...item,
@@ -682,7 +713,7 @@ const CandleChart = ({
       logTrendLines(coloredAlerts);
       setActiveLineType(null);
       sendDataToAPI(
-        { analysisLine: coloredAlerts , buyTrendLineDate:buyTrendLineDate},
+        { analysisLine: coloredAlerts, buyTrendLineDate: buyTrendLineDate },
         "/config/edit",
         "Alert lines saved."
       );
@@ -744,12 +775,11 @@ const CandleChart = ({
       logTrendLines(coloredAlerts); // Log trend lines with names and colors for debugging
       setActiveLineType(null);
       sendDataToAPI(
-        { buyTrendLines: coloredAlerts , buyTrendLineDate: buyTrendLineDate  },
+        { buyTrendLines: coloredAlerts, buyTrendLineDate: buyTrendLineDate },
         "/config/edit",
         "Entry lines saved."
       );
     };
-
 
     const onFibComplete1 = (newRetracements) => {
       console.log("onFibComplete1");
@@ -822,7 +852,7 @@ const CandleChart = ({
           break;
 
         case 65: // A - Draw Trendline
-         setEnableAlertLine(true);
+          setEnableAlertLine(true);
           // setEnableTrendLine(false);
           // setEnableEntryLine(false);
           handleActivateAlertLine();
@@ -866,7 +896,13 @@ const CandleChart = ({
       })
       .accessor((d) => d.atr);
 
-    const dataWithIndicators = atrCalculator(rsiCalculator(initialData));
+    const bb = bollingerBand()
+      .merge((d, c) => {
+        d.bb = c;
+      })
+      .accessor((d) => d.bb);
+
+    const dataWithIndicators = atrCalculator(rsiCalculator(bb(initialData)));
     const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor(
       (d) => new Date(d.date || d.timestamp)
     );
@@ -895,7 +931,7 @@ const CandleChart = ({
       const updatedAlert3 = []; // Define the updated value
       setAlert3(updatedAlert3); // Update the state
       sendDataToAPI(
-        { analysisLine: updatedAlert3 , buyTrendLineDate : null },
+        { analysisLine: updatedAlert3, buyTrendLineDate: null },
         "/config/edit",
         "Alert lines saved."
       );
@@ -905,7 +941,7 @@ const CandleChart = ({
       const updatedAlert3 = [];
       setEntryLine(updatedAlert3);
       sendDataToAPI(
-        { buyTrendLines: updatedAlert3 , buyTrendLineDate : null },
+        { buyTrendLines: updatedAlert3, buyTrendLineDate: null },
         "/config/edit",
         "Alert lines saved."
       );
@@ -944,7 +980,7 @@ const CandleChart = ({
       <div className="flex flex-col">
         {window.location.pathname == "/future/back" ? (
           <>
-              {/* <div className="flex flex-col gap-2 md:flex-row md:justify-around mt-2">
+            {/* <div className="flex flex-col gap-2 md:flex-row md:justify-around mt-2">
                     <button
                       className={`px-2 py-1 rounded-sm w-full md:w-fit mx-auto ${
                         activeLineType === "entryLine"
@@ -965,8 +1001,8 @@ const CandleChart = ({
                     >
                       Activate Analiysis Line
                     </button>
-                  </div> */} 
-           </>
+                  </div> */}
+          </>
         ) : (
           <>
             <hr />
@@ -1076,7 +1112,7 @@ const CandleChart = ({
                 </div>
               )}
 
-              {master?.isMaster &&  master?.tradeIndex == 4 && (
+              {master?.isMaster && master?.tradeIndex == 4 && (
                 <>
                   <div className="flex flex-col gap-2 md:flex-row md:justify-around">
                     <button
@@ -1179,6 +1215,21 @@ const CandleChart = ({
                       fill={(d) => (d.close > d.open ? "#089981" : "#f23645")}
                       widthRatio={0.6} // Adjust this value to control candle width and spacing
                     />
+                  )}
+
+                  {showRow?.bollingerBand && (
+                    <>
+                      <BollingerSeries
+                        yAccessor={(d) => d.bb}
+                        stroke={bbStroke}
+                        fill={bbFill}
+                      />
+                      <BollingerBandTooltip
+                        origin={[-38, 60]}
+                        yAccessor={(d) => d.bb}
+                        options={bb.options()}
+                      />
+                    </>
                   )}
 
                   <>

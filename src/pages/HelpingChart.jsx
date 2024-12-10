@@ -148,6 +148,7 @@ const HelpingChart = () => {
     rsi: false,
     atr: false,
     bearishLine: false,
+    bollingerBand : false
   });
   const [hideConfig, setHideConfig] = useState(true);
   // const [supportTrendLine, setSupportTrendLine] = useState([]);
@@ -491,7 +492,7 @@ const HelpingChart = () => {
     // intervalRef.current = interval;
 
     return () => clearInterval(interval);
-  }, []);
+  }, []);     
 
   const prevHaveTradeOfCE = useRef(false); // Start with false
   const prevHaveTradeOfPE = useRef(false); // Start with false
@@ -602,7 +603,7 @@ const HelpingChart = () => {
     if (!isConnected || !data?.data?.instrument_token) return;
     //  console.log("Hii")
     socket?.on("getLiveData", (socketdata) => {
-      // console.log(socketdata)
+      //console.log(socketdata)
       //  Check if token is a string before applying replace
       if (typeof socketdata?.token === "string") {
         socketdata.token = Number(socketdata?.token?.replace(/"/g, ""));
@@ -812,8 +813,6 @@ const HelpingChart = () => {
       //   sendDataToAPI({ buyTrendLines: entryLine });
       // }
     }
-
-    // alert("No valid data to save.");
   };
 
   useEffect(() => {
@@ -970,6 +969,7 @@ const HelpingChart = () => {
           <>
             <div>
               <div className="flex flex-wrap font-semibold py-2  justify-start">
+
                 {/* <p className=" text-[13px] md:text-[16px]">
                    Terminal : {data?.data?.terminal}
                 </p>
@@ -986,6 +986,7 @@ const HelpingChart = () => {
                 {/* <p className=" text-[13px] md:text-[16px]">
                   Trade Index: {data?.data?.tradeIndex}
                 </p> */}
+
                 {data?.data?.tradeIndex != 4 && data?.data?.tradeIndex != 7 && (
                   <>
                     <p className=" text-[13px] md:text-[16px]">
@@ -1046,7 +1047,7 @@ const HelpingChart = () => {
                   }`}
                 >
                   PE SELL Status:{" "}
-                  {getValue("haveTradeOfPEBuy") ? "True" : "False"}
+                  { getValue("haveTradeOfPEBuy") ? "True" : "False"}
                 </p>
                 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                 {/* FUT Buy Status */}
@@ -1444,6 +1445,21 @@ const HelpingChart = () => {
                   }`}
                 >
                   volume
+                </button>
+                <button
+                  onClick={() =>
+                    setShowRow((p) => ({
+                      ...p,
+                      bollingerBand: !p.bollingerBand,
+                    }))
+                  }
+                  className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
+                    showRow.bollingerBand
+                      ? "bg-blue-500 text-gray-100"
+                      : "bg-gray-300 "
+                  }`}
+                >
+                  Bollinger 
                 </button>
 
                 <button

@@ -649,7 +649,7 @@ const Dashboard = () => {
           <Button
             onClick={() => handleButtonClick("tradingStockPE")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["tradingStockPE"] ? "bg-red-500" : "bg-black"
+              activeButtons["tradingStockPE"] ? "bg-red-500 hover:bg-red-600" : "bg-black"
             }`}
           >
             Trading Stock PE

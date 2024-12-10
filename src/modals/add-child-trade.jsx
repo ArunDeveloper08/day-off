@@ -101,7 +101,7 @@ const AddChildTrade = () => {
               <SelectGroup>
                 <SelectLabel>Add  {data.symbol} Child</SelectLabel>
                 {apiData &&
-                  apiData.map((suggestion) => (
+                  apiData?.map((suggestion) => (
                     <SelectItem
                       key={suggestion.tradingsymbol}
                       value={suggestion}

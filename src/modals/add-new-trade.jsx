@@ -522,7 +522,7 @@ export const AddNewtrade = () => {
       alert("Add Successfully");
     } catch (error) {
       alert(error.response.data.message);
-      console.log(error);
+      //console.log(error);
     } finally {
       data.getAllTrades();
       setValues(initialState);
@@ -560,8 +560,8 @@ export const AddNewtrade = () => {
                   <SelectGroup>
                     <SelectLabel>Trade Index</SelectLabel>
                     {[
-                      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
-                      18, 19, 20,
+                      1, 2, 7, 11, 12, 17
+                  
                     ]?.map((suggestion) => (
                       <SelectItem key={suggestion} value={suggestion}>
                         {suggestion}
@@ -1218,7 +1218,7 @@ export const AddNewtrade = () => {
                   </div>
 
                   <div className="px-1">
-                    <Label>CE Buy Deviation</Label>
+                    <Label> TrendLine Deviation(%)</Label>
                     <Input
                       name="candleRatioBuy"
                       onChange={handleChange}
@@ -1227,7 +1227,7 @@ export const AddNewtrade = () => {
                       type="number"
                     />
                   </div>
-                  <div className="px-1">
+                  {/* <div className="px-1">
                     <Label>PE Buy Deviation</Label>
                     <Input
                       name="candleRatioSell"
@@ -1266,7 +1266,7 @@ export const AddNewtrade = () => {
                       className="mt-1"
                       type="number"
                     />
-                  </div>
+                  </div> */}
                   <div className="px-1">
                     <Label>Secondary Sell Target (%)</Label>
                     <Input
