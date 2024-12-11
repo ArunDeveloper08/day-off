@@ -1227,6 +1227,7 @@ export const AddNewtrade = () => {
                       type="number"
                     />
                   </div>
+                  
                   {/* <div className="px-1">
                     <Label>PE Buy Deviation</Label>
                     <Input
@@ -1354,7 +1355,8 @@ export const AddNewtrade = () => {
               </>
             )} */}
 
-            {values.isMaster && values.indexValue == 4 && (
+            {
+            values.isMaster && values.indexValue == 4 && (
               <>
                 <div className="px-1">
                   <Label>Max Zone Time</Label>

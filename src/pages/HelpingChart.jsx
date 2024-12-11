@@ -175,7 +175,7 @@ const HelpingChart = () => {
       );
       setData((p) => ({ ...p, data: data.data }));
       if (data?.data?.buyTrendLineDate == null) {
-        setBuyTrendLineDate(new Date().toISOString().split("T")[0]);
+        setBuyTrendLineDate((new Date().toISOString().split("T")[0])?.slice(0,10));
       } else {
         setBuyTrendLineDate(data?.data?.buyTrendLineDate);
       }
@@ -223,52 +223,97 @@ const HelpingChart = () => {
     return mergedLines;
   };
 
-  const getChartData = () => {
-    axios
-      .post(`${BASE_URL_OVERALL}/chart/helper?id=${id}`)
-      .then((res) => {
+  // const getChartData = () => {
+  //   axios
+  //     .post(`${BASE_URL_OVERALL}/chart/helper?id=${id}`)
+  //     .then((res) => {
+  //       // Set other data from the API
+  //       setApiData(res.data.data);
+  //     //  setCeTargetValue(res.data.data?.[0]?.CETargetLevelValue);
+  //       //setPeTargetValue(res.data.data?.[0]?.PETargetLevelValue);
+  //       setCeStopLoss(res.data.data?.[0]?.CEStopLoss);
+  //       setPeStopLoss(res.data.data?.[0]?.PEStopLoss);
+  //       setIntractiveData(res.data);
+
+  //       // Log API data for debugging
+
+  //       // Merge entry lines if there are buyTrendLines
+  //       if (res?.data?.buyTrendLines?.length > 0) {
+  //         // const hasResistance = res?.data?.buyTrendLines?.some(item => item.name === "Resistance");
+  //         // const hasSupport = res?.data?.buyTrendLines?.some(item => item.name === "Support");
+
+  //         // if (hasResistance) {
+  //         //     setCheckButtonBull(true);
+  //         //     setEntryLine(res?.data?.buyTrendLines);
+  //         // }
+
+  //         // if (hasSupport) {
+  //         //     setCheckButtonBear(true);
+  //         //     setBearishLine(res?.data?.buyTrendLines)
+  //         // }
+
+  //         setEntryLine(res?.data?.buyTrendLines);
+  //         setApiResponseReceived(true); // After state update
+  //       }
+
+  //       // Process alert lines
+  //       if (res?.data?.analysisLine?.length > 0) {
+  //         setAlert3(res.data?.analysisLine);
+  //         setApiResponseReceived(true);
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // };
+  //console.log("buyTrendline", buyTrendLineDate);
+
+  // Refined rounding function
+  
+  const getChartData = async () => {
+    const maxRetries = 5; // Maximum number of retries
+    let attempts = 0;     // Counter for attempts
+  
+    while (attempts < maxRetries) {
+      try {
+        const res = await axios.post(`${BASE_URL_OVERALL}/chart/helper?id=${id}`);
+  
         // Set other data from the API
         setApiData(res.data.data);
-      //  setCeTargetValue(res.data.data?.[0]?.CETargetLevelValue);
-        //setPeTargetValue(res.data.data?.[0]?.PETargetLevelValue);
         setCeStopLoss(res.data.data?.[0]?.CEStopLoss);
         setPeStopLoss(res.data.data?.[0]?.PEStopLoss);
         setIntractiveData(res.data);
-
-        // Log API data for debugging
-
+  
         // Merge entry lines if there are buyTrendLines
         if (res?.data?.buyTrendLines?.length > 0) {
-          // const hasResistance = res?.data?.buyTrendLines?.some(item => item.name === "Resistance");
-          // const hasSupport = res?.data?.buyTrendLines?.some(item => item.name === "Support");
-
-          // if (hasResistance) {
-          //     setCheckButtonBull(true);
-          //     setEntryLine(res?.data?.buyTrendLines);
-          // }
-
-          // if (hasSupport) {
-          //     setCheckButtonBear(true);
-          //     setBearishLine(res?.data?.buyTrendLines)
-          // }
-
           setEntryLine(res?.data?.buyTrendLines);
-          setApiResponseReceived(true); // After state update
+          setApiResponseReceived(true);
         }
-
+  
         // Process alert lines
         if (res?.data?.analysisLine?.length > 0) {
           setAlert3(res.data?.analysisLine);
           setApiResponseReceived(true);
         }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  
+        // Exit loop on success
+        return;
+      } catch (err) {
+        attempts++;
+        console.log(`Attempt ${attempts} failed:`, err);
+  
+        // Wait for a short period before retrying
+        if (attempts < maxRetries) {
+          await new Promise((resolve) => setTimeout(resolve, 1000)); // 1-second delay
+        }
+      }
+    }
+  
+    // If all retries fail
+    console.log('All retry attempts failed.');                                              
   };
-  //console.log("buyTrendline", buyTrendLineDate);
-
-  // Refined rounding function
+  
+  
   const roundToNearestTime = (time, interval) => {
     const date = new Date(time);
     const minutes = date.getMinutes();
@@ -459,7 +504,7 @@ const HelpingChart = () => {
     axios
       .put(`${BASE_URL_OVERALL}/config/editMaster?id=${id}`, {
         ...values,
-        buyTrendLineDate,
+        
       })
       .then((res) => {
         alert("Successfully Updated");
@@ -467,6 +512,28 @@ const HelpingChart = () => {
         // if (prevTrendLineActive.current === values.trendLineActive) {
         getChartData();
         getTradeConfig();
+        setApiResponseReceived(true);
+        // }
+        // Update the previous value to the current value
+        // prevTrendLineActive.current = values.trendLineActive;
+      })
+      .catch((err) => {
+        console.log(err);
+        alert(err.response?.data?.message || "An error occurred");
+      });
+  };
+  const handleSubmit2 = () => {
+    axios
+      .put(`${BASE_URL_OVERALL}/config/editMaster?id=${id}`, {
+      buyTrendLineDate
+        
+      })
+      .then((res) => {
+        alert("Successfully Updated");
+        // Call getChartData only if trendLineActive has NOT changed
+        // if (prevTrendLineActive.current === values.trendLineActive) {
+        getChartData();
+       // getTradeConfig();
         setApiResponseReceived(true);
         // }
         // Update the previous value to the current value
@@ -915,7 +982,8 @@ const HelpingChart = () => {
     // Open the /future/pcrchart route in a new tab
     window.open("/future/pcrchart", "_blank");
   };
-
+   
+   //console.log("socketData" , socketData)
   return (
     <div className="p-2">
       {/* {data.error ? (
@@ -1783,18 +1851,7 @@ const HelpingChart = () => {
               </div> */}
 
               {/* Buttons Section */}
-              <div className="flex flex-col w-full sm:w-auto">
-                <Label>TrendLine Date</Label>
-                <Input
-                  type="date"
-                  className="border-[1px] border-black rounded-sm"
-                  min={today} // Set today's date as the minimum
-                  onChange={(e) => setBuyTrendLineDate(e.target.value)}
-                  value={
-                    buyTrendLineDate ? buyTrendLineDate?.split("T")?.[0] : ""
-                  }
-                />
-              </div>
+        
               <div className="flex items-center flex-wrap space-x-2 mt-2">
                 {/* Submit Button */}
                 <Button onClick={handleSubmit} size="sm">
@@ -2014,6 +2071,21 @@ const HelpingChart = () => {
                       <span>Entry Line 1</span>
                     </div>
                   </button>
+                  <div className="flex flex-col w-full sm:w-auto">
+                <Label>TrendLine Date</Label>
+                <Input
+                  type="date"
+                  className="border-[1px] border-black rounded-sm"
+                  min={today} // Set today's date as the minimum
+                  onChange={(e) => setBuyTrendLineDate((e.target.value)?.slice)}
+                  value={
+                    buyTrendLineDate ? buyTrendLineDate?.split("T")?.[0] : ""
+                  }
+                />
+              </div>
+              <div>
+                <Button onClick={handleSubmit2} size="sm">Submit</Button>
+              </div>
 
                   {/* <button
                     onClick={() =>
@@ -2051,6 +2123,7 @@ const HelpingChart = () => {
                       <span>Bearish Line</span>
                     </div>
                   </button> */}
+
                 </>
               </div>
             </div>
@@ -2079,7 +2152,7 @@ const HelpingChart = () => {
               alert3={alert3}
               setEntryLine={setEntryLine} 
               entryLine={entryLine}
-            //  tradeIndex={tradeIndex}
+           
               setBearishLine={setBearishLine}
               bearishLine={bearishLine}
               id={id}

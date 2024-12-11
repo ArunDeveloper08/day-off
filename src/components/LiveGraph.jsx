@@ -644,8 +644,8 @@ const CandleChart = ({
 
     const sendDataToAPI = async (
       data,
-      endpoint,
-      alertMessage = "Successfully saved."
+     // endpoint,
+     // alertMessage = "Successfully saved."
     ) => {
       const trendLineNames = [
         "Support",
@@ -664,7 +664,7 @@ const CandleChart = ({
        if(incompleteLineExists){
          alert("Please Draw Line Inside The Chart");
          await getChartData();
-         return
+         return;
        }
 
       try {
@@ -935,6 +935,7 @@ const CandleChart = ({
         "/config/edit",
         "Alert lines saved."
       );
+
     };
 
     const handleResetEntryLines = () => {
@@ -975,6 +976,7 @@ const CandleChart = ({
       setEnableAlertLine(true);
       setEnableEntryLine(false);
     };
+      
 
     return (
       <div className="flex flex-col">
