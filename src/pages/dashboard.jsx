@@ -906,12 +906,12 @@ const Dashboard = () => {
                     {/* <th>  Hedging Trade</th> */}
                     <th> Identifier Under Hedge</th>
                     <th>Call Entry Value</th>
-                    <th>Put Entry Value</th>
-
-                    <th>Lot Size</th>
-                    <th>Entry Line Below</th>
                     <th>LTP</th>
-                    <th>Entry Line Above</th>
+                    <th>Put Entry Value</th>
+                    <th>Lot Size</th>
+                  {/* <th>Entry Line Below</th> */}
+                
+                    {/* <th>Entry Line Above</th> */}
                     {/* <th>Terminal</th> */}
                     <th>ON/OFF</th>
                   </>
@@ -1084,6 +1084,7 @@ const Dashboard = () => {
                               <td>{item.buyTrendLineDate?.slice(0, 10)}</td>
                             </>
                           )}
+
                         {!narration && (
                           <>
                             <td
@@ -1133,6 +1134,12 @@ const Dashboard = () => {
                             >
                               {item.ResistancePrice?.toFixed(1)}
                             </td>
+                            <td className="w-32">
+                              {                    
+                                socketData[item.instrument_token]
+                                  ?.last_traded_price
+                              }
+                            </td>
                             <td
                               className={`${
                                 item.SupportPrice &&
@@ -1141,8 +1148,10 @@ const Dashboard = () => {
                             >
                               {item.SupportPrice?.toFixed(1)}
                             </td>
+                 
                             <td>{item.lotSize}</td>
-                            <td
+                     
+                            {/* <td
                               className={`${
                                 socketData[item.instrument_token]
                                   ?.last_traded_price < item.targetBelow
@@ -1151,15 +1160,10 @@ const Dashboard = () => {
                               }`}
                             >
                               {item.targetBelow}
-                            </td>
-                            <td className="w-32">
-                              {
-                                socketData[item.instrument_token]
-                                  ?.last_traded_price
-                              }
-                            </td>
+                            </td> */}
+                     
 
-                            <td
+                            {/* <td
                               className={`${
                                 socketData[item.instrument_token]
                                   ?.last_traded_price > item.targetAbove
@@ -1168,7 +1172,7 @@ const Dashboard = () => {
                               }`}
                             >
                               {item.targetAbove}
-                            </td>
+                            </td> */}
 
                             {/* <td>
                               {editMode === item.id ? (
@@ -1277,7 +1281,7 @@ const Dashboard = () => {
                           >
                             <SquareArrowOutUpRight className="w-4 h-4" />
                           </Button>
-                        </td>
+                        </td>        
                         <td>
                           <Button
                             size="icon"

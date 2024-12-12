@@ -599,7 +599,7 @@ const HelpingChart = () => {
   useEffect(() => {
     getChartData();
     // if (!values) return;
-    const interval = setInterval(getChartData, 60 * 1000);
+    const interval = setInterval(getChartData,  120 * 1000);
     //  intervalRef.current = interval;
 
     return () => clearInterval(interval);
@@ -712,7 +712,7 @@ const HelpingChart = () => {
     const { instrument_token } = data.data; // Extract instrument token
     // console.log("instrument Token",instrument_token)
     const handleTradeUpdate = (socketData) => {
-      // console.log("socketData",socketData)
+      //  console.log("socketData",socketData)
       if (Array.isArray(socketData)) {
         const matchingData = socketData.filter(
           (item) => Number(item.instrument_token) === instrument_token
@@ -730,11 +730,11 @@ const HelpingChart = () => {
     };
   }, [socket, isConnected, data?.data?.instrument_token]);
 
-  // console.log("filteredData", filteredData);
+  //  console.log("filteredData", filteredData);
 
   useEffect(() => {
     if (filteredData?.length > 0) {
-      const currentValues = {
+      const currentValues = {                                      
         CEStopLossForIndex7: filteredData?.[0]?.CEStopLossForIndex7,
         CEStopLossForIndex17: filteredData?.[0]?.CEStopLossForIndex17,
         PEStopLossForIndex7: filteredData?.[0]?.PEStopLossForIndex7,
@@ -977,15 +977,16 @@ const HelpingChart = () => {
     getTestMode();
   }, []);
 
-  const getValue = (key) => filteredData?.[0]?.[key] ?? data.data[key];
+  const getValue = (key) => data.data[key];
+  // const getValue = (key) => filteredData?.[0]?.[key] ?? data.data[key];
   const openChartInNewTab = () => {
     // Open the /future/pcrchart route in a new tab
     window.open("/future/pcrchart", "_blank");
   };
    
-   //console.log("socketData" , socketData)
+   
   return (
-    <div className="p-2">
+    <div className="p-2">                                                                                                     
       {/* {data.error ? (
         "Some Error Occcured"
       ) : ( */}
@@ -1055,7 +1056,7 @@ const HelpingChart = () => {
                   Trade Index: {data?.data?.tradeIndex}
                 </p> */}
 
-                {data?.data?.tradeIndex != 4 && data?.data?.tradeIndex != 7 && (
+                {/* {data?.data?.tradeIndex != 4 && data?.data?.tradeIndex != 7 && (
                   <>
                     <p className=" text-[13px] md:text-[16px]">
                       SMA1 : {data?.data?.SMA1}
@@ -1064,7 +1065,7 @@ const HelpingChart = () => {
                       SMA2 : {data?.data?.SMA2}
                     </p>
                   </>
-                )}
+                )} */}
                 <p className="text-red-500 text-[13px] md:text-[16px]">
                   {ceStopLoss && `CE Stop Loss : ${ceStopLoss?.toFixed(1)}`}
                 </p>
@@ -1107,6 +1108,7 @@ const HelpingChart = () => {
                 </p>
                 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                 {/* PE SELL Status */}
+           
                 <p
                   className={`${
                     getValue("haveTradeOfPEBuy")
@@ -1276,6 +1278,7 @@ const HelpingChart = () => {
                   )}
                 </div>
               )}
+              
               {data.data.tradeIndex == 7 && (
                 <div>
                   {trendLineValue && (
@@ -2077,7 +2080,7 @@ const HelpingChart = () => {
                   type="date"
                   className="border-[1px] border-black rounded-sm"
                   min={today} // Set today's date as the minimum
-                  onChange={(e) => setBuyTrendLineDate((e.target.value)?.slice)}
+                  onChange={(e) => setBuyTrendLineDate((e.target.value))}
                   value={
                     buyTrendLineDate ? buyTrendLineDate?.split("T")?.[0] : ""
                   }

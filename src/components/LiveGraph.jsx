@@ -642,6 +642,15 @@ const CandleChart = ({
     //   logTrendLines(coloredNewTrends);
     // };
 
+    const hasIncompleteLine = (lines, trendLineNames) => {
+      return lines?.some(
+        (line) =>
+          trendLineNames.includes(line?.name) &&
+          (line?.endTime === null || line?.endTime === undefined)
+      );
+    };
+
+
     const sendDataToAPI = async (
       data,
      // endpoint,
@@ -655,17 +664,16 @@ const CandleChart = ({
         "AlertLine1",
         "AlertLine2"
       ];
+     // console.log(data)
     
-      // Check if any trend line matches the condition
-      const incompleteLineExists = data?.buyTrendLines?.some(
-        (line) =>
-          trendLineNames.includes(line?.name) && (line?.endTime === null || line?.endTime === undefined)
-      );
-       if(incompleteLineExists){
-         alert("Please Draw Line Inside The Chart");
-         await getChartData();
-         return;
-       }
+   if (
+    hasIncompleteLine(data?.buyTrendLines, trendLineNames) ||
+    hasIncompleteLine(data?.analysisLine, trendLineNames)
+  ) {
+    alert("Please Draw Line Inside The Chart");
+    await getChartData();
+    return;
+  }
 
       try {
         await axios.put(`${BASE_URL_OVERALL}/config/edit`, { id, ...data });
@@ -931,18 +939,19 @@ const CandleChart = ({
       const updatedAlert3 = []; // Define the updated value
       setAlert3(updatedAlert3); // Update the state
       sendDataToAPI(
-        { analysisLine: updatedAlert3, buyTrendLineDate: null },
+        { analysisLine: updatedAlert3, buyTrendLineDate: null , callLine : 0 , putLine: 0 },
         "/config/edit",
         "Alert lines saved."
       );
 
     };
 
+
     const handleResetEntryLines = () => {
       const updatedAlert3 = [];
       setEntryLine(updatedAlert3);
       sendDataToAPI(
-        { buyTrendLines: updatedAlert3, buyTrendLineDate: null },
+        { buyTrendLines: updatedAlert3, buyTrendLineDate: null , callLine : 0 , putLine : 0 },
         "/config/edit",
         "Alert lines saved."
       );
@@ -964,6 +973,7 @@ const CandleChart = ({
         console.log(err);
       }
     };
+
 
     const handleActivateEntryLine = () => {
       setActiveLineType("entryLine");
@@ -1055,6 +1065,7 @@ const CandleChart = ({
                 <div className="flex flex-col gap-2 md:flex-row md:justify-around">
                   {master?.tradeIndex == 4 ? (
                     <button
+                    
                       className="bg-red-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
                       onClick={handleResetTrendLines}
                     >
@@ -1062,6 +1073,14 @@ const CandleChart = ({
                     </button>
                   ) : (
                     <button
+                    disabled={
+                      master?.haveTradeOfCE ||
+                      master?.haveTradeOfPE ||
+                      master?.haveTradeOfCEBuy ||
+                      master?.haveTradeOfPEBuy ||
+                      master?.haveTradeOfFUTSell ||
+                      master?.haveTradeOfFUTBuy
+                    }
                       className="bg-red-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
                       onClick={handleResetAlertLine}
                     >
@@ -1083,7 +1102,16 @@ const CandleChart = ({
                     Submit
                   </button> */}
                   <button
-                    className="bg-red-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
+
+                      disabled={
+                    master?.haveTradeOfCE ||
+                    master?.haveTradeOfPE ||
+                    master?.haveTradeOfCEBuy ||
+                    master?.haveTradeOfPEBuy ||
+                    master?.haveTradeOfFUTSell ||
+                    master?.haveTradeOfFUTBuy
+                  }
+                    className="bg-red-600 hover:bg-red-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
                     onClick={handleResetEntryLines}
                   >
                     Remove EntryLine1
