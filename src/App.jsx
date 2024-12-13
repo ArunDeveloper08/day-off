@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes, redirect } from "react-router-dom";
+import { Navigate, Route, Routes  } from "react-router-dom";
 import React, { Suspense } from "react";
 import "./App.css";
 // import FuturePage from "./pages/future";
@@ -10,6 +10,7 @@ import { DashboardPage } from "./pages/dashboard";
 //const LivePageLayout = React.lazy(() => import("./pages/live-page"));
 const BackTestingPageLayout = React.lazy(() => import("./pages/back-testing-page"));
 import LoginPage from "./pages/LoginPage";
+//const LoginPage = React.lazy(()=> import("./pages/LoginPage"))
 import { ThemeProvider } from "./components/theme-provider";
 // import AngelOneLayout from "./pages/angel-one/layout";
 // import GainerLosser from "./pages/angel-one/gainer-looser";
@@ -19,6 +20,7 @@ const AngelOneLayout = React.lazy(() => import("./pages/angel-one/layout"));
 const GainerLosser = React.lazy(() =>
   import("./pages/angel-one/gainer-looser")
 );
+
 const OtherPage = React.lazy(() => import("./pages/angel-one/other-page"));
 const OptionGreek = React.lazy(() => import("./pages/angel-one/option-greek"));
 import Dashboard from "./components/TradingViewGraph";
@@ -26,7 +28,6 @@ import { HelpingPageLayout } from "./pages/HelpingChart";
 import CustomTab from "./pages/CustomTab";
 // import AngelLogin from "./pages/AngelLogin";
 import secureLocalStorage from "react-secure-storage";
-
 import ModalProvider from "./providers/modal-provider";
 // import IdentifierLooserGainer from "./pages/IdentifierLooserGainer";
 // import PcrChart from "./pages/PcrChart";
@@ -36,7 +37,7 @@ const IdentifierLooserGainer = React.lazy(() =>
   import("./pages/IdentifierLooserGainer")
 );
 const PcrChart = React.lazy(() => import("./pages/PcrChart"));
-//const ModalProvider = React.lazy(() => import("./providers/modal-provider"));
+
 
 export default function Home() {
   // useAuth();
@@ -141,7 +142,4 @@ export default function Home() {
   );
 }
 
-// url for gainer looser log
-// /api/v1/logs/getPrevDate  ==> GET METHOD    PORT 4001
 
-// /api/v1/logs/getdata===>POST METHOD     send datatype={expirytype: "NEAR", datatype: "Long Built Up"}   and date

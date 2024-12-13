@@ -1039,7 +1039,7 @@ const CandleChart = ({
                   </div>
                 </>
               )}
-
+    
               {master?.isMaster && master?.tradeIndex == 4 && (
                 <>
                   <div className="flex flex-col gap-2 md:flex-row md:justify-around">

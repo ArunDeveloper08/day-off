@@ -107,6 +107,8 @@ export const LivePage = () => {
       }));
     }
   };
+
+  
   const getChartData = useCallback(() => {
     if (isUserScroll) return;
 
@@ -134,7 +136,7 @@ export const LivePage = () => {
   useEffect(() => {
     if (isUserScroll) return;
     getChartData();
-    const interval = setInterval(getChartData, 25 * 1000);
+    const interval = setInterval(getChartData, 45 * 1000);
     intervalRef.current = interval;
 
     return () => clearInterval(interval);
@@ -175,9 +177,9 @@ export const LivePage = () => {
     };
   }, [socket, data, isConnected]);
 
+
   // useEffect(() => {
   //   if (!isConnected || !data?.data?.instrument_token) return;
-
   //   socket?.on("getLiveData", (socketdata) => {
   //     // Check if token is a string before applying replace
   //     if (typeof socketdata?.token === "string") {
@@ -276,10 +278,11 @@ export const LivePage = () => {
   };
   //  console.log("socketdata",socketData)
   return (
-    <div>
+    <div>     
       {/* {data.error ? ( */}
-      {/* // "Some Error Occcured" */}
+      {/* // "Some Error Occcured" */} 
       {/* // ) : ( */}
+
       <>
         <div>
           <p className="font-semibold text-center font-mono text-[20px] text-green-600">

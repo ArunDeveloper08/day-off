@@ -271,7 +271,7 @@ const HelpingChart = () => {
   // Refined rounding function
   
   const getChartData = async () => {
-    const maxRetries = 5; // Maximum number of retries
+    const maxRetries = 7; // Maximum number of retries
     let attempts = 0;     // Counter for attempts
   
     while (attempts < maxRetries) {
@@ -555,7 +555,7 @@ const HelpingChart = () => {
 
   useEffect(() => {
     getTradeConfig();
-    const interval = setInterval(getTradeConfig, 12 * 1000);
+    const interval = setInterval(getTradeConfig, 8 * 1000);
     // intervalRef.current = interval;
 
     return () => clearInterval(interval);
@@ -600,8 +600,6 @@ const HelpingChart = () => {
     getChartData();
     // if (!values) return;
     const interval = setInterval(getChartData,  120 * 1000);
-    //  intervalRef.current = interval;
-
     return () => clearInterval(interval);
   }, [
     data?.data?.haveTradeOfCE,
@@ -613,6 +611,8 @@ const HelpingChart = () => {
     trendLineValue?.dataForIndex7?.CESellLinePrice,
     trendLineValue?.dataForIndex7?.PESellLinePrice,
   ]);
+
+
 
   // const memoizedTrendLines = useMemo(() => {
   //   let supports = [];
@@ -635,6 +635,7 @@ const HelpingChart = () => {
   //   setSupportTrendLine(memoizedTrendLines.supports);
   //   setResistanceTrendLine(memoizedTrendLines.resistances);
   // }, [memoizedTrendLines]);
+
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -666,8 +667,12 @@ const HelpingChart = () => {
   //   });
   // }, [socket, data, isConnected]);
 
+
+  const lastUpdateTimeRef = useRef(Date.now());
   useEffect(() => {
     if (!isConnected || !data?.data?.instrument_token) return;
+
+   
     //  console.log("Hii")
     socket?.on("getLiveData", (socketdata) => {
       //console.log(socketdata)
@@ -682,22 +687,39 @@ const HelpingChart = () => {
       // Proceed if the token matches the instrument token
       if (socketdata.token === data?.data.instrument_token) {
         setSocketData(socketdata);
-        setApiData((prevApiData) => {
-          if (!prevApiData || prevApiData.length === 0) return prevApiData;
 
-          // Clone the previous data to avoid direct mutation
-          const updatedData = [...prevApiData];
+        const currentTime = Date.now();
+        // Throttle updates to once per second
+        if (currentTime - lastUpdateTimeRef.current > 1000) {
+          lastUpdateTimeRef.current = currentTime;
+          setApiData((prevApiData) => {
+            if (!prevApiData || prevApiData.length === 0) return prevApiData;
+  
+            const updatedData = [...prevApiData];
+            updatedData[updatedData.length - 1] = {
+              ...updatedData[updatedData.length - 1],
+              close: socketdata.last_traded_price,
+            };
+  
+            return updatedData;
+          });
+        }
+        // setApiData((prevApiData) => {
+        //   if (!prevApiData || prevApiData.length === 0) return prevApiData;
 
-          // Replace the `close` value in the last candle with `last_traded_price`
-          updatedData[updatedData.length - 1] = {
-            ...updatedData[updatedData.length - 1],
-            close: socketData.last_traded_price,
-          };
+        //   // Clone the previous data to avoid direct mutation
+        //   const updatedData = [...prevApiData];
 
-          return updatedData;
-        });
+        //   // Replace the `close` value in the last candle with `last_traded_price`
+        //   updatedData[updatedData.length - 1] = {
+        //     ...updatedData[updatedData.length - 1],
+        //     close: socketData.last_traded_price,
+        //   };
+
+        //   return updatedData;
+        // });
       }
-    });
+    });         
 
     return () => {
       socket?.off("getLiveData"); // Clean up the event listener when the component unmounts
@@ -706,7 +728,6 @@ const HelpingChart = () => {
   // console.log("socketData",socketData)
 
   useEffect(() => {
-    // console.log("Hiiiiii")
     if (!isConnected || !data?.data?.instrument_token) return;
 
     const { instrument_token } = data.data; // Extract instrument token
@@ -730,7 +751,7 @@ const HelpingChart = () => {
     };
   }, [socket, isConnected, data?.data?.instrument_token]);
 
-  //  console.log("filteredData", filteredData);
+  //         console.log("filteredData", filteredData);
 
   useEffect(() => {
     if (filteredData?.length > 0) {
