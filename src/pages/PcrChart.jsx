@@ -2,20 +2,26 @@ import { ResponsiveLine } from "@nivo/line";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { BASE_URL_OVERALL } from "@/lib/constants";
+import { useSearchParams } from "react-router-dom";
 
 const PcrAndCoiPcrChart = () => {
   const [pcrData, setPcrData] = useState([]);
   const [coiPcrData, setCoiPcrData] = useState([]);
+  const [diffOIData, setDiffOIData] = useState([]);
+  const [searchParams] = useSearchParams();
+  const identifier = searchParams.get("identifier");
 
   // Function to fetch and transform the data for both PCR and COI PCR charts
 
   const getChartData = async () => {
     try {
-      const response = await axios.get(`${BASE_URL_OVERALL}/log`);
+      const response = await axios.get(`${BASE_URL_OVERALL}/log?identifier=${identifier}`);
       const transformedPcrData = transformToChartData(response.data.data, "pcrRatio");
       const transformedCoiPcrData = transformToChartData(response.data.data, "coiPCRatio");
+      const transformedOiDiffData = transformToChartData(response.data.data, "diffOI");
       setPcrData(transformedPcrData);
       setCoiPcrData(transformedCoiPcrData);
+      setDiffOIData(transformedOiDiffData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -222,6 +228,78 @@ const PcrAndCoiPcrChart = () => {
           <p>Loading COI PCR chart...</p>
         )}
       </div>
+      <div style={{ height: 400, marginTop:25 }}>
+      
+        <p className="text-center font-bold text-[22px]">Diff  OI   CHART</p>
+        {diffOIData?.length > 0 ? (
+          <ResponsiveLine
+            data={diffOIData}
+            margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
+            xScale={{ type: "time" }}
+            yScale={{
+              type: "linear",
+              min: "auto",
+              max: "auto",
+              stacked: false,
+              reverse: false,
+            }}
+            axisTop={null}
+            axisRight={null}
+            axisBottom={{
+              tickSize: 5,
+              tickPadding: 5,
+              legend: "Time",
+              legendOffset: 36,
+              legendPosition: "middle",
+              tickValues: getTickValues(diffOIData),
+              format: formatTick,
+            }}
+            axisLeft={{
+              orient: "left",
+              legend: "DIFF OI",
+              legendOffset: -40,
+              legendPosition: "middle",
+            }}
+            pointSize={5}
+            pointColor={{ theme: "background" }}
+            pointBorderWidth={2}
+            pointBorderColor={{ from: "serieColor" }}
+            pointLabelYOffset={-12}
+            useMesh={true}
+            tooltip={customTooltip}
+            legends={[
+              {
+                anchor: "bottom-right",
+                direction: "column",
+                justify: false,
+                translateX: 100,
+                translateY: 0,
+                itemsSpacing: 0,
+                itemDirection: "left-to-right",
+                itemWidth: 80,
+                itemHeight: 20,
+                itemOpacity: 0.75,
+                symbolSize: 12,
+                symbolShape: "circle",
+                symbolBorderColor: "rgba(0, 0, 0, .5)",
+                effects: [
+                  {
+                    on: "hover",
+                    style: {
+                      itemBackground: "rgba(0, 0, 0, .03)",
+                      itemOpacity: 1,
+                    },
+                  },
+                ],
+              },
+            ]}
+          />
+        ) : (
+          <p>Loading Diff OI chart...</p>
+        )}
+      </div>
+
+
     </div>
   );
 };

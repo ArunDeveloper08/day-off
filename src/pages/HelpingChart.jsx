@@ -690,7 +690,8 @@ const HelpingChart = () => {
 
         const currentTime = Date.now();
         // Throttle updates to once per second
-        if (currentTime - lastUpdateTimeRef.current > 1000) {
+        if (currentTime - lastUpdateTimeRef.current > 6000) {
+          //console.log("hii")
           lastUpdateTimeRef.current = currentTime;
           setApiData((prevApiData) => {
             if (!prevApiData || prevApiData.length === 0) return prevApiData;
@@ -751,7 +752,7 @@ const HelpingChart = () => {
     };
   }, [socket, isConnected, data?.data?.instrument_token]);
 
-  //         console.log("filteredData", filteredData);
+  //console.log("filteredData", filteredData);
 
   useEffect(() => {
     if (filteredData?.length > 0) {
@@ -1001,8 +1002,17 @@ const HelpingChart = () => {
   const getValue = (key) => data.data[key];
   // const getValue = (key) => filteredData?.[0]?.[key] ?? data.data[key];
   const openChartInNewTab = () => {
-    // Open the /future/pcrchart route in a new tab
-    window.open("/future/pcrchart", "_blank");
+    // // Open the /future/pcrchart route in a new tab
+
+    // window.open("/future/pcrchart", "_blank");
+
+    const identifier = data?.data?.identifier;
+
+    // Construct the URL with the identifier as a query parameter
+    const url = `/future/pcrchart?identifier=${encodeURIComponent(identifier)}`;
+  
+    // Open the constructed URL in a new tab
+    window.open(url, "_blank");
   };
    
    
@@ -1176,7 +1186,7 @@ const HelpingChart = () => {
                   {testingMode === 1 ? "Test Mode ON" : "Test Mode OFF"}
                 </button>
                 &nbsp;
-                {id == 1405 && (
+                {(id == 1405 || id == 79) && (
                   <button
                     onClick={openChartInNewTab}
                     className="bg-green-600 text-white px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]"
