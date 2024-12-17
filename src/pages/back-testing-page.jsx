@@ -15,12 +15,13 @@ import { useLiveSocket } from "@/providers/live-socket-provider";
 import { useTheme } from "@/components/theme-provider";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+
 export const BackTestingPage = () => {
   const { theme, setTheme } = useTheme();
 
-  useEffect(() => {
-    setTheme("light");
-  }, []);
+  // useEffect(() => {
+  //   setTheme("light");
+  // }, []);
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const id = searchParams.get("id");
@@ -28,11 +29,12 @@ export const BackTestingPage = () => {
   const [apiData, setApiData] = useState([]);
   const [updateTrigger, setUpdateTrigger] = useState(false);
   // const [chartType, setChartType] = useState("canvas");
-  const [trends3, setTrends3] = useState([]);
-  const [alert3, setAlert3] = useState([]);
+ const [trends3, setTrends3] = useState([]);
+ const [alert3, setAlert3] = useState([]);
   const [intractiveData, setIntractiveData] = useState([]);
   const [entryLine, setEntryLine] = useState([]);
   const [chartType, setChartType] = useState("svg");
+
   const [data, setData] = useState({
     loading: false,
     data: {},
@@ -66,6 +68,7 @@ export const BackTestingPage = () => {
     suppRes: false,
     entryLine: true,
     toolTip: false,
+    bollingerBand:false,
   });
 
   const [latestValues, setLatestValues] = useState({
@@ -74,6 +77,7 @@ export const BackTestingPage = () => {
     RSI_Value: 0,
     BaseExitValue: 0,
   });
+
 
   const getTradeConfig = async () => {
     setData((p) => ({ ...p, loading: true }));
@@ -123,6 +127,7 @@ export const BackTestingPage = () => {
   //   }
   // };
 
+  
   const handleStart = () => {
     axios
       .post(`${BASE_URL_OVERALL}/test/startTesting`, {
@@ -173,6 +178,7 @@ export const BackTestingPage = () => {
     }
   }, [socket, isConnected]);
 
+
   const handleSubmit = async (data) => {
     try {
       await axios.put(`${BASE_URL_OVERALL}/config/edit`, {
@@ -193,7 +199,8 @@ export const BackTestingPage = () => {
     await handleSubmit({ testingBuyTrendLines: null });
    window.location.reload();
   };
- 
+
+
   useEffect(() => {
     if (data?.data?.identifier) {
       document.title = `BackTest ${data?.data?.identifier}`;
@@ -264,15 +271,15 @@ export const BackTestingPage = () => {
   const handlePlayPause = () => {  
     const command = isPlaying ? "pauseInterval" : "playInterval";
     socket.emit(command);
-   // console.log(`${command} command sent`);
     setIsPlaying((prev) => !prev); 
-  // Toggle the playing state
   };
     
   const handleSelect = (key, value) => {
     setValues((prev) => ({ ...prev, [key]: value }));
   }
   
+
+ //  return  <div> Loading ...</div>;
 
   return (  
     <div>
@@ -405,6 +412,21 @@ export const BackTestingPage = () => {
             >
               Target Profit
             </button>
+            <button
+                  onClick={() =>
+                    setShowRow((p) => ({
+                      ...p,
+                      bollingerBand: !p.bollingerBand,
+                    }))
+                  }
+                  className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
+                    showRow.bollingerBand
+                      ? "bg-blue-500 text-gray-100"
+                      : "bg-gray-300 "
+                  }`}
+                >
+                  Bollinger 
+                </button>
             {/* 
               &nbsp; &nbsp;
          <button

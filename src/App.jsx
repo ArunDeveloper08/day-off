@@ -6,9 +6,9 @@ import HomePage from "./pages/home";
 // import useAuth from "./hooks/useAuth";
 import { DashboardPage } from "./pages/dashboard";
  import { LivePageLayout } from "./pages/live-page";
-// import { BackTestingPageLayout } from "./pages/back-testing-page";
+import { BackTestingPageLayout } from "./pages/back-testing-page";
 //const LivePageLayout = React.lazy(() => import("./pages/live-page"));
-const BackTestingPageLayout = React.lazy(() => import("./pages/back-testing-page"));
+//const BackTestingPageLayout = React.lazy(() => import("./pages/back-testing-page"));
 import LoginPage from "./pages/LoginPage";
 //const LoginPage = React.lazy(()=> import("./pages/LoginPage"))
 import { ThemeProvider } from "./components/theme-provider";

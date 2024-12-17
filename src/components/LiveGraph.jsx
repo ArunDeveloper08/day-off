@@ -1542,6 +1542,35 @@ const CandleChart = ({
                           xOffset: 0, // Adjust horizontal offset if necessary
                         }}
                       />
+                      <Annotate
+                        with={LabelAnnotation}
+                        when={(d) => d.idx.index === 6}
+                        usingProps={{
+                          text: "MonthlyClose",
+                          fill: "black",
+                          fontFamily: "Arial",
+                          y: ({ yScale, datum }) => yScale(datum.monthlyClose), // Calculate y position based on yScale
+                          fontSize: 20,
+                          textAnchor: "middle",
+                          yOffset: -10, // Adjust as needed to position the text above the high point
+                          xOffset: 0, // Adjust horizontal offset if necessary
+                        }}
+                      />
+
+                      <Annotate
+                        with={LabelAnnotation}
+                        when={(d) => d.idx.index === 6}
+                        usingProps={{
+                          text: "Monthly Open",
+                          fill: "black",
+                          fontFamily: "Arial",
+                          y: ({ yScale, datum }) => yScale(datum.monthlyOpen), // Calculate y position based on yScale
+                          fontSize: 20,
+                          textAnchor: "middle",
+                          yOffset: -10, // Adjust as needed to position the text above the high point
+                          xOffset: 0, // Adjust horizontal offset if necessary
+                        }}
+                      />
                       <LineSeries
                         strokeWidth={6}
                         stroke="red"
@@ -1551,6 +1580,16 @@ const CandleChart = ({
                         strokeWidth={6}
                         stroke="green"
                         yAccessor={(d) => d.monthlyLow}
+                      />
+                      <LineSeries
+                        strokeWidth={6}
+                        stroke="red"
+                        yAccessor={(d) => d.monthlyClose}
+                      />
+                      <LineSeries
+                        strokeWidth={6}
+                        stroke="green"
+                        yAccessor={(d) => d.monthlyOpen}
                       />
                     </>
                   )}
@@ -1595,6 +1634,16 @@ const CandleChart = ({
                         strokeWidth={5}
                         stroke="green"
                         yAccessor={(d) => d.weeklyLow}
+                      />
+                      <LineSeries
+                        strokeWidth={5}
+                        stroke="red"
+                        yAccessor={(d) => d.weeklyOpen}
+                      />
+                      <LineSeries
+                        strokeWidth={5}
+                        stroke="green"
+                        yAccessor={(d) => d.weeklyClose}
                       />
                     </>
                   )}
@@ -1686,6 +1735,16 @@ const CandleChart = ({
                         stroke="green"
                         yAccessor={(d) => d.hourlyLow}
                       />
+                      <LineSeries
+                        strokeWidth={2}
+                        stroke="red"
+                        yAccessor={(d) => d.hourlyOpen}
+                      />
+                      <LineSeries
+                        strokeWidth={2}
+                        stroke="green"
+                        yAccessor={(d) => d.hourlyClose}
+                      />
                     </>
                   )}
 
@@ -1730,6 +1789,16 @@ const CandleChart = ({
                         strokeWidth={4}
                         stroke="green"
                         yAccessor={(d) => d.dailyLow}
+                      />
+                      <LineSeries
+                        strokeWidth={4}
+                        stroke="red"
+                        yAccessor={(d) => d.dailyOpen}
+                      />
+                      <LineSeries
+                        strokeWidth={4}
+                        stroke="green"
+                        yAccessor={(d) => d.dailyClose}
                       />
                     </>
                   )}

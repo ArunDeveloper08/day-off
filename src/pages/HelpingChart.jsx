@@ -55,6 +55,8 @@ const HelpingChart = () => {
   const [filteredData, setFilteredData] = useState([]);
   const previousValues = useRef({});
   const [buyTrendLineDate, setBuyTrendLineDate] = useState();
+  const [bankNifty , setBankNifty] = useState()
+  const [Nifty , setNifty] = useState()
   // const [checkButtonBull , setCheckButtonBull] = useState(false);
   // const [checkButtonBear , setCheckButtonBear] = useState(false);
   // const [selectedInterval, setSelectedInterval] = useState("ONE_MINUTE");
@@ -223,6 +225,21 @@ const HelpingChart = () => {
     return mergedLines;
   };
 
+
+  const pcrlog = async ()=>{
+    try{
+    const response = await  axios.get(`${BASE_URL_OVERALL}/log/pcrValue`);
+   
+    setBankNifty(response?.data.data?.valueOfBankNifty)
+    setNifty(response?.data.data?.valueOfNifty50)
+    }catch(err){
+      console.warn(err)
+    }
+  }
+  useEffect(()=>{
+    pcrlog();
+
+  },[])
   // const getChartData = () => {
   //   axios
   //     .post(`${BASE_URL_OVERALL}/chart/helper?id=${id}`)
@@ -599,7 +616,7 @@ const HelpingChart = () => {
   useEffect(() => {
     getChartData();
     // if (!values) return;
-    const interval = setInterval(getChartData,  120 * 1000);
+    const interval = setInterval({getChartData , pcrlog},  120 * 1000);
     return () => clearInterval(interval);
   }, [
     data?.data?.haveTradeOfCE,
@@ -1009,13 +1026,30 @@ const HelpingChart = () => {
     const identifier = data?.data?.identifier;
 
     // Construct the URL with the identifier as a query parameter
-    const url = `/future/pcrchart?identifier=${encodeURIComponent(identifier)}`;
+  //  const url = `/future/pcrchart?identifier=${encodeURIComponent(identifier)}`;
+    const url = `/future/pcrchart?identifier=Nifty Bank`;
+  
+    // Open the constructed URL in a new tab
+    window.open(url, "_blank");
+  };
+
+  const openChartInNewTab2 = () => {
+    // // Open the /future/pcrchart route in a new tab
+
+    // window.open("/future/pcrchart", "_blank");
+
+    const identifier = data?.data?.identifier;
+
+    // Construct the URL with the identifier as a query parameter
+  //  const url = `/future/pcrchart?identifier=${encodeURIComponent(identifier)}`;
+    const url = `/future/pcrchart?identifier=Nifty 50`;
   
     // Open the constructed URL in a new tab
     window.open(url, "_blank");
   };
    
-   
+
+ 
   return (
     <div className="p-2">                                                                                                     
       {/* {data.error ? (
@@ -1025,26 +1059,27 @@ const HelpingChart = () => {
         <h2 className="text-center font-semibold text-[18px] font-mono text-red-600 sm:text-[20px] md:text-[20px]">
           {data?.data?.identifier} &nbsp;{" "}
           <button className="text-[20px] text-center font-semibold text-red-700">
-            LTP : {socketData?.last_traded_price} &nbsp; OI PCR :{" "}
-            {id == 1405 && (
+            LTP : {socketData?.last_traded_price} &nbsp; 
+         
               <span>
+                {/* OI PCR :{" "}
                 {data?.data?.PCR?.toFixed(1)} &nbsp; COI PCR :{" "}
-                {data?.data?.COIPCR?.toFixed(1)} &nbsp; RSI :{" "}
+                {data?.data?.COIPCR?.toFixed(1)} &nbsp; RSI :{" "} */}
                 {data?.data?.RSI_Value?.toFixed(1)} &nbsp;
               </span>
-            )}
-            {data?.data?.lastHighestLTP > 0 && (
+        
+            {/* {data?.data?.lastHighestLTP > 0 && (
               <span>Last High LTP : {data?.data?.lastHighestLTP}</span>
-            )}
+            )} */}
             &nbsp;
-            {
+            {/* {
               // (data?.data?.haveTradeOfPEBuy ||
               //   data?.data?.haveTradeOfPE ||
               //   data?.data?.haveTradeOfFUTSell) &&
               data?.data?.lastLowestLTP > 0 && (
                 <span> Last Lowest LTP : {data?.data?.lastLowestLTP} </span>
               )
-            }
+            } */}
           </button>
           &nbsp; &nbsp;
           <Button
@@ -1063,7 +1098,40 @@ const HelpingChart = () => {
             High/Low line
           </Button>
           &nbsp; &nbsp;
+          <button
+          
+                  onClick={toggleTestingMode}
+                  className={`${
+                    testingMode === 1
+                      ? "bg-red-600 text-white hover:bg-red-600"
+                      : "bg-green-600 text-white hover:bg-green-600"
+                  }  border-muted-foreground rounded-sm text-[13px] md:text-[16px] px-[6px] py-[2px] 
+                  font-bold text-center`}
+                >
+                  {testingMode === 1 ? "Test Mode ON" : "Test Mode OFF"}
+                </button>
         </h2>
+        <div className="flex justify-around font-bold mt-2">
+  <p>Nifty OI PCR: {(Nifty?.pcrRatio)?.toFixed(1)}  </p>
+  <p>Nifty COI PCR: {(Nifty?.coiPCRatio)?.toFixed(1)} </p>
+  <p>Bank Nifty OI PCR: {(bankNifty?.pcrRatio)?.toFixed(1)}  </p>
+  <p>Bank Nifty COI PCR: {(bankNifty?.coiPCRatio)?.toFixed(1)} </p>
+  
+  <button
+                    onClick={openChartInNewTab}
+                    className="bg-green-600 text-white px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]"
+                  >
+                   BankNifty PCR Chart
+                  </button>
+                  &nbsp;
+                  <button
+                    onClick={openChartInNewTab2}
+                    className="bg-green-600 text-white px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]"
+                  >
+                   Nifty PCR Chart
+                  </button>
+
+        </div>
 
         {hideConfig && (
           <>
@@ -1174,26 +1242,13 @@ const HelpingChart = () => {
                   FUT Sell Status:{" "}
                   {getValue("haveTradeOfFUTSell") ? "True" : "False"}
                 </p>
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-                <button
-                  onClick={toggleTestingMode}
-                  className={`${
-                    testingMode === 1
-                      ? "bg-red-600 text-white"
-                      : "bg-green-600 text-white"
-                  } px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]`}
-                >
-                  {testingMode === 1 ? "Test Mode ON" : "Test Mode OFF"}
-                </button>
+                &nbsp; &nbsp; &nbsp; 
+       
                 &nbsp;
-                {(id == 1405 || id == 79) && (
-                  <button
-                    onClick={openChartInNewTab}
-                    className="bg-green-600 text-white px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]"
-                  >
-                    PCR Chart
-                  </button>
-                )}
+              
+                  &nbsp;
+        
+            
               </div>
 
               <div className="flex flex-wrap   font-semibold py-2  justify-start">

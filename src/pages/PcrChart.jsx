@@ -40,7 +40,7 @@ const PcrAndCoiPcrChart = () => {
         id: `${field} Data`,
         data: data?.map((point) => ({
           x: new Date(point.createdAt),
-          y: point[field], // Dynamically use either 'pcrRatio' or 'coiPCRatio'
+          y: point[field], 
         })),
       },
     ];
@@ -53,6 +53,7 @@ const PcrAndCoiPcrChart = () => {
     const interval = setInterval(getChartData, 120 * 1000);
     return () => clearInterval(interval);
   }, []);
+
 
   const formatTick = (tick) => {
     return tick instanceof Date ? tick.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : tick;
@@ -88,83 +89,90 @@ const PcrAndCoiPcrChart = () => {
   return (
     <div>
     
-      <div style={{ height: 400 }}>
-        <p className="text-center font-bold text-[22px]">OI PCR  CHART</p>
-        {pcrData?.length > 0 ? (
-          <ResponsiveLine
-            data={pcrData}
-            margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
-            xScale={{ type: "time" }}
-            yScale={{
-              type: "linear",
-              min: "auto",
-              max: "auto",
-              stacked: false,
-              reverse: false,
-            }}
-            axisTop={null}
-            axisRight={null}
-            axisBottom={{
-              tickSize: 5,
-              tickPadding: 5,
-              legend: "Time",
-              legendOffset: 36,
-              legendPosition: "middle",
-              tickValues: getTickValues(pcrData),
-              format: formatTick,
-            }}
-            axisLeft={{
-              orient: "left",
-              legend: "PCR Ratio",
-              legendOffset: -40,
-              legendPosition: "middle",
-            }}
-            pointSize={5}
-            pointColor={{ theme: "background" }}
-            pointBorderWidth={2}
-            pointBorderColor={{ from: "serieColor" }}
-            pointLabelYOffset={-12}
-            useMesh={true}
-            tooltip={customTooltip}
-            legends={[
-              {
-                anchor: "bottom-right",
-                direction: "column",
-                justify: false,
-                translateX: 100,
-                translateY: 0,
-                itemsSpacing: 0,
-                itemDirection: "left-to-right",
-                itemWidth: 80,
-                itemHeight: 20,
-                itemOpacity: 0.75,
-                symbolSize: 12,
-                symbolShape: "circle",
-                symbolBorderColor: "rgba(0, 0, 0, .5)",
-                effects: [
-                  {
-                    on: "hover",
-                    style: {
-                      itemBackground: "rgba(0, 0, 0, .03)",
-                      itemOpacity: 1,
-                    },
-                  },
-                ],
+    <div style={{ height: 400 }}>
+    <p className="text-center font-bold text-[22px]"><span className="text-blue-500">{identifier}</span> OI PCR CHART</p>
+  {pcrData?.length > 0 ? (
+    <ResponsiveLine
+      data={pcrData}
+      margin={{ top: 10, right: 110, bottom: 50, left: 60 }}
+      xScale={{ type: "time" }}
+      yScale={{
+        type: "linear",
+        min: "auto",
+        max: "auto",
+        stacked: false,
+        reverse: false,
+      }}
+      axisTop={null}
+      axisRight={null}
+      axisBottom={{
+        tickSize: 5,
+        tickPadding: 5,
+        legend: "Time",
+        legendOffset: 36,
+        legendPosition: "middle",
+        tickValues: getTickValues(pcrData),
+        format: formatTick,
+      }}
+      axisLeft={{
+        orient: "left",
+        legend: "PCR Ratio",
+        legendOffset: -40,
+        legendPosition: "middle",
+      }}
+      pointSize={5}
+      pointColor={{ theme: "background" }}
+      pointBorderWidth={2}
+      pointBorderColor={{ from: "serieColor" }}
+      pointLabelYOffset={-12}
+      useMesh={true}
+      tooltip={customTooltip}
+      legends={[
+        {
+          anchor: "bottom-right",
+          direction: "column",
+          justify: false,
+          translateX: 100,
+          translateY: 0,
+          itemsSpacing: 0,
+          itemDirection: "left-to-right",
+          itemWidth: 80,
+          itemHeight: 20,
+          itemOpacity: 0.75,
+          symbolSize: 12,
+          symbolShape: "circle",
+          symbolBorderColor: "rgba(0, 0, 0, .5)",
+          effects: [
+            {
+              on: "hover",
+              style: {
+                itemBackground: "rgba(0, 0, 0, .03)",
+                itemOpacity: 1,
               },
-            ]}
-          />
-        ) : (
-          <p>Loading PCR chart...</p>
-        )}
-      </div>
+            },
+          ],
+        },
+      ]}
+      // Force the line to be green
+      colors={(line) => {
+        // Check if the data points for the line have any value < 1
+        const hasValueBelowOne = line.data.some((point) => point.y < 1);
+        return hasValueBelowOne ? "#dc3545" : "#28a745"; // Red if <1, Green otherwise
+      }}// Solid green color
+    />
+  ) : (
+    <p>Loading PCR chart...</p>
+  )}
+</div>
 
-      <div style={{ height: 400, marginTop:25 }}>
+
+      <div style={{ height: 400, marginTop: 55 }}>
       
-        <p className="text-center font-bold text-[22px]">COI  PCR   CHART</p>
+        <p className="text-center font-bold text-[22px]"> <span className="text-blue-500"><span className="text-blue-500"><span className="text-blue-500">{identifier}</span></span></span> COI  PCR   CHART</p>
         {coiPcrData?.length > 0 ? (
           <ResponsiveLine
             data={coiPcrData}
-            margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
+            margin={{ top: 10, right: 110, bottom: 50, left: 60 }}
             xScale={{ type: "time" }}
             yScale={{
               type: "linear",
@@ -223,18 +231,23 @@ const PcrAndCoiPcrChart = () => {
                 ],
               },
             ]}
+            colors={(line) => {
+              // Check if the data points for the line have any value < 1
+              const hasValueBelowOne = line.data.some((point) => point.y < 1);
+              return hasValueBelowOne ? "#dc3545" : "#28a745"; // Red if <1, Green otherwise
+            }}
           />
         ) : (
           <p>Loading COI PCR chart...</p>
         )}
       </div>
-      <div style={{ height: 400, marginTop:25 }}>
+      <div style={{ height: 400, marginTop:55 }}>
       
-        <p className="text-center font-bold text-[22px]">Diff  OI   CHART</p>
+        <p className="text-center font-bold text-[22px]"><span className="text-blue-500"><span className="text-blue-500">{identifier}</span></span> Diff OI CHART</p>
         {diffOIData?.length > 0 ? (
           <ResponsiveLine
             data={diffOIData}
-            margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
+            margin={{ top: 10, right: 110, bottom: 50, left: 60 }}
             xScale={{ type: "time" }}
             yScale={{
               type: "linear",
@@ -293,6 +306,11 @@ const PcrAndCoiPcrChart = () => {
                 ],
               },
             ]}
+            colors={(line) => {
+              // Check if the data points for the line have any value < 1
+              const hasValueBelowOne = line.data.some((point) => point.y < 0);
+              return hasValueBelowOne ? "#dc3545" : "#28a745"; // Red if <1, Green otherwise
+            }}
           />
         ) : (
           <p>Loading Diff OI chart...</p>
