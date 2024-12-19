@@ -1215,12 +1215,7 @@ const CandleChart = ({
                   // yExtents={(d) => [d.high, d.low]} // Ensure proper y-axis scaling based on high/low
                   padding={{ top: 20, bottom: 50 }} // Add some padding to prevent squeezing
 
-                  // padding={{ top: 10, bottom: 20 }}
-                  // origin={(w, h) => [0, h - 300]}
-                  // origin={(_, h) => {
-                  //   console.log(h);
-                  //   return [0, h - 300];
-                  // }}
+        
                 >
                   <XAxis axisAt="bottom" orient="bottom" ticks={10} />
                   <YAxis axisAt="right" orient="right" />

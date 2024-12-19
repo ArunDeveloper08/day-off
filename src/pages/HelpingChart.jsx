@@ -34,6 +34,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { formatDate } from "@/lib/utils";
 import { useModal } from "@/hooks/use-modal";
+import { debounce } from "lodash";
 
 const HelpingChart = () => {
   const { theme, setTheme } = useTheme();
@@ -41,7 +42,7 @@ const HelpingChart = () => {
   const debounceRef = useRef(null); // Add ref for debouncing
   const [intractiveData, setIntractiveData] = useState([]);
   // const [master, setMaster] = useState("");
- // const [ceTargetValue, setCeTargetValue] = useState(null);
+  // const [ceTargetValue, setCeTargetValue] = useState(null);
   // const [peTargetValue, setPeTargetValue] = useState(null);
   const [ceStopLoss, setCeStopLoss] = useState(null);
   const [peStopLoss, setPeStopLoss] = useState(null);
@@ -55,13 +56,13 @@ const HelpingChart = () => {
   const [filteredData, setFilteredData] = useState([]);
   const previousValues = useRef({});
   const [buyTrendLineDate, setBuyTrendLineDate] = useState();
-  const [bankNifty , setBankNifty] = useState()
-  const [Nifty , setNifty] = useState()
+  const [bankNifty, setBankNifty] = useState();
+  const [Nifty, setNifty] = useState();
   // const [checkButtonBull , setCheckButtonBull] = useState(false);
   // const [checkButtonBear , setCheckButtonBear] = useState(false);
   // const [selectedInterval, setSelectedInterval] = useState("ONE_MINUTE");
 
- // let tradeIndex = "";
+  // let tradeIndex = "";
   // const timeScale = useRef(scaleTime().domain([0, 1]));
   // const priceScale = useRef(scaleLinear().domain([0, 1]));
   // const [entryLine2, setEntryLine2] = useState([]);
@@ -150,7 +151,7 @@ const HelpingChart = () => {
     rsi: false,
     atr: false,
     bearishLine: false,
-    bollingerBand : false
+    bollingerBand: false,
   });
   const [hideConfig, setHideConfig] = useState(true);
   // const [supportTrendLine, setSupportTrendLine] = useState([]);
@@ -177,7 +178,9 @@ const HelpingChart = () => {
       );
       setData((p) => ({ ...p, data: data.data }));
       if (data?.data?.buyTrendLineDate == null) {
-        setBuyTrendLineDate((new Date().toISOString().split("T")[0])?.slice(0,10));
+        setBuyTrendLineDate(
+          new Date().toISOString().split("T")[0]?.slice(0, 10)
+        );
       } else {
         setBuyTrendLineDate(data?.data?.buyTrendLineDate);
       }
@@ -225,21 +228,19 @@ const HelpingChart = () => {
     return mergedLines;
   };
 
+  const pcrlog = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL_OVERALL}/log/pcrValue`);
 
-  const pcrlog = async ()=>{
-    try{
-    const response = await  axios.get(`${BASE_URL_OVERALL}/log/pcrValue`);
-   
-    setBankNifty(response?.data.data?.valueOfBankNifty)
-    setNifty(response?.data.data?.valueOfNifty50)
-    }catch(err){
-      console.warn(err)
+      setBankNifty(response?.data.data?.valueOfBankNifty);
+      setNifty(response?.data.data?.valueOfNifty50);
+    } catch (err) {
+      console.warn(err);
     }
-  }
-  useEffect(()=>{
+  };
+  useEffect(() => {
     pcrlog();
-
-  },[])
+  }, []);
   // const getChartData = () => {
   //   axios
   //     .post(`${BASE_URL_OVERALL}/chart/helper?id=${id}`)
@@ -286,51 +287,52 @@ const HelpingChart = () => {
   //console.log("buyTrendline", buyTrendLineDate);
 
   // Refined rounding function
-  
+
   const getChartData = async () => {
     const maxRetries = 7; // Maximum number of retries
-    let attempts = 0;     // Counter for attempts
-  
+    let attempts = 0; // Counter for attempts
+
     while (attempts < maxRetries) {
       try {
-        const res = await axios.post(`${BASE_URL_OVERALL}/chart/helper?id=${id}`);
-  
+        const res = await axios.post(
+          `${BASE_URL_OVERALL}/chart/helper?id=${id}`
+        );
+
         // Set other data from the API
         setApiData(res.data.data);
         setCeStopLoss(res.data.data?.[0]?.CEStopLoss);
         setPeStopLoss(res.data.data?.[0]?.PEStopLoss);
         setIntractiveData(res.data);
-  
+
         // Merge entry lines if there are buyTrendLines
         if (res?.data?.buyTrendLines?.length > 0) {
           setEntryLine(res?.data?.buyTrendLines);
           setApiResponseReceived(true);
         }
-  
+
         // Process alert lines
         if (res?.data?.analysisLine?.length > 0) {
           setAlert3(res.data?.analysisLine);
           setApiResponseReceived(true);
         }
-  
+
         // Exit loop on success
         return;
       } catch (err) {
         attempts++;
         console.log(`Attempt ${attempts} failed:`, err);
-  
+
         // Wait for a short period before retrying
         if (attempts < maxRetries) {
           await new Promise((resolve) => setTimeout(resolve, 1000)); // 1-second delay
         }
       }
     }
-  
+
     // If all retries fail
-    console.log('All retry attempts failed.');                                              
+    console.log("All retry attempts failed.");
   };
-  
-  
+
   const roundToNearestTime = (time, interval) => {
     const date = new Date(time);
     const minutes = date.getMinutes();
@@ -485,16 +487,14 @@ const HelpingChart = () => {
     );
   }, [apiResponseReceived, apiData, values?.interval]);
 
-
   const handleSelect = (key, value) => {
-
     setValues((prev) => ({ ...prev, [key]: value }));
     if (key === "interval") {
       manualIntervalRef.current = value;
     }
-            
+
     if (key === "interval" && apiResponseReceived) {
-      const updatedEntryLines = filterAndTransformLines( 
+      const updatedEntryLines = filterAndTransformLines(
         entryLine,
         apiData,
         value
@@ -521,7 +521,6 @@ const HelpingChart = () => {
     axios
       .put(`${BASE_URL_OVERALL}/config/editMaster?id=${id}`, {
         ...values,
-        
       })
       .then((res) => {
         alert("Successfully Updated");
@@ -542,15 +541,14 @@ const HelpingChart = () => {
   const handleSubmit2 = () => {
     axios
       .put(`${BASE_URL_OVERALL}/config/editMaster?id=${id}`, {
-      buyTrendLineDate
-        
+        buyTrendLineDate,
       })
       .then((res) => {
         alert("Successfully Updated");
         // Call getChartData only if trendLineActive has NOT changed
         // if (prevTrendLineActive.current === values.trendLineActive) {
         getChartData();
-       // getTradeConfig();
+        // getTradeConfig();
         setApiResponseReceived(true);
         // }
         // Update the previous value to the current value
@@ -576,7 +574,7 @@ const HelpingChart = () => {
     // intervalRef.current = interval;
 
     return () => clearInterval(interval);
-  }, []);     
+  }, []);
 
   const prevHaveTradeOfCE = useRef(false); // Start with false
   const prevHaveTradeOfPE = useRef(false); // Start with false
@@ -616,7 +614,7 @@ const HelpingChart = () => {
   useEffect(() => {
     getChartData();
     // if (!values) return;
-    const interval = setInterval({getChartData , pcrlog},  120 * 1000);
+    const interval = setInterval({ getChartData, pcrlog }, 120 * 1000);
     return () => clearInterval(interval);
   }, [
     data?.data?.haveTradeOfCE,
@@ -628,8 +626,6 @@ const HelpingChart = () => {
     trendLineValue?.dataForIndex7?.CESellLinePrice,
     trendLineValue?.dataForIndex7?.PESellLinePrice,
   ]);
-
-
 
   // const memoizedTrendLines = useMemo(() => {
   //   let supports = [];
@@ -652,7 +648,6 @@ const HelpingChart = () => {
   //   setSupportTrendLine(memoizedTrendLines.supports);
   //   setResistanceTrendLine(memoizedTrendLines.resistances);
   // }, [memoizedTrendLines]);
-
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -689,7 +684,6 @@ const HelpingChart = () => {
   useEffect(() => {
     if (!isConnected || !data?.data?.instrument_token) return;
 
-   
     //  console.log("Hii")
     socket?.on("getLiveData", (socketdata) => {
       //console.log(socketdata)
@@ -707,18 +701,20 @@ const HelpingChart = () => {
 
         const currentTime = Date.now();
         // Throttle updates to once per second
-        if (currentTime - lastUpdateTimeRef.current > 6000) {
+        if (currentTime - lastUpdateTimeRef.current > 10 * 1000) {
+        
+
           //console.log("hii")
           lastUpdateTimeRef.current = currentTime;
           setApiData((prevApiData) => {
             if (!prevApiData || prevApiData.length === 0) return prevApiData;
-  
+
             const updatedData = [...prevApiData];
             updatedData[updatedData.length - 1] = {
               ...updatedData[updatedData.length - 1],
               close: socketdata.last_traded_price,
             };
-  
+          
             return updatedData;
           });
         }
@@ -737,13 +733,23 @@ const HelpingChart = () => {
         //   return updatedData;
         // });
       }
-    });         
+    });
 
     return () => {
       socket?.off("getLiveData"); // Clean up the event listener when the component unmounts
     };
   }, [socket, data, isConnected]);
-  // console.log("socketData",socketData)
+ 
+
+
+
+
+
+ 
+
+ 
+  
+  
 
   useEffect(() => {
     if (!isConnected || !data?.data?.instrument_token) return;
@@ -773,7 +779,7 @@ const HelpingChart = () => {
 
   useEffect(() => {
     if (filteredData?.length > 0) {
-      const currentValues = {                                      
+      const currentValues = {
         CEStopLossForIndex7: filteredData?.[0]?.CEStopLossForIndex7,
         CEStopLossForIndex17: filteredData?.[0]?.CEStopLossForIndex17,
         PEStopLossForIndex7: filteredData?.[0]?.PEStopLossForIndex7,
@@ -808,7 +814,7 @@ const HelpingChart = () => {
       alert("High Low Reset !");
       getChartData();
     } catch (error) {
-      alert("Some error Occured" , error);
+      alert("Some error Occured", error);
     }
   };
 
@@ -1018,40 +1024,22 @@ const HelpingChart = () => {
 
   const getValue = (key) => data.data[key];
   // const getValue = (key) => filteredData?.[0]?.[key] ?? data.data[key];
+
   const openChartInNewTab = () => {
-    // // Open the /future/pcrchart route in a new tab
-
-    // window.open("/future/pcrchart", "_blank");
-
-    const identifier = data?.data?.identifier;
-
-    // Construct the URL with the identifier as a query parameter
-  //  const url = `/future/pcrchart?identifier=${encodeURIComponent(identifier)}`;
     const url = `/future/pcrchart?identifier=Nifty Bank`;
-  
-    // Open the constructed URL in a new tab
     window.open(url, "_blank");
   };
 
   const openChartInNewTab2 = () => {
-    // // Open the /future/pcrchart route in a new tab
+    // const identifier = data?.data?.identifier;
 
-    // window.open("/future/pcrchart", "_blank");
-
-    const identifier = data?.data?.identifier;
-
-    // Construct the URL with the identifier as a query parameter
-  //  const url = `/future/pcrchart?identifier=${encodeURIComponent(identifier)}`;
     const url = `/future/pcrchart?identifier=Nifty 50`;
-  
-    // Open the constructed URL in a new tab
+
     window.open(url, "_blank");
   };
-   
 
- 
   return (
-    <div className="p-2">                                                                                                     
+    <div className="p-2">
       {/* {data.error ? (
         "Some Error Occcured"
       ) : ( */}
@@ -1059,15 +1047,13 @@ const HelpingChart = () => {
         <h2 className="text-center font-semibold text-[18px] font-mono text-red-600 sm:text-[20px] md:text-[20px]">
           {data?.data?.identifier} &nbsp;{" "}
           <button className="text-[20px] text-center font-semibold text-red-700">
-            LTP : {socketData?.last_traded_price} &nbsp; 
-         
-              <span>
-                {/* OI PCR :{" "}
+            LTP : {socketData?.last_traded_price} &nbsp;
+            <span>
+              {/* OI PCR :{" "}
                 {data?.data?.PCR?.toFixed(1)} &nbsp; COI PCR :{" "}
                 {data?.data?.COIPCR?.toFixed(1)} &nbsp; RSI :{" "} */}
-                {data?.data?.RSI_Value?.toFixed(1)} &nbsp;
-              </span>
-        
+        {/* RSI :{" "}  {data?.data?.RSI_Value?.toFixed(1)} &nbsp; */}
+            </span>
             {/* {data?.data?.lastHighestLTP > 0 && (
               <span>Last High LTP : {data?.data?.lastHighestLTP}</span>
             )} */}
@@ -1099,45 +1085,41 @@ const HelpingChart = () => {
           </Button>
           &nbsp; &nbsp;
           <button
-          
-                  onClick={toggleTestingMode}
-                  className={`${
-                    testingMode === 1
-                      ? "bg-red-600 text-white hover:bg-red-600"
-                      : "bg-green-600 text-white hover:bg-green-600"
-                  }  border-muted-foreground rounded-sm text-[13px] md:text-[16px] px-[6px] py-[2px] 
+            onClick={toggleTestingMode}
+            className={`${
+              testingMode === 1
+                ? "bg-red-600 text-white hover:bg-red-600"
+                : "bg-green-600 text-white hover:bg-green-600"
+            }  border-muted-foreground rounded-sm text-[13px] md:text-[16px] px-[6px] py-[2px] 
                   font-bold text-center`}
-                >
-                  {testingMode === 1 ? "Test Mode ON" : "Test Mode OFF"}
-                </button>
+          >
+            {testingMode === 1 ? "Test Mode ON" : "Test Mode OFF"}
+          </button>
         </h2>
         <div className="flex justify-around font-bold mt-2">
-  <p>Nifty OI PCR: {(Nifty?.pcrRatio)?.toFixed(1)}  </p>
-  <p>Nifty COI PCR: {(Nifty?.coiPCRatio)?.toFixed(1)} </p>
-  <p>Bank Nifty OI PCR: {(bankNifty?.pcrRatio)?.toFixed(1)}  </p>
-  <p>Bank Nifty COI PCR: {(bankNifty?.coiPCRatio)?.toFixed(1)} </p>
-  
-  <button
-                    onClick={openChartInNewTab}
-                    className="bg-green-600 text-white px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]"
-                  >
-                   BankNifty PCR Chart
-                  </button>
-                  &nbsp;
-                  <button
-                    onClick={openChartInNewTab2}
-                    className="bg-green-600 text-white px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]"
-                  >
-                   Nifty PCR Chart
-                  </button>
-
+          <p>Nifty OI PCR: {Nifty?.pcrRatio?.toFixed(1)} </p>
+          <p>Nifty COI PCR: {Nifty?.coiPCRatio?.toFixed(1)} </p>
+          <p>Bank Nifty OI PCR: {bankNifty?.pcrRatio?.toFixed(1)} </p>
+          <p>Bank Nifty COI PCR: {bankNifty?.coiPCRatio?.toFixed(1)} </p>
+          <button
+            onClick={openChartInNewTab}
+            className="bg-green-600 text-white px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]"
+          >
+            BankNifty PCR Chart
+          </button>
+          &nbsp;
+          <button
+            onClick={openChartInNewTab2}
+            className="bg-green-600 text-white px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]"
+          >
+            Nifty PCR Chart
+          </button>
         </div>
 
         {hideConfig && (
           <>
             <div>
               <div className="flex flex-wrap font-semibold py-2  justify-start">
-
                 {/* <p className=" text-[13px] md:text-[16px]">
                    Terminal : {data?.data?.terminal}
                 </p>
@@ -1154,7 +1136,6 @@ const HelpingChart = () => {
                 {/* <p className=" text-[13px] md:text-[16px]">
                   Trade Index: {data?.data?.tradeIndex}
                 </p> */}
-
                 {/* {data?.data?.tradeIndex != 4 && data?.data?.tradeIndex != 7 && (
                   <>
                     <p className=" text-[13px] md:text-[16px]">
@@ -1207,7 +1188,6 @@ const HelpingChart = () => {
                 </p>
                 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                 {/* PE SELL Status */}
-           
                 <p
                   className={`${
                     getValue("haveTradeOfPEBuy")
@@ -1216,7 +1196,7 @@ const HelpingChart = () => {
                   }`}
                 >
                   PE SELL Status:{" "}
-                  { getValue("haveTradeOfPEBuy") ? "True" : "False"}
+                  {getValue("haveTradeOfPEBuy") ? "True" : "False"}
                 </p>
                 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                 {/* FUT Buy Status */}
@@ -1242,13 +1222,7 @@ const HelpingChart = () => {
                   FUT Sell Status:{" "}
                   {getValue("haveTradeOfFUTSell") ? "True" : "False"}
                 </p>
-                &nbsp; &nbsp; &nbsp; 
-       
-                &nbsp;
-              
-                  &nbsp;
-        
-            
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
               </div>
 
               <div className="flex flex-wrap   font-semibold py-2  justify-start">
@@ -1364,7 +1338,7 @@ const HelpingChart = () => {
                   )}
                 </div>
               )}
-              
+
               {data.data.tradeIndex == 7 && (
                 <div>
                   {trendLineValue && (
@@ -1616,7 +1590,7 @@ const HelpingChart = () => {
                       : "bg-gray-300 "
                   }`}
                 >
-                  Bollinger 
+                  Bollinger
                 </button>
 
                 <button
@@ -1891,7 +1865,6 @@ const HelpingChart = () => {
                 </Select>
               </div>
 
-
               {/* WMA Input */}
               {/* <div className="flex flex-col w-full sm:w-auto">
                 <Label>WMA</Label>
@@ -1940,7 +1913,7 @@ const HelpingChart = () => {
               </div> */}
 
               {/* Buttons Section */}
-        
+
               <div className="flex items-center flex-wrap space-x-2 mt-2">
                 {/* Submit Button */}
                 <Button onClick={handleSubmit} size="sm">
@@ -2161,20 +2134,24 @@ const HelpingChart = () => {
                     </div>
                   </button>
                   <div className="flex flex-col w-full sm:w-auto">
-                <Label>TrendLine Date</Label>
-                <Input
-                  type="date"
-                  className="border-[1px] border-black rounded-sm"
-                  min={today} // Set today's date as the minimum
-                  onChange={(e) => setBuyTrendLineDate((e.target.value))}
-                  value={
-                    buyTrendLineDate ? buyTrendLineDate?.split("T")?.[0] : ""
-                  }
-                />
-              </div>
-              <div>
-                <Button onClick={handleSubmit2} size="sm">Submit</Button>
-              </div>
+                    <Label>TrendLine Date</Label>
+                    <Input
+                      type="date"
+                      className="border-[1px] border-black rounded-sm"
+                      min={today} // Set today's date as the minimum
+                      onChange={(e) => setBuyTrendLineDate(e.target.value)}
+                      value={
+                        buyTrendLineDate
+                          ? buyTrendLineDate?.split("T")?.[0]
+                          : ""
+                      }
+                    />
+                  </div>
+                  <div>
+                    <Button onClick={handleSubmit2} size="sm">
+                      Submit
+                    </Button>
+                  </div>
 
                   {/* <button
                     onClick={() =>
@@ -2212,14 +2189,11 @@ const HelpingChart = () => {
                       <span>Bearish Line</span>
                     </div>
                   </button> */}
-
                 </>
               </div>
             </div>
           </>
         )}
-
-
 
         {apiData?.length > 0 && (
           <div className="w-full h-auto flex justify-center">
@@ -2239,9 +2213,8 @@ const HelpingChart = () => {
               setTrends3={setTrends3}
               setAlert3={setAlert3}
               alert3={alert3}
-              setEntryLine={setEntryLine} 
+              setEntryLine={setEntryLine}
               entryLine={entryLine}
-           
               setBearishLine={setBearishLine}
               bearishLine={bearishLine}
               id={id}

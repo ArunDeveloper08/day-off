@@ -369,12 +369,12 @@ const Dashboard = () => {
         ) {
           match = true;
         }
-        // if (activeFilters.includes("Banking") && item.category === "Banking") {
-        //   match = true;
-        // }
-        // if (activeFilters.includes("Pharma") && item.category === "Pharma") {
-        //   match = true;
-        // }
+        if (activeFilters.includes("Nifty50") && item.category === "Nifty50") {
+          match = true;
+        }
+        if (activeFilters.includes("BankNifty") && item.category === "BankNifty") {
+          match = true;
+        }
         // if (activeFilters.includes("IT") && item.category === "IT") {
         //   match = true;
         // }
@@ -694,6 +694,28 @@ const Dashboard = () => {
           >
             My Common Master
           </Button>
+
+
+          <Button
+            onClick={() => handleButtonClick("Nifty50")}
+            className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
+              activeButtons["Nifty50"]
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-black"
+            }`}
+          >
+           Nifty 50
+          </Button>
+          <Button
+            onClick={() => handleButtonClick("BankNifty")}
+            className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
+              activeButtons["BankNifty"]
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-black"
+            }`}
+          >
+            Bank Nifty
+          </Button>
           {/* <Button
             onClick={() => handleButtonClick("Banking")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
@@ -887,16 +909,17 @@ const Dashboard = () => {
                     <th>Put Target Level</th>
                   </>
                 )} */}
-                {(activeFilters.includes("isMaster") ||
-                  activeFilters.includes("MyBullishMaster") ||
-                  activeFilters.includes("MyBearishMaster")) &&
+                {
+                // (activeFilters.includes("isMaster") ||
+                //   activeFilters.includes("MyBullishMaster") ||
+                //   activeFilters.includes("MyBearishMaster")) &&
                   !narration && (
                     <>
                       <th>Looser/Gainer</th>
                       <th>Date Loss/Gain</th>
                       <th>TrendLine Update Date</th>
                     </>
-                  )}
+                   )}
                 {!narration && (
                   <>
                     <th>Trade Type</th>
@@ -1066,9 +1089,10 @@ const Dashboard = () => {
                           </>
                         )} */}
 
-                        {(activeFilters.includes("isMaster") ||
-                          activeFilters.includes("MyBullishMaster") ||
-                          activeFilters.includes("MyBearishMaster")) &&
+                        {
+                          // activeFilters.includes("isMaster") ||
+                          // activeFilters.includes("MyBullishMaster") ||
+                          // activeFilters.includes("MyBearishMaster")) &&
                           !narration && (
                             <>
                               <td
@@ -1083,7 +1107,7 @@ const Dashboard = () => {
                               <td>{item.dateOfLooserGainer?.slice(0, 10)}</td>
                               <td>{item.buyTrendLineDate?.slice(0, 10)}</td>
                             </>
-                          )}
+                          )} 
 
                         {!narration && (
                           <>
@@ -1387,6 +1411,9 @@ const Dashboard = () => {
                                   hedgeDeviation: item.hedgeDeviation,
                                   dynamicExitPercent: item.dynamicExitPercent,
                                   tradingOptions: item.tradingOptions,
+                                  exitSelection:item.exitSelection,
+                                  entryCandle:item.entryCandle,
+
                                 },
                                 getAllTrades,
                                 trades,
