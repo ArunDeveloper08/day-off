@@ -510,6 +510,8 @@ export const EditTrade = () => {
                             My Common Master
                           </SelectItem>
                           <SelectItem value="Index">Index</SelectItem>
+                          <SelectItem value="PE">PE</SelectItem>
+                          <SelectItem value="CE">CE</SelectItem>
                           <SelectItem value="Nifty50">Nifty 50</SelectItem>
                           <SelectItem value="BankNifty">Bank Nifty</SelectItem>
                           {/* <SelectItem value="IT">IT</SelectItem> */}
@@ -833,72 +835,74 @@ export const EditTrade = () => {
                             type="number"
                           />
                         </div>
-                             <div className="px-1">
-                                            <Label>Target Level(%)</Label>
-                                            <Input
-                                              name="targetLevel"
-                                              onChange={handleChange}
-                                              value={values.targetLevel}
-                                              className="mt-1"
-                                              type="number"
-                                            />
-                                          </div>
                         <div className="px-1">
-                  <Label>Interval</Label>
-                  <Select
-                    // disabled={loading}
-                    value={values.interval}
-                    name="terminal"
-                    onValueChange={(value) => handleSelect("interval", value)}
-                  >
-                    <SelectTrigger className="w-full mt-1 border-zinc-500">
-                      <SelectValue>{values.interval}</SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>Interval</SelectLabel>
-                        {[
-                          {
-                            label: "1 minute",
-                            value: "ONE_MINUTE",
-                          },
-                          {
-                            label: "3 minute",
-                            value: "THREE_MINUTE",
-                          },
-                          {
-                            label: "5 minute",
-                            value: "FIVE_MINUTE",
-                          },
-
-                          {
-                            label: "15 minute",
-                            value: "FIFTEEN_MINUTE",
-                          },
-                          {
-                            label: "30 minute",
-                            value: "THIRTY_MINUTE",
-                          },
-                          {
-                            label: "1 hour",
-                            value: "ONE_HOUR",
-                          },
-                          {
-                            label: "1 day",
-                            value: "ONE_DAY",
-                          },
-                        ]?.map((suggestion) => (
-                          <SelectItem
-                            key={suggestion.value}
-                            value={suggestion.value}
+                          <Label>Target Level(%)</Label>
+                          <Input
+                            name="targetLevel"
+                            onChange={handleChange}
+                            value={values.targetLevel}
+                            className="mt-1"
+                            type="number"
+                          />
+                        </div>
+                        <div className="px-1">
+                          <Label>Interval</Label>
+                          <Select
+                            // disabled={loading}
+                            value={values.interval}
+                            name="terminal"
+                            onValueChange={(value) =>
+                              handleSelect("interval", value)
+                            }
                           >
-                            {suggestion.label}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
+                            <SelectTrigger className="w-full mt-1 border-zinc-500">
+                              <SelectValue>{values.interval}</SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectLabel>Interval</SelectLabel>
+                                {[
+                                  {
+                                    label: "1 minute",
+                                    value: "ONE_MINUTE",
+                                  },
+                                  {
+                                    label: "3 minute",
+                                    value: "THREE_MINUTE",
+                                  },
+                                  {
+                                    label: "5 minute",
+                                    value: "FIVE_MINUTE",
+                                  },
+
+                                  {
+                                    label: "15 minute",
+                                    value: "FIFTEEN_MINUTE",
+                                  },
+                                  {
+                                    label: "30 minute",
+                                    value: "THIRTY_MINUTE",
+                                  },
+                                  {
+                                    label: "1 hour",
+                                    value: "ONE_HOUR",
+                                  },
+                                  {
+                                    label: "1 day",
+                                    value: "ONE_DAY",
+                                  },
+                                ]?.map((suggestion) => (
+                                  <SelectItem
+                                    key={suggestion.value}
+                                    value={suggestion.value}
+                                  >
+                                    {suggestion.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </div>
                       </>
                     )}
                     {/* <div className="px-1">
@@ -1086,7 +1090,7 @@ export const EditTrade = () => {
                           className="mt-1"
                           type="number"
                         />
-                      </div> 
+                      </div>
 
                       {/* <div className="px-1">
                         <Label>PE Buy Deviation</Label>
@@ -1324,8 +1328,6 @@ export const EditTrade = () => {
                     </SelectContent>
                   </Select>
                 </div> */}
-
-                
 
                 <div className="px-1">
                   <Label>Customer Grading</Label>

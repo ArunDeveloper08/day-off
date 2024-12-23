@@ -60,7 +60,7 @@ import { useInteractiveNodes } from "./interactiveutils";
 import { getMorePropsForChart } from "react-stockcharts/lib/interactive/utils";
 // import { saveInteractiveNodes, getInteractiveNodes } from "./interactiveutils";
 // import { Modal, Button, FormGroup, FormControl } from "react-bootstrap";
-import Dialog from "@/modals/dialog-modal";
+//import Dialog from "@/modals/dialog-modal";
 import { useModal } from "@/hooks/use-modal";
 import { rsi, atr } from "react-stockcharts/lib/indicator";
 import {
@@ -86,6 +86,26 @@ function tooltipContent(underlyingValue) {
         {
           label: "Candle Index", // Display index instead of length
           value: currentItem.index,
+          stroke: "black",
+        },
+        {
+          label: "Open", // Display index instead of length
+          value: currentItem.open,
+          stroke: "black",
+        },
+        {
+          label: "Close", // Display index instead of length
+          value: currentItem.close,
+          stroke: "black",
+        },
+        {
+          label: "High", // Display index instead of length
+          value: currentItem.high,
+          stroke: "black",
+        },
+        {
+          label: "Low", // Display index instead of length
+          value: currentItem.low,
           stroke: "black",
         },
 
@@ -181,11 +201,10 @@ const bbStroke = {
   middle: "#000000",
   bottom: "#964B00",
 };
-
 const bbFill = "#4682B4";
+
 // const Dialog = ({ showModal, text, chartId, onClose, onSave }) => {
 //   const [localText, setLocalText] = useState(text);
-
 //   useEffect(() => {
 //     setLocalText(text);
 //   }, [text]);
@@ -216,6 +235,7 @@ const bbFill = "#4682B4";
 //           </FormGroup>
 //         </form>
 //       </Modal.Body>
+
 
 //       <Modal.Footer>
 //         <Button bsstyle="primary" onClick={handleSave}>
@@ -350,7 +370,7 @@ const AlertLineArray = [
 ];
 
 const CandleChart = ({
-  handleCreateTrendLines,
+//  handleCreateTrendLines,
   chartType,
   // getChartData,
   data: initialData,
@@ -671,13 +691,13 @@ const CandleChart = ({
     hasIncompleteLine(data?.analysisLine, trendLineNames)
   ) {
     alert("Please Draw Line Inside The Chart");
-    await getChartData();
+ //   await getChartData();
     return;
   }
 
       try {
         await axios.put(`${BASE_URL_OVERALL}/config/edit`, { id, ...data });
-        await getChartData();
+     //   await getChartData();
       } catch (error) {
         console.error("Error saving data:", error);
       }
@@ -987,6 +1007,7 @@ const CandleChart = ({
       setEnableEntryLine(false);
     };
       
+    //console.log("hii")
 
     return (
       <div className="flex flex-col">

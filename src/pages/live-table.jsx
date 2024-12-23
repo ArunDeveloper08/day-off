@@ -4,7 +4,7 @@ import { formatDate } from "@/lib/utils";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-const LiveDataTable = ({ id, socketData }) => {
+const LiveDataTable = ({ id, socketData ,socketMastertData}) => {
   const { theme } = useTheme();
   const [data, setData] = useState([]);
   const [sum, setSum] = useState(0);
@@ -49,6 +49,7 @@ const LiveDataTable = ({ id, socketData }) => {
     if (
       !item ||
       !socketData?.last_traded_price ||
+      !socketMastertData?.last_traded_price ||
       !item?.entryPivot ||
       item?.exitPivot
     )
@@ -56,13 +57,14 @@ const LiveDataTable = ({ id, socketData }) => {
 
     let diff = null;
     if (item.entryOrderType === "BUY") {
-      diff = (socketData.last_traded_price - item.entryPivot)?.toFixed(2);
+      diff = (socketMastertData.last_traded_price - item.entryPivot)?.toFixed(2);
     } else if (item.entryOrderType === "SELL") {
-      diff = (item.entryPivot - socketData.last_traded_price)?.toFixed(2);
+      diff = (item.entryPivot - socketMastertData.last_traded_price)?.toFixed(2);
     }
     return { identifier: item.identifier, diff };
   };
 
+  // console.log(socketData)
   return (
     <div className="p-4">
       <div className="ml-3 mt-2 flex justify-around">

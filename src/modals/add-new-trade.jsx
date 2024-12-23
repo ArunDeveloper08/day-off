@@ -105,9 +105,9 @@ const initialState = {
   FUTDeviation: "",
   hedgeValue: "",
   hedgeDeviation: "",
-  tradingOptions:"",
-  exitSelection:"low",
-  entryCandle: "both"
+  tradingOptions: "",
+  exitSelection: "low",
+  entryCandle: "both",
   // Min_Order_Qty:"1"
 };
 
@@ -183,7 +183,7 @@ const alternateInitialState = {
   noTradeZone: "",
   trendCandleCount: "",
   dynamicExitPercent: "1",
- candleRatioBuy: "0.1",
+  candleRatioBuy: "0.1",
   candleRatioSell: "",
   CESellDeviation: "",
   PESellDeviation: "",
@@ -193,9 +193,9 @@ const alternateInitialState = {
   FUTDeviation: "",
   hedgeValue: "",
   hedgeDeviation: "",
-  tradingOptions:"",
-   exitSelection:"low",
-   entryCandle: "both"
+  tradingOptions: "",
+  exitSelection: "low",
+  entryCandle: "both",
 };
 // tradeIndex =2
 const gammaBlastInitialState = {
@@ -275,7 +275,7 @@ const gammaBlastInitialState = {
   noTradeZone: "",
   trendCandleCount: "",
   dynamicExitPercent: "1",
- candleRatioBuy: "0.1",
+  candleRatioBuy: "0.1",
   candleRatioSell: "",
   CESellDeviation: "",
   PESellDeviation: "",
@@ -285,9 +285,9 @@ const gammaBlastInitialState = {
   FUTDeviation: "",
   hedgeValue: "",
   hedgeDeviation: "",
-  tradingOptions:"",
-   exitSelection:"low",
-   entryCandle: "both"
+  tradingOptions: "",
+  exitSelection: "low",
+  entryCandle: "both",
 };
 // tradeIndex =6
 
@@ -432,7 +432,7 @@ export const AddNewtrade = () => {
       return alert("This Trade is Hedge Trade . Enter Main Identifier");
     }
 
-    if(!values.isMaster  && values.tradingOptions == ""){
+    if (!values.isMaster && values.tradingOptions == "") {
       return alert("Please select Trading Option");
     }
     // if (values?.rangeBoundPercent > values?.rangeBoundPercent2) {
@@ -525,7 +525,7 @@ export const AddNewtrade = () => {
         hedgeDeviation: values.hedgeDeviation,
         tradingOptions: values.tradingOptions,
         exitSelection: values.exitSelection,
-        entryCandle:  values.entryCandle,
+        entryCandle: values.entryCandle,
       });
       alert("Add Successfully");
     } catch (error) {
@@ -567,10 +567,7 @@ export const AddNewtrade = () => {
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Trade Index</SelectLabel>
-                    {[
-                      1, 2, 7, 11, 12, 17
-                  
-                    ]?.map((suggestion) => (
+                    {[1, 2, 7, 11, 12, 17]?.map((suggestion) => (
                       <SelectItem key={suggestion} value={suggestion}>
                         {suggestion}
                       </SelectItem>
@@ -749,104 +746,109 @@ export const AddNewtrade = () => {
             )}
 
             {values?.isMaster == false && (
-              <>             
-              <div className="px-1">
-                <Label>Master Name</Label>
-                <Select
-                  value={values?.master}
-                  name="master"
-                  onValueChange={(value) => handleSelect("master", value)}
-                >
-                  <SelectTrigger className="w-full mt-1 border-zinc-500">
-                    <SelectValue>{values?.master?.masterName}</SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Master Name</SelectLabel>
-                      {/* <SelectItem value={{ masterName: "self" }}>
+              <>
+                <div className="px-1">
+                  <Label>Master Name</Label>
+                  <Select
+                    value={values?.master}
+                    name="master"
+                    onValueChange={(value) => handleSelect("master", value)}
+                  >
+                    <SelectTrigger className="w-full mt-1 border-zinc-500">
+                      <SelectValue>{values?.master?.masterName}</SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Master Name</SelectLabel>
+                        {/* <SelectItem value={{ masterName: "self" }}>
                         Self
                       </SelectItem> */}
-                      {trades?.map((item, index) => (
-                        <SelectItem key={index} value={item}>
-                          {item.masterName}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
+                        {trades?.map((item, index) => (
+                          <SelectItem key={index} value={item}>
+                            {item.masterName}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-              <div className="px-1">
-              <Label>Trading CE/PE</Label>
-              <Select
-                value={values?.tradingOptions}
-                name="tradingOptions"
-                onValueChange={(value) => handleSelect("tradingOptions", value)}
-              >
-                <SelectTrigger className="w-full mt-1 border-zinc-500">
-                  <SelectValue>{values?.tradingOptions}</SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Trading Option</SelectLabel>
-                    <SelectItem value="CE">CE</SelectItem>
-                    <SelectItem value="PE">PE</SelectItem>
-             
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
+                <div className="px-1">
+                  <Label>Trading CE/PE</Label>
+                  <Select
+                    value={values?.tradingOptions}
+                    name="tradingOptions"
+                    onValueChange={(value) =>
+                      handleSelect("tradingOptions", value)
+                    }
+                  >
+                    <SelectTrigger className="w-full mt-1 border-zinc-500">
+                      <SelectValue>{values?.tradingOptions}</SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Trading Option</SelectLabel>
+                        <SelectItem value="CE">CE</SelectItem>
+                        <SelectItem value="PE">PE</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
               </>
-
-              
             )}
-
-        
 
             {values?.isMaster == true && (
               <>
-            <div className="px-1">
-              <Label>Category</Label>
-              <Select
-                value={values?.category}
-                name="category"
-                onValueChange={(value) => handleSelect("category", value)}
-              >
-                <SelectTrigger className="w-full mt-1 border-zinc-500">
-                  <SelectValue>{values?.category}</SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>category</SelectLabel>
-                    <SelectItem value="MyBullishMaster">My Bullish Master</SelectItem>
-                    <SelectItem value="MyBearishMaster">My Bearish Master</SelectItem>
-                    <SelectItem value="MyCommonMaster">My Common Master</SelectItem>
-                    <SelectItem value="Index">Index</SelectItem>
-                    <SelectItem value="Nifty50">Nifty 50</SelectItem>
-                    <SelectItem value="BankNifty">Bank Nifty</SelectItem>
-                    {/* <SelectItem value="IT">IT</SelectItem>
+                <div className="px-1">
+                  <Label>Category</Label>
+                  <Select
+                    value={values?.category}
+                    name="category"
+                    onValueChange={(value) => handleSelect("category", value)}
+                  >
+                    <SelectTrigger className="w-full mt-1 border-zinc-500">
+                      <SelectValue>{values?.category}</SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>category</SelectLabel>
+                        <SelectItem value="MyBullishMaster">
+                          My Bullish Master
+                        </SelectItem>
+                        <SelectItem value="MyBearishMaster">
+                          My Bearish Master
+                        </SelectItem>
+                        <SelectItem value="MyCommonMaster">
+                          My Common Master
+                        </SelectItem>
+                        <SelectItem value="Index">Index</SelectItem>
+                        <SelectItem value="PE">PE</SelectItem>
+                        <SelectItem value="CE">CE</SelectItem>
+                        <SelectItem value="Nifty50">Nifty 50</SelectItem>
+                        <SelectItem value="BankNifty">Bank Nifty</SelectItem>
+                        {/* <SelectItem value="IT">IT</SelectItem>
                     <SelectItem value="Energy">Energy</SelectItem>
                     <SelectItem value="Auto">Auto</SelectItem>
                     <SelectItem value="RangeBound">RangeBound</SelectItem>
                     <SelectItem value="Chemical">Chemical</SelectItem>
                     <SelectItem value="Defence">Defence</SelectItem>
                     <SelectItem value="RealEstate">Real Estate</SelectItem> */}
-                    <SelectItem value="Others">Others</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-     
-            <div className="px-1">
-              <Label>Min Exit %</Label>
-              <Input
-                name="minExitPercent"
-                onChange={handleChange}
-                value={values.minExitPercent}
-                className="mt-1"
-                type="text"
-              />
-            </div>
+                        <SelectItem value="Others">Others</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="px-1">
+                  <Label>Min Exit %</Label>
+                  <Input
+                    name="minExitPercent"
+                    onChange={handleChange}
+                    value={values.minExitPercent}
+                    className="mt-1"
+                    type="text"
+                  />
+                </div>
                 {/* <div className="px-1">
                   <Label>Alert Above</Label>
                   <Input
@@ -869,7 +871,7 @@ export const AddNewtrade = () => {
                 </div> */}
               </>
             )}
-            
+
             {values?.isMaster && (
               <div className="px-1">
                 <Label>Lot Size</Label>
@@ -1054,90 +1056,95 @@ export const AddNewtrade = () => {
                   </>
                 )}
 
-                {
-                  (values.indexValue == 2 && values.isMaster == false) && (
-                    <>
-                              <div className="px-1">
-                  <Label>Candle Type</Label>
-                  <Select
-                    // disabled={loading}
-                    value={values.candleType}
-                    name="candleType"
-                    onValueChange={(value) => handleSelect("candleType", value)}
-                  >
-                    <SelectTrigger className="w-full mt-1 border-zinc-500">
-                      <SelectValue>{values.candleType}</SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>Candle Type</SelectLabel>
-                        {["HeikinAshi", "Normal"]?.map((suggestion) => (
-                          <SelectItem key={suggestion} value={suggestion}>
-                            {suggestion}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
-                              <div className="px-1">
-                  <Label>Exit Selection</Label>
-                  <Select
-                    // disabled={loading}
-                    value={values.exitSelection}
-                    name="exitSelection"
-                    onValueChange={(value) => handleSelect("exitSelection", value)}
-                  >
-                    <SelectTrigger className="w-full mt-1 border-zinc-500">
-                      <SelectValue>{values.exitSelection}</SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>Exit Selection</SelectLabel>
-                        {["open", "low"]?.map((suggestion) => (
-                          <SelectItem key={suggestion} value={suggestion}>
-                            {suggestion}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
-                              <div className="px-1">
-                  <Label>Entry Candle</Label>
-                  <Select
-                    // disabled={loading}
-                    value={values.entryCandle}
-                    name="entryCandle"
-                    onValueChange={(value) => handleSelect("entryCandle", value)}
-                  >
-                    <SelectTrigger className="w-full mt-1 border-zinc-500">
-                      <SelectValue>{values.entryCandle}</SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>Entry Candle</SelectLabel>
-                        {["green", "both"]?.map((suggestion) => (
-                          <SelectItem key={suggestion} value={suggestion}>
-                            {suggestion}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
+                {values.indexValue == 2 && values.isMaster == false && (
+                  <>
+                    <div className="px-1">
+                      <Label>Candle Type</Label>
+                      <Select
+                        // disabled={loading}
+                        value={values.candleType}
+                        name="candleType"
+                        onValueChange={(value) =>
+                          handleSelect("candleType", value)
+                        }
+                      >
+                        <SelectTrigger className="w-full mt-1 border-zinc-500">
+                          <SelectValue>{values.candleType}</SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Candle Type</SelectLabel>
+                            {["HeikinAshi", "Normal"]?.map((suggestion) => (
+                              <SelectItem key={suggestion} value={suggestion}>
+                                {suggestion}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="px-1">
+                      <Label>Exit Selection</Label>
+                      <Select
+                        // disabled={loading}
+                        value={values.exitSelection}
+                        name="exitSelection"
+                        onValueChange={(value) =>
+                          handleSelect("exitSelection", value)
+                        }
+                      >
+                        <SelectTrigger className="w-full mt-1 border-zinc-500">
+                          <SelectValue>{values.exitSelection}</SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Exit Selection</SelectLabel>
+                            {["open", "low"]?.map((suggestion) => (
+                              <SelectItem key={suggestion} value={suggestion}>
+                                {suggestion}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="px-1">
+                      <Label>Entry Candle</Label>
+                      <Select
+                        // disabled={loading}
+                        value={values.entryCandle}
+                        name="entryCandle"
+                        onValueChange={(value) =>
+                          handleSelect("entryCandle", value)
+                        }
+                      >
+                        <SelectTrigger className="w-full mt-1 border-zinc-500">
+                          <SelectValue>{values.entryCandle}</SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Entry Candle</SelectLabel>
+                            {["green", "both"]?.map((suggestion) => (
+                              <SelectItem key={suggestion} value={suggestion}>
+                                {suggestion}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-                <div className="px-1">
-              <Label>WMA</Label>
-              <Input
-                name="wma"
-                onChange={handleChange}
-                value={values.wma}
-                className="mt-1"
-                type="number"
-              />
-            </div>
-            <div className="px-1">
+                    <div className="px-1">
+                      <Label>WMA</Label>
+                      <Input
+                        name="wma"
+                        onChange={handleChange}
+                        value={values.wma}
+                        className="mt-1"
+                        type="number"
+                      />
+                    </div>
+                    <div className="px-1">
                       <Label>RSI Max</Label>
                       <Input
                         name="rsiMax"
@@ -1148,100 +1155,97 @@ export const AddNewtrade = () => {
                       />
                     </div>
 
-
                     <div className="px-1">
-                    <Label>D_Exit (%)</Label>
-                    <Input
-                      name="dynamicExitPercent"
-                      onChange={handleChange}
-                      value={values.dynamicExitPercent}
-                      className="mt-1"
-                      type="number"
-                    />
-                  </div>
+                      <Label>D_Exit (%)</Label>
+                      <Input
+                        name="dynamicExitPercent"
+                        onChange={handleChange}
+                        value={values.dynamicExitPercent}
+                        className="mt-1"
+                        type="number"
+                      />
+                    </div>
                     <div className="px-1">
-                    <Label>D_Entry (%)</Label>
-                    <Input
-                      name="dynamicEntryPercentage"
-                      onChange={handleChange}
-                      value={values.dynamicEntryPercentage}
-                      className="mt-1"
-                      type="number"
-                    />
-                  </div>
+                      <Label>D_Entry (%)</Label>
+                      <Input
+                        name="dynamicEntryPercentage"
+                        onChange={handleChange}
+                        value={values.dynamicEntryPercentage}
+                        className="mt-1"
+                        type="number"
+                      />
+                    </div>
                     <div className="px-1">
-                    <Label>Target Level(%)</Label>
-                    <Input
-                      name="targetLevel"
-                      onChange={handleChange}
-                      value={values.targetLevel}
-                      className="mt-1"
-                      type="number"
-                    />
-                  </div>
-                  <div className="px-1">
-                                    <Label>Interval</Label>
-                                    <Select
-                                      // disabled={loading}
-                                      value={values.interval}
-                                      name="terminal"
-                                      onValueChange={(value) => handleSelect("interval", value)}
-                                    >
-                                      <SelectTrigger className="w-full mt-1 border-zinc-500">
-                                        <SelectValue>{values.interval}</SelectValue>
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        <SelectGroup>
-                                          <SelectLabel>Interval</SelectLabel>
-                                          {[
-                                            {
-                                              label: "1 minute",
-                                              value: "ONE_MINUTE",
-                                            },
-                                            {
-                                              label: "3 minute",
-                                              value: "THREE_MINUTE",
-                                            },
-                                            {
-                                              label: "5 minute",
-                                              value: "FIVE_MINUTE",
-                                            },
-                  
-                                            {
-                                              label: "15 minute",
-                                              value: "FIFTEEN_MINUTE",
-                                            },
-                                            {
-                                              label: "30 minute",
-                                              value: "THIRTY_MINUTE",
-                                            },
-                                            {
-                                              label: "1 hour",
-                                              value: "ONE_HOUR",
-                                            },
-                                            {
-                                              label: "1 day",
-                                              value: "ONE_DAY",
-                                            },
-                                          ]?.map((suggestion) => (
-                                            <SelectItem
-                                              key={suggestion.value}
-                                              value={suggestion.value}
-                                            >
-                                              {suggestion.label}
-                                            </SelectItem>
-                                          ))}
-                                        </SelectGroup>
-                                      </SelectContent>
-                                    </Select>
-                                  </div>
+                      <Label>Target Level(%)</Label>
+                      <Input
+                        name="targetLevel"
+                        onChange={handleChange}
+                        value={values.targetLevel}
+                        className="mt-1"
+                        type="number"
+                      />
+                    </div>
+                    <div className="px-1">
+                      <Label>Interval</Label>
+                      <Select
+                        // disabled={loading}
+                        value={values.interval}
+                        name="terminal"
+                        onValueChange={(value) =>
+                          handleSelect("interval", value)
+                        }
+                      >
+                        <SelectTrigger className="w-full mt-1 border-zinc-500">
+                          <SelectValue>{values.interval}</SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Interval</SelectLabel>
+                            {[
+                              {
+                                label: "1 minute",
+                                value: "ONE_MINUTE",
+                              },
+                              {
+                                label: "3 minute",
+                                value: "THREE_MINUTE",
+                              },
+                              {
+                                label: "5 minute",
+                                value: "FIVE_MINUTE",
+                              },
 
+                              {
+                                label: "15 minute",
+                                value: "FIFTEEN_MINUTE",
+                              },
+                              {
+                                label: "30 minute",
+                                value: "THIRTY_MINUTE",
+                              },
+                              {
+                                label: "1 hour",
+                                value: "ONE_HOUR",
+                              },
+                              {
+                                label: "1 day",
+                                value: "ONE_DAY",
+                              },
+                            ]?.map((suggestion) => (
+                              <SelectItem
+                                key={suggestion.value}
+                                value={suggestion.value}
+                              >
+                                {suggestion.label}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </>
+                )}
 
-                    </>
-                  )
-                }
-
-      
                 {/* {values.isMaster == false && (
                   <div className="px-1">
                     <Label>Range Bound</Label>
@@ -1311,8 +1315,6 @@ export const AddNewtrade = () => {
               </>
             )} */}
 
-          
-
             {/* {values.indexValue != 6 && values.indexValue != 4 && (
               <>
                 {values?.isMaster == true && (
@@ -1329,7 +1331,6 @@ export const AddNewtrade = () => {
                 )}
               </>
             )} */}
-
 
             {/* {(values?.isMaster == true && values?.indexValue != 4 ) && (
               <>
@@ -1390,7 +1391,7 @@ export const AddNewtrade = () => {
                       type="number"
                     />
                   </div>
-                  
+
                   {/* <div className="px-1">
                     <Label>PE Buy Deviation</Label>
                     <Input
@@ -1518,8 +1519,7 @@ export const AddNewtrade = () => {
               </>
             )} */}
 
-            {
-            values.isMaster && values.indexValue == 4 && (
+            {values.isMaster && values.indexValue == 4 && (
               <>
                 <div className="px-1">
                   <Label>Max Zone Time</Label>

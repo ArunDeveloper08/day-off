@@ -221,6 +221,7 @@ export const LivePage = () => {
     }
   };
 
+
   const handleCreateTrendLines = useCallback(
     async (trendline, textList1, retracements3, channels1, alert) => {
       // if (trendline?.some(line => line?.endTime === undefined && line?.startTime)) {
@@ -562,7 +563,7 @@ export const LivePage = () => {
           </div>
         </div>
 
-        {id && <LiveDataTable id={id} socketData={socketData} />}
+        {id && <LiveDataTable id={id} socketData={socketData}  socketMastertData={socketMastertData} />}
       </>
       {/* // )} */}
     </div>
