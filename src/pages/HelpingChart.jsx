@@ -41,9 +41,6 @@ const HelpingChart = () => {
   const intervalRef = useRef(null);
   const debounceRef = useRef(null); // Add ref for debouncing
   const [intractiveData, setIntractiveData] = useState([]);
-  // const [master, setMaster] = useState("");
-  // const [ceTargetValue, setCeTargetValue] = useState(null);
-  // const [peTargetValue, setPeTargetValue] = useState(null);
   const [ceStopLoss, setCeStopLoss] = useState(null);
   const [peStopLoss, setPeStopLoss] = useState(null);
   // const [chartType, setChartType] = useState("canvas");
@@ -58,14 +55,8 @@ const HelpingChart = () => {
   const [buyTrendLineDate, setBuyTrendLineDate] = useState();
   const [bankNifty, setBankNifty] = useState();
   const [Nifty, setNifty] = useState();
-  // const [checkButtonBull , setCheckButtonBull] = useState(false);
-  // const [checkButtonBear , setCheckButtonBear] = useState(false);
-  // const [selectedInterval, setSelectedInterval] = useState("ONE_MINUTE");
-
-  // let tradeIndex = "";
-  // const timeScale = useRef(scaleTime().domain([0, 1]));
-  // const priceScale = useRef(scaleLinear().domain([0, 1]));
-  // const [entryLine2, setEntryLine2] = useState([]);
+  const [noActionLine , setNoActionLine]  = useState([]);
+  const [horizontalLine , setHorizontalLine]  = useState([]);
 
   useEffect(() => {
     setTheme("light");
@@ -113,7 +104,6 @@ const HelpingChart = () => {
   // }, [data]);
 
   const { socket, isConnected } = useLiveSocket();
- 
 
   const width = window.innerWidth;
   const height = window.innerHeight;
@@ -151,12 +141,12 @@ const HelpingChart = () => {
     atr: false,
     bearishLine: false,
     bollingerBand: false,
+    noActionLine : true,
+    horizontalLine: true,
   });
   const [hideConfig, setHideConfig] = useState(true);
- 
+
   const { onOpen } = useModal();
-
-
 
   const [apiResponseReceived, setApiResponseReceived] = useState(false);
   const [testingMode, setTestingMode] = useState("");
@@ -223,23 +213,13 @@ const HelpingChart = () => {
     return mergedLines;
   };
 
-  const pcrlog = async () => {
-    try {
-      const response = await axios.get(`${BASE_URL_OVERALL}/log/pcrValue`);
 
-      setBankNifty(response?.data.data?.valueOfBankNifty);
-      setNifty(response?.data.data?.valueOfNifty50);
-    } catch (err) {
-      console.warn(err);
-    }
-  };
-  useEffect(() => {
-    pcrlog();
-  }, []);
-  
+
+
+
 
   const getChartData = async () => {
-    const maxRetries = 7; // Maximum number of retries
+    const maxRetries = 5; // Maximum number of retries
     let attempts = 0; // Counter for attempts
 
     while (attempts < maxRetries) {
@@ -250,8 +230,8 @@ const HelpingChart = () => {
 
         // Set other data from the API
         setApiData(res.data.data);
-        setCeStopLoss(res.data.data?.[0]?.CEStopLoss);
-        setPeStopLoss(res.data.data?.[0]?.PEStopLoss);
+        setCeStopLoss(res.data.data?.[0]?.CEStopLossForIndex7);
+        setPeStopLoss(res.data.data?.[0]?.PEStopLossForIndex7);
         setIntractiveData(res.data);
 
         // Merge entry lines if there are buyTrendLines
@@ -265,6 +245,15 @@ const HelpingChart = () => {
           setAlert3(res.data?.analysisLine);
           setApiResponseReceived(true);
         }
+        if (res?.data?.trendLines?.length > 0) {
+          setNoActionLine(res.data?.trendLines);
+          setApiResponseReceived(true);
+        }
+        if (res?.data?.horizontalLine?.length > 0) {
+          setHorizontalLine(res.data?.horizontalLine);
+          setApiResponseReceived(true);
+        }
+
 
         // Exit loop on success
         return;
@@ -274,7 +263,7 @@ const HelpingChart = () => {
 
         // Wait for a short period before retrying
         if (attempts < maxRetries) {
-          await new Promise((resolve) => setTimeout(resolve, 1000)); // 1-second delay
+          await new Promise((resolve) => setTimeout(resolve, 3000)); // 3-second delay
         }
       }
     }
@@ -317,8 +306,22 @@ const HelpingChart = () => {
     return date;
   };
 
-  const filterAndTransformLines = (trendLines, data, interval) => {
+  const filterAndTransformLines = (trendLines, data, interval, isHorizontal = false) => {
     return trendLines?.map((line) => {
+
+      if (isHorizontal) {
+        // Special handling for horizontal lines
+        const firstIndex = 0;
+        const lastIndex = data.length - 1;
+  
+        return {
+          ...line,
+          start: [firstIndex, line.start[1] || data[firstIndex]?.close],
+          end: [lastIndex, line.end[1] || data[lastIndex]?.close],
+          startTime: data[firstIndex]?.timestamp,
+          endTime: data[lastIndex]?.timestamp,
+        };
+      }
       const roundedStartTime = roundToNearestTime(line.startTime, interval);
       const roundedEndTime = roundToNearestTime(line.endTime, interval);
 
@@ -357,8 +360,6 @@ const HelpingChart = () => {
   useEffect(() => {
     if (!apiResponseReceived) return;
 
-
-
     const updatedEntryLines = filterAndTransformLines(
       entryLine,
       apiData,
@@ -380,6 +381,26 @@ const HelpingChart = () => {
       JSON.stringify(prev) !== JSON.stringify(updatedAlertLines)
         ? updatedAlertLines
         : prev
+    );
+    const updatedNoActionLines = filterAndTransformLines(
+      noActionLine,
+      apiData,
+      values?.interval
+    );
+    setNoActionLine((prev) =>
+      JSON.stringify(prev) !== JSON.stringify(updatedNoActionLines)
+        ? updatedNoActionLines
+        : prev
+    );
+
+    const updatedHorizontalLines = filterAndTransformLines(
+      horizontalLine, // Assuming you have a state for horizontal lines
+      apiData,
+      values?.interval,
+      true // Indicate this is for horizontal lines
+    );
+    setHorizontalLine((prev) =>
+      JSON.stringify(prev) !== JSON.stringify(updatedHorizontalLines) ? updatedHorizontalLines : prev
     );
   }, [apiResponseReceived, apiData, values?.interval]);
 
@@ -506,11 +527,25 @@ const HelpingChart = () => {
     data?.data?.haveTradeOfCEBuy,
     data?.data?.haveTradeOfPEBuy,
   ]);
+  const pcrlog = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL_OVERALL}/log/pcrValue`);
+
+      setBankNifty(response?.data.data?.valueOfBankNifty);
+      setNifty(response?.data.data?.valueOfNifty50);
+    } catch (err) {
+      console.warn(err);
+    }
+  };
 
   useEffect(() => {
     getChartData();
+    pcrlog();
     // if (!values) return;
-    const interval = setInterval(() => { getChartData(); pcrlog(); }, 120 * 1000);
+    const interval = setInterval(() => {
+      getChartData();
+      pcrlog();
+    }, 120 * 1000);
 
     return () => clearInterval(interval);
   }, [
@@ -523,8 +558,6 @@ const HelpingChart = () => {
     trendLineValue?.dataForIndex7?.CESellLinePrice,
     trendLineValue?.dataForIndex7?.PESellLinePrice,
   ]);
-
-
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -546,7 +579,6 @@ const HelpingChart = () => {
     };
   }, [id, values]);
 
-     
   const lastUpdateTimeRef = useRef(Date.now());
   const currentTime = Date.now();
   useEffect(() => {
@@ -567,29 +599,26 @@ const HelpingChart = () => {
       if (socketdata.token === data?.data.instrument_token) {
         setSocketData(socketdata);
 
-        
         // Throttle updates to once per second
-       // if (currentTime - lastUpdateTimeRef.current > 10 * 1000) {
-        
-
+        if (currentTime - lastUpdateTimeRef.current > 10 * 1000) {
           //console.log("hii")
           lastUpdateTimeRef.current = currentTime;
-  
+
           setApiData((prevApiData) => {
             if (!prevApiData || prevApiData.length === 0) return prevApiData;
-  
+
             // Clone the previous data to avoid direct mutation
             const updatedData = [...prevApiData];
-  
+
             // Replace the `close` value in the last candle with `last_traded_price`
             updatedData[updatedData.length - 1] = {
               ...updatedData[updatedData.length - 1],
               close: socketData.last_traded_price,
             };
-  
+
             return updatedData;
           });
-        //}
+        }
       }
     });
 
@@ -597,17 +626,6 @@ const HelpingChart = () => {
       socket?.off("getLiveData"); // Clean up the event listener when the component unmounts
     };
   }, [socket, data, isConnected]);
- 
-
-
-
-
-
- 
-
- 
-  
-  
 
   useEffect(() => {
     if (!isConnected || !data?.data?.instrument_token) return;
@@ -686,8 +704,6 @@ const HelpingChart = () => {
       console.log(err);
     }
   };
-
- 
 
   useEffect(() => {
     if (!id) return;
@@ -800,6 +816,8 @@ const HelpingChart = () => {
     window.open(url, "_blank");
   };
 
+  //console.log(filteredData)
+
   return (
     <div className="p-2">
       {/* {data.error ? (
@@ -814,7 +832,7 @@ const HelpingChart = () => {
               {/* OI PCR :{" "}
                 {data?.data?.PCR?.toFixed(1)} &nbsp; COI PCR :{" "}
                 {data?.data?.COIPCR?.toFixed(1)} &nbsp; RSI :{" "} */}
-        {/* RSI :{" "}  {data?.data?.RSI_Value?.toFixed(1)} &nbsp; */}
+              {/* RSI :{" "}  {data?.data?.RSI_Value?.toFixed(1)} &nbsp; */}
             </span>
             {/* {data?.data?.lastHighestLTP > 0 && (
               <span>Last High LTP : {data?.data?.lastHighestLTP}</span>
@@ -867,7 +885,6 @@ const HelpingChart = () => {
           <p>BankNifty COI PCR: {bankNifty?.coiPCRatio?.toFixed(1)} </p>
           <p>BankNifty CE (%): {bankNifty?.CEPercentage?.toFixed(1)} </p>
           <p>BankNifty CE (%): {bankNifty?.PEPercentage?.toFixed(1)} </p>
-
         </div>
 
         {hideConfig && (
@@ -900,12 +917,7 @@ const HelpingChart = () => {
                     </p>
                   </>
                 )} */}
-                <p className="text-red-500 text-[13px] md:text-[16px]">
-                  {ceStopLoss && `CE Stop Loss : ${ceStopLoss?.toFixed(1)}`}
-                </p>
-                <p className="text-red-500 text-[13px] md:text-[16px]">
-                  {peStopLoss && `PE Stop Loss : ${peStopLoss?.toFixed(1)}`}
-                </p>
+            
                 {/* Here put socket Data */}
                 {/* CE Buy Status */}
                 <p
@@ -1052,18 +1064,18 @@ const HelpingChart = () => {
                 </p>
                 &nbsp;
                 <button
-            onClick={openChartInNewTab}
-            className="bg-green-600 text-white px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]"
-          >
-            BankNifty PCR Chart
-          </button>
-          &nbsp;
-          <button
-            onClick={openChartInNewTab2}
-            className="bg-green-600 text-white px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]"
-          >
-            Nifty PCR Chart
-          </button>
+                  onClick={openChartInNewTab}
+                  className="bg-green-600 text-white px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]"
+                >
+                  BankNifty PCR Chart
+                </button>
+                &nbsp;
+                <button
+                  onClick={openChartInNewTab2}
+                  className="bg-green-600 text-white px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]"
+                >
+                  Nifty PCR Chart
+                </button>
               </div>
 
               {data.data.tradeIndex == 4 && (
@@ -1230,6 +1242,12 @@ const HelpingChart = () => {
                         <span></span>
                       )}
                       {/* Time : {formatDate(trendLineValue?.timestamp)} */}
+                   
+                  {ceStopLoss && `CE Stop Loss : ${ceStopLoss?.toFixed(1)}`}
+              
+             
+                  {peStopLoss && `PE Stop Loss : ${peStopLoss?.toFixed(1)}`}
+                
                     </p>
                   )}
                 </div>
@@ -1264,54 +1282,6 @@ const HelpingChart = () => {
                   }`}
                 >
                   Candle
-                </button>
-
-                <button
-                  onClick={() =>
-                    setShowRow((p) => ({
-                      ...p,
-                      dynamicExitValue: !p.dynamicExitValue,
-                    }))
-                  }
-                  className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
-                    showRow.dynamicExitValue
-                      ? "bg-blue-500 text-gray-100"
-                      : "bg-gray-300 "
-                  }`}
-                >
-                  D_Exit Value
-                </button>
-
-                <button
-                  onClick={() =>
-                    setShowRow((p) => ({
-                      ...p,
-                      Last_Highest_LTP: !p.Last_Highest_LTP,
-                    }))
-                  }
-                  className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
-                    showRow.Last_Highest_LTP
-                      ? "bg-blue-500 text-gray-100"
-                      : "bg-gray-300 "
-                  }`}
-                >
-                  Last High LTP
-                </button>
-
-                <button
-                  onClick={() =>
-                    setShowRow((p) => ({
-                      ...p,
-                      rangeBoundLine: !p.rangeBoundLine,
-                    }))
-                  }
-                  className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
-                    showRow.rangeBoundLine
-                      ? "bg-blue-500 text-gray-100"
-                      : "bg-gray-300 "
-                  }`}
-                >
-                  Range Bound
                 </button>
 
                 <button
@@ -1551,7 +1521,7 @@ const HelpingChart = () => {
                 </div>
               </div> */}
 
-            <div className="flex flex-wrap items-center mt-2 mb-1 space-x-3">
+            <div className="flex flex-wrap items-center mt-2 mb-1 space-x-10">
               {/* Date Input */}
               <div className="flex flex-col w-full sm:w-auto">
                 <Label>Date</Label>
@@ -1633,56 +1603,7 @@ const HelpingChart = () => {
                 </Select>
               </div>
 
-              {/* WMA Input */}
-              {/* <div className="flex flex-col w-full sm:w-auto">
-                <Label>WMA</Label>
-                <Input
-                  name="WMA"
-                  onChange={handleChange}
-                  value={values.WMA}
-                  className="mt-1"
-                  type="number"
-                  min={0}
-                />
-              </div> */}
-
-              {/* Trendline Status */}
-              {/* <div className="flex flex-col w-full sm:w-auto">
-                <Label>Trendline Status</Label>
-                <Select
-                  value={values.trendLineActive}
-                  name="trendLineActive"
-                  onValueChange={(value) =>
-                    handleSelect("trendLineActive", value)
-                  }
-                >
-                  <SelectTrigger className="w-full sm:w-[130px] mt-1 border-zinc-500">
-                    <SelectValue>
-                      {values.trendLineActive ? "Active" : "Deactive"}
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>TrendLine Status</SelectLabel>
-                      {[
-                        { label: "Active", value: true },
-                        { label: "Deactive", value: false },
-                      ]?.map((suggestion) => (
-                        <SelectItem
-                          key={suggestion.value}
-                          value={suggestion.value}
-                        >
-                          {suggestion.label}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div> */}
-
-              {/* Buttons Section */}
-
-              <div className="flex items-center flex-wrap space-x-2 mt-2">
+              <div className="flex items-center flex-wrap space-x-10 mt-2">
                 {/* Submit Button */}
                 <Button onClick={handleSubmit} size="sm">
                   Submit
@@ -1705,65 +1626,6 @@ const HelpingChart = () => {
 
                 {/* Fibonacci Button */}
                 <>
-                  {/* <button
-                    onClick={() =>
-                      setShowRow((prev) => ({
-                        ...prev,
-                        fibonacci: !prev.fibonacci,
-                      }))
-                    }
-                    className={`px-2 py-1 text-xs font-semibold rounded-md duration-300 ${
-                      showRow.fibonacci ? "bg-black text-gray-100" : "bg-white"
-                    }`}
-                  >
-                    <div className="flex items-center">
-                      <svg
-                        width="28"
-                        height="28"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <g fill="currentColor" fillRule="nonzero">
-                          <path d="M3 5h22v-1h-22z"></path>
-                          <path d="M3 17h22v-1h-22z"></path>
-                          <path d="M3 11h19.5v-1h-19.5z"></path>
-                          <path d="M5.5 23h19.5v-1h-19.5z"></path>
-                          <path d="M3.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM24.5 12c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5z"></path>
-                        </g>
-                      </svg>
-                      <span>Fibonacci Retracement</span>
-                    </div>
-                  </button>
-
-               
-                  <button
-                    onClick={() =>
-                      setShowRow((p) => ({
-                        ...p,
-                        equidistantChannel: !p.equidistantChannel,
-                      }))
-                    }
-                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-                      showRow.equidistantChannel
-                        ? "bg-black text-gray-100"
-                        : "bg-white "
-                    }`}
-                  >
-                    <div className="flex items-center">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 28 28"
-                        width="28"
-                        height="28"
-                      >
-                        <g fill="currentColor" fillRule="nonzero">
-                          <path d="M8.354 18.354l10-10-.707-.707-10 10zM12.354 25.354l5-5-.707-.707-5 5z"></path>
-                          <path d="M20.354 17.354l5-5-.707-.707-5 5z"></path>
-                          <path d="M19.5 8c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM6.5 21c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
-                        </g>
-                      </svg>
-                      <span>Equidistant Channel</span>
-                    </div>
-                  </button> */}
                   {data?.data?.tradeIndex == 4 && (
                     <button
                       onClick={() =>
@@ -1803,104 +1665,6 @@ const HelpingChart = () => {
                     </button>
                   )}
 
-                  <button
-                    onClick={() =>
-                      setShowRow((prev) => ({
-                        ...prev,
-                        fibonacci: !prev.fibonacci,
-                      }))
-                    }
-                    className={` px-2 py-1 text-xs font-semibold rounded-md duration-300 ${
-                      showRow.fibonacci ? "bg-black text-gray-100" : "bg-white"
-                    }`}
-                  >
-                    <div className="flex items-center">
-                      <svg
-                        width="28"
-                        height="28"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <g fill="currentColor" fillRule="nonzero">
-                          <path d="M3 5h22v-1h-22z"></path>
-                          <path d="M3 17h22v-1h-22z"></path>
-                          <path d="M3 11h19.5v-1h-19.5z"></path>
-                          <path d="M5.5 23h19.5v-1h-19.5z"></path>
-                          <path d="M3.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM24.5 12c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5z"></path>
-                        </g>
-                      </svg>
-                      <span>Fibonacci Retracement</span>
-                    </div>
-                  </button>
-
-                  <button
-                    onClick={() =>
-                      setShowRow((p) => ({
-                        ...p,
-                        trendLine: false, // Ensure trendLine is false when alertLine is true
-                        alertLine: !p.alertLine,
-                        // entryLine : false,
-                      }))
-                    }
-                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-                      showRow.alertLine ? "bg-black text-gray-100" : "bg-white"
-                    }`}
-                  >
-                    <div className="flex items-center">
-                      <span
-                        className="icon-KTgbfaP5"
-                        role="img"
-                        aria-hidden="true"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 28 28"
-                          width="28"
-                          height="28"
-                        >
-                          <g fill="currentColor" fillRule="nonzero">
-                            <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
-                            <path d="M22.5 7c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM5.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
-                          </g>
-                        </svg>
-                      </span>
-                      <span>Entry Line 2</span>
-                    </div>
-                  </button>
-                  <button
-                    onClick={() =>
-                      setShowRow((p) => ({
-                        ...p,
-                        trendLine: false, // Ensure trendLine is false when alertLine is true
-                        bearishLine: false,
-                        entryLine: !p.entryLine,
-                      }))
-                    }
-                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-                      showRow.entryLine ? "bg-black text-gray-100" : "bg-white"
-                    }`}
-                    // disabled={checkButtonBear}
-                  >
-                    <div className="flex items-center">
-                      <span
-                        className="icon-KTgbfaP5"
-                        role="img"
-                        aria-hidden="true"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 28 28"
-                          width="28"
-                          height="28"
-                        >
-                          <g fill="currentColor" fillRule="nonzero">
-                            <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
-                            <path d="M22.5 7c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM5.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
-                          </g>
-                        </svg>
-                      </span>
-                      <span>Entry Line 1</span>
-                    </div>
-                  </button>
                   <div className="flex flex-col w-full sm:w-auto">
                     <Label>TrendLine Date</Label>
                     <Input
@@ -1920,56 +1684,173 @@ const HelpingChart = () => {
                       Submit
                     </Button>
                   </div>
-
-                  {/* <button
-                    onClick={() =>
-                      setShowRow((p) => ({
-                        ...p,
-                        entryLine : false, // Ensure trendLine is false when alertLine is true
-                        // alertLine: false,
-                        bearishLine: !p.bearishLine,
-                      }))
-                    }
-                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-                      showRow.bearishLine ? "bg-black text-gray-100" : "bg-white"
-                    }`}
-                    // disabled={checkButtonBull}
-                  >
-                    <div className="flex items-center">
-
-                      <span
-                        className="icon-KTgbfaP5"
-                        role="img"
-                        aria-hidden="true"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 28 28"
-                          width="28"
-                          height="28"
-                        >
-                          <g fill="currentColor" fillRule="nonzero">
-                            <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
-                            <path d="M22.5 7c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM5.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
-                          </g>
-                        </svg>
-                      </span>
-                      <span>Bearish Line</span>
-                    </div>
-                  </button> */}
                 </>
               </div>
             </div>
+
+            <div className="flex items-center flex-wrap space-x-10 mt-2">
+              <button
+                onClick={() =>
+                  setShowRow((prev) => ({
+                    ...prev,
+                    fibonacci: !prev.fibonacci,
+                  }))
+                }
+                className={` px-2 py-1 text-xs font-semibold rounded-md duration-300 ${
+                  showRow.fibonacci ? "bg-black text-gray-100" : "bg-white"
+                }`}
+              >
+                <div className="flex items-center">
+                  <svg
+                    width="28"
+                    height="28"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <g fill="currentColor" fillRule="nonzero">
+                      <path d="M3 5h22v-1h-22z"></path>
+                      <path d="M3 17h22v-1h-22z"></path>
+                      <path d="M3 11h19.5v-1h-19.5z"></path>
+                      <path d="M5.5 23h19.5v-1h-19.5z"></path>
+                      <path d="M3.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM24.5 12c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5z"></path>
+                    </g>
+                  </svg>
+                  <span>Fibonacci Retracement</span>
+                </div>
+              </button>
+
+              <button
+                onClick={() =>
+                  setShowRow((p) => ({
+                    ...p,
+                    trendLine: false, // Ensure trendLine is false when alertLine is true
+                    alertLine: !p.alertLine,
+                    // entryLine : false,
+                  }))
+                }
+                className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                  showRow.alertLine ? "bg-black text-gray-100" : "bg-white"
+                }`}
+              >
+                <div className="flex items-center">
+                  <span className="icon-KTgbfaP5" role="img" aria-hidden="true">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 28 28"
+                      width="28"
+                      height="28"
+                    >
+                      <g fill="currentColor" fillRule="nonzero">
+                        <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
+                        <path d="M22.5 7c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM5.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
+                      </g>
+                    </svg>
+                  </span>
+                  <span>Entry Line 2</span>
+                </div>
+              </button>
+              <button
+                onClick={() =>
+                  setShowRow((p) => ({
+                    ...p,
+                    trendLine: false, // Ensure trendLine is false when alertLine is true
+                    bearishLine: false,
+                    entryLine: !p.entryLine,
+                  }))
+                }
+                className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                  showRow.entryLine ? "bg-black text-gray-100" : "bg-white"
+                }`}
+                // disabled={checkButtonBear}
+              >
+                <div className="flex items-center">
+                  <span className="icon-KTgbfaP5" role="img" aria-hidden="true">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 28 28"
+                      width="28"
+                      height="28"
+                    >
+                      <g fill="currentColor" fillRule="nonzero">
+                        <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
+                        <path d="M22.5 7c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM5.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
+                      </g>
+                    </svg>
+                  </span>
+                  <span>Entry Line 1</span>
+                </div>
+              </button>
+              <button
+                onClick={() =>
+                  setShowRow((p) => ({
+                    ...p,
+                    trendLine: false, // Ensure trendLine is false when alertLine is true
+                    bearishLine: false,
+                    noActionLine: !p.noActionLine,
+                  }))
+                }
+                className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                  showRow.noActionLine ? "bg-black text-gray-100" : "bg-white"
+                }`}
+                // disabled={checkButtonBear}
+              >
+                <div className="flex items-center">
+                  <span className="icon-KTgbfaP5" role="img" aria-hidden="true">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 28 28"
+                      width="28"
+                      height="28"
+                    >
+                      <g fill="currentColor" fillRule="nonzero">
+                        <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
+                        <path d="M22.5 7c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM5.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
+                      </g>
+                    </svg>
+                  </span>
+                  <span>Extra Line</span>
+                </div>
+              </button>
+              <button
+                onClick={() =>
+                  setShowRow((p) => ({
+                    ...p,
+                    trendLine: false, // Ensure trendLine is false when alertLine is true
+                    bearishLine: false,
+                    horizontalLine: !p.horizontalLine,
+                  }))
+                }
+                className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                  showRow.horizontalLine ? "bg-black text-gray-100" : "bg-white"
+                }`}
+                // disabled={checkButtonBear}
+              >
+                <div className="flex items-center">
+                  <span className="icon-KTgbfaP5" role="img" aria-hidden="true">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 28 28"
+                      width="28"
+                      height="28"
+                    >
+                      <g fill="currentColor" fillRule="nonzero">
+                        <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>
+                        <path d="M22.5 7c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM5.5 24c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
+                      </g>
+                    </svg>
+                  </span>
+                  <span>Horizontal Line</span>
+                </div>
+              </button>
+            </div>
           </>
         )}
- 
 
-        {(apiData?.length > 0  )&& (
+        {apiData?.length > 0 && (
           <div className="w-full h-auto flex justify-center">
             <CandleChart
               data={apiData}
               //getChartData={getChartData}
-            //  handleCreateTrendLines={handleCreateTrendLines}
+              //  handleCreateTrendLines={handleCreateTrendLines}
               master={data?.data}
               ratio={1}
               width={width + 30} // Adjust width dynamically with some margin
@@ -1986,8 +1867,12 @@ const HelpingChart = () => {
               entryLine={entryLine}
               setBearishLine={setBearishLine}
               bearishLine={bearishLine}
+              noActionLine={noActionLine}
+              setNoActionLine={setNoActionLine}
               id={id}
               buyTrendLineDate={buyTrendLineDate}
+              horizontalLine={horizontalLine}
+              setHorizontalLine = {setHorizontalLine}
             />
           </div>
         )}

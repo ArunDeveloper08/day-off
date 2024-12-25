@@ -148,7 +148,7 @@ export const LivePage = () => {
         clearInterval(intervalRef.current);
       } else {
         getChartData();
-        intervalRef.current = setInterval(getChartData, 15 * 1000);
+        intervalRef.current = setInterval(getChartData, 120 * 1000);
       }
     };
 
@@ -158,6 +158,9 @@ export const LivePage = () => {
       clearInterval(intervalRef.current);
     };
   }, [id, prevDate]);
+
+    const lastUpdateTimeRef = useRef(Date.now());
+    const currentTime = Date.now();
 
   useEffect(() => {
     if (!isConnected || !data?.data?.instrument_token) return;
@@ -170,14 +173,38 @@ export const LivePage = () => {
       if (socketdata.token == data?.data.masterChart_InstrumentToken) {
         setSocketMasterData(socketdata);
       }
+
+
+      if (currentTime - lastUpdateTimeRef.current > 10 * 1000) {
+        
+
+        //console.log("hii")
+        lastUpdateTimeRef.current = currentTime;
+
+        setApiData((prevApiData) => {
+          if (!prevApiData || prevApiData.length === 0) return prevApiData;
+
+          // Clone the previous data to avoid direct mutation
+          const updatedData = [...prevApiData];
+
+          // Replace the `close` value in the last candle with `last_traded_price`
+          updatedData[updatedData.length - 1] = {
+            ...updatedData[updatedData.length - 1],
+            close: socketData.last_traded_price,
+          };
+
+          return updatedData;
+        });
+      }
     });
 
     return () => {
       socket.off("getLiveData");
     };
   }, [socket, data, isConnected]);
+ // console.log(socketData)
 
-
+ //console.log(socketData)
   // useEffect(() => {
   //   if (!isConnected || !data?.data?.instrument_token) return;
   //   socket?.on("getLiveData", (socketdata) => {

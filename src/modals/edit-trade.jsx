@@ -231,7 +231,7 @@ export const EditTrade = () => {
                     <SelectContent>
                       <SelectGroup>
                         <SelectLabel>Trade Index</SelectLabel>
-                        {[1, 2, 7, 11, 12, 17]?.map((suggestion) => (
+                        {[1, 2, 7, 8 , 11, 12, 17 , 18]?.map((suggestion) => (
                           <SelectItem key={suggestion} value={suggestion}>
                             {suggestion}
                           </SelectItem>
@@ -343,41 +343,9 @@ export const EditTrade = () => {
                   </>
                 )}
 
-                {/* <div className="px-1">
-                  <Label>WMA</Label>
-                  <Input
-                    name="wma"
-                    onChange={handleChange}
-                    value={values.wma}
-                    className="mt-1"
-                    type="number"
-                  />
-                </div> */}
+   
 
-                {values?.isMaster == true && (
-                  <>
-                    {/* <div className="px-1">
-                      <Label>Alert Above</Label>
-                      <Input
-                        name="targetAbove"
-                        onChange={handleChange}
-                        value={values.targetAbove}
-                        className="mt-1"
-                        type="text"
-                      />
-                    </div>
-                    <div className="px-1">
-                      <Label>Alert Below</Label>
-                      <Input
-                        name="targetBelow"
-                        onChange={handleChange}
-                        value={values.targetBelow}
-                        className="mt-1"
-                        type="text"
-                      />
-                    </div> */}
-                  </>
-                )}
+   
 
                 {values?.isMaster && (
                   <div className="px-1">

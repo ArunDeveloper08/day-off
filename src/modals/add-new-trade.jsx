@@ -567,7 +567,7 @@ export const AddNewtrade = () => {
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Trade Index</SelectLabel>
-                    {[1, 2, 7, 11, 12, 17]?.map((suggestion) => (
+                    {[1, 2, 7, 8 ,11, 12, 17  , 18]?.map((suggestion) => (
                       <SelectItem key={suggestion} value={suggestion}>
                         {suggestion}
                       </SelectItem>

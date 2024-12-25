@@ -387,6 +387,10 @@ const CandleChart = ({
   setAlert3,
   entryLine,
   setEntryLine,
+  noActionLine,
+  setNoActionLine,
+  setHorizontalLine,
+  horizontalLine,
 
   id,
   getChartData,
@@ -397,6 +401,8 @@ const CandleChart = ({
     const { getInteractiveNodes, saveInteractiveNodes } = useInteractiveNodes();
     const [enableAlertLine, setEnableAlertLine] = useState(false);
     const [enableEntryLine, setEnableEntryLine] = useState(false);
+    const [enableNoActionLine, setEnableNoActionLine] = useState(false);
+    const [enableHorizontalLine, setEnableHorizontalLine] = useState(false);
     const [enableInteractiveObject, setEnableInteractiveObject] =
       useState(false);
 
@@ -575,7 +581,8 @@ const CandleChart = ({
       setTrends3(state.trends_3 || trends3);
       setChannels1(state.channels_1 || channels1);
       setAlert3(state.alert_3 || alert3);
-      setEntryLine(state.entryLine || entryLine);
+      setNoActionLine(state.noActionLine || noActionLine)
+     //setHorizontalLine(state.horizontalLine || horizontalLine )
     };
 
     const onDrawCompleteChart3 = (newTrends) => {
@@ -616,6 +623,8 @@ const CandleChart = ({
       setTrends3(coloredNewTrends);
       logTrendLines(coloredNewTrends);
     };
+
+
 
     // const DEGREE_TO_RADIAN = Math.PI / 180;
     // const DEFAULT_ANGLE = 80; // Default angle in degrees
@@ -684,7 +693,7 @@ const CandleChart = ({
         "AlertLine1",
         "AlertLine2"
       ];
-     // console.log(data)
+     //console.log(data)
     
    if (
     hasIncompleteLine(data?.buyTrendLines, trendLineNames) ||
@@ -746,6 +755,81 @@ const CandleChart = ({
         "Alert lines saved."
       );
     };
+    const onDrawCompleteNoAction = (newAlerts) => {
+      setEnableNoActionLine(false);
+
+      let coloredAlerts = newAlerts?.map((item, ind) => {
+        let startIndex = Math.min(Math.floor(item.start[0]), data?.length - 1);
+        let startTime = data[startIndex]?.timestamp;
+
+        let endIndex = Math.floor(item?.end[0]);
+        let endTime =
+          endIndex >= 0 && endIndex < data?.length
+            ? data[endIndex]?.timestamp
+            : undefined;
+
+        // Check if the index is within the AlertLineArray bounds
+      
+
+        return {
+          ...item,
+          appearance: {
+            ...item.appearance,
+            stroke: "blue",
+            strokeWidth: 1,
+          },
+          startTime,
+          endTime,
+         
+        };
+      });
+
+      setNoActionLine(coloredAlerts);
+      logTrendLines(coloredAlerts);
+     setActiveLineType(null);
+      sendDataToAPI(
+        { trendLines: coloredAlerts,  },
+        "/config/edit",
+        "Extra lines saved."
+      );
+    };
+    const onDrawCompleteHorizontal = (newAlerts) => {
+      setEnableHorizontalLine(false);
+  
+      // Ensure the line spans from the first candle to the last candle
+      let coloredAlerts = newAlerts?.map((item) => {
+          let startIndex = 0; // First candle
+          let endIndex = data?.length - 1; // Last candle
+  
+          // Get the timestamp for the first and last candles
+          let startTime = data[startIndex]?.timestamp;
+          let endTime = data[endIndex]?.timestamp;
+  
+          return {
+              ...item,
+              start: [startIndex, item.start[1]], // Keep the y-coordinate same, adjust x to start at the first candle
+              end: [endIndex, item.start[1]], // Keep the y-coordinate same, adjust x to end at the last candle
+              appearance: {
+                  ...item.appearance,
+                  stroke: "black",
+                  strokeWidth: 1,
+              },
+              startTime,
+              endTime,
+          };
+      });
+  
+      // Update state and send data
+      setHorizontalLine(coloredAlerts);
+      logTrendLines(coloredAlerts);
+      setActiveLineType(null);
+      sendDataToAPI(
+          { horizontalLine: coloredAlerts },
+          "/config/edit",
+          "Horizontal lines saved."
+      );
+  };
+  
 
     const onDrawCompleteEntryLine3 = (newAlerts) => {
       setEnableEntryLine(false);
@@ -888,8 +972,14 @@ const CandleChart = ({
         case 69: // E - Enable Fibonacci
           setEnableFib(true);
           break;
+        case 82: // R- Enable Horizontal
+          setEnableHorizontalLine(true);
+          handleActivateAlertLine();
+          break;
         case 70: // F - Enable Equidistant Channel
-          setEnableEquidistantChannel(true);
+          //setEnableEquidistantChannel(true);
+          setEnableNoActionLine(true);
+          handleActivateActionLine();
           break;
         default:
           break;
@@ -976,6 +1066,24 @@ const CandleChart = ({
         "Alert lines saved."
       );
     };
+    const handleResetActionLines = () => {
+      const updatedAlert3 = [];
+      setNoActionLine(updatedAlert3);
+      sendDataToAPI(
+        { trendLines: updatedAlert3},
+        "/config/edit",
+        "Extra lines saved."
+      );
+    };
+    const handleResetHorizontalLines = () => {
+      const updatedAlert3 = [];
+      setHorizontalLine(updatedAlert3);
+      sendDataToAPI(
+        { horizontalLine: updatedAlert3},
+        "/config/edit",
+        "Horizontal lines saved."
+      );
+    };
 
     const MannualTrade = async (id, EntryType, Signal) => {
       try {
@@ -999,12 +1107,31 @@ const CandleChart = ({
       setActiveLineType("entryLine");
       setEnableEntryLine(true);
       setEnableAlertLine(false);
+      setEnableNoActionLine(false)
+      setEnableHorizontalLine(false);
     };
 
     const handleActivateAlertLine = () => {
       setActiveLineType("alertLine");
       setEnableAlertLine(true);
       setEnableEntryLine(false);
+      setEnableNoActionLine(false)
+      setEnableHorizontalLine(false);
+    };
+
+    const handleActivateActionLine = () => {
+      setActiveLineType("noActionLine");
+      setEnableAlertLine(false);
+      setEnableEntryLine(false);
+      setEnableNoActionLine(true);
+      setEnableHorizontalLine(false);
+    };
+    const handleActivateHorizontalLine = () => {
+      setActiveLineType("horizontalLine");
+      setEnableAlertLine(false);
+      setEnableEntryLine(false);
+      setEnableNoActionLine(false);
+      setEnableHorizontalLine(true);
     };
       
     //console.log("hii")
@@ -1109,7 +1236,8 @@ const CandleChart = ({
                     </button>
                   )}
 
-                  {/* <button
+                  {
+                  /* <button
                     className="bg-green-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
                     onClick={() =>
                       handleCreateTrendLines(
@@ -1121,7 +1249,8 @@ const CandleChart = ({
                     }
                   >
                     Submit
-                  </button> */}
+                  </button> */
+                  }
                   <button
 
                       disabled={
@@ -1137,8 +1266,35 @@ const CandleChart = ({
                   >
                     Remove EntryLine1
                   </button>
+                  <button
+
+                      
+                    className="bg-red-600 hover:bg-red-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
+                    onClick={handleResetActionLines}
+                  >
+                    Remove ExtraLine
+                  </button>
+                  <button
+
+                      
+                    className="bg-red-600 hover:bg-red-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
+                    onClick={handleResetHorizontalLines}
+                  >
+                    Remove HorizontalLines
+                  </button>
 
                   <div className="flex flex-col gap-2 md:flex-row md:justify-around">
+                   
+                    <button
+                      className={`px-2 py-1 rounded-sm w-full md:w-fit mx-auto ${
+                        activeLineType === "alertLine"
+                          ? "bg-green-600 text-white"
+                          : "bg-gray-600 text-white"
+                      }`}
+                      onClick={handleActivateAlertLine}
+                    >
+                      Activate Entry Line2
+                    </button>
                     <button
                       className={`px-2 py-1 rounded-sm w-full md:w-fit mx-auto ${
                         activeLineType === "entryLine"
@@ -1151,13 +1307,23 @@ const CandleChart = ({
                     </button>
                     <button
                       className={`px-2 py-1 rounded-sm w-full md:w-fit mx-auto ${
-                        activeLineType === "alertLine"
+                        activeLineType === "noActionLine"
                           ? "bg-green-600 text-white"
                           : "bg-gray-600 text-white"
                       }`}
-                      onClick={handleActivateAlertLine}
+                      onClick={handleActivateActionLine}
                     >
-                      Activate Entry Line2
+                     Extra Line
+                    </button>
+                    <button
+                      className={`px-2 py-1 rounded-sm w-full md:w-fit mx-auto ${
+                        activeLineType === "horizontalLine"
+                          ? "bg-green-600 text-white"
+                          : "bg-gray-600 text-white"
+                      }`}
+                      onClick={handleActivateHorizontalLine}
+                    >
+                     Horizontal Line
                     </button>
                   </div>
                 </div>
@@ -1752,12 +1918,12 @@ const CandleChart = ({
                         yAccessor={(d) => d.hourlyLow}
                       />
                       <LineSeries
-                        strokeWidth={2}
+                        strokeWidth={1}
                         stroke="red"
                         yAccessor={(d) => d.hourlyOpen}
                       />
                       <LineSeries
-                        strokeWidth={2}
+                        strokeWidth={1}
                         stroke="green"
                         yAccessor={(d) => d.hourlyClose}
                       />
@@ -1797,22 +1963,22 @@ const CandleChart = ({
                       />
 
                       <LineSeries
-                        strokeWidth={4}
+                        strokeWidth={3}
                         stroke="red"
                         yAccessor={(d) => d.dailyHigh}
                       />
                       <LineSeries
-                        strokeWidth={4}
+                        strokeWidth={3}
                         stroke="green"
                         yAccessor={(d) => d.dailyLow}
                       />
                       <LineSeries
-                        strokeWidth={4}
+                        strokeWidth={1}
                         stroke="red"
                         yAccessor={(d) => d.dailyOpen}
                       />
                       <LineSeries
-                        strokeWidth={4}
+                        strokeWidth={1}
                         stroke="green"
                         yAccessor={(d) => d.dailyClose}
                       />
@@ -1948,6 +2114,66 @@ const CandleChart = ({
                       />
                     </>
                   )}
+                  {showRow.noActionLine && (
+                    <>
+                      <TrendLine
+                        ref={(node) => {
+                          entryLineNodeRef.current = node;
+                        }}
+                        enabled={enableNoActionLine}
+                        type="LINE"
+                        snap={false}
+                        value={noActionLine}
+                        snapTo={(d) => [d?.high, d?.low]}
+                        onStart={() => console.log("Entry Line Line Start")}
+                        onComplete={onDrawCompleteNoAction}
+                        trends={noActionLine}
+                      />
+                      <DrawingObjectSelector
+                        enabled={!enableNoActionLine}
+                        getInteractiveNodes={() => ({
+                          // EntryLine: {
+                          //   1: entryLineNodeRef.current,
+                          //   3: entryLineNodeRef.current,
+                          // },
+                        })}
+                        drawingObjectMap={{
+                          EntryLine: "NoActionLine",
+                        }}
+                        onSelect={handleSelection}
+                      />
+                    </>
+                  )}
+                  {showRow.horizontalLine && (
+                    <>
+                      <TrendLine
+                        ref={(node) => {
+                          entryLineNodeRef.current = node;
+                        }}
+                        enabled={enableHorizontalLine}
+                        type="LINE"
+                        snap={false}
+                        value={horizontalLine}
+                        snapTo={(d) => [d?.high, d?.low]}
+                        onStart={() => console.log("Entry Line Line Start")}
+                        onComplete={onDrawCompleteHorizontal}
+                        trends={horizontalLine}
+                      />
+                      <DrawingObjectSelector
+                        enabled={!enableHorizontalLine}
+                        getInteractiveNodes={() => ({
+                          // EntryLine: {
+                          //   1: entryLineNodeRef.current,
+                          //   3: entryLineNodeRef.current,
+                          // },
+                        })}
+                        drawingObjectMap={{
+                          EntryLine: "horizontalLine",
+                        }}
+                        onSelect={handleSelection}
+                      />
+                    </>
+                  )}
 
                   {showRow.fibonacci && (
                     <>
@@ -2012,14 +2238,10 @@ const CandleChart = ({
                       />
                     </>
                   )}
-                  <MACDSeries yAccessor={(d) => d.macd} {...macdAppearance} />
 
-                  {/* <MACDTooltip
-              origin={[-38, 15]}
-              yAccessor={(d) => d.macd}
-              options={macdCalculator.options()}
-              appearance={macdAppearance}
-               /> */}
+                {/* <MACDSeries yAccessor={(d) => d.macd} {...macdAppearance} /> */}
+
+          
 
                   <ZoomButtons onReset={handleReset} />
                 </Chart>
