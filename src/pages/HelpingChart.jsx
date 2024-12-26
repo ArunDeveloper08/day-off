@@ -884,7 +884,7 @@ const HelpingChart = () => {
           <p>BankNifty OI PCR: {bankNifty?.pcrRatio?.toFixed(1)} </p>
           <p>BankNifty COI PCR: {bankNifty?.coiPCRatio?.toFixed(1)} </p>
           <p>BankNifty CE (%): {bankNifty?.CEPercentage?.toFixed(1)} </p>
-          <p>BankNifty CE (%): {bankNifty?.PEPercentage?.toFixed(1)} </p>
+          <p>BankNifty PE (%): {bankNifty?.PEPercentage?.toFixed(1)} </p>
         </div>
 
         {hideConfig && (

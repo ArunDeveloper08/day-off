@@ -923,7 +923,7 @@ const CandleChart = ({
 
     const onKeyPress = (e) => {
       const keyCode = e.which;
-      console.log(keyCode);
+     //console.log(keyCode);
       switch (keyCode) {
         case 46: // DEL
           setTrends1(trends1.filter((each) => !each.selected));
@@ -1013,6 +1013,8 @@ const CandleChart = ({
         d.atr = c;
       })
       .accessor((d) => d.atr);
+
+          
 
     const bb = bollingerBand()
       .merge((d, c) => {
@@ -1134,7 +1136,7 @@ const CandleChart = ({
       setEnableHorizontalLine(true);
     };
       
-    //console.log("hii")
+  
 
     return (
       <div className="flex flex-col">

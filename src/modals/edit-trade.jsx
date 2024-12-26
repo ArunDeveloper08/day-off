@@ -602,16 +602,7 @@ export const EditTrade = () => {
                             type="rsiMax"
                           />
                         </div>
-                        <div className="px-1">
-                          <Label>RSI Candle</Label>
-                          <Input
-                            name="rsiCandle"
-                            onChange={handleChange}
-                            value={values.rsiCandle}
-                            className="mt-1"
-                            type="rsiCandle"
-                          />
-                        </div>
+               
                         <div className="px-1">
                           <Label>MV Source 1</Label>
                           <Select
@@ -780,6 +771,16 @@ export const EditTrade = () => {
                             value={values.rsiMax}
                             className="mt-1"
                             type="rsiMax"
+                          />
+                        </div>
+                        <div className="px-1">
+                          <Label>RSI Candle</Label>
+                          <Input
+                            name="rsiCandle"
+                            onChange={handleChange}
+                            value={values.rsiCandle}
+                            className="mt-1"
+                            type="rsiCandle"
                           />
                         </div>
 

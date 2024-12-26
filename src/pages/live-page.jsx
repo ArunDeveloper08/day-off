@@ -48,6 +48,7 @@ export const LivePage = () => {
   const [isUserScroll, setIsUserScroll] = useState(false);
   const [masterId, setMasterId] = useState("");
   const [trends3, setTrends3] = useState([]);
+ 
 
   const [values, setValues] = useState({
     s1: null,
@@ -98,6 +99,7 @@ export const LivePage = () => {
         `${BASE_URL_OVERALL}/config/get?id=${id}`
       );
       setData((p) => ({ ...p, data: data.data }));
+
       setValues(data?.data);
       setPrevDate(data?.data?.masterChartPrevDate);
     } catch (error) {
@@ -590,7 +592,10 @@ export const LivePage = () => {
           </div>
         </div>
 
-        {id && <LiveDataTable id={id} socketData={socketData}  socketMastertData={socketMastertData} />}
+        {id && <LiveDataTable id={id} socketData={socketData}  socketMastertData={socketMastertData} 
+        
+         values={values}
+        />}
       </>
       {/* // )} */}
     </div>

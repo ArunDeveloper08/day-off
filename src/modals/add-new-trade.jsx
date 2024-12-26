@@ -944,16 +944,7 @@ export const AddNewtrade = () => {
                         type="rsiMax"
                       />
                     </div>
-                    <div className="px-1">
-                      <Label>RSI Candle</Label>
-                      <Input
-                        name="rsiCandle"
-                        onChange={handleChange}
-                        value={values.rsiCandle}
-                        className="mt-1"
-                        type="rsiCandle"
-                      />
-                    </div>
+                   
                     <div className="px-1">
                       <Label>SMA 1</Label>
                       <Input
@@ -1154,6 +1145,16 @@ export const AddNewtrade = () => {
                         type="rsiMax"
                       />
                     </div>
+                    <div className="px-1">
+                      <Label>RSI Candle</Label>
+                      <Input
+                        name="rsiCandle"
+                        onChange={handleChange}
+                        value={values.rsiCandle}
+                        className="mt-1"
+                        type="rsiCandle"
+                      />
+                    </div>
 
                     <div className="px-1">
                       <Label>D_Exit (%)</Label>
@@ -1188,7 +1189,7 @@ export const AddNewtrade = () => {
                     <div className="px-1">
                       <Label>Interval</Label>
                       <Select
-                        // disabled={loading}
+            
                         value={values.interval}
                         name="terminal"
                         onValueChange={(value) =>

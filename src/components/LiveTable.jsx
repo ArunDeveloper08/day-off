@@ -67,7 +67,7 @@ const LiveTable = () => {
     return { CallType: item.CallType, identifier: item.identifier, diff };
   };
 
-  console.log(trands);
+  //console.log(trands);
 
   return (
     <div>
