@@ -62,7 +62,7 @@ const AddChildTrade = () => {
   };
 
   if (!isModalOpen) return null;
-
+  
   const handleSubmit = async () => {
     if (!values.childTrade) {
       return alert("Please Enter Child Indentifier");

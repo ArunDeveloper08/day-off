@@ -58,6 +58,7 @@ export const LivePage = () => {
     r2: null,
     r3: null,
   });
+
   const [showRow, setShowRow] = useState({
     showAvg: false,
     candle: true,
@@ -67,9 +68,9 @@ export const LivePage = () => {
     trendLine: true,
     initialLow: false,
     Last_Highest_LTP: false,
-    rangeBoundLine: true,
+    rangeBoundLine: false,
     MouseCoordinates: true,
-    movingAvg: true,
+    movingAvg: false,
     fibonacci: false,
     equidistantChannel: false,
     volume: false,
@@ -80,9 +81,10 @@ export const LivePage = () => {
     hourly: false,
     daily: false,
     suppRes: false,
-    toolTip: true,
+    toolTip: false,
     alertLine: false,
   });
+
   const [apiData, setApiData] = useState([]);
   const [data, setData] = useState({
     loading: false,
@@ -130,7 +132,7 @@ export const LivePage = () => {
 
   useEffect(() => {
     getTradeConfig();
-    const interval = setInterval(getTradeConfig, 20 * 1000);
+    const interval = setInterval(getTradeConfig, 15 * 1000);
     intervalRef.current = interval;
     return () => clearInterval(interval);
   }, []);
@@ -355,7 +357,7 @@ export const LivePage = () => {
             <button className="text-sm md:text-lg text-center font-semibold text-green-600">
               LTP : {socketData?.last_traded_price} &nbsp; &nbsp; Master LTP :
               {socketMastertData?.last_traded_price} &nbsp; &nbsp; RSI Live :{" "}
-              {socketData?.RSI_value} &nbsp; &nbsp;
+              {data.data.RSI_Value} &nbsp; &nbsp;
             </button>
 
             {/* <button onClick={toggleScroll} className="text-lg">

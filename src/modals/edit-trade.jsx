@@ -231,7 +231,7 @@ export const EditTrade = () => {
                     <SelectContent>
                       <SelectGroup>
                         <SelectLabel>Trade Index</SelectLabel>
-                        {[1, 2, 7, 8 , 11, 12, 17 , 18]?.map((suggestion) => (
+                        {[ 2, 7, 8 , 12, 17 , 18]?.map((suggestion) => (
                           <SelectItem key={suggestion} value={suggestion}>
                             {suggestion}
                           </SelectItem>
@@ -696,7 +696,7 @@ export const EditTrade = () => {
                             </SelectContent>
                           </Select>
                         </div>
-                        <div className="px-1">
+                        {/* <div className="px-1">
                           <Label>Exit Selection</Label>
                           <Select
                             // disabled={loading}
@@ -723,7 +723,7 @@ export const EditTrade = () => {
                               </SelectGroup>
                             </SelectContent>
                           </Select>
-                        </div>
+                        </div> */}
                         <div className="px-1">
                           <Label>Entry Candle</Label>
                           <Select

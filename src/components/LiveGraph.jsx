@@ -236,7 +236,6 @@ const bbFill = "#4682B4";
 //         </form>
 //       </Modal.Body>
 
-
 //       <Modal.Footer>
 //         <Button bsstyle="primary" onClick={handleSave}>
 //           Save
@@ -370,7 +369,7 @@ const AlertLineArray = [
 ];
 
 const CandleChart = ({
-//  handleCreateTrendLines,
+  //  handleCreateTrendLines,
   chartType,
   // getChartData,
   data: initialData,
@@ -581,8 +580,8 @@ const CandleChart = ({
       setTrends3(state.trends_3 || trends3);
       setChannels1(state.channels_1 || channels1);
       setAlert3(state.alert_3 || alert3);
-      setNoActionLine(state.noActionLine || noActionLine)
-     //setHorizontalLine(state.horizontalLine || horizontalLine )
+      setNoActionLine(state.noActionLine || noActionLine);
+      //setHorizontalLine(state.horizontalLine || horizontalLine )
     };
 
     const onDrawCompleteChart3 = (newTrends) => {
@@ -623,8 +622,6 @@ const CandleChart = ({
       setTrends3(coloredNewTrends);
       logTrendLines(coloredNewTrends);
     };
-
-
 
     // const DEGREE_TO_RADIAN = Math.PI / 180;
     // const DEFAULT_ANGLE = 80; // Default angle in degrees
@@ -679,11 +676,10 @@ const CandleChart = ({
       );
     };
 
-
     const sendDataToAPI = async (
-      data,
-     // endpoint,
-     // alertMessage = "Successfully saved."
+      data
+      // endpoint,
+      // alertMessage = "Successfully saved."
     ) => {
       const trendLineNames = [
         "Support",
@@ -691,22 +687,22 @@ const CandleChart = ({
         "Call Target Line",
         "Put Target Line",
         "AlertLine1",
-        "AlertLine2"
+        "AlertLine2",
       ];
-     //console.log(data)
-    
-   if (
-    hasIncompleteLine(data?.buyTrendLines, trendLineNames) ||
-    hasIncompleteLine(data?.analysisLine, trendLineNames)
-  ) {
-    alert("Please Draw Line Inside The Chart");
- //   await getChartData();
-    return;
-  }
+      //console.log(data)
+
+      if (
+        hasIncompleteLine(data?.buyTrendLines, trendLineNames) ||
+        hasIncompleteLine(data?.analysisLine, trendLineNames)
+      ) {
+        alert("Please Draw Line Inside The Chart");
+        //   await getChartData();
+        return;
+      }
 
       try {
         await axios.put(`${BASE_URL_OVERALL}/config/edit`, { id, ...data });
-     //   await getChartData();
+        //   await getChartData();
       } catch (error) {
         console.error("Error saving data:", error);
       }
@@ -769,7 +765,6 @@ const CandleChart = ({
             : undefined;
 
         // Check if the index is within the AlertLineArray bounds
-      
 
         return {
           ...item,
@@ -780,56 +775,54 @@ const CandleChart = ({
           },
           startTime,
           endTime,
-         
         };
       });
 
       setNoActionLine(coloredAlerts);
       logTrendLines(coloredAlerts);
-     setActiveLineType(null);
+      setActiveLineType(null);
       sendDataToAPI(
-        { trendLines: coloredAlerts,  },
+        { trendLines: coloredAlerts },
         "/config/edit",
         "Extra lines saved."
       );
     };
     const onDrawCompleteHorizontal = (newAlerts) => {
       setEnableHorizontalLine(false);
-  
+
       // Ensure the line spans from the first candle to the last candle
       let coloredAlerts = newAlerts?.map((item) => {
-          let startIndex = 0; // First candle
-          let endIndex = data?.length - 1; // Last candle
-  
-          // Get the timestamp for the first and last candles
-          let startTime = data[startIndex]?.timestamp;
-          let endTime = data[endIndex]?.timestamp;
-  
-          return {
-              ...item,
-              start: [startIndex, item.start[1]], // Keep the y-coordinate same, adjust x to start at the first candle
-              end: [endIndex, item.start[1]], // Keep the y-coordinate same, adjust x to end at the last candle
-              appearance: {
-                  ...item.appearance,
-                  stroke: "black",
-                  strokeWidth: 1,
-              },
-              startTime,
-              endTime,
-          };
+        let startIndex = 0; // First candle
+        let endIndex = data?.length - 1; // Last candle
+
+        // Get the timestamp for the first and last candles
+        let startTime = data[startIndex]?.timestamp;
+        let endTime = data[endIndex]?.timestamp;
+
+        return {
+          ...item,
+          start: [startIndex, item.start[1]], // Keep the y-coordinate same, adjust x to start at the first candle
+          end: [endIndex, item.start[1]], // Keep the y-coordinate same, adjust x to end at the last candle
+          appearance: {
+            ...item.appearance,
+            stroke: "black",
+            strokeWidth: 1,
+          },
+          startTime,
+          endTime,
+        };
       });
-  
+
       // Update state and send data
       setHorizontalLine(coloredAlerts);
       logTrendLines(coloredAlerts);
       setActiveLineType(null);
       sendDataToAPI(
-          { horizontalLine: coloredAlerts },
-          "/config/edit",
-          "Horizontal lines saved."
+        { horizontalLine: coloredAlerts },
+        "/config/edit",
+        "Horizontal lines saved."
       );
-  };
-  
+    };
 
     const onDrawCompleteEntryLine3 = (newAlerts) => {
       setEnableEntryLine(false);
@@ -923,7 +916,7 @@ const CandleChart = ({
 
     const onKeyPress = (e) => {
       const keyCode = e.which;
-     //console.log(keyCode);
+      //console.log(keyCode);
       switch (keyCode) {
         case 46: // DEL
           setTrends1(trends1.filter((each) => !each.selected));
@@ -1014,8 +1007,6 @@ const CandleChart = ({
       })
       .accessor((d) => d.atr);
 
-          
-
     const bb = bollingerBand()
       .merge((d, c) => {
         d.bb = c;
@@ -1051,19 +1042,27 @@ const CandleChart = ({
       const updatedAlert3 = []; // Define the updated value
       setAlert3(updatedAlert3); // Update the state
       sendDataToAPI(
-        { analysisLine: updatedAlert3, buyTrendLineDate: null , callLine : 0 , putLine: 0 },
+        {
+          analysisLine: updatedAlert3,
+          buyTrendLineDate: null,
+          callLine: 0,
+          putLine: 0,
+        },
         "/config/edit",
         "Alert lines saved."
       );
-
     };
-
 
     const handleResetEntryLines = () => {
       const updatedAlert3 = [];
       setEntryLine(updatedAlert3);
       sendDataToAPI(
-        { buyTrendLines: updatedAlert3, buyTrendLineDate: null , callLine : 0 , putLine : 0 },
+        {
+          buyTrendLines: updatedAlert3,
+          buyTrendLineDate: null,
+          callLine: 0,
+          putLine: 0,
+        },
         "/config/edit",
         "Alert lines saved."
       );
@@ -1072,7 +1071,7 @@ const CandleChart = ({
       const updatedAlert3 = [];
       setNoActionLine(updatedAlert3);
       sendDataToAPI(
-        { trendLines: updatedAlert3},
+        { trendLines: updatedAlert3 },
         "/config/edit",
         "Extra lines saved."
       );
@@ -1081,7 +1080,7 @@ const CandleChart = ({
       const updatedAlert3 = [];
       setHorizontalLine(updatedAlert3);
       sendDataToAPI(
-        { horizontalLine: updatedAlert3},
+        { horizontalLine: updatedAlert3 },
         "/config/edit",
         "Horizontal lines saved."
       );
@@ -1104,12 +1103,11 @@ const CandleChart = ({
       }
     };
 
-
     const handleActivateEntryLine = () => {
       setActiveLineType("entryLine");
       setEnableEntryLine(true);
       setEnableAlertLine(false);
-      setEnableNoActionLine(false)
+      setEnableNoActionLine(false);
       setEnableHorizontalLine(false);
     };
 
@@ -1117,7 +1115,7 @@ const CandleChart = ({
       setActiveLineType("alertLine");
       setEnableAlertLine(true);
       setEnableEntryLine(false);
-      setEnableNoActionLine(false)
+      setEnableNoActionLine(false);
       setEnableHorizontalLine(false);
     };
 
@@ -1135,8 +1133,6 @@ const CandleChart = ({
       setEnableNoActionLine(false);
       setEnableHorizontalLine(true);
     };
-      
-  
 
     return (
       <div className="flex flex-col">
@@ -1189,7 +1185,7 @@ const CandleChart = ({
                   </div>
                 </>
               )}
-    
+
               {master?.isMaster && master?.tradeIndex == 4 && (
                 <>
                   <div className="flex flex-col gap-2 md:flex-row md:justify-around">
@@ -1215,7 +1211,6 @@ const CandleChart = ({
                 <div className="flex flex-col gap-2 md:flex-row md:justify-around">
                   {master?.tradeIndex == 4 ? (
                     <button
-                    
                       className="bg-red-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
                       onClick={handleResetTrendLines}
                     >
@@ -1223,14 +1218,14 @@ const CandleChart = ({
                     </button>
                   ) : (
                     <button
-                    disabled={
-                      master?.haveTradeOfCE ||
-                      master?.haveTradeOfPE ||
-                      master?.haveTradeOfCEBuy ||
-                      master?.haveTradeOfPEBuy ||
-                      master?.haveTradeOfFUTSell ||
-                      master?.haveTradeOfFUTBuy
-                    }
+                      disabled={
+                        master?.haveTradeOfCE ||
+                        master?.haveTradeOfPE ||
+                        master?.haveTradeOfCEBuy ||
+                        master?.haveTradeOfPEBuy ||
+                        master?.haveTradeOfFUTSell ||
+                        master?.haveTradeOfFUTBuy
+                      }
                       className="bg-red-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
                       onClick={handleResetAlertLine}
                     >
@@ -1238,8 +1233,7 @@ const CandleChart = ({
                     </button>
                   )}
 
-                  {
-                  /* <button
+                  {/* <button
                     className="bg-green-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
                     onClick={() =>
                       handleCreateTrendLines(
@@ -1251,34 +1245,28 @@ const CandleChart = ({
                     }
                   >
                     Submit
-                  </button> */
-                  }
+                  </button> */}
                   <button
-
-                      disabled={
-                    master?.haveTradeOfCE ||
-                    master?.haveTradeOfPE ||
-                    master?.haveTradeOfCEBuy ||
-                    master?.haveTradeOfPEBuy ||
-                    master?.haveTradeOfFUTSell ||
-                    master?.haveTradeOfFUTBuy
-                  }
+                    disabled={
+                      master?.haveTradeOfCE ||
+                      master?.haveTradeOfPE ||
+                      master?.haveTradeOfCEBuy ||
+                      master?.haveTradeOfPEBuy ||
+                      master?.haveTradeOfFUTSell ||
+                      master?.haveTradeOfFUTBuy
+                    }
                     className="bg-red-600 hover:bg-red-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
                     onClick={handleResetEntryLines}
                   >
                     Remove EntryLine1
                   </button>
                   <button
-
-                      
                     className="bg-red-600 hover:bg-red-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
                     onClick={handleResetActionLines}
                   >
                     Remove ExtraLine
                   </button>
                   <button
-
-                      
                     className="bg-red-600 hover:bg-red-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
                     onClick={handleResetHorizontalLines}
                   >
@@ -1286,7 +1274,6 @@ const CandleChart = ({
                   </button>
 
                   <div className="flex flex-col gap-2 md:flex-row md:justify-around">
-                   
                     <button
                       className={`px-2 py-1 rounded-sm w-full md:w-fit mx-auto ${
                         activeLineType === "alertLine"
@@ -1315,7 +1302,7 @@ const CandleChart = ({
                       }`}
                       onClick={handleActivateActionLine}
                     >
-                     Extra Line
+                      Extra Line
                     </button>
                     <button
                       className={`px-2 py-1 rounded-sm w-full md:w-fit mx-auto ${
@@ -1325,7 +1312,7 @@ const CandleChart = ({
                       }`}
                       onClick={handleActivateHorizontalLine}
                     >
-                     Horizontal Line
+                      Horizontal Line
                     </button>
                   </div>
                 </div>
@@ -1403,8 +1390,6 @@ const CandleChart = ({
                   // padding={{ top: 0, bottom: 0 }}
                   // yExtents={(d) => [d.high, d.low]} // Ensure proper y-axis scaling based on high/low
                   padding={{ top: 20, bottom: 50 }} // Add some padding to prevent squeezing
-
-        
                 >
                   <XAxis axisAt="bottom" orient="bottom" ticks={10} />
                   <YAxis axisAt="right" orient="right" />
@@ -1482,6 +1467,41 @@ const CandleChart = ({
                     stroke="blue"
                     yAccessor={(d) => Number(d.CEStopLoss)}
                   />
+
+                  <LineSeries
+                    strokeDasharray="Dash"
+                    strokeWidth={2}
+                    stroke="green"
+                    yAccessor={(d) =>
+                      d.stopLoss != null ? Number(d.stopLoss) : undefined
+                    }
+                  />
+                  <LineSeries
+                    strokeWidth={2}
+                    stroke="violet"
+                    yAccessor={(d) =>
+                      d.targetPrice != null ? Number(d.targetPrice) : undefined
+                    }                                                                                            
+                  />
+                  <LineSeries
+                    strokeWidth={2}
+                    stroke="green"
+                    yAccessor={(d) =>
+                      d.entryPivotValue != null
+                        ? Number(d.entryPivotValue)
+                        : undefined
+                    }
+                  />
+                  <LineSeries
+                    strokeWidth={2}
+                    stroke="red"
+                    yAccessor={(d) =>
+                      d.dynamicExitValue != null
+                        ? Number(d.dynamicExitValue)
+                        : undefined
+                    }
+                  />
+
                   <LineSeries
                     strokeDasharray="Dash"
                     strokeWidth={2}
@@ -2241,9 +2261,7 @@ const CandleChart = ({
                     </>
                   )}
 
-                {/* <MACDSeries yAccessor={(d) => d.macd} {...macdAppearance} /> */}
-
-          
+                  {/* <MACDSeries yAccessor={(d) => d.macd} {...macdAppearance} /> */}
 
                   <ZoomButtons onReset={handleReset} />
                 </Chart>

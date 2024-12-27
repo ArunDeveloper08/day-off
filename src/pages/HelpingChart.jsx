@@ -708,7 +708,7 @@ const HelpingChart = () => {
   useEffect(() => {
     if (!id) return;
     getTrendLinesValue();
-    const interval = setInterval(getTrendLinesValue, 7 * 1000);
+    const interval = setInterval(getTrendLinesValue, 5 * 1000);
     // intervalRef.current = interval;
 
     return () => clearInterval(interval);
@@ -816,7 +816,7 @@ const HelpingChart = () => {
     window.open(url, "_blank");
   };
 
-  //console.log(filteredData)
+  //console.log(trendLineValue)
 
   return (
     <div className="p-2">
@@ -1124,15 +1124,15 @@ const HelpingChart = () => {
                   {trendLineValue && (
                     <p className="font-semibold text-[13px] md:text-[16px]">
                       Resistance :
-                      {filteredData &&
-                        filteredData?.[0]?.resistance?.toFixed(1)}
+                      {trendLineValue?.dataForIndex7?.ResistancePrice &&
+                        trendLineValue?.dataForIndex7?.ResistancePrice?.toFixed(1)}
                       &nbsp; &nbsp; Support :
-                      {filteredData && filteredData?.[0]?.support?.toFixed(1)}
+                      {trendLineValue?.dataForIndex7?.SupportPrice && trendLineValue?.dataForIndex7?.SupportPrice?.toFixed(1)}
                       &nbsp; &nbsp; Call Target :
-                      {filteredData &&
-                        filteredData?.[0]?.callTarget?.toFixed(1)}
+                      {trendLineValue?.dataForIndex7?.callTargetLevelPrice &&
+                        trendLineValue?.dataForIndex7?.callTargetLevelPrice?.toFixed(1)}
                       &nbsp; &nbsp; Put Target :
-                      {filteredData && filteredData?.[0]?.putTarget?.toFixed(1)}
+                      {trendLineValue?.dataForIndex7?.putTargetLevelPrice && trendLineValue?.dataForIndex7?.putTargetLevelPrice?.toFixed(1)}
                       &nbsp; &nbsp;
                       {trendLineValue?.dataForIndex7?.CESellLinePrice > 0 && (
                         <span>
@@ -1241,7 +1241,7 @@ const HelpingChart = () => {
                       ) : (
                         <span></span>
                       )}
-                      {/* Time : {formatDate(trendLineValue?.timestamp)} */}
+                  
                    
                   {ceStopLoss && `CE Stop Loss : ${ceStopLoss?.toFixed(1)}`}
               
@@ -1489,37 +1489,7 @@ const HelpingChart = () => {
               </div>
             </div>
 
-            {/* <button
-                    onClick={() =>
-                      setShowRow((p) => ({
-                        ...p,
-                        equidistantChannel: !p.equidistantChannel,
-                      }))
-                    }
-                    className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-                      showRow.equidistantChannel
-                        ? "bg-black text-gray-100"
-                        : "bg-white "
-                    }`}
-                  >
-                    <div className="flex  items-center">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 28 28"
-                        width="28"
-                        height="28"
-                      >
-                        <g fill="currentColor" fill-rule="nonzero">
-                          <path d="M8.354 18.354l10-10-.707-.707-10 10zM12.354 25.354l5-5-.707-.707-5 5z"></path>
-                          <path d="M20.354 17.354l5-5-.707-.707-5 5z"></path>
-                          <path d="M19.5 8c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM6.5 21c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5zM18.5 20c.828 0 1.5-.672 1.5-1.5s-.672-1.5-1.5-1.5-1.5.672-1.5 1.5.672 1.5 1.5 1.5zm0 1c-1.381 0-2.5-1.119-2.5-2.5s1.119-2.5 2.5-2.5 2.5 1.119 2.5 2.5-1.119 2.5-2.5 2.5z"></path>
-                        </g>
-                      </svg>
-                      <span>Equidistant Channel</span>
-                    </div>
-                  </button>
-                </div>
-              </div> */}
+        
 
             <div className="flex flex-wrap items-center mt-2 mb-1 space-x-10">
               {/* Date Input */}
@@ -1680,15 +1650,18 @@ const HelpingChart = () => {
                     />
                   </div>
                   <div>
+
                     <Button onClick={handleSubmit2} size="sm">
                       Submit
                     </Button>
+
                   </div>
                 </>
               </div>
             </div>
 
             <div className="flex items-center flex-wrap space-x-10 mt-2">
+
               <button
                 onClick={() =>
                   setShowRow((prev) => ({
@@ -1748,6 +1721,7 @@ const HelpingChart = () => {
                   <span>Entry Line 2</span>
                 </div>
               </button>
+
               <button
                 onClick={() =>
                   setShowRow((p) => ({
@@ -1850,7 +1824,7 @@ const HelpingChart = () => {
             <CandleChart
               data={apiData}
               //getChartData={getChartData}
-              //  handleCreateTrendLines={handleCreateTrendLines}
+              //handleCreateTrendLines={handleCreateTrendLines}
               master={data?.data}
               ratio={1}
               width={width + 30} // Adjust width dynamically with some margin
