@@ -120,9 +120,9 @@ export default function Home() {
           <Route
             path="/future/helping"
             element={
-              <ProtectedRoute>
+             // <ProtectedRoute>
                 <HelpingPageLayout />
-              </ProtectedRoute>
+             // </ProtectedRoute>
             }
           />
 

@@ -263,7 +263,7 @@ const HelpingChart = () => {
 
         // Wait for a short period before retrying
         if (attempts < maxRetries) {
-          await new Promise((resolve) => setTimeout(resolve, 3000)); // 3-second delay
+          await new Promise((resolve) => setTimeout(resolve, 2000)); // 3-second delay
         }
       }
     }
@@ -539,13 +539,10 @@ const HelpingChart = () => {
   };
 
   useEffect(() => {
-    getChartData();
-    pcrlog();
+   
+   
     // if (!values) return;
-    const interval = setInterval(() => {
-      getChartData();
-      pcrlog();
-    }, 120 * 1000);
+    const interval = setInterval(getChartData, 120 * 1000);
 
     return () => clearInterval(interval);
   }, [
@@ -557,7 +554,20 @@ const HelpingChart = () => {
     data?.data?.haveTradeOfFUTBuy,
     trendLineValue?.dataForIndex7?.CESellLinePrice,
     trendLineValue?.dataForIndex7?.PESellLinePrice,
+   
   ]);
+
+  useEffect(()=>{
+    pcrlog();
+    getChartData();
+    const interval = setInterval(() => {
+      pcrlog();
+     
+    }, 120 * 1000);
+
+    return () => clearInterval(interval);
+
+  },[])
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -578,6 +588,7 @@ const HelpingChart = () => {
       }
     };
   }, [id, values]);
+
 
   const lastUpdateTimeRef = useRef(Date.now());
   const currentTime = Date.now();
@@ -1120,9 +1131,10 @@ const HelpingChart = () => {
               )}
 
               {data.data.tradeIndex == 7 && (
+                
                 <div>
                   {trendLineValue && (
-                    <p className="font-semibold text-[13px] md:text-[16px]">
+                     <p className="font-semibold text-[13px] md:text-[16px]">
                       Resistance :
                       {trendLineValue?.dataForIndex7?.ResistancePrice &&
                         trendLineValue?.dataForIndex7?.ResistancePrice?.toFixed(1)}
@@ -1823,8 +1835,7 @@ const HelpingChart = () => {
           <div className="w-full h-auto flex justify-center">
             <CandleChart
               data={apiData}
-              //getChartData={getChartData}
-              //handleCreateTrendLines={handleCreateTrendLines}
+         
               master={data?.data}
               ratio={1}
               width={width + 30} // Adjust width dynamically with some margin

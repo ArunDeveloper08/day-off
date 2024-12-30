@@ -197,7 +197,7 @@ export const BackTestingPage = () => {
     await setEntryLine([]);
     socket.emit("playInterval");
     await handleSubmit({ testingBuyTrendLines: null });
-   window.location.reload();
+    window.location.reload();
   };
 
 

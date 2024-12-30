@@ -1047,6 +1047,8 @@ const CandleChart = ({
           buyTrendLineDate: null,
           callLine: 0,
           putLine: 0,
+          callLine2:0,
+          putLine2: 0,
         },
         "/config/edit",
         "Alert lines saved."
@@ -1062,6 +1064,8 @@ const CandleChart = ({
           buyTrendLineDate: null,
           callLine: 0,
           putLine: 0,
+          callLine2:0,
+          putLine2: 0,
         },
         "/config/edit",
         "Alert lines saved."
@@ -1384,12 +1388,15 @@ const CandleChart = ({
                   id={1}
                   // margin={{ left: 80, right: 80, top: 30, bottom: 50 }}
 
+                  // yExtents={[
+                  //   (d) => [d.high, d.low, d.pivot - d.dynamicExitValue],
+                  // ]}
                   yExtents={[
-                    (d) => [d.high, d.low, d.pivot - d.dynamicExitValue],
+                    (d) => [d.high, d.low],
                   ]}
                   // padding={{ top: 0, bottom: 0 }}
                   // yExtents={(d) => [d.high, d.low]} // Ensure proper y-axis scaling based on high/low
-                  padding={{ top: 20, bottom: 50 }} // Add some padding to prevent squeezing
+                  padding={{ top: 10, bottom: 50 }} // Add some padding to prevent squeezing
                 >
                   <XAxis axisAt="bottom" orient="bottom" ticks={10} />
                   <YAxis axisAt="right" orient="right" />
@@ -1561,39 +1568,39 @@ const CandleChart = ({
                 yAccessor={(d) => Number(d.PETargetLevelValue )}
               /> */}
 
-                  {showRow.dynamicEntryValue && (
+                  {/* {showRow.dynamicEntryValue && (
                     <LineSeries
                       strokeWidth={4}
                       stroke="orange"
                       yAccessor={(d) => d.dynamicEntryValue}
                     />
-                  )}
+                  )} */}
 
-                  {showRow.underlyingValue && (
+                  {/* {showRow.underlyingValue && (
                     <LineSeries
                       strokeWidth={2}
                       stroke="black"
                       yAccessor={(d) => Number(d.underlyingValue) + 2}
                     />
-                  )}
+                  )} */}
 
-                  {showRow.initialLow && (
+                  {/* {showRow.initialLow && (
                     <LineSeries
                       strokeDasharray="Dash"
                       strokeWidth={4}
                       stroke="gray"
                       yAccessor={(d) => Number(d.InitialLow)}
                     />
-                  )}
-                  {showRow.RangeBoundTargetProfit && (
+                  )} */}
+                  {/* {showRow.RangeBoundTargetProfit && (
                     <LineSeries
                       strokeDasharray="Dash"
                       strokeWidth={4}
                       stroke="pink"
                       yAccessor={(d) => Number(d.RangeBoundTargetProfit)}
                     />
-                  )}
-                  {showRow.dynamicExitValue && (
+                  )} */}
+                  {/* {showRow.dynamicExitValue && (
                     <LineSeries
                       strokeWidth={4}
                       stroke="blue"
@@ -1601,7 +1608,7 @@ const CandleChart = ({
                         d?.exitSupport ? Number(d.exitSupport) : undefined
                       }
                     />
-                  )}
+                  )} */}
                   {showRow.Last_Highest_LTP && (
                     <LineSeries
                       strokeDasharray="Dash"
@@ -1614,7 +1621,7 @@ const CandleChart = ({
                       }
                     />
                   )}
-                  {showRow.movingAvg && (
+                  {/* {showRow.movingAvg && (
                     <>
                       <LineSeries
                         strokeWidth={2}
@@ -1627,7 +1634,7 @@ const CandleChart = ({
                         yAccessor={(d) => Number(d.movingAvgMA2)}
                       />
                     </>
-                  )}
+                  )} */}
 
                   {showRow.showAvg && (
                     <>
@@ -1644,7 +1651,7 @@ const CandleChart = ({
                     </>
                   )}
 
-                  {showRow.rangeBoundLine && (
+                  {/* {showRow.rangeBoundLine && (
                     <>
                       <LineSeries
                         strokeWidth={3}
@@ -1675,7 +1682,7 @@ const CandleChart = ({
                         yAccessor={(d) => d.OuterR_max}
                       />
                     </>
-                  )}
+                  )} */}
 
                   {/* <LineSeries
                     strokeWidth={"3"}
@@ -2346,7 +2353,7 @@ const CandleChart = ({
       </div>
     );
   } catch (error) {
-    // window.location.reload();
+    
     console.log("Error", error);
   }
 };
