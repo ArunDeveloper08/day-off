@@ -115,7 +115,7 @@ export const LivePage = () => {
 
   const getChartData = async () => {
     const maxRetries = 5; // Maximum number of retries
-    const delay = 2000; // Delay in milliseconds between retries
+    const delay = 3000; // Delay in milliseconds between retries
     let attempts = 0;
   
     const fetchData = async () => {
@@ -147,7 +147,7 @@ export const LivePage = () => {
 
   useEffect(() => {
     getTradeConfig();
-    const interval = setInterval(getTradeConfig, 15 * 1000);
+    const interval = setInterval(getTradeConfig, 120 * 1000);
     intervalRef.current = interval;
     return () => clearInterval(interval);
   }, []);
@@ -156,7 +156,7 @@ export const LivePage = () => {
    // if (isUserScroll) return;
     getChartData();
     const interval = setInterval(getChartData, 120 * 1000);
-   // intervalRef.current = interval;
+    intervalRef.current = interval;
 
     return () => clearInterval(interval);
   }, [id, prevDate, isUserScroll, trendLineActive]);
@@ -167,7 +167,8 @@ export const LivePage = () => {
         clearInterval(intervalRef.current);
       } else {
         getChartData();
-        intervalRef.current = setInterval(getChartData, 120 * 1000);
+        getTradeConfig();
+        intervalRef.current = setInterval({getChartData , getTradeConfig}, 120 * 1000);
       }
     };
 

@@ -57,6 +57,7 @@ const HelpingChart = () => {
   const [Nifty, setNifty] = useState();
   const [noActionLine , setNoActionLine]  = useState([]);
   const [horizontalLine , setHorizontalLine]  = useState([]);
+  const [tradeStatus , setTradeStatus] = useState([])
 
   useEffect(() => {
     setTheme("light");
@@ -192,6 +193,22 @@ const HelpingChart = () => {
       setData((p) => ({ ...p, loading: false }));
     }
   };
+
+  const gethaveTradeInfo = async()=>{
+    try{
+ const response = await axios.get(`${BASE_URL_OVERALL}/config/tradeStatus?id=${id}`)
+
+ setTradeStatus(response.data.data)
+    }catch(err){
+      console.log(err);
+    }
+  }
+
+  useEffect(()=>{
+    gethaveTradeInfo()
+    const interval = setInterval(gethaveTradeInfo, 5 * 1000)
+    return ()=>clearInterval(interval)
+  },[])
 
   const mergeEntryLines = (apiLines, stateLines) => {
     const apiLineNames = new Set(apiLines?.map((apiLine) => apiLine.name));
@@ -444,7 +461,7 @@ const HelpingChart = () => {
         // Call getChartData only if trendLineActive has NOT changed
         // if (prevTrendLineActive.current === values.trendLineActive) {
         getChartData();
-        getTradeConfig();
+        //getTradeConfig();
         setApiResponseReceived(true);
         // }
         // Update the previous value to the current value
@@ -465,7 +482,7 @@ const HelpingChart = () => {
         // Call getChartData only if trendLineActive has NOT changed
         // if (prevTrendLineActive.current === values.trendLineActive) {
         getChartData();
-        // getTradeConfig();
+         getTradeConfig();
         setApiResponseReceived(true);
         // }
         // Update the previous value to the current value
@@ -487,7 +504,7 @@ const HelpingChart = () => {
 
   useEffect(() => {
     getTradeConfig();
-    const interval = setInterval(getTradeConfig, 8 * 1000);
+    const interval = setInterval(getTradeConfig, 240 * 1000);
     // intervalRef.current = interval;
 
     return () => clearInterval(interval);
@@ -497,7 +514,7 @@ const HelpingChart = () => {
   const prevHaveTradeOfPE = useRef(false); // Start with false
 
   useEffect(() => {
-    const { haveTradeOfCE, haveTradeOfPE } = data?.data || {};
+    const { haveTradeOfCE, haveTradeOfPE } = tradeStatus || {};
     // Detect transition from false to true (for CE)
     if (haveTradeOfCE && !prevHaveTradeOfCE.current) {
       console.log("CE Trade became active");
@@ -522,10 +539,10 @@ const HelpingChart = () => {
     prevHaveTradeOfCE.current = haveTradeOfCE;
     prevHaveTradeOfPE.current = haveTradeOfPE;
   }, [
-    data?.data?.haveTradeOfCE,
-    data?.data?.haveTradeOfPE,
-    data?.data?.haveTradeOfCEBuy,
-    data?.data?.haveTradeOfPEBuy,
+   tradeStatus?.haveTradeOfCE,
+   tradeStatus?.haveTradeOfPE,
+   tradeStatus?.haveTradeOfCEBuy,
+   tradeStatus?.haveTradeOfPEBuy,
   ]);
   const pcrlog = async () => {
     try {
@@ -546,12 +563,12 @@ const HelpingChart = () => {
 
     return () => clearInterval(interval);
   }, [
-    data?.data?.haveTradeOfCE,
-    data?.data?.haveTradeOfPE,
-    data?.data?.haveTradeOfCEBuy,
-    data?.data?.haveTradeOfPEBuy,
-    data?.data?.haveTradeOfFUTSell,
-    data?.data?.haveTradeOfFUTBuy,
+   tradeStatus?.haveTradeOfCE,
+   tradeStatus?.haveTradeOfPE,
+   tradeStatus?.haveTradeOfCEBuy,
+   tradeStatus?.haveTradeOfPEBuy,
+   tradeStatus?.haveTradeOfFUTSell,
+   tradeStatus?.haveTradeOfFUTBuy,
     trendLineValue?.dataForIndex7?.CESellLinePrice,
     trendLineValue?.dataForIndex7?.PESellLinePrice,
    
@@ -811,7 +828,8 @@ const HelpingChart = () => {
     getTestMode();
   }, []);
 
-  const getValue = (key) => data.data[key];
+  const getValue = (key) => tradeStatus?.[key];
+  
   // const getValue = (key) => filteredData?.[0]?.[key] ?? data.data[key];
 
   const openChartInNewTab = () => {
@@ -827,7 +845,7 @@ const HelpingChart = () => {
     window.open(url, "_blank");
   };
 
-  //console.log(trendLineValue)
+  //console.log("haha", tradeStatus)
 
   return (
     <div className="p-2">
@@ -1130,7 +1148,7 @@ const HelpingChart = () => {
                 </div>
               )}
 
-              {data.data.tradeIndex == 7 && (
+              {(data.data.tradeIndex == 7 || data.data.tradeIndex == 17) && (
                 
                 <div>
                   {trendLineValue && (
@@ -1858,6 +1876,7 @@ const HelpingChart = () => {
               buyTrendLineDate={buyTrendLineDate}
               horizontalLine={horizontalLine}
               setHorizontalLine = {setHorizontalLine}
+            tradeStatus={tradeStatus}
             />
           </div>
         )}

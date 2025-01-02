@@ -394,6 +394,7 @@ const CandleChart = ({
   id,
   getChartData,
   buyTrendLineDate,
+  tradeStatus
 }) => {
   try {
     const { onOpen } = useModal();
@@ -1137,7 +1138,8 @@ const CandleChart = ({
       setEnableNoActionLine(false);
       setEnableHorizontalLine(true);
     };
-
+    
+  //console.log("Hii")
     return (
       <div className="flex flex-col">
         {window.location.pathname == "/future/back" ? (
@@ -1223,12 +1225,12 @@ const CandleChart = ({
                   ) : (
                     <button
                       disabled={
-                        master?.haveTradeOfCE ||
-                        master?.haveTradeOfPE ||
-                        master?.haveTradeOfCEBuy ||
-                        master?.haveTradeOfPEBuy ||
-                        master?.haveTradeOfFUTSell ||
-                        master?.haveTradeOfFUTBuy
+                        tradeStatus?.haveTradeOfCE ||
+                        tradeStatus?.haveTradeOfPE ||
+                        tradeStatus?.haveTradeOfCEBuy ||
+                        tradeStatus?.haveTradeOfPEBuy ||
+                        tradeStatus?.haveTradeOfFUTSell ||
+                        tradeStatus?.haveTradeOfFUTBuy
                       }
                       className="bg-red-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
                       onClick={handleResetAlertLine}
@@ -1252,12 +1254,12 @@ const CandleChart = ({
                   </button> */}
                   <button
                     disabled={
-                      master?.haveTradeOfCE ||
-                      master?.haveTradeOfPE ||
-                      master?.haveTradeOfCEBuy ||
-                      master?.haveTradeOfPEBuy ||
-                      master?.haveTradeOfFUTSell ||
-                      master?.haveTradeOfFUTBuy
+                      tradeStatus?.haveTradeOfCE ||
+                      tradeStatus?.haveTradeOfPE ||
+                      tradeStatus?.haveTradeOfCEBuy ||
+                      tradeStatus?.haveTradeOfPEBuy ||
+                      tradeStatus?.haveTradeOfFUTSell ||
+                      tradeStatus?.haveTradeOfFUTBuy
                     }
                     className="bg-red-600 hover:bg-red-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
                     onClick={handleResetEntryLines}
@@ -1396,7 +1398,7 @@ const CandleChart = ({
                   ]}
                   // padding={{ top: 0, bottom: 0 }}
                   // yExtents={(d) => [d.high, d.low]} // Ensure proper y-axis scaling based on high/low
-                  padding={{ top: 10, bottom: 50 }} // Add some padding to prevent squeezing
+                  padding={{ top: 10, bottom: 70 }} // Add some padding to prevent squeezing
                 >
                   <XAxis axisAt="bottom" orient="bottom" ticks={10} />
                   <YAxis axisAt="right" orient="right" />

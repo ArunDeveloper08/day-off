@@ -59,9 +59,9 @@ const UIButton = ({
   <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
     WMA: {data?.data?.WMA}
   </p>
-  <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+  {/* <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
     Candle Size: {data?.data?.candleSize}
-  </p>
+  </p> */}
   <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
     D_Exit: {data?.data?.dynamicExitValue?.toFixed(2)}
   </p>
@@ -74,7 +74,7 @@ const UIButton = ({
   <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
     Initial_Exit: {data?.data?.BaseExitValue?.toFixed(2)}
   </p>
-  <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+  {/* <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
     Range Bound: {data?.data?.rangeBoundPercent}%
   </p>
   <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
@@ -88,13 +88,13 @@ const UIButton = ({
   </p>
   <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
     MV Source2: {data?.data?.mvSource2}
-  </p>
+  </p> */}
   <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
     RSI Max: {data?.data?.rsiMax}
   </p>
-  <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+  {/* <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
     RSI Min: {data?.data?.rsiMin}
-  </p>
+  </p> */}
   <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
     Order Type: {data?.data?.orderType}
   </p>

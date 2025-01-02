@@ -179,6 +179,7 @@ export const EditTrade = () => {
         tradingOptions: values.tradingOptions,
         entryCandle: values.entryCandle,
         exitSelection: values.exitSelection,
+        atrMf: values.atrMf,
 
         // targetProfit: values.targetProfit,
       });
@@ -231,7 +232,7 @@ export const EditTrade = () => {
                     <SelectContent>
                       <SelectGroup>
                         <SelectLabel>Trade Index</SelectLabel>
-                        {[ 2, 7, 8 , 12, 17 , 18]?.map((suggestion) => (
+                        {[2, 7, 8, 12, 17, 18]?.map((suggestion) => (
                           <SelectItem key={suggestion} value={suggestion}>
                             {suggestion}
                           </SelectItem>
@@ -262,7 +263,7 @@ export const EditTrade = () => {
                 <div className="px-1">
                   <Label>Exchange</Label>
                   <Input
-                    readOnly
+                    //readOnly
                     value={values.exchange}
                     className="mt-1"
                     type="text"
@@ -343,10 +344,6 @@ export const EditTrade = () => {
                   </>
                 )}
 
-   
-
-   
-
                 {values?.isMaster && (
                   <div className="px-1">
                     <Label>Lot Size</Label>
@@ -388,7 +385,7 @@ export const EditTrade = () => {
                 </div>
                 {values?.isMaster == true && (
                   <>
-                    <div className="px-1">
+                    {/* <div className="px-1">
                       <Label>Strike Difference</Label>
                       <Input
                         name="strikeDiff"
@@ -397,7 +394,7 @@ export const EditTrade = () => {
                         className="mt-1"
                         type="text"
                       />
-                    </div>
+                    </div> */}
                   </>
                 )}
 
@@ -602,7 +599,7 @@ export const EditTrade = () => {
                             type="rsiMax"
                           />
                         </div>
-               
+
                         <div className="px-1">
                           <Label>MV Source 1</Label>
                           <Select
@@ -810,6 +807,16 @@ export const EditTrade = () => {
                             name="targetLevel"
                             onChange={handleChange}
                             value={values.targetLevel}
+                            className="mt-1"
+                            type="number"
+                          />
+                        </div>
+                        <div className="px-1">
+                          <Label>ATR MF</Label>
+                          <Input
+                            name="atrMf"
+                            onChange={handleChange}
+                            value={values.atrMf}
                             className="mt-1"
                             type="number"
                           />
@@ -1030,7 +1037,7 @@ export const EditTrade = () => {
                 {(values.indexValue == 7 || values.indexValue == 17) &&
                   values.isMaster && (
                     <>
-                      <div className="px-1">
+                      {/* <div className="px-1">
                         <Label>D_Exit (%)</Label>
                         <Input
                           name="dynamicExitPercent"
@@ -1039,7 +1046,7 @@ export const EditTrade = () => {
                           className="mt-1"
                           type="number"
                         />
-                      </div>
+                      </div> */}
                       <div className="px-1">
                         <Label>Trend Candle Count</Label>
                         <Input
@@ -1101,7 +1108,7 @@ export const EditTrade = () => {
                           type="number"
                         />
                       </div> */}
-                      <div className="px-1">
+                      {/* <div className="px-1">
                         <Label>Secondary Sell Target (%)</Label>
                         <Input
                           name="secondarySellTarget"
@@ -1110,7 +1117,7 @@ export const EditTrade = () => {
                           className="mt-1"
                           type="number"
                         />
-                      </div>
+                      </div> */}
                     </>
                   )}
 

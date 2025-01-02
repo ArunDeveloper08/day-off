@@ -108,6 +108,7 @@ const initialState = {
   tradingOptions: "",
   exitSelection: "low",
   entryCandle: "both",
+  atrMf :"2"
   // Min_Order_Qty:"1"
 };
 
@@ -196,6 +197,7 @@ const alternateInitialState = {
   tradingOptions: "",
   exitSelection: "low",
   entryCandle: "both",
+    atrMf :"2"
 };
 // tradeIndex =2
 const gammaBlastInitialState = {
@@ -288,6 +290,7 @@ const gammaBlastInitialState = {
   tradingOptions: "",
   exitSelection: "low",
   entryCandle: "both",
+    atrMf :"2"
 };
 // tradeIndex =6
 
@@ -406,9 +409,9 @@ export const AddNewtrade = () => {
   if (!isModalOpen) return null; // Ensure the component returns null if the modal is not open
 
   const handleSubmit = async () => {
-    if (values?.isMaster && values?.strikeDiff == "") {
-      return alert("please fill Strike Difference");
-    }
+    // if (values?.isMaster && values?.strikeDiff == "") {
+    //   return alert("please fill Strike Difference");
+    // }
     if (
       (!values?.master || !values.master.masterName?.trim()) &&
       values.isMaster == false
@@ -526,6 +529,7 @@ export const AddNewtrade = () => {
         tradingOptions: values.tradingOptions,
         exitSelection: values.exitSelection,
         entryCandle: values.entryCandle,
+        atrMf: values.atrMf,
       });
       alert("Add Successfully");
     } catch (error) {
@@ -597,7 +601,7 @@ export const AddNewtrade = () => {
             <div className="px-1">
               <Label>Exchange</Label>
               <Input
-                readOnly
+                //readOnly
                 value={values.exchange}
                 className="mt-1"
                 type="text"
@@ -732,7 +736,7 @@ export const AddNewtrade = () => {
             </div>
             {values?.isMaster == true && (
               <>
-                <div className="px-1">
+                {/* <div className="px-1">
                   <Label>Strike Difference</Label>
                   <Input
                     name="strikeDiff"
@@ -741,7 +745,7 @@ export const AddNewtrade = () => {
                     className="mt-1"
                     type="text"
                   />
-                </div>
+                </div> */}
               </>
             )}
 
@@ -1047,7 +1051,7 @@ export const AddNewtrade = () => {
                   </>
                 )}
 
-                {values.indexValue == 2 && values.isMaster == false && (
+                {(values.indexValue == 2 && values.isMaster == false) && (
                   <>
                     <div className="px-1">
                       <Label>Candle Type</Label>
@@ -1187,6 +1191,16 @@ export const AddNewtrade = () => {
                       />
                     </div>
                     <div className="px-1">
+                      <Label>ATR MF</Label>
+                      <Input
+                        name="atrMf"
+                        onChange={handleChange}
+                        value={values.atrMf}
+                        className="mt-1"
+                        type="number"
+                      />
+                    </div>
+                    <div className="px-1">
                       <Label>Interval</Label>
                       <Select
             
@@ -1225,7 +1239,7 @@ export const AddNewtrade = () => {
                                 value: "THIRTY_MINUTE",
                               },
                               {
-                                label: "1 hour",
+                                label: "1 hour",                  
                                 value: "ONE_HOUR",
                               },
                               {
@@ -1361,7 +1375,7 @@ export const AddNewtrade = () => {
             {(values.indexValue == 7 || values.indexValue == 17) &&
               values.isMaster && (
                 <>
-                  <div className="px-1">
+                  {/* <div className="px-1">
                     <Label>D_Exit (%)</Label>
                     <Input
                       name="dynamicExitPercent"
@@ -1370,7 +1384,7 @@ export const AddNewtrade = () => {
                       className="mt-1"
                       type="number"
                     />
-                  </div>
+                  </div> */}
                   <div className="px-1">
                     <Label> Trend Candle Count</Label>
                     <Input
@@ -1433,7 +1447,7 @@ export const AddNewtrade = () => {
                       type="number"
                     />
                   </div> */}
-                  <div className="px-1">
+                  {/* <div className="px-1">
                     <Label>Secondary Sell Target (%)</Label>
                     <Input
                       name="secondarySellTarget"
@@ -1442,7 +1456,7 @@ export const AddNewtrade = () => {
                       className="mt-1"
                       type="number"
                     />
-                  </div>
+                  </div> */}
                 </>
               )}
 
