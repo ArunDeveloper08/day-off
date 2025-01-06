@@ -38,7 +38,7 @@ const initialState = {
   tradeInTime: "09:15",
   tradeOutTime: "23:30",
   wma: "1",
-  interval: "THREE_MINUTE",
+  interval: "FIVE_MINUTE",
   indexValue: "1",
   minExitPercent: "5",
   maxExitPercent: "30",
@@ -47,7 +47,7 @@ const initialState = {
   earningPercentLimit: "1",
   orderType: "Buy",
   isMaster: false,
-  dynamicEntryPercentage: "1",
+  dynamicEntryPercentage: "2",
   lossLimit: "10",
   candleSize: "3",
   // maxLoss: "1",
@@ -62,7 +62,7 @@ const initialState = {
   SMA1: "3",
   SMA2: "6",
   // SMA3: "26",
-  rangeBound: "Disable",
+  rangeBound: "Disable",  
   movingAvgType: "WMA",
   // movingAvgOFFSET3: "1",
   movingAvgOFFSET2: "1",
@@ -85,7 +85,7 @@ const initialState = {
   customerGrading: "1",
   narration: "",
   strikeDiff: "",
-  targetLevel: "",
+  targetLevel: "50",
   category: "",
   targetBelow: "",
   targetAbove: "",
@@ -94,7 +94,7 @@ const initialState = {
   maxZoneTime: "",
   noTradeZone: "",
   trendCandleCount: "",
-  dynamicExitPercent: "1",
+  dynamicExitPercent: "10",
   candleRatioBuy: "0.1",
   candleRatioSell: "",
   CESellDeviation: "",
@@ -108,7 +108,7 @@ const initialState = {
   tradingOptions: "",
   exitSelection: "low",
   entryCandle: "both",
-  atrMf :"2"
+  atrMf :"1"
   // Min_Order_Qty:"1"
 };
 
@@ -125,7 +125,7 @@ const alternateInitialState = {
   tradeInTime: "09:15",
   tradeOutTime: "23:30",
   wma: "1",
-  interval: "THREE_MINUTE",
+  interval: "FIVE_MINUTE",
   indexValue: "2",
   priceIncPercent: "20",
   priceDecPercent: "40",
@@ -174,7 +174,7 @@ const alternateInitialState = {
   customerGrading: "1",
   narration: "",
   strikeDiff: "",
-  targetLevel: "",
+  targetLevel: "50",
   category: "",
   targetBelow: "",
   targetAbove: "",
@@ -183,7 +183,7 @@ const alternateInitialState = {
   maxZoneTime: "",
   noTradeZone: "",
   trendCandleCount: "",
-  dynamicExitPercent: "1",
+  dynamicExitPercent: "10",
   candleRatioBuy: "0.1",
   candleRatioSell: "",
   CESellDeviation: "",
@@ -197,7 +197,7 @@ const alternateInitialState = {
   tradingOptions: "",
   exitSelection: "low",
   entryCandle: "both",
-    atrMf :"2"
+    atrMf :"1"
 };
 // tradeIndex =2
 const gammaBlastInitialState = {
@@ -830,6 +830,10 @@ export const AddNewtrade = () => {
                         <SelectItem value="CE">CE</SelectItem>
                         <SelectItem value="Nifty50">Nifty 50</SelectItem>
                         <SelectItem value="BankNifty">Bank Nifty</SelectItem>
+                        <SelectItem value="todayTrade">Today Trade</SelectItem>
+                        <SelectItem value="daily">Daily</SelectItem>
+                        <SelectItem value="hourly">Hourly</SelectItem>
+                        <SelectItem value="15Min">15 Min</SelectItem>
                         {/* <SelectItem value="IT">IT</SelectItem>
                     <SelectItem value="Energy">Energy</SelectItem>
                     <SelectItem value="Auto">Auto</SelectItem>

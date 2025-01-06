@@ -47,8 +47,8 @@ const Dashboard = () => {
     error: "",
   });
   const [narration, setNarration] = useState(false);
-  //const [editMode, setEditMode] = useState(null); // State to manage edit mode
-  // const [editValues, setEditValues] = useState({}); // State to manage the current values being edited
+  const [editMode, setEditMode] = useState(null); // State to manage edit mode
+   const [editValues, setEditValues] = useState({}); // State to manage the current values being edited
   const lastExecutionTimeRef = useRef(0);
   const [showOffTerminals, setShowOffTerminals] = useState(true);
   //const [filter, setFilter] = useState("ALL");
@@ -244,49 +244,50 @@ const Dashboard = () => {
     }
   };
 
-  // const handleEdit = (item) => {
-  //   setEditMode(item.id);
-  //   setEditValues({
-  //     id: item.id,
-  //     terminal: item.terminal,
-  //     tradeEntryPercent: item.tradeEntryPercent,
-  //     minExitPercent: item.minExitPercent,
-  //     maxExitPercent: item.maxExitPercent,
-  //     priceIncPercent: item.priceIncPercent,
-  //     // priceDecPercent: item.priceDecPercent,
-  //     WMA: item.WMA,
-  //     // wmaLtp: item.wmaLtp,
-  //     orderType: item.orderType,
-  //     dynamicEntryPercentage: item.dynamicEntryPercentage,
-  //     minProfit: item.minProfit,
-  //     candleSize: item.candleSize,
-  //     lossLimit: item.lossLimit,
-  //     tradeIndex: item.tradeIndex,
-  //   });
-  // };
+  const handleEdit = (item) => {
+    setEditMode(item.id);
+    setEditValues({
+      id: item.id,
+      terminal: item.terminal,
+      tradeEntryPercent: item.tradeEntryPercent,
+      minExitPercent: item.minExitPercent,
+      maxExitPercent: item.maxExitPercent,
+      priceIncPercent: item.priceIncPercent,
+      // priceDecPercent: item.priceDecPercent,
+      WMA: item.WMA,
+      // wmaLtp: item.wmaLtp,
+      orderType: item.orderType,
+      dynamicEntryPercentage: item.dynamicEntryPercentage,
+      minProfit: item.minProfit,
+      candleSize: item.candleSize,
+      lossLimit: item.lossLimit,
+      tradeIndex: item.tradeIndex,
+      category : item.category
+    });
+  };
 
-  // const handleUpdate = async () => {
-  //   confirm("Are you sure to update configuration");
-  //   try {
-  //     await axios.put(`${BASE_URL_OVERALL}/config/edit`, editValues);
-  //     alert("Update Successfully");
-  //   } catch (error) {
-  //     alert(
-  //       "Something went wrong! " + error.response.data.message || error.message
-  //     );
-  //   } finally {
-  //     getAllTrades();
-  //     setEditMode(null);
-  //   }
-  // };
+  const handleUpdate = async () => {
+    confirm("Are you sure to update configuration");
+    try {
+      await axios.put(`${BASE_URL_OVERALL}/config/edit`, editValues);
+      alert("Update Successfully");
+    } catch (error) {
+      alert(
+        "Something went wrong! " + error.response.data.message || error.message
+      );
+    } finally {
+      getAllTrades();
+      setEditMode(null);
+    }
+  };
 
-  // const handleInputChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setEditValues((prev) => ({
-  //     ...prev,
-  //     [name]: value,
-  //   }));
-  // };
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditValues((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   const toggleShowOffTerminals = () => {
     setShowOffTerminals((prev) => !prev);
@@ -349,8 +350,26 @@ const Dashboard = () => {
           match = true;
         }
         if (
+          activeFilters.includes("todayTrade") &&
+          item.category == "todayTrade"
+        ) {
+          match = true;
+        }
+        if (
           activeFilters.includes("MyBullishMaster") &&
           item.category === "MyBullishMaster"
+        ) {
+          match = true;
+        }
+        if (
+          activeFilters.includes("haveTrade") &&
+          item.haveTrade 
+        ) {
+          match = true;
+        }
+        if (
+          activeFilters.includes("buyTrendLineDate") &&
+          item.buyTrendLineDate 
         ) {
           match = true;
         }
@@ -373,6 +392,15 @@ const Dashboard = () => {
           match = true;
         }
         if (activeFilters.includes("BankNifty") && item.category === "BankNifty") {
+          match = true;
+        }
+        if (activeFilters.includes("daily") && item.category === "daily") {
+          match = true;
+        }
+        if (activeFilters.includes("hourly") && item.category === "hourly") {
+          match = true;
+        }
+        if (activeFilters.includes("15Min") && item.category === "15Min") {
           match = true;
         }
         // if (activeFilters.includes("IT") && item.category === "IT") {
@@ -707,6 +735,66 @@ const Dashboard = () => {
           >
             Bank Nifty
           </Button>
+          <Button
+            onClick={() => handleButtonClick("todayTrade")}
+            className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
+              activeButtons["todayTrade"]
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-black"
+            }`}
+          >
+           Today Trade
+          </Button>
+          <Button
+            onClick={() => handleButtonClick("haveTrade")}
+            className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
+              activeButtons["haveTrade"]
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-black"
+            }`}
+          >
+            Have Trade
+          </Button>
+          <Button
+            onClick={() => handleButtonClick("buyTrendLineDate")}
+            className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
+              activeButtons["buyTrendLineDate"]
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-black"
+            }`}
+          >
+            TrendLine Date
+          </Button>
+          <Button
+            onClick={() => handleButtonClick("daily")}
+            className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
+              activeButtons["daily"]
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-black"
+            }`}
+          >
+          Daily
+          </Button>
+          <Button
+            onClick={() => handleButtonClick("hourly")}
+            className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
+              activeButtons["hourly"]
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-black"
+            }`}
+          >
+        Hourly
+          </Button>
+          <Button
+            onClick={() => handleButtonClick("15Min")}
+            className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
+              activeButtons["15Min"]
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-black"
+            }`}
+          >
+       15 Min
+          </Button>
       
           <Button
             onClick={() => handleButtonClick("ALL")}
@@ -766,6 +854,7 @@ const Dashboard = () => {
                 <th>Sr. No.</th>
                 <th>Identifier</th>
                 <th>Exchange</th>
+                <th>Main Index</th>
 
                 {narration && <th>Narration</th>}
                 {!activeFilters.includes("isMaster") && (
@@ -779,7 +868,7 @@ const Dashboard = () => {
                     <th>Traling stop loss</th> */}
 
                     {/* <th>WMA</th> */}
-                    <th>Main Index</th>
+                   
                   </>
                 )}
                 {/* <th>Interval</th> */}
@@ -816,7 +905,7 @@ const Dashboard = () => {
                   {/* <th>Entry Line Below</th> */}
                 
                     {/* <th>Entry Line Above</th> */}
-                    {/* <th>Terminal</th> */}
+                     <th>Category</th> 
                     <th>ON/OFF</th>
                   </>
                 )}
@@ -827,8 +916,8 @@ const Dashboard = () => {
 
                 {/* <th>Have Trade</th> */}
                 {/* <th>Market Trend</th> */}
-                {/* <th>Edit</th>
-                <th>Update</th> */}
+                 {/* <th>Edit</th>
+                <th>Update</th>  */}
                 <th>Live</th>
                 <th>Testing</th>
                 <th>Action</th>
@@ -882,6 +971,7 @@ const Dashboard = () => {
                               {item.identifier}
                             </td>
                             <td>{item.exchange}</td>
+                            <td>{item.tradeIndex}</td>
 
                         {narration && <td>{item.narration}</td>}
                         {!activeFilters?.includes("isMaster") && (
@@ -958,7 +1048,7 @@ const Dashboard = () => {
                                 item.WMA
                               )}
                             </td> */}
-                            <td>{item.tradeIndex}</td>
+                          
                           </>
                         )}
 
@@ -1081,32 +1171,44 @@ const Dashboard = () => {
                               {item.targetAbove}
                             </td> */}
 
-                            {/* <td>
+                            <td>
                               {editMode === item.id ? (
                                 <select
-                                  name="terminal"
-                                  value={editValues.terminal}
+                                  name="category"
+                                  value={editValues.category}
                                   onChange={handleInputChange}
                                   className="w-full border-[1px] border-black p-2 rounded-md"
                                 >
-                                  <option value="ON">ON</option>
-                                  <option value="OFF">OFF</option>
-                                  <option value="manualIn">Manual In</option>
+                                   <option value="MyBullishMaster">
+                                                           My Bullish Master
+                                                         </option>
+                                                         <option value="MyBearishMaster">
+                                                           My Bearish Master
+                                                         </option>
+                                                         <option value="MyCommonMaster">
+                                                           My Common Master
+                                                         </option>
+                                                         <option value="Index">Index</option>
+                                                         <option value="PE">PE</option>
+                                                         <option value="CE">CE</option>
+                                                         <option value="Nifty50">Nifty 50</option>
+                                                         <option value="BankNifty">Bank Nifty</option>
+                                                          <option value="todayTrade">Today Trade</option>
+                                                         {/* <option value="IT">IT</option>
+                                                     <option value="Energy">Energy</option>
+                                                     <option value="Auto">Auto</option>
+                                                     <option value="RangeBound">RangeBound</option>
+                                                     <option value="Chemical">Chemical</option>
+                                                     <option value="Defence">Defence</option>
+                                                     <option value="RealEstate">Real Estate</option> */}
+                                                         <option value="Others">Others</option>
                                 </select>
                               ) : (
-                                <span
-                                  className={
-                                    item.terminal === "ON"
-                                      ? "text-red-700 font-semibold"
-                                      : "text-green-700 font-semibold"
-                                  }
-                                >
-                                  {item.terminal === "manualIn"
-                                    ? "Manual In"
-                                    : item.terminal}
+                                <span>
+                                {item.category}
                                 </span>
                               )}
-                            </td> */}
+                            </td>
                             <td>
                               <button
                                 onClick={() =>
@@ -1166,15 +1268,15 @@ const Dashboard = () => {
                             {item.rangeBound}
                           </p>
                         </td> */}
-                        {/* 
-                        <td>
+                        
+                        {/* <td>
                           <Button onClick={() => handleEdit(item)}>Edit</Button>
                         </td>
                         <td>
                           {editMode === item.id && (
                             <Button onClick={handleUpdate}>Update</Button>
                           )}
-                        </td> */}
+                        </td>  */}
                         <td>
                           <Button
                             size="icon"

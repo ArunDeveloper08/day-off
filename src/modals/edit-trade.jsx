@@ -479,6 +479,12 @@ export const EditTrade = () => {
                           <SelectItem value="CE">CE</SelectItem>
                           <SelectItem value="Nifty50">Nifty 50</SelectItem>
                           <SelectItem value="BankNifty">Bank Nifty</SelectItem>
+                          <SelectItem value="todayTrade">
+                            Today Trade
+                          </SelectItem>
+                          <SelectItem value="daily">Daily</SelectItem>
+                          <SelectItem value="hourly">Hourly</SelectItem>
+                          <SelectItem value="15Min">15 Min</SelectItem>
                           {/* <SelectItem value="IT">IT</SelectItem> */}
                           {/* <SelectItem value="Energy">Energy</SelectItem>
                           <SelectItem value="Auto">Auto</SelectItem>

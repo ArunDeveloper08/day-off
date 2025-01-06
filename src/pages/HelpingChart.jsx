@@ -461,7 +461,7 @@ const HelpingChart = () => {
         // Call getChartData only if trendLineActive has NOT changed
         // if (prevTrendLineActive.current === values.trendLineActive) {
         getChartData();
-        //getTradeConfig();
+        getTradeConfig();
         setApiResponseReceived(true);
         // }
         // Update the previous value to the current value
@@ -557,7 +557,7 @@ const HelpingChart = () => {
 
   useEffect(() => {
    
-   
+    getChartData();
     // if (!values) return;
     const interval = setInterval(getChartData, 120 * 1000);
 
@@ -576,7 +576,7 @@ const HelpingChart = () => {
 
   useEffect(()=>{
     pcrlog();
-    getChartData();
+   
     const interval = setInterval(() => {
       pcrlog();
      
@@ -592,7 +592,7 @@ const HelpingChart = () => {
         clearInterval(intervalRef.current);
       } else {
         getChartData();
-        intervalRef.current = setInterval(getChartData, 12 * 1000);
+       // intervalRef.current = setInterval(getChartData, 12 * 1000);
       }
     };
 
@@ -847,6 +847,18 @@ const HelpingChart = () => {
 
   //console.log("haha", tradeStatus)
 
+  const tradeOptions = [
+    { label: "Bullish", value: 0 },
+    { label: "Bearish", value: 1 },
+    { label: "Both", value: 2 },
+    { label: "None", value: 3 },
+  ];
+
+  const tradeIdentificationValue = data.data.tradeIdentification;
+
+  // Find the corresponding trade option
+  const tradeLabel = tradeOptions.find(option => option.value === tradeIdentificationValue)?.label || "Unknown";
+
   return (
     <div className="p-2">
       {/* {data.error ? (
@@ -904,6 +916,8 @@ const HelpingChart = () => {
           >
             {testingMode === 1 ? "Test Mode ON" : "Test Mode OFF"}
           </button>
+          &nbsp;
+          Trade Indentification :{tradeLabel}
         </h2>
         <div className="flex justify-around font-bold mt-2 text-[14px]">
           <p>Nifty OI PCR: {Nifty?.pcrRatio?.toFixed(1)} </p>
