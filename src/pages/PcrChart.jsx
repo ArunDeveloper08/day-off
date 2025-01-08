@@ -153,12 +153,15 @@ const PcrAndCoiPcrChart = () => {
           ],
         },
       ]}
-      // Force the line to be green
       colors={(line) => {
-        // Check if the data points for the line have any value < 1
-        const hasValueBelowOne = line.data.some((point) => point.y < 1);
-        return hasValueBelowOne ? "#dc3545" : "#28a745"; // Red if <1, Green otherwise
-      }}// Solid green color
+        // Check the last value in the data array
+        const lastValue = line.data[line.data.length - 1]?.y;
+      
+        // If the last value is >= 1, return green; otherwise, return red
+        return lastValue >= 1 ? "#28a745" : "#dc3545";
+      }}
+      
+      
     />
   ) : (
     <p>Loading PCR chart...</p>
@@ -232,10 +235,14 @@ const PcrAndCoiPcrChart = () => {
               },
             ]}
             colors={(line) => {
-              // Check if the data points for the line have any value < 1
-              const hasValueBelowOne = line.data.some((point) => point.y < 1);
-              return hasValueBelowOne ? "#dc3545" : "#28a745"; // Red if <1, Green otherwise
+              // Check the last value in the data array
+              const lastValue = line.data[line.data.length - 1]?.y;
+            
+              // If the last value is >= 1, return green; otherwise, return red
+              return lastValue >= 1 ? "#28a745" : "#dc3545";
             }}
+            
+            
           />
         ) : (
           <p>Loading COI PCR chart...</p>
@@ -307,10 +314,14 @@ const PcrAndCoiPcrChart = () => {
               },
             ]}
             colors={(line) => {
-              // Check if the data points for the line have any value < 1
-              const hasValueBelowOne = line.data.some((point) => point.y < 0);
-              return hasValueBelowOne ? "#dc3545" : "#28a745"; // Red if <1, Green otherwise
+              // Check the last value in the data array
+              const lastValue = line.data[line.data.length - 1]?.y;
+            
+              // If the last value is >= 1, return green; otherwise, return red
+              return lastValue >= 1 ? "#28a745" : "#dc3545";
             }}
+            
+            
           />
         ) : (
           <p>Loading Diff OI chart...</p>

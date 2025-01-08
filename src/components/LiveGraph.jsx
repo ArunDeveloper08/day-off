@@ -365,7 +365,9 @@ const entryLineArray = [
 ];
 const AlertLineArray = [
   { color: "green", name: "AlertLine1", strokeWidth: 3 },
+  { color: "violet", name: "AlertTarget1", strokeWidth: 3 },
   { color: "red", name: "AlertLine2", strokeWidth: 3 },
+  { color: "orange", name: "AlertTarget2", strokeWidth: 3 },
 ];
 
 const CandleChart = ({
@@ -394,7 +396,7 @@ const CandleChart = ({
   id,
   getChartData,
   buyTrendLineDate,
-  tradeStatus
+  tradeStatus,
 }) => {
   try {
     const { onOpen } = useModal();
@@ -1048,8 +1050,10 @@ const CandleChart = ({
           buyTrendLineDate: null,
           callLine: 0,
           putLine: 0,
-          callLine2:0,
+          callLine2: 0,
           putLine2: 0,
+          CELine: 0,
+          PELine: 0,
         },
         "/config/edit",
         "Alert lines saved."
@@ -1065,8 +1069,10 @@ const CandleChart = ({
           buyTrendLineDate: null,
           callLine: 0,
           putLine: 0,
-          callLine2:0,
+          callLine2: 0,
           putLine2: 0,
+          CELine: 0,
+          PELine: 0,
         },
         "/config/edit",
         "Alert lines saved."
@@ -1138,8 +1144,8 @@ const CandleChart = ({
       setEnableNoActionLine(false);
       setEnableHorizontalLine(true);
     };
-    
-  //console.log("Hii")
+
+    //console.log("Hii")
     return (
       <div className="flex flex-col">
         {window.location.pathname == "/future/back" ? (
@@ -1393,9 +1399,7 @@ const CandleChart = ({
                   // yExtents={[
                   //   (d) => [d.high, d.low, d.pivot - d.dynamicExitValue],
                   // ]}
-                  yExtents={[
-                    (d) => [d.high, d.low],
-                  ]}
+                  yExtents={[(d) => [d.high, d.low]]}
                   // padding={{ top: 0, bottom: 0 }}
                   // yExtents={(d) => [d.high, d.low]} // Ensure proper y-axis scaling based on high/low
                   padding={{ top: 10, bottom: 70 }} // Add some padding to prevent squeezing
@@ -1476,6 +1480,38 @@ const CandleChart = ({
                     stroke="blue"
                     yAccessor={(d) => Number(d.CEStopLoss)}
                   />
+                  {(master.callLine || master.callLine2)  && (
+                    <LineSeries
+                      strokeDasharray="Dash"
+                      strokeWidth={1}
+                      stroke="blue"
+                      yAccessor={(d) => Number(d.DEntryCE1)}
+                    />
+                  )}
+                  {(master.callLine || master.callLine2) && (
+                    <LineSeries
+                      strokeDasharray="Dash"
+                      strokeWidth={1}
+                      stroke="blue"
+                      yAccessor={(d) => Number(d.DEntryCE2)}
+                    />
+                  )}
+                  {(master.putLine || master.putLine2) && (
+                    <LineSeries
+                      strokeDasharray="Dash"
+                      strokeWidth={1}
+                      stroke="brown"
+                      yAccessor={(d) => Number(d.DEntryPE2)}
+                    />
+                  )}
+                  {(master.putLine || master.putLine2) && (
+                    <LineSeries
+                      strokeDasharray="Dash"
+                      strokeWidth={1}
+                      stroke="brown"
+                      yAccessor={(d) => Number(d.DEntryPE1)}
+                    />
+                  )}
 
                   <LineSeries
                     strokeDasharray="Dash"
@@ -1490,7 +1526,7 @@ const CandleChart = ({
                     stroke="violet"
                     yAccessor={(d) =>
                       d.targetPrice != null ? Number(d.targetPrice) : undefined
-                    }                                                                                            
+                    }
                   />
                   <LineSeries
                     strokeWidth={2}
@@ -2355,7 +2391,6 @@ const CandleChart = ({
       </div>
     );
   } catch (error) {
-    
     console.log("Error", error);
   }
 };

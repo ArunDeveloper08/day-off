@@ -553,9 +553,7 @@ const Dashboard = () => {
     }
   };
   // console.log("Trade Identification" , trades)
-  const a =
-    tradeOptions.find((option) => option.value === tradeIdentification)
-      ?.label || "";
+
 
   return (
     <>
@@ -844,9 +842,9 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="overflow-x-scroll">
+        <div >
           <table
-            className="dashboard-table w-[1400px]  mx-auto"
+            className="dashboard-table w-[900px]  mx-auto "
             // className={`${!activeFilters.includes("isMaster") ? 'dashboard-table w-[1200px]  mx-auto' : 'dashboard-table w-[1700px]  mx-auto'}`}
           >
             <thead>
@@ -897,7 +895,7 @@ const Dashboard = () => {
                    
                     <th>Is Hedge</th>
                     {/* <th>  Hedging Trade</th> */}
-                    <th> Identifier Under Hedge</th>
+                <th> Identifier Under Hedge</th>
                     {/* <th>Call Entry Value</th> */}
                     <th>LTP</th>
                     {/* <th>Put Entry Value</th> */}
@@ -952,6 +950,10 @@ const Dashboard = () => {
                     return 0;
                   })
                   ?.map((item, index) => {
+
+                    const a =
+                    tradeOptions.find((option) => option.value === item.tradeIdentification)
+                      ?.label || "";
                     return (
                       <tr key={index}>
                         <td>{index + 1}</td>
@@ -1084,15 +1086,15 @@ const Dashboard = () => {
                         {!narration && (
                           <>
                             <td
-                              className={`${
-                                a === "Bullish"
-                                  ? "text-green-600 font-semibold"
-                                  : a === "Bearish"
-                                  ? "text-red-600 font-semibold"
-                                  : "font-semibold"
-                              }`}
+                              // className={`${
+                              //   a == 0
+                              //     ? "text-green-600 font-semibold"
+                              //     : a == 1
+                              //     ? "text-red-600 font-semibold"
+                              //     : "font-semibold"
+                              // }`}
                             >
-                              {a}
+                         {a}
                             </td>
                             <td
                               className={`${
@@ -1399,6 +1401,9 @@ const Dashboard = () => {
                                   exitSelection:item.exitSelection,
                                   entryCandle:item.entryCandle,
                                   atrMf:item.atrMf,
+                                  tradeIdentification: item.tradeIdentification,
+                                  RSDeviation: item.RSDeviation,
+                                  maxLoss: item.maxLoss,
 
                                 },
                                 getAllTrades,

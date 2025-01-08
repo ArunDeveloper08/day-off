@@ -25,6 +25,13 @@ import axios from "axios";
 import { BASE_URL_OVERALL } from "@/lib/constants";
 import { Textarea } from "@/components/ui/textarea";
 
+const tradeOptions = [
+  { label: "Bullish", value: 0 },
+  { label: "Bearish", value: 1 },
+  { label: "Both", value: 2 },
+  { label: "None", value: 3 },
+];
+
 export const EditTrade = () => {
   const { isOpen, onClose, type, data } = useModal();
   React.useEffect(() => {
@@ -180,6 +187,9 @@ export const EditTrade = () => {
         entryCandle: values.entryCandle,
         exitSelection: values.exitSelection,
         atrMf: values.atrMf,
+        tradeIdentification: values.tradeIdentification,
+        RSDeviation: values.RSDeviation,
+        maxLoss: values.maxLoss,
 
         // targetProfit: values.targetProfit,
       });
@@ -452,41 +462,110 @@ export const EditTrade = () => {
                   </>
                 )}
                 {values.isMaster == true && (
-                  <div className="px-1">
-                    <Label>Category</Label>
-                    <Select
-                      value={values?.category}
-                      name="category"
-                      onValueChange={(value) => handleSelect("category", value)}
-                    >
-                      <SelectTrigger className="w-full mt-1 border-zinc-500">
-                        <SelectValue>{values?.category}</SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>category</SelectLabel>
-                          <SelectItem value="MyBullishMaster">
-                            My Bullish Master
-                          </SelectItem>
-                          <SelectItem value="MyBearishMaster">
-                            My Bearish Master
-                          </SelectItem>
-                          <SelectItem value="MyCommonMaster">
-                            My Common Master
-                          </SelectItem>
-                          <SelectItem value="Index">Index</SelectItem>
-                          <SelectItem value="PE">PE</SelectItem>
-                          <SelectItem value="CE">CE</SelectItem>
-                          <SelectItem value="Nifty50">Nifty 50</SelectItem>
-                          <SelectItem value="BankNifty">Bank Nifty</SelectItem>
-                          <SelectItem value="todayTrade">
-                            Today Trade
-                          </SelectItem>
-                          <SelectItem value="daily">Daily</SelectItem>
-                          <SelectItem value="hourly">Hourly</SelectItem>
-                          <SelectItem value="15Min">15 Min</SelectItem>
-                          {/* <SelectItem value="IT">IT</SelectItem> */}
-                          {/* <SelectItem value="Energy">Energy</SelectItem>
+                  <>
+                    <div className=" mb-1 ">
+                      <Label>Trade Identification</Label>
+                      <Select
+                        className="w-[150px] "
+                        value={values.tradeIdentification}
+                        onValueChange={(value) =>
+                          handleSelect("tradeIdentification", value)
+                        }
+                      >
+                        <SelectTrigger className="w-full mt-1 border-zinc-500">
+                          <SelectValue>
+                            {tradeOptions.find(
+                              (option) =>
+                                option.value === values.tradeIdentification
+                            )?.label || ""}
+                          </SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Trade Identification</SelectLabel>
+
+                            {tradeOptions?.map((option) => (
+                              <SelectItem
+                                key={option.value}
+                                value={option.value}
+                              >
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    {/* <div className="px-1">
+                      <Label>Channel Deviation (%)</Label>
+                      <Input
+                        name="RSDeviation"
+                        onChange={handleChange}
+                        value={values.RSDeviation}
+                        className="mt-1"
+                        type="text"
+                      />
+                    </div> */}
+
+                    <div className="px-1">
+                      <Label>Loss Limit</Label>
+                      <Input
+                        name="maxLoss"
+                        onChange={handleChange}
+                        value={values.maxLoss}
+                        className="mt-1"
+                        type="text"
+                      />
+                    </div>
+                       <div className="px-1">
+                                      <Label>D_Entry 2(%)</Label>
+                                      <Input
+                                        name="priceDecPercent"
+                                        onChange={handleChange}
+                                        value={values.priceDecPercent}
+                                        className="mt-1"
+                                        type="text"
+                                      />
+                                    </div>
+                    <div className="px-1">
+                      <Label>Category</Label>
+                      <Select
+                        value={values?.category}
+                        name="category"
+                        onValueChange={(value) =>
+                          handleSelect("category", value)
+                        }
+                      >
+                        <SelectTrigger className="w-full mt-1 border-zinc-500">
+                          <SelectValue>{values?.category}</SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>category</SelectLabel>
+                            <SelectItem value="MyBullishMaster">
+                              My Bullish Master
+                            </SelectItem>
+                            <SelectItem value="MyBearishMaster">
+                              My Bearish Master
+                            </SelectItem>
+                            <SelectItem value="MyCommonMaster">
+                              My Common Master
+                            </SelectItem>
+                            <SelectItem value="Index">Index</SelectItem>
+                            <SelectItem value="PE">PE</SelectItem>
+                            <SelectItem value="CE">CE</SelectItem>
+                            <SelectItem value="Nifty50">Nifty 50</SelectItem>
+                            <SelectItem value="BankNifty">
+                              Bank Nifty
+                            </SelectItem>
+                            <SelectItem value="todayTrade">
+                              Today Trade
+                            </SelectItem>
+                            <SelectItem value="daily">Daily</SelectItem>
+                            <SelectItem value="hourly">Hourly</SelectItem>
+                            <SelectItem value="15Min">15 Min</SelectItem>
+                            {/* <SelectItem value="IT">IT</SelectItem> */}
+                            {/* <SelectItem value="Energy">Energy</SelectItem>
                           <SelectItem value="Auto">Auto</SelectItem>
                           <SelectItem value="RangeBound">RangeBound</SelectItem>
                           <SelectItem value="Chemical">Chemical</SelectItem>
@@ -494,11 +573,12 @@ export const EditTrade = () => {
                           <SelectItem value="RealEstate">
                             Real Estate
                           </SelectItem> */}
-                          <SelectItem value="Others">Others</SelectItem>
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                            <SelectItem value="Others">Others</SelectItem>
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </>
                 )}
 
                 {values?.indexValue != 6 && (
@@ -1043,16 +1123,16 @@ export const EditTrade = () => {
                 {(values.indexValue == 7 || values.indexValue == 17) &&
                   values.isMaster && (
                     <>
-                      {/* <div className="px-1">
-                        <Label>D_Exit (%)</Label>
+                      <div className="px-1">
+                        <Label>D_Entry (%)</Label>
                         <Input
-                          name="dynamicExitPercent"
+                          name="dynamicEntryPercentage"
                           onChange={handleChange}
-                          value={values.dynamicExitPercent}
+                          value={values.dynamicEntryPercentage}
                           className="mt-1"
                           type="number"
                         />
-                      </div> */}
+                      </div>
                       <div className="px-1">
                         <Label>Trend Candle Count</Label>
                         <Input

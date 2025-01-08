@@ -27,7 +27,7 @@ const LiveDataTable = ({ id, socketData ,socketMastertData , values}) => {
     const total = data?.reduce((acc, item) => {
       if (item.entryPrice !== null && item.exitPrice !== null) {
         const diff =
-          item.entryOrderType === "SELL"
+          item.CallType === "PE"
             ? item.entryPrice - item?.exitPrice
             : item.exitPrice - item?.entryPrice;
         return acc + diff;
@@ -59,9 +59,9 @@ const LiveDataTable = ({ id, socketData ,socketMastertData , values}) => {
   
     // Check tradeIndex condition
     if (values?.tradeIndex === 7 || values?.tradeIndex === 17) {
-      if (item.entryOrderType === "BUY") {
+      if (item.CallType === "CE") {
         diff = (socketMastertData.last_traded_price - item.entryPivot)?.toFixed(2);
-      } else if (item.entryOrderType === "SELL") {
+      } else if (item.CallType === "PE") {
         diff = (item.entryPivot - socketMastertData.last_traded_price)?.toFixed(2);
       }
     } else {
@@ -114,7 +114,7 @@ const LiveDataTable = ({ id, socketData ,socketMastertData , values}) => {
               // console.log("item.entryOrderType",item.entryOrderType)
               const priceDiff =
                 item.entryPrice !== null && item.exitPrice !== null
-                  ? item.entryOrderType === "SELL"
+                  ? item.CallType === "PE"
                     ? (item.entryPrice - item.exitPrice)?.toFixed(2)
                     : (item.exitPrice - item.entryPrice)?.toFixed(2)
                   : null;

@@ -55,9 +55,10 @@ const HelpingChart = () => {
   const [buyTrendLineDate, setBuyTrendLineDate] = useState();
   const [bankNifty, setBankNifty] = useState();
   const [Nifty, setNifty] = useState();
-  const [noActionLine , setNoActionLine]  = useState([]);
-  const [horizontalLine , setHorizontalLine]  = useState([]);
-  const [tradeStatus , setTradeStatus] = useState([])
+  const [noActionLine, setNoActionLine] = useState([]);
+  const [horizontalLine, setHorizontalLine] = useState([]);
+  const [tradeStatus, setTradeStatus] = useState([]);
+  const [trendLineMode, setTrendLineMode] = useState(0);
 
   useEffect(() => {
     setTheme("light");
@@ -142,7 +143,7 @@ const HelpingChart = () => {
     atr: false,
     bearishLine: false,
     bollingerBand: false,
-    noActionLine : true,
+    noActionLine: true,
     horizontalLine: true,
   });
   const [hideConfig, setHideConfig] = useState(true);
@@ -163,6 +164,7 @@ const HelpingChart = () => {
         `${BASE_URL_OVERALL}/config/get?id=${id}`
       );
       setData((p) => ({ ...p, data: data.data }));
+      setTrendLineMode(data.data?.trendLineMode);
       if (data?.data?.buyTrendLineDate == null) {
         setBuyTrendLineDate(
           new Date().toISOString().split("T")[0]?.slice(0, 10)
@@ -194,21 +196,23 @@ const HelpingChart = () => {
     }
   };
 
-  const gethaveTradeInfo = async()=>{
-    try{
- const response = await axios.get(`${BASE_URL_OVERALL}/config/tradeStatus?id=${id}`)
+  const gethaveTradeInfo = async () => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL_OVERALL}/config/tradeStatus?id=${id}`
+      );
 
- setTradeStatus(response.data.data)
-    }catch(err){
+      setTradeStatus(response.data.data);
+    } catch (err) {
       console.log(err);
     }
-  }
+  };
 
-  useEffect(()=>{
-    gethaveTradeInfo()
-    const interval = setInterval(gethaveTradeInfo, 5 * 1000)
-    return ()=>clearInterval(interval)
-  },[])
+  useEffect(() => {
+    gethaveTradeInfo();
+    const interval = setInterval(gethaveTradeInfo, 5 * 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const mergeEntryLines = (apiLines, stateLines) => {
     const apiLineNames = new Set(apiLines?.map((apiLine) => apiLine.name));
@@ -229,11 +233,6 @@ const HelpingChart = () => {
     console.log("Merged Entry Lines:", mergedLines);
     return mergedLines;
   };
-
-
-
-
-
 
   const getChartData = async () => {
     const maxRetries = 5; // Maximum number of retries
@@ -270,7 +269,6 @@ const HelpingChart = () => {
           setHorizontalLine(res.data?.horizontalLine);
           setApiResponseReceived(true);
         }
-
 
         // Exit loop on success
         return;
@@ -323,14 +321,18 @@ const HelpingChart = () => {
     return date;
   };
 
-  const filterAndTransformLines = (trendLines, data, interval, isHorizontal = false) => {
+  const filterAndTransformLines = (
+    trendLines,
+    data,
+    interval,
+    isHorizontal = false
+  ) => {
     return trendLines?.map((line) => {
-
       if (isHorizontal) {
         // Special handling for horizontal lines
         const firstIndex = 0;
         const lastIndex = data.length - 1;
-  
+
         return {
           ...line,
           start: [firstIndex, line.start[1] || data[firstIndex]?.close],
@@ -417,12 +419,15 @@ const HelpingChart = () => {
       true // Indicate this is for horizontal lines
     );
     setHorizontalLine((prev) =>
-      JSON.stringify(prev) !== JSON.stringify(updatedHorizontalLines) ? updatedHorizontalLines : prev
+      JSON.stringify(prev) !== JSON.stringify(updatedHorizontalLines)
+        ? updatedHorizontalLines
+        : prev
     );
   }, [apiResponseReceived, apiData, values?.interval]);
 
   const handleSelect = (key, value) => {
     setValues((prev) => ({ ...prev, [key]: value }));
+    setTrendLineMode((prev) => ({ ...prev, [key]: value }));
     if (key === "interval") {
       manualIntervalRef.current = value;
     }
@@ -476,13 +481,15 @@ const HelpingChart = () => {
     axios
       .put(`${BASE_URL_OVERALL}/config/editMaster?id=${id}`, {
         buyTrendLineDate,
+        // trendLineMode,
+        interval: values.interval,
       })
       .then((res) => {
         alert("Successfully Updated");
         // Call getChartData only if trendLineActive has NOT changed
         // if (prevTrendLineActive.current === values.trendLineActive) {
         getChartData();
-         getTradeConfig();
+        getTradeConfig();
         setApiResponseReceived(true);
         // }
         // Update the previous value to the current value
@@ -504,7 +511,7 @@ const HelpingChart = () => {
 
   useEffect(() => {
     getTradeConfig();
-    const interval = setInterval(getTradeConfig, 240 * 1000);
+    const interval = setInterval(getTradeConfig, 120 * 1000);
     // intervalRef.current = interval;
 
     return () => clearInterval(interval);
@@ -539,10 +546,10 @@ const HelpingChart = () => {
     prevHaveTradeOfCE.current = haveTradeOfCE;
     prevHaveTradeOfPE.current = haveTradeOfPE;
   }, [
-   tradeStatus?.haveTradeOfCE,
-   tradeStatus?.haveTradeOfPE,
-   tradeStatus?.haveTradeOfCEBuy,
-   tradeStatus?.haveTradeOfPEBuy,
+    tradeStatus?.haveTradeOfCE,
+    tradeStatus?.haveTradeOfPE,
+    tradeStatus?.haveTradeOfCEBuy,
+    tradeStatus?.haveTradeOfPEBuy,
   ]);
   const pcrlog = async () => {
     try {
@@ -556,35 +563,31 @@ const HelpingChart = () => {
   };
 
   useEffect(() => {
-   
     getChartData();
     // if (!values) return;
     const interval = setInterval(getChartData, 120 * 1000);
 
     return () => clearInterval(interval);
   }, [
-   tradeStatus?.haveTradeOfCE,
-   tradeStatus?.haveTradeOfPE,
-   tradeStatus?.haveTradeOfCEBuy,
-   tradeStatus?.haveTradeOfPEBuy,
-   tradeStatus?.haveTradeOfFUTSell,
-   tradeStatus?.haveTradeOfFUTBuy,
+    tradeStatus?.haveTradeOfCE,
+    tradeStatus?.haveTradeOfPE,
+    tradeStatus?.haveTradeOfCEBuy,
+    tradeStatus?.haveTradeOfPEBuy,
+    tradeStatus?.haveTradeOfFUTSell,
+    tradeStatus?.haveTradeOfFUTBuy,
     trendLineValue?.dataForIndex7?.CESellLinePrice,
     trendLineValue?.dataForIndex7?.PESellLinePrice,
-   
   ]);
 
-  useEffect(()=>{
+  useEffect(() => {
     pcrlog();
-   
+
     const interval = setInterval(() => {
       pcrlog();
-     
     }, 120 * 1000);
 
     return () => clearInterval(interval);
-
-  },[])
+  }, []);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -592,7 +595,7 @@ const HelpingChart = () => {
         clearInterval(intervalRef.current);
       } else {
         getChartData();
-       // intervalRef.current = setInterval(getChartData, 12 * 1000);
+        // intervalRef.current = setInterval(getChartData, 12 * 1000);
       }
     };
 
@@ -605,7 +608,6 @@ const HelpingChart = () => {
       }
     };
   }, [id, values]);
-
 
   const lastUpdateTimeRef = useRef(Date.now());
   const currentTime = Date.now();
@@ -829,7 +831,7 @@ const HelpingChart = () => {
   }, []);
 
   const getValue = (key) => tradeStatus?.[key];
-  
+
   // const getValue = (key) => filteredData?.[0]?.[key] ?? data.data[key];
 
   const openChartInNewTab = () => {
@@ -857,7 +859,17 @@ const HelpingChart = () => {
   const tradeIdentificationValue = data.data.tradeIdentification;
 
   // Find the corresponding trade option
-  const tradeLabel = tradeOptions.find(option => option.value === tradeIdentificationValue)?.label || "Unknown";
+  const tradeLabel =
+    tradeOptions.find((option) => option.value === tradeIdentificationValue)
+      ?.label || "Unknown";
+
+  // const trednLineModeOption = [
+  //   { label: "Mannual", value: 0 },
+  //   { label: "Auto", value: 1 },
+
+  // ];
+
+  // console.log("trendLine" , trendLineMode)
 
   return (
     <div className="p-2">
@@ -916,8 +928,7 @@ const HelpingChart = () => {
           >
             {testingMode === 1 ? "Test Mode ON" : "Test Mode OFF"}
           </button>
-          &nbsp;
-          Trade Indentification :{tradeLabel}
+          &nbsp; Trade Indentification :{tradeLabel}
         </h2>
         <div className="flex justify-around font-bold mt-2 text-[14px]">
           <p>Nifty OI PCR: {Nifty?.pcrRatio?.toFixed(1)} </p>
@@ -960,7 +971,6 @@ const HelpingChart = () => {
                     </p>
                   </>
                 )} */}
-            
                 {/* Here put socket Data */}
                 {/* CE Buy Status */}
                 <p
@@ -1032,80 +1042,6 @@ const HelpingChart = () => {
                   {getValue("haveTradeOfFUTSell") ? "True" : "False"}
                 </p>
                 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-              </div>
-
-              <div className="flex flex-wrap   font-semibold py-2  justify-start">
-                <p
-                  className={`${
-                    getValue("haveTradeOfHedgeCE")
-                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
-                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
-                  }`}
-                >
-                  CE Buy Hedge :{" "}
-                  {getValue("haveTradeOfHedgeCE") ? "True" : "False"}
-                </p>
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-                {/* PE Buy Hedge */}
-                <p
-                  className={`${
-                    getValue("haveTradeOfHedgePE")
-                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
-                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
-                  }`}
-                >
-                  PE Buy Hedge :{" "}
-                  {getValue("haveTradeOfHedgePE") ? "True" : "False"}
-                </p>
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-                {/* CE SELL Hedge */}
-                <p
-                  className={`${
-                    getValue("haveTradeOfHedgeCESell")
-                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
-                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
-                  }`}
-                >
-                  CE SELL Hedge:{" "}
-                  {getValue("haveTradeOfHedgeCESell") ? "True" : "False"}
-                </p>
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-                {/* PE SELL Hedge */}
-                <p
-                  className={`${
-                    getValue("haveTradeOfHedgePESell")
-                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
-                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
-                  }`}
-                >
-                  PE SELL Hedge:{" "}
-                  {getValue("haveTradeOfHedgePESell") ? "True" : "False"}
-                </p>
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-                {/* FUT Buy Hedge */}
-                <p
-                  className={`${
-                    getValue("haveTradeOfHedgeFUTBuy")
-                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
-                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
-                  }`}
-                >
-                  FUT Buy Hedge:{" "}
-                  {getValue("haveTradeOfHedgeFUTBuy") ? "True" : "False"}
-                </p>
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-                {/* FUT Sell Hedge */}
-                <p
-                  className={`${
-                    getValue("haveTradeOfHedgeFUTSell")
-                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
-                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
-                  }`}
-                >
-                  FUT Sell Hedge:{" "}
-                  {getValue("haveTradeOfHedgeFUTSell") ? "True" : "False"}
-                </p>
-                &nbsp;
                 <button
                   onClick={openChartInNewTab}
                   className="bg-green-600 text-white px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]"
@@ -1119,6 +1055,97 @@ const HelpingChart = () => {
                 >
                   Nifty PCR Chart
                 </button>
+              </div>
+
+              <div className="flex flex-wrap   font-semibold py-2  justify-start">
+                {/* <p
+                  className={`${
+                    getValue("haveTradeOfHedgeCE")
+                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
+                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
+                  }`}
+                >
+                  CE Buy Hedge :{" "}
+                  {getValue("haveTradeOfHedgeCE") ? "True" : "False"}
+                </p>
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+          
+                <p
+                  className={`${
+                    getValue("haveTradeOfHedgePE")
+                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
+                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
+                  }`}
+                >
+                  PE Buy Hedge :{" "}
+                  {getValue("haveTradeOfHedgePE") ? "True" : "False"}
+                </p>
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+            
+                <p
+                  className={`${
+                    getValue("haveTradeOfHedgeCESell")
+                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
+                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
+                  }`}
+                >
+                  CE SELL Hedge:{" "}
+                  {getValue("haveTradeOfHedgeCESell") ? "True" : "False"}
+                </p>
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+          
+                <p
+                  className={`${
+                    getValue("haveTradeOfHedgePESell")
+                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
+                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
+                  }`}
+                >
+                  PE SELL Hedge:{" "}
+                  {getValue("haveTradeOfHedgePESell") ? "True" : "False"}
+                </p>
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+          
+                <p
+                  className={`${
+                    getValue("haveTradeOfHedgeFUTBuy")
+                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
+                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
+                  }`}
+                >
+                  FUT Buy Hedge:{" "}
+                  {getValue("haveTradeOfHedgeFUTBuy") ? "True" : "False"}
+                </p>
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+              
+                <p
+                  className={`${
+                    getValue("haveTradeOfHedgeFUTSell")
+                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
+                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
+                  }`}
+                >
+                  FUT Sell Hedge:{" "}
+                  {getValue("haveTradeOfHedgeFUTSell") ? "True" : "False"}
+                </p> */}
+                <p
+                  className={`${
+                    data?.data?.maxLoss == data.data.lossLimit
+                      ? "text-red-600 font-bold"
+                      : "text-green-600 font-bold"
+                  }`}
+                >
+                  Trade Count : {data.data.lossLimit}
+                </p>
+                &nbsp; &nbsp; &nbsp; &nbsp;
+                <p>Call Entry Line : {data.data.callLine}</p>
+                &nbsp; &nbsp; &nbsp; &nbsp;
+                <p>Put Entry Line : {data.data.putLine}</p>
+                &nbsp; &nbsp; &nbsp; &nbsp;
+                <p>Call Entry Line2 : {data.data.callLine2}</p>
+                &nbsp; &nbsp; &nbsp; &nbsp;
+                <p>Put Entry Line2: {data.data.putLine2}</p>
+                &nbsp; &nbsp; &nbsp; &nbsp;
               </div>
 
               {data.data.tradeIndex == 4 && (
@@ -1163,20 +1190,63 @@ const HelpingChart = () => {
               )}
 
               {(data.data.tradeIndex == 7 || data.data.tradeIndex == 17) && (
-                
                 <div>
                   {trendLineValue && (
-                     <p className="font-semibold text-[13px] md:text-[16px]">
+                    <p className="font-semibold text-[13px] md:text-[16px]">
                       Resistance :
                       {trendLineValue?.dataForIndex7?.ResistancePrice &&
-                        trendLineValue?.dataForIndex7?.ResistancePrice?.toFixed(1)}
+                        trendLineValue?.dataForIndex7?.ResistancePrice?.toFixed(
+                          1
+                        )}
                       &nbsp; &nbsp; Support :
-                      {trendLineValue?.dataForIndex7?.SupportPrice && trendLineValue?.dataForIndex7?.SupportPrice?.toFixed(1)}
+                      {trendLineValue?.dataForIndex7?.SupportPrice &&
+                        trendLineValue?.dataForIndex7?.SupportPrice?.toFixed(1)}
                       &nbsp; &nbsp; Call Target :
                       {trendLineValue?.dataForIndex7?.callTargetLevelPrice &&
-                        trendLineValue?.dataForIndex7?.callTargetLevelPrice?.toFixed(1)}
+                        trendLineValue?.dataForIndex7?.callTargetLevelPrice?.toFixed(
+                          1
+                        )}
                       &nbsp; &nbsp; Put Target :
-                      {trendLineValue?.dataForIndex7?.putTargetLevelPrice && trendLineValue?.dataForIndex7?.putTargetLevelPrice?.toFixed(1)}
+                      {trendLineValue?.dataForIndex7?.putTargetLevelPrice &&
+                        trendLineValue?.dataForIndex7?.putTargetLevelPrice?.toFixed(
+                          1
+                        )}
+                      &nbsp; &nbsp; &nbsp; &nbsp;
+                      {trendLineValue?.dataForIndex7?.AlertLine1Price && (
+                        <span>
+                          EntryLine Call :{" "}
+                          {trendLineValue?.dataForIndex7?.AlertLine1Price?.toFixed(
+                            1
+                          )}
+                        </span>
+                      )}
+                      &nbsp; &nbsp;
+                      {trendLineValue?.dataForIndex7?.AlertLine1Target && (
+                        <span>
+                          EntryLine Call Target :{" "}
+                          {trendLineValue?.dataForIndex7?.AlertLine1Target?.toFixed(
+                            1
+                          )}
+                        </span>
+                      )}
+                      &nbsp; &nbsp;
+                      {trendLineValue?.dataForIndex7?.AlertLine2Price && (
+                        <span>
+                          EntryLine Put :{" "}
+                          {trendLineValue?.dataForIndex7?.AlertLine2Price?.toFixed(
+                            1
+                          )}
+                        </span>
+                      )}
+                      &nbsp; &nbsp;
+                      {trendLineValue?.dataForIndex7?.AlertLine2Target && (
+                        <span>
+                          EntryLine Put Target :{" "}
+                          {trendLineValue?.dataForIndex7?.AlertLine2Target?.toFixed(
+                            1
+                          )}
+                        </span>
+                      )}
                       &nbsp; &nbsp;
                       {trendLineValue?.dataForIndex7?.CESellLinePrice > 0 && (
                         <span>
@@ -1285,13 +1355,8 @@ const HelpingChart = () => {
                       ) : (
                         <span></span>
                       )}
-                  
-                   
-                  {ceStopLoss && `CE Stop Loss : ${ceStopLoss?.toFixed(1)}`}
-              
-             
-                  {peStopLoss && `PE Stop Loss : ${peStopLoss?.toFixed(1)}`}
-                
+                      {ceStopLoss && `CE Stop Loss : ${ceStopLoss?.toFixed(1)}`}
+                      {peStopLoss && `PE Stop Loss : ${peStopLoss?.toFixed(1)}`}
                     </p>
                   )}
                 </div>
@@ -1533,8 +1598,6 @@ const HelpingChart = () => {
               </div>
             </div>
 
-        
-
             <div className="flex flex-wrap items-center mt-2 mb-1 space-x-10">
               {/* Date Input */}
               <div className="flex flex-col w-full sm:w-auto">
@@ -1693,19 +1756,46 @@ const HelpingChart = () => {
                       }
                     />
                   </div>
-                  <div>
+                  {/* <div className=" mb-1 ">
+                    <Label>TrendLine Mode</Label>
+                    <Select
+                      className="w-[150px] "
+                      value={trendLineMode}
+                      // onValueChange={(value) => handleSelect("trendLineMode", value)}
+                      onValueChange={(value) => setTrendLineMode(value)}
+                    >
+                      <SelectTrigger className="w-full mt-1 border-zinc-500">
+                        <SelectValue>
+                          {trednLineModeOption.find(
+                            (option) =>
+                              option.value === trendLineMode
+                          )?.label || ""}
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>TrendLine Mode</SelectLabel>
 
+                          {trednLineModeOption?.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div> */}
+
+                  <div>
                     <Button onClick={handleSubmit2} size="sm">
                       Submit
                     </Button>
-
                   </div>
                 </>
               </div>
             </div>
 
             <div className="flex items-center flex-wrap space-x-10 mt-2">
-
               <button
                 onClick={() =>
                   setShowRow((prev) => ({
@@ -1867,7 +1957,6 @@ const HelpingChart = () => {
           <div className="w-full h-auto flex justify-center">
             <CandleChart
               data={apiData}
-         
               master={data?.data}
               ratio={1}
               width={width + 30} // Adjust width dynamically with some margin
@@ -1889,8 +1978,8 @@ const HelpingChart = () => {
               id={id}
               buyTrendLineDate={buyTrendLineDate}
               horizontalLine={horizontalLine}
-              setHorizontalLine = {setHorizontalLine}
-            tradeStatus={tradeStatus}
+              setHorizontalLine={setHorizontalLine}
+              tradeStatus={tradeStatus}
             />
           </div>
         )}

@@ -39,15 +39,15 @@ const initialState = {
   tradeOutTime: "23:30",
   wma: "1",
   interval: "FIVE_MINUTE",
-  indexValue: "1",
+  indexValue: "7",
   minExitPercent: "5",
   maxExitPercent: "30",
   priceIncPercent: "20",
-  priceDecPercent: "40",
+  priceDecPercent: "0",
   earningPercentLimit: "1",
   orderType: "Buy",
   isMaster: false,
-  dynamicEntryPercentage: "2",
+  dynamicEntryPercentage: "0",
   lossLimit: "10",
   candleSize: "3",
   // maxLoss: "1",
@@ -62,7 +62,7 @@ const initialState = {
   SMA1: "3",
   SMA2: "6",
   // SMA3: "26",
-  rangeBound: "Disable",  
+  rangeBound: "Disable",
   movingAvgType: "WMA",
   // movingAvgOFFSET3: "1",
   movingAvgOFFSET2: "1",
@@ -108,7 +108,10 @@ const initialState = {
   tradingOptions: "",
   exitSelection: "low",
   entryCandle: "both",
-  atrMf :"1"
+  atrMf: "1",
+  tradeIdentification: "2",
+  RSDeviation:"",
+  maxLoss:"5"
   // Min_Order_Qty:"1"
 };
 
@@ -128,11 +131,11 @@ const alternateInitialState = {
   interval: "FIVE_MINUTE",
   indexValue: "2",
   priceIncPercent: "20",
-  priceDecPercent: "40",
+  priceDecPercent: "0",
   earningPercentLimit: "1",
   orderType: "Buy",
   isMaster: false,
-  dynamicEntryPercentage: "1",
+  dynamicEntryPercentage: "2",
   lossLimit: "10",
   candleSize: "3",
   // maxLoss: "1",
@@ -197,7 +200,10 @@ const alternateInitialState = {
   tradingOptions: "",
   exitSelection: "low",
   entryCandle: "both",
-    atrMf :"1"
+  atrMf: "1",
+  tradeIdentification: "2",
+  RSDeviation:"",
+  maxLoss:"5"
 };
 // tradeIndex =2
 const gammaBlastInitialState = {
@@ -217,7 +223,7 @@ const gammaBlastInitialState = {
   indexValue: "6",
 
   priceIncPercent: "20",
-  priceDecPercent: "40",
+  priceDecPercent: "0",
   earningPercentLimit: "1",
   orderType: "Buy",
   isMaster: false,
@@ -290,13 +296,23 @@ const gammaBlastInitialState = {
   tradingOptions: "",
   exitSelection: "low",
   entryCandle: "both",
-    atrMf :"2"
+  atrMf: "2",
+  tradeIdentification: "2",
+  RSDeviation:"",
+  maxLoss:"5"
 };
 // tradeIndex =6
 
+const tradeOptions = [
+  { label: "Bullish", value: 0 },
+  { label: "Bearish", value: 1 },
+  { label: "Both", value: 2 },
+  { label: "None", value: 3 },
+];
+
 export const AddNewtrade = () => {
   const { isOpen, onClose, type, data } = useModal();
-  const [values, setValues] = React.useState(alternateInitialState);
+  const [values, setValues] = React.useState(initialState);
   const [expiryDates, setExpiryDates] = React.useState([]);
 
   const [trades, setTrades] = React.useState({
@@ -323,7 +339,7 @@ export const AddNewtrade = () => {
 
     // Check if isMaster is true and set indexValue to 4
     if (values.isMaster) {
-      newState = { ...values, indexValue: "7" };
+      newState = { ...values };
     } else if (values.indexValue === 2) {
       newState = alternateInitialState;
     } else if (values.indexValue === 6) {
@@ -530,6 +546,9 @@ export const AddNewtrade = () => {
         exitSelection: values.exitSelection,
         entryCandle: values.entryCandle,
         atrMf: values.atrMf,
+        tradeIdentification: values.tradeIdentification,
+        RSDeviation: values.RSDeviation,
+        maxLoss: values.maxLoss,
       });
       alert("Add Successfully");
     } catch (error) {
@@ -560,7 +579,7 @@ export const AddNewtrade = () => {
             <div className="px-1">
               <Label>Index Value (Please fill this first )</Label>
               <Select
-                disabled={values.isMaster}
+                //disabled={values.isMaster}
                 value={values.indexValue}
                 name="indexValue"
                 onValueChange={(value) => handleSelect("indexValue", value)}
@@ -571,7 +590,7 @@ export const AddNewtrade = () => {
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Trade Index</SelectLabel>
-                    {[ 2, 7, 8 , 12, 17  , 18]?.map((suggestion) => (
+                    {[2, 7, 8, 12, 17, 18]?.map((suggestion) => (
                       <SelectItem key={suggestion} value={suggestion}>
                         {suggestion}
                       </SelectItem>
@@ -734,20 +753,7 @@ export const AddNewtrade = () => {
                 </SelectContent>
               </Select>
             </div>
-            {values?.isMaster == true && (
-              <>
-                {/* <div className="px-1">
-                  <Label>Strike Difference</Label>
-                  <Input
-                    name="strikeDiff"
-                    onChange={handleChange}
-                    value={values.strikeDiff}
-                    className="mt-1"
-                    type="text"
-                  />
-                </div> */}
-              </>
-            )}
+
 
             {values?.isMaster == false && (
               <>
@@ -803,6 +809,66 @@ export const AddNewtrade = () => {
 
             {values?.isMaster == true && (
               <>
+                <div className=" mb-1 ">
+                  <Label>Trade Identification</Label>
+                  <Select
+                    className="w-[150px] "
+                    value={values.tradeIdentification}
+                    onValueChange={(value) => handleSelect("tradeIdentification", value)}
+                  
+                  >
+                    <SelectTrigger className="w-full mt-1 border-zinc-500">
+                      <SelectValue>
+                        {tradeOptions.find(
+                          (option) =>
+                            option.value === values.tradeIdentification
+                        )?.label || ""}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Trade Identification</SelectLabel>
+
+                        {tradeOptions?.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+                {/* <div className="px-1">
+                  <Label>Channel Deviation (%)</Label>
+                  <Input
+                    name="RSDeviation"
+                    onChange={handleChange}
+                    value={values.RSDeviation}
+                    className="mt-1"
+                    type="text"
+                  />
+                </div> */}
+                <div className="px-1">
+                  <Label>Loss Limit</Label>
+                  <Input
+                    name="maxLoss"
+                    onChange={handleChange}
+                    value={values.maxLoss}
+                    className="mt-1"
+                    type="text"
+                  />
+                </div>
+                <div className="px-1">
+                  <Label>D_Entry 2(%)</Label>
+                  <Input
+                    name="priceDecPercent"
+                    onChange={handleChange}
+                    value={values.priceDecPercent}
+                    className="mt-1"
+                    type="text"
+                  />
+                </div>
+
                 <div className="px-1">
                   <Label>Category</Label>
                   <Select
@@ -952,7 +1018,7 @@ export const AddNewtrade = () => {
                         type="rsiMax"
                       />
                     </div>
-                   
+
                     <div className="px-1">
                       <Label>SMA 1</Label>
                       <Input
@@ -1055,7 +1121,7 @@ export const AddNewtrade = () => {
                   </>
                 )}
 
-                {(values.indexValue == 2 && values.isMaster == false) && (
+                {values.indexValue == 2 && values.isMaster == false && (
                   <>
                     <div className="px-1">
                       <Label>Candle Type</Label>
@@ -1207,7 +1273,6 @@ export const AddNewtrade = () => {
                     <div className="px-1">
                       <Label>Interval</Label>
                       <Select
-            
                         value={values.interval}
                         name="terminal"
                         onValueChange={(value) =>
@@ -1243,7 +1308,7 @@ export const AddNewtrade = () => {
                                 value: "THIRTY_MINUTE",
                               },
                               {
-                                label: "1 hour",                  
+                                label: "1 hour",
                                 value: "ONE_HOUR",
                               },
                               {
@@ -1379,16 +1444,16 @@ export const AddNewtrade = () => {
             {(values.indexValue == 7 || values.indexValue == 17) &&
               values.isMaster && (
                 <>
-                  {/* <div className="px-1">
-                    <Label>D_Exit (%)</Label>
+                  <div className="px-1">
+                    <Label>D_Entry (%)</Label>
                     <Input
-                      name="dynamicExitPercent"
+                      name="dynamicEntryPercentage"
                       onChange={handleChange}
-                      value={values.dynamicExitPercent}
+                      value={values.dynamicEntryPercentage}
                       className="mt-1"
                       type="number"
                     />
-                  </div> */}
+                  </div>
                   <div className="px-1">
                     <Label> Trend Candle Count</Label>
                     <Input
