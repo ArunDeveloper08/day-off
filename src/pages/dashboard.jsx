@@ -205,7 +205,7 @@ const Dashboard = () => {
         clearInterval(intervalRef.current);
       } else {
         getAllTrades();
-        intervalRef.current = setInterval(getAllTrades, 12 * 1000);
+        intervalRef.current = setInterval(getAllTrades, 30 * 1000);
       }
     };
 
@@ -350,14 +350,26 @@ const Dashboard = () => {
           match = true;
         }
         if (
+          activeFilters.includes("Future") &&
+          item.tradingOptions == "Future"
+        ) {
+          match = true;
+        }
+        if (
+          activeFilters.includes("EQ") &&
+          item.tradingOptions == "EQ"
+        ) {
+          match = true;
+        }
+        if (
           activeFilters.includes("todayTrade") &&
           item.category == "todayTrade"
         ) {
           match = true;
         }
         if (
-          activeFilters.includes("MyBullishMaster") &&
-          item.category === "MyBullishMaster"
+          activeFilters.includes("Large") &&
+          item.category === "Large"
         ) {
           match = true;
         }
@@ -377,14 +389,14 @@ const Dashboard = () => {
         //   match = true;
         // }
         if (
-          activeFilters.includes("MyBearishMaster") &&
-          item.category === "MyBearishMaster"
+          activeFilters.includes("Medium") &&
+          item.category === "Medium"
         ) {
           match = true;
         }
         if (
-          activeFilters.includes("MyCommonMaster") &&
-          item.category === "MyCommonMaster"
+          activeFilters.includes("Small") &&
+          item.category === "Small"
         ) {
           match = true;
         }
@@ -403,42 +415,7 @@ const Dashboard = () => {
         if (activeFilters.includes("15Min") && item.category === "15Min") {
           match = true;
         }
-        // if (activeFilters.includes("IT") && item.category === "IT") {
-        //   match = true;
-        // }
-        // if (activeFilters.includes("Energy") && item.category === "Energy") {
-        //   match = true;
-        // }
-        // if (activeFilters.includes("Auto") && item.category === "Auto") {
-        //   match = true;
-        // }
-        // if (activeFilters.includes("Defence") && item.category === "Defence") {
-        //   match = true;
-        // }
-        // if (
-        //   activeFilters.includes("Chemical") &&
-        //   item.category === "Chemical"
-        // ) {
-        //   match = true;
-        // }
-        // if (
-        //   activeFilters.includes("RealEstate") &&
-        //   item.category === "RealEstate"
-        // ) {
-        //   match = true;
-        // }
-        // if (
-        //   activeFilters.includes("RangeBound") &&
-        //   item.category === "RangeBound"
-        // ) {
-        //   match = true;
-        // }
-        // if (activeFilters.includes("Others") && item.category === "Others") {
-        //   match = true;
-        // }
-        // if (activeFilters.includes("Hedging") && item.isHedging == "1") {
-        //   match = true;
-        // }
+      
         if (item?.isMaster && item.targetAbove && item.targetBelow) {
           const LTP = socketData[item.instrument_token]?.last_traded_price;
 
@@ -552,6 +529,7 @@ const Dashboard = () => {
       console.log(error);
     }
   };
+
   // console.log("Trade Identification" , trades)
 
 
@@ -680,36 +658,52 @@ const Dashboard = () => {
           >
             Trading Stock PE
           </Button>
+          <Button
+            onClick={() => handleButtonClick("Future")}
+            className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
+              activeButtons["Future"] ? "bg-red-500 hover:bg-red-600" : "bg-black"
+            }`}
+          >
+       Future
+          </Button>
+          <Button
+            onClick={() => handleButtonClick("EQ")}
+            className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
+              activeButtons["EQ"] ? "bg-red-500 hover:bg-red-600" : "bg-black"
+            }`}
+          >
+     EQ
+          </Button>
        
           <Button
-            onClick={() => handleButtonClick("MyBullishMaster")}
+            onClick={() => handleButtonClick("Small")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["MyBullishMaster"]
+              activeButtons["Small"]
                 ? "bg-red-500 hover:bg-red-600"
                 : "bg-black"
             }`}
           >
-            My Bullish Master
+           Small
           </Button>
           <Button
-            onClick={() => handleButtonClick("MyBearishMaster")}
+            onClick={() => handleButtonClick("Medium")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["MyBearishMaster"]
+              activeButtons["Medium"]
                 ? "bg-red-500 hover:bg-red-600"
                 : "bg-black"
             }`}
           >
-            My Bearish Master
+            Medium
           </Button>
           <Button
-            onClick={() => handleButtonClick("MyCommonMaster")}
+            onClick={() => handleButtonClick("Large")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["MyCommonMaster"]
+              activeButtons["Large"]
                 ? "bg-red-500 hover:bg-red-600"
                 : "bg-black"
             }`}
           >
-            My Common Master
+         Large
           </Button>
 
 
@@ -900,6 +894,7 @@ const Dashboard = () => {
                     <th>LTP</th>
                     {/* <th>Put Entry Value</th> */}
                     <th>Lot Size</th>
+                    <th>Loss Limit</th>
                   {/* <th>Entry Line Below</th> */}
                 
                     {/* <th>Entry Line Above</th> */}
@@ -942,6 +937,14 @@ const Dashboard = () => {
                     if (!a.haveTrade && b.haveTrade) return 1;
 
                     // Priority 2: Rows with valid dateOfLooserGainer come next
+                    if (a.buyTrendLineDate && b.buyTrendLineDate) {
+                      return new Date(b.buyTrendLineDate) - new Date(a.buyTrendLineDate);
+                    }
+                
+                    // Priority 3: Rows with valid buyTrendLineDate come next
+                    if (a.buyTrendLineDate && !b.buyTrendLineDate) return -1;
+                    if (!a.buyTrendLineDate && b.buyTrendLineDate) return 1;
+                    ////                                               /////
                     if (a.dateOfLooserGainer && !b.dateOfLooserGainer)
                       return -1;
                     if (!a.dateOfLooserGainer && b.dateOfLooserGainer) return 1;
@@ -952,7 +955,7 @@ const Dashboard = () => {
                   ?.map((item, index) => {
 
                     const a =
-                    tradeOptions.find((option) => option.value === item.tradeIdentification)
+                    tradeOptions?.find((option) => option.value === item.tradeIdentification)
                       ?.label || "";
                     return (
                       <tr key={index}>
@@ -1149,6 +1152,7 @@ const Dashboard = () => {
                             </td> */}
                  
                             <td>{item.lotSize}</td>
+                            <td>{item.maxLoss}</td>
                      
                             {/* <td
                               className={`${
@@ -1307,7 +1311,7 @@ const Dashboard = () => {
                         <td className="text-center flex gap-x-2">
                           <Button
                             onClick={() =>
-                              onOpen("edit-trade", {
+                              onOpen("edit-trade", {                
                                 data: {
                                   id: item.id,
                                   symbol: item.symbol,
@@ -1404,6 +1408,12 @@ const Dashboard = () => {
                                   tradeIdentification: item.tradeIdentification,
                                   RSDeviation: item.RSDeviation,
                                   maxLoss: item.maxLoss,
+                                  targetTime: item.targetTime,
+                                  entryLineTime: item.entryLineTime,
+                                  dExitMf: item.dExitMf,
+                                  targetMf: item.targetMf,
+                                  atrMax: item.atrMax,
+                                  
 
                                 },
                                 getAllTrades,

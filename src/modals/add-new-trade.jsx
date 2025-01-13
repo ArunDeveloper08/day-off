@@ -110,8 +110,13 @@ const initialState = {
   entryCandle: "both",
   atrMf: "1",
   tradeIdentification: "2",
-  RSDeviation:"",
-  maxLoss:"5"
+  RSDeviation: "",
+  maxLoss: "5",
+  targetTime: "1",
+  entryLineTime: "1",
+  dExitMf: "1",
+  targetMf: "1",
+  atrMax:"60"
   // Min_Order_Qty:"1"
 };
 
@@ -202,8 +207,13 @@ const alternateInitialState = {
   entryCandle: "both",
   atrMf: "1",
   tradeIdentification: "2",
-  RSDeviation:"",
-  maxLoss:"5"
+  RSDeviation: "",
+  maxLoss: "5",
+  targetTime: "1",
+  entryLineTime: "1",
+  dExitMf: "1",
+  targetMf: "1",
+    atrMax:"60"
 };
 // tradeIndex =2
 const gammaBlastInitialState = {
@@ -298,8 +308,13 @@ const gammaBlastInitialState = {
   entryCandle: "both",
   atrMf: "2",
   tradeIdentification: "2",
-  RSDeviation:"",
-  maxLoss:"5"
+  RSDeviation: "",
+  maxLoss: "5",
+  targetTime: "1",
+  entryLineTime: "1",
+  dExitMf: "1",
+  targetMf: "1",
+    atrMax:"60"
 };
 // tradeIndex =6
 
@@ -549,6 +564,11 @@ export const AddNewtrade = () => {
         tradeIdentification: values.tradeIdentification,
         RSDeviation: values.RSDeviation,
         maxLoss: values.maxLoss,
+        targetTime: values.targetTime,
+        entryLineTime: values.entryLineTime,
+        dExitMf: values.dExitMf,
+        targetMf: values.targetMf,
+        atrMax: values.atrMax,
       });
       alert("Add Successfully");
     } catch (error) {
@@ -754,7 +774,6 @@ export const AddNewtrade = () => {
               </Select>
             </div>
 
-
             {values?.isMaster == false && (
               <>
                 <div className="px-1">
@@ -800,10 +819,32 @@ export const AddNewtrade = () => {
                         <SelectLabel>Trading Option</SelectLabel>
                         <SelectItem value="CE">CE</SelectItem>
                         <SelectItem value="PE">PE</SelectItem>
+                        <SelectItem value="Future">Future</SelectItem>
+                        <SelectItem value="EQ">EQ</SelectItem>
                       </SelectGroup>
                     </SelectContent>
                   </Select>
                 </div>
+                <div className="px-1">
+                      <Label>RSI Max</Label>
+                      <Input
+                        name="rsiMax"
+                        onChange={handleChange}
+                        value={values.rsiMax}
+                        className="mt-1"
+                        type="number"
+                      />
+                    </div>
+                <div className="px-1">
+                      <Label>ATR Max</Label>
+                      <Input
+                        name="atrMax"
+                        onChange={handleChange}
+                        value={values.atrMax}
+                        className="mt-1"
+                      type="number"
+                      />
+                    </div>
               </>
             )}
 
@@ -814,8 +855,9 @@ export const AddNewtrade = () => {
                   <Select
                     className="w-[150px] "
                     value={values.tradeIdentification}
-                    onValueChange={(value) => handleSelect("tradeIdentification", value)}
-                  
+                    onValueChange={(value) =>
+                      handleSelect("tradeIdentification", value)
+                    }
                   >
                     <SelectTrigger className="w-full mt-1 border-zinc-500">
                       <SelectValue>
@@ -882,14 +924,14 @@ export const AddNewtrade = () => {
                     <SelectContent>
                       <SelectGroup>
                         <SelectLabel>category</SelectLabel>
-                        <SelectItem value="MyBullishMaster">
-                          My Bullish Master
+                        <SelectItem value="Small">
+                          Small
                         </SelectItem>
-                        <SelectItem value="MyBearishMaster">
-                          My Bearish Master
+                        <SelectItem value="Medium">
+                       Medium
                         </SelectItem>
-                        <SelectItem value="MyCommonMaster">
-                          My Common Master
+                        <SelectItem value="Large">
+                          Large
                         </SelectItem>
                         <SelectItem value="Index">Index</SelectItem>
                         <SelectItem value="PE">PE</SelectItem>
@@ -908,6 +950,58 @@ export const AddNewtrade = () => {
                     <SelectItem value="Defence">Defence</SelectItem>
                     <SelectItem value="RealEstate">Real Estate</SelectItem> */}
                         <SelectItem value="Others">Others</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="px-1">
+                  <Label>Entry Time Delay</Label>
+                  <Select
+                    value={values?.entryLineTime}
+                    name="entryLineTime"
+                    onValueChange={(value) =>
+                      handleSelect("entryLineTime", value)
+                    }
+                  >
+                    <SelectTrigger className="w-full mt-1 border-zinc-500">
+                      <SelectValue>{values?.entryLineTime}</SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Entry Time Delay</SelectLabel>
+                        <SelectItem value="1">1 min</SelectItem>
+                        <SelectItem value="3">3 min</SelectItem>
+                        <SelectItem value="5">5 min</SelectItem>
+                        <SelectItem value="10">10 min</SelectItem>
+                        <SelectItem value="15">15 min</SelectItem>
+                        <SelectItem value="20">20 min</SelectItem>
+                        <SelectItem value="30">30 min</SelectItem>
+                        <SelectItem value="45">45 min</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="px-1">
+                  <Label> Target Time Delay</Label>
+                  <Select
+                    value={values?.targetTime}
+                    name="targetTime"
+                    onValueChange={(value) => handleSelect("targetTime", value)}
+                  >
+                    <SelectTrigger className="w-full mt-1 border-zinc-500">
+                      <SelectValue>{values?.targetTime}</SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Target Time Delay</SelectLabel>
+                        <SelectItem value="1">1 min</SelectItem>
+                        <SelectItem value="3">3 min</SelectItem>
+                        <SelectItem value="5">5 min</SelectItem>
+                        <SelectItem value="10">10 min</SelectItem>
+                        <SelectItem value="15">15 min</SelectItem>
+                        <SelectItem value="20">20 min</SelectItem>
+                        <SelectItem value="30">30 min</SelectItem>
+                        <SelectItem value="45">45 min</SelectItem>
                       </SelectGroup>
                     </SelectContent>
                   </Select>
@@ -1209,16 +1303,7 @@ export const AddNewtrade = () => {
                         type="number"
                       />
                     </div>
-                    <div className="px-1">
-                      <Label>RSI Max</Label>
-                      <Input
-                        name="rsiMax"
-                        onChange={handleChange}
-                        value={values.rsiMax}
-                        className="mt-1"
-                        type="rsiMax"
-                      />
-                    </div>
+            
                     <div className="px-1">
                       <Label>RSI Candle</Label>
                       <Input
@@ -1229,7 +1314,7 @@ export const AddNewtrade = () => {
                         type="rsiCandle"
                       />
                     </div>
-
+{/* 
                     <div className="px-1">
                       <Label>D_Exit (%)</Label>
                       <Input
@@ -1239,7 +1324,7 @@ export const AddNewtrade = () => {
                         className="mt-1"
                         type="number"
                       />
-                    </div>
+                    </div> */}
                     <div className="px-1">
                       <Label>D_Entry (%)</Label>
                       <Input
@@ -1248,6 +1333,16 @@ export const AddNewtrade = () => {
                         value={values.dynamicEntryPercentage}
                         className="mt-1"
                         type="number"
+                      />
+                    </div>
+                    <div className="px-1">
+                      <Label>D_Entry 2(%)</Label>
+                      <Input
+                        name="priceDecPercent"
+                        onChange={handleChange}
+                        value={values.priceDecPercent}
+                        className="mt-1"
+                        type="text"
                       />
                     </div>
                     <div className="px-1">
@@ -1261,11 +1356,31 @@ export const AddNewtrade = () => {
                       />
                     </div>
                     <div className="px-1">
-                      <Label>ATR MF</Label>
+                      <Label>StopLoss MF</Label>
                       <Input
                         name="atrMf"
                         onChange={handleChange}
                         value={values.atrMf}
+                        className="mt-1"
+                        type="number"
+                      />
+                    </div>
+                    <div className="px-1">
+                      <Label>Target MF</Label>
+                      <Input
+                        name="targetMf"
+                        onChange={handleChange}
+                        value={values.targetMf}
+                        className="mt-1"
+                        type="number"
+                      />
+                    </div>
+                    <div className="px-1">
+                      <Label>D_Exit MF</Label>
+                      <Input
+                        name="dExitMf"
+                        onChange={handleChange}
+                        value={values.dExitMf}
                         className="mt-1"
                         type="number"
                       />

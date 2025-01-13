@@ -190,6 +190,11 @@ export const EditTrade = () => {
         tradeIdentification: values.tradeIdentification,
         RSDeviation: values.RSDeviation,
         maxLoss: values.maxLoss,
+        targetTime: values.targetTime,
+        entryLineTime: values.entryLineTime,
+        targetMf: values.targetMf,
+        dExitMf: values.dExitMf,
+        atrMax: values.atrMax,
 
         // targetProfit: values.targetProfit,
       });
@@ -455,9 +460,31 @@ export const EditTrade = () => {
                             <SelectLabel>Trading Option</SelectLabel>
                             <SelectItem value="CE">CE</SelectItem>
                             <SelectItem value="PE">PE</SelectItem>
+                            <SelectItem value="Future">Future</SelectItem>
+                            <SelectItem value="EQ">EQ</SelectItem>
                           </SelectGroup>
                         </SelectContent>
                       </Select>
+                    </div>
+                    <div className="px-1">
+                      <Label>RSI Max</Label>
+                      <Input
+                        name="rsiMax"
+                        onChange={handleChange}
+                        value={values.rsiMax}
+                        className="mt-1"
+                        type="number"
+                      />
+                    </div>
+                    <div className="px-1">
+                      <Label>ATR Max</Label>
+                      <Input
+                        name="atrMax"
+                        onChange={handleChange}
+                        value={values.atrMax}
+                        className="mt-1"
+                        type="number"
+                      />
                     </div>
                   </>
                 )}
@@ -517,16 +544,16 @@ export const EditTrade = () => {
                         type="text"
                       />
                     </div>
-                       <div className="px-1">
-                                      <Label>D_Entry 2(%)</Label>
-                                      <Input
-                                        name="priceDecPercent"
-                                        onChange={handleChange}
-                                        value={values.priceDecPercent}
-                                        className="mt-1"
-                                        type="text"
-                                      />
-                                    </div>
+                    <div className="px-1">
+                      <Label>D_Entry 2(%)</Label>
+                      <Input
+                        name="priceDecPercent"
+                        onChange={handleChange}
+                        value={values.priceDecPercent}
+                        className="mt-1"
+                        type="text"
+                      />
+                    </div>
                     <div className="px-1">
                       <Label>Category</Label>
                       <Select
@@ -542,15 +569,9 @@ export const EditTrade = () => {
                         <SelectContent>
                           <SelectGroup>
                             <SelectLabel>category</SelectLabel>
-                            <SelectItem value="MyBullishMaster">
-                              My Bullish Master
-                            </SelectItem>
-                            <SelectItem value="MyBearishMaster">
-                              My Bearish Master
-                            </SelectItem>
-                            <SelectItem value="MyCommonMaster">
-                              My Common Master
-                            </SelectItem>
+                            <SelectItem value="Small">Small</SelectItem>
+                            <SelectItem value="Medium">Medium</SelectItem>
+                            <SelectItem value="Large">Large</SelectItem>
                             <SelectItem value="Index">Index</SelectItem>
                             <SelectItem value="PE">PE</SelectItem>
                             <SelectItem value="CE">CE</SelectItem>
@@ -574,6 +595,60 @@ export const EditTrade = () => {
                             Real Estate
                           </SelectItem> */}
                             <SelectItem value="Others">Others</SelectItem>
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="px-1">
+                      <Label>Entry Time Delay</Label>
+                      <Select
+                        value={values?.entryLineTime}
+                        name="entryLineTime"
+                        onValueChange={(value) =>
+                          handleSelect("entryLineTime", value)
+                        }
+                      >
+                        <SelectTrigger className="w-full mt-1 border-zinc-500">
+                          <SelectValue>{values?.entryLineTime}</SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Entry Time Delay</SelectLabel>
+                            <SelectItem value="1">1 min</SelectItem>
+                            <SelectItem value="3">3 min</SelectItem>
+                            <SelectItem value="5">5 min</SelectItem>
+                            <SelectItem value="10">10 min</SelectItem>
+                            <SelectItem value="15">15 min</SelectItem>
+                            <SelectItem value="20">20 min</SelectItem>
+                            <SelectItem value="30">30 min</SelectItem>
+                            <SelectItem value="45">45 min</SelectItem>
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="px-1">
+                      <Label> Target Time Delay</Label>
+                      <Select
+                        value={values?.targetTime}
+                        name="targetTime"
+                        onValueChange={(value) =>
+                          handleSelect("targetTime", value)
+                        }
+                      >
+                        <SelectTrigger className="w-full mt-1 border-zinc-500">
+                          <SelectValue>{values?.targetTime}</SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Target Time Delay</SelectLabel>
+                            <SelectItem value="1">1 min</SelectItem>
+                            <SelectItem value="3">3 min</SelectItem>
+                            <SelectItem value="5">5 min</SelectItem>
+                            <SelectItem value="10">10 min</SelectItem>
+                            <SelectItem value="15">15 min</SelectItem>
+                            <SelectItem value="20">20 min</SelectItem>
+                            <SelectItem value="30">30 min</SelectItem>
+                            <SelectItem value="45">45 min</SelectItem>
                           </SelectGroup>
                         </SelectContent>
                       </Select>
@@ -846,16 +921,7 @@ export const EditTrade = () => {
                             type="number"
                           />
                         </div>
-                        <div className="px-1">
-                          <Label>RSI Max</Label>
-                          <Input
-                            name="rsiMax"
-                            onChange={handleChange}
-                            value={values.rsiMax}
-                            className="mt-1"
-                            type="rsiMax"
-                          />
-                        </div>
+
                         <div className="px-1">
                           <Label>RSI Candle</Label>
                           <Input
@@ -866,7 +932,7 @@ export const EditTrade = () => {
                             type="rsiCandle"
                           />
                         </div>
-
+                        {/* 
                         <div className="px-1">
                           <Label>D_Exit (%)</Label>
                           <Input
@@ -876,7 +942,7 @@ export const EditTrade = () => {
                             className="mt-1"
                             type="number"
                           />
-                        </div>
+                        </div> */}
                         <div className="px-1">
                           <Label>D_Entry (%)</Label>
                           <Input
@@ -885,6 +951,16 @@ export const EditTrade = () => {
                             value={values.dynamicEntryPercentage}
                             className="mt-1"
                             type="number"
+                          />
+                        </div>
+                        <div className="px-1">
+                          <Label>D_Entry 2(%)</Label>
+                          <Input
+                            name="priceDecPercent"
+                            onChange={handleChange}
+                            value={values.priceDecPercent}
+                            className="mt-1"
+                            type="text"
                           />
                         </div>
                         <div className="px-1">
@@ -898,11 +974,31 @@ export const EditTrade = () => {
                           />
                         </div>
                         <div className="px-1">
-                          <Label>ATR MF</Label>
+                          <Label>StopLoss MF</Label>
                           <Input
                             name="atrMf"
                             onChange={handleChange}
                             value={values.atrMf}
+                            className="mt-1"
+                            type="number"
+                          />
+                        </div>
+                        <div className="px-1">
+                          <Label>Target MF</Label>
+                          <Input
+                            name="targetMf"
+                            onChange={handleChange}
+                            value={values.targetMf}
+                            className="mt-1"
+                            type="number"
+                          />
+                        </div>
+                        <div className="px-1">
+                          <Label>D_Exit MF</Label>
+                          <Input
+                            name="dExitMf"
+                            onChange={handleChange}
+                            value={values.dExitMf}
                             className="mt-1"
                             type="number"
                           />
@@ -1367,7 +1463,7 @@ export const EditTrade = () => {
                   />
                 </div>
 
-                {/* <div className="px-1">
+                <div className="px-1">
                   <Label>Terminal</Label>
                   <Select
                     // disabled={loading}
@@ -1389,7 +1485,7 @@ export const EditTrade = () => {
                       </SelectGroup>
                     </SelectContent>
                   </Select>
-                </div> */}
+                </div>
 
                 <div className="px-1">
                   <Label>Customer Grading</Label>

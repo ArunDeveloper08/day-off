@@ -399,6 +399,7 @@ export const LivePage = () => {
                 noActionLine={noActionLine}
                 setHorizontalLine={setHorizontalLine}
                 setNoActionLine={setNoActionLine}
+                master={data?.data}
               />
             )}
           </div>

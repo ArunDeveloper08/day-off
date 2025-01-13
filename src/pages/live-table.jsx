@@ -75,6 +75,7 @@ const LiveDataTable = ({ id, socketData ,socketMastertData , values}) => {
     return { identifier: item.identifier, diff };
   };
   
+  
 
 
   return (

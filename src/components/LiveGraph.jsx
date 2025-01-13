@@ -1480,7 +1480,7 @@ const CandleChart = ({
                     stroke="blue"
                     yAccessor={(d) => Number(d.CEStopLoss)}
                   />
-                  {(master.callLine || master.callLine2)  && (
+                  {(master.callLine )  && (
                     <LineSeries
                       strokeDasharray="Dash"
                       strokeWidth={1}
@@ -1488,7 +1488,17 @@ const CandleChart = ({
                       yAccessor={(d) => Number(d.DEntryCE1)}
                     />
                   )}
-                  {(master.callLine || master.callLine2) && (
+
+                  {( master.callLine2)  && (
+                    <LineSeries
+                      strokeDasharray="Dash"
+                      strokeWidth={2}
+                      stroke="blue"
+                      yAccessor={(d) => Number(d.DEntryCE1)}
+                    />
+                  )}
+
+                  {(master.callLine ) && (
                     <LineSeries
                       strokeDasharray="Dash"
                       strokeWidth={1}
@@ -1496,7 +1506,16 @@ const CandleChart = ({
                       yAccessor={(d) => Number(d.DEntryCE2)}
                     />
                   )}
-                  {(master.putLine || master.putLine2) && (
+
+                  {( master.callLine2) && (
+                    <LineSeries
+                      strokeDasharray="Dash"
+                      strokeWidth={2}
+                      stroke="blue"
+                      yAccessor={(d) => Number(d.DEntryCE2)}
+                    />
+                  )}
+                  {(master.putLine ) && (
                     <LineSeries
                       strokeDasharray="Dash"
                       strokeWidth={1}
@@ -1504,10 +1523,26 @@ const CandleChart = ({
                       yAccessor={(d) => Number(d.DEntryPE2)}
                     />
                   )}
-                  {(master.putLine || master.putLine2) && (
+                  {( master.putLine2) && (
+                    <LineSeries
+                      strokeDasharray="Dash"
+                      strokeWidth={2}
+                      stroke="brown"
+                      yAccessor={(d) => Number(d.DEntryPE2)}
+                    />
+                  )}
+                  {( master.putLine ) && ( 
                     <LineSeries
                       strokeDasharray="Dash"
                       strokeWidth={1}
+                      stroke="brown"
+                      yAccessor={(d) => Number(d.DEntryPE1)}
+                    />
+                  )}
+                  {( master.putLine2) && (
+                    <LineSeries
+                      strokeDasharray="Dash"
+                      strokeWidth={2}
                       stroke="brown"
                       yAccessor={(d) => Number(d.DEntryPE1)}
                     />
@@ -1556,14 +1591,14 @@ const CandleChart = ({
 
                   <LineSeries
                     strokeDasharray="Dash"
-                    strokeWidth={2}
+                    strokeWidth={3}
                     stroke="green"
                     yAccessor={(d) => Number(d.CEStopLossForIndex7)}
                   />
 
                   <LineSeries
-                    strokeDasharray="Dash"
-                    strokeWidth={2}
+                    strokeDasharray="Dash"   
+                    strokeWidth={3}
                     stroke="red"
                     yAccessor={(d) => Number(d.PEStopLossForIndex7)}
                   />
