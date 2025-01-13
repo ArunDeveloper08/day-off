@@ -1588,7 +1588,7 @@ const CandleChart = ({
                     stroke="orange"
                     yAccessor={(d) => Number(d.PEStopLoss)}
                   />
-
+                                    
                   <LineSeries
                     strokeDasharray="Dash"
                     strokeWidth={3}

@@ -928,8 +928,8 @@ const Dashboard = () => {
                       (showOffTerminals || item.terminal !== "OFF") &&
                       item.identifier &&
                       item.identifier
-                        .toLowerCase()
-                        .includes(filterIdentifier.toLowerCase())
+                        ?.toLowerCase()
+                        ?.includes(filterIdentifier?.toLowerCase())
                   )
                   ?.sort((a, b) => {
                     // Priority 1: Rows with haveTrade: true come first

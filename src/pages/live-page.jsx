@@ -219,8 +219,8 @@ export const LivePage = () => {
       socket.off("getLiveData");
     };
   }, [socket, data, isConnected]);
+  
   // console.log(socketData)
-
   //console.log(socketData)
   // useEffect(() => {
   //   if (!isConnected || !data?.data?.instrument_token) return;

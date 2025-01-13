@@ -1305,7 +1305,7 @@ export const AddNewtrade = () => {
                     </div>
             
                     <div className="px-1">
-                      <Label>RSI Candle</Label>
+                      <Label>RSI / ATR Candle</Label>
                       <Input
                         name="rsiCandle"
                         onChange={handleChange}
@@ -1326,7 +1326,7 @@ export const AddNewtrade = () => {
                       />
                     </div> */}
                     <div className="px-1">
-                      <Label>D_Entry (%)</Label>
+                      <Label>D_Entry1 MF (%)</Label>
                       <Input
                         name="dynamicEntryPercentage"
                         onChange={handleChange}
@@ -1336,7 +1336,7 @@ export const AddNewtrade = () => {
                       />
                     </div>
                     <div className="px-1">
-                      <Label>D_Entry 2(%)</Label>
+                      <Label>D_Entry2 MF(%)</Label>
                       <Input
                         name="priceDecPercent"
                         onChange={handleChange}
@@ -1345,7 +1345,7 @@ export const AddNewtrade = () => {
                         type="text"
                       />
                     </div>
-                    <div className="px-1">
+                    {/* <div className="px-1">
                       <Label>Target Level(%)</Label>
                       <Input
                         name="targetLevel"
@@ -1354,9 +1354,9 @@ export const AddNewtrade = () => {
                         className="mt-1"
                         type="number"
                       />
-                    </div>
+                    </div> */}
                     <div className="px-1">
-                      <Label>StopLoss MF</Label>
+                      <Label>StopLoss MF (%)</Label>
                       <Input
                         name="atrMf"
                         onChange={handleChange}
@@ -1366,17 +1366,17 @@ export const AddNewtrade = () => {
                       />
                     </div>
                     <div className="px-1">
-                      <Label>Target MF</Label>
+                      <Label>Target MF (%)</Label>
                       <Input
-                        name="targetMf"
+                        name="targetLevel"
                         onChange={handleChange}
-                        value={values.targetMf}
+                        value={values.targetLevel}
                         className="mt-1"
                         type="number"
                       />
                     </div>
                     <div className="px-1">
-                      <Label>D_Exit MF</Label>
+                      <Label>D_Exit MF (%)</Label>
                       <Input
                         name="dExitMf"
                         onChange={handleChange}
