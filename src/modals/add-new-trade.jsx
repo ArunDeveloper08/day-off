@@ -43,11 +43,11 @@ const initialState = {
   minExitPercent: "5",
   maxExitPercent: "30",
   priceIncPercent: "20",
-  priceDecPercent: "0",
+  priceDecPercent: "0.5",
   earningPercentLimit: "1",
   orderType: "Buy",
   isMaster: false,
-  dynamicEntryPercentage: "0",
+  dynamicEntryPercentage: "0.1",
   lossLimit: "10",
   candleSize: "3",
   // maxLoss: "1",
@@ -85,7 +85,7 @@ const initialState = {
   customerGrading: "1",
   narration: "",
   strikeDiff: "",
-  targetLevel: "50",
+  targetLevel: "2",
   category: "",
   targetBelow: "",
   targetAbove: "",
@@ -136,11 +136,11 @@ const alternateInitialState = {
   interval: "FIVE_MINUTE",
   indexValue: "2",
   priceIncPercent: "20",
-  priceDecPercent: "0",
+  priceDecPercent: "0.5",
   earningPercentLimit: "1",
   orderType: "Buy",
   isMaster: false,
-  dynamicEntryPercentage: "2",
+  dynamicEntryPercentage: "0.1",
   lossLimit: "10",
   candleSize: "3",
   // maxLoss: "1",
@@ -182,7 +182,7 @@ const alternateInitialState = {
   customerGrading: "1",
   narration: "",
   strikeDiff: "",
-  targetLevel: "50",
+  targetLevel: "2",
   category: "",
   targetBelow: "",
   targetAbove: "",
@@ -233,11 +233,11 @@ const gammaBlastInitialState = {
   indexValue: "6",
 
   priceIncPercent: "20",
-  priceDecPercent: "0",
+  priceDecPercent: "0.5",
   earningPercentLimit: "1",
   orderType: "Buy",
   isMaster: false,
-  dynamicEntryPercentage: "1",
+  dynamicEntryPercentage: "0.1",
   lossLimit: "10",
   candleSize: "3",
   // maxLoss: "1",
@@ -306,7 +306,7 @@ const gammaBlastInitialState = {
   tradingOptions: "",
   exitSelection: "low",
   entryCandle: "both",
-  atrMf: "2",
+  atrMf: "1",
   tradeIdentification: "2",
   RSDeviation: "",
   maxLoss: "5",
@@ -469,6 +469,14 @@ export const AddNewtrade = () => {
     if (!values.isMaster && values.tradingOptions == "") {
       return alert("Please select Trading Option");
     }
+
+    if (
+      values.indexValue === 2 && 
+      (!values.dynamicEntryPercentage || !values.priceDecPercent || !values.atrMf || !values.dExitMf || !values.targetLevel || !values.entryCandle)
+    ) {
+      return alert("Please fill in all the required inputs for index 2.");
+    }
+    
     // if (values?.rangeBoundPercent > values?.rangeBoundPercent2) {
     //   return alert(
     //     "Range Bound Percent 2 Should be greater than Range Bound Percent"
@@ -835,7 +843,7 @@ export const AddNewtrade = () => {
                         type="number"
                       />
                     </div>
-                <div className="px-1">
+                {/* <div className="px-1">
                       <Label>ATR Max</Label>
                       <Input
                         name="atrMax"
@@ -844,7 +852,7 @@ export const AddNewtrade = () => {
                         className="mt-1"
                       type="number"
                       />
-                    </div>
+                    </div> */}
               </>
             )}
 
@@ -1331,7 +1339,7 @@ export const AddNewtrade = () => {
                         name="dynamicEntryPercentage"
                         onChange={handleChange}
                         value={values.dynamicEntryPercentage}
-                        className="mt-1"
+                        className="mt-1"  
                         type="number"
                       />
                     </div>
@@ -1769,7 +1777,7 @@ export const AddNewtrade = () => {
               </Select>
             </div> */}
 
-            {/* <div className="px-1">
+            <div className="px-1">
               <Label>Interval</Label>
               <Select
                 value={values.interval}
@@ -1823,7 +1831,7 @@ export const AddNewtrade = () => {
                   </SelectGroup>
                 </SelectContent>
               </Select>
-            </div> */}
+            </div>
 
             <div className="px-1">
               <Label>Customer Grading</Label>

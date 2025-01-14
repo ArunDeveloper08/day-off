@@ -47,6 +47,7 @@ const UIButton = ({
     Trade Terminal:{" "}
     {data?.data?.terminal === "manualIn" ? "Manual In" : data?.data?.terminal}
   </p>
+  &nbsp;
   <p className="text-green-600 text-[13px] md:text-[16px] w-full sm:w-auto">
     Candle: {data?.data?.interval === "minute" ? "1 minute" : data?.data?.interval}
   </p>
@@ -60,12 +61,37 @@ const UIButton = ({
     WMA: {data?.data?.WMA}
   </p>
   {/* <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+    Target MF(%): {data?.data?.targetLevel}
+  </p>
+  <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+  D_Exit MF (%): {data?.data?.dExitMf}
+  </p>
+  <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+  StopLoss MF (%): {data?.data?.atrMf}
+  </p>
+  <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+  D_Entry1 MF(%): {data?.data?.dynamicEntryPercentage}
+  </p>
+  <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+  D_Entry2 MF(%): {data?.data?.priceDecPercent}
+  </p> */}
+  {/* <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
     Candle Size: {data?.data?.candleSize}
   </p> */}
   <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
-    D_Exit: {data?.data?.dynamicExitValue?.toFixed(2)}
+    Target Level: {data?.data?.targetPrice?.toFixed(2)}
   </p>
   <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+ Stop Loss: {data?.data?.stopLoss?.toFixed(2)}
+  </p>
+  <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+ Entry Line: {data?.data?.entryPivotValue?.toFixed(2)}
+  </p>
+  <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+  Entry Candle: {data?.data?.entryCandle}
+  </p>
+ 
+  {/* <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
     D_Entry: {data?.data?.dynamicEntryValue?.toFixed(2)}
   </p>
   <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
@@ -73,7 +99,7 @@ const UIButton = ({
   </p>
   <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
     Initial_Exit: {data?.data?.BaseExitValue?.toFixed(2)}
-  </p>
+  </p> */}
   {/* <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
     Range Bound: {data?.data?.rangeBoundPercent}%
   </p>
@@ -95,12 +121,12 @@ const UIButton = ({
   {/* <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
     RSI Min: {data?.data?.rsiMin}
   </p> */}
-  <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+  {/* <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
     Order Type: {data?.data?.orderType}
   </p>
   <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
     Master Trend: {data?.data?.masterTrend}
-  </p>
+  </p> */}
 
   {liveTrendValue && (
     <div className="flex flex-wrap gap-2 w-full mt-2">

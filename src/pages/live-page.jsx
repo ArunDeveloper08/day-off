@@ -23,6 +23,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import UIButton from "../components/UIButton";
 import { IoPlay, IoPause } from "react-icons/io5";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export const LivePage = () => {
   const { theme, setTheme } = useTheme();
@@ -38,7 +40,7 @@ export const LivePage = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const id = searchParams.get("id");
-  const [prevDate, setPrevDate] = useState("");
+  const [prevDate, setPrevDate] = useState(new Date());
   const { socket, isConnected } = useLiveSocket();
   let width = useMemo(() => window.screen.width, []);
   let height = useMemo(() => window.screen.height, []);
@@ -50,6 +52,7 @@ export const LivePage = () => {
   const [trends3, setTrends3] = useState([]);
   const [noActionLine, setNoActionLine] = useState([]);
   const [horizontalLine, setHorizontalLine] = useState([]);
+  
 
   const [values, setValues] = useState({
     s1: null,
@@ -58,6 +61,7 @@ export const LivePage = () => {
     r1: null,
     r2: null,
     r3: null,
+    interval:"ONE_MINUTE"
   });
 
   const [showRow, setShowRow] = useState({
@@ -113,6 +117,7 @@ export const LivePage = () => {
     }
   };
 
+  
   const getChartData = async () => {
     const maxRetries = 5; // Maximum number of retries
     const delay = 3000; // Delay in milliseconds between retries
@@ -147,7 +152,7 @@ export const LivePage = () => {
 
   useEffect(() => {
     getTradeConfig();
-    const interval = setInterval(getTradeConfig, 120 * 1000);
+    const interval = setInterval(getTradeConfig, 60 * 1000);
     intervalRef.current = interval;
     return () => clearInterval(interval);
   }, []);
@@ -155,7 +160,7 @@ export const LivePage = () => {
   useEffect(() => {
    // if (isUserScroll) return;
     getChartData();
-    const interval = setInterval(getChartData, 120 * 1000);
+    const interval = setInterval(getChartData, 60 * 1000);
     intervalRef.current = interval;
 
     return () => clearInterval(interval);
@@ -194,7 +199,7 @@ export const LivePage = () => {
         setSocketMasterData(socketdata);
       }
 
-      if (currentTime - lastUpdateTimeRef.current > 10 * 1000) {
+    //  if (currentTime - lastUpdateTimeRef.current > 10 * 1000) {
         //console.log("hii")
         lastUpdateTimeRef.current = currentTime;
 
@@ -212,7 +217,7 @@ export const LivePage = () => {
 
           return updatedData;
         });
-      }
+     // }
     });
 
     return () => {
@@ -307,9 +312,9 @@ export const LivePage = () => {
   //   }));
   // };
 
-  const toggleScroll = () => {
-    setIsUserScroll((prevState) => !prevState);
-  };
+  // const toggleScroll = () => {
+  //   setIsUserScroll((prevState) => !prevState);
+  // };
 
   const getHighLowLines = async () => {
     try {
@@ -321,6 +326,13 @@ export const LivePage = () => {
     }
   };
   //  console.log("socketdata",socketData)
+  
+  const handleSelect = (key, value) => {
+    setValues((prev) => ({ ...prev, [key]: value }));
+  };
+  
+ 
+
   return (  
     <div>
       {/* {data.error ? ( */}
@@ -361,6 +373,61 @@ export const LivePage = () => {
                 className="w-full md:w-[150px] border-black border-[1px] rounded-md"
                 onChange={(e) => setPrevDate(e.target.value)}
               />
+                 <div className="px-1">
+              {/* <Label>Interval</Label> */}
+              <Select
+                value={values.interval}
+                name="terminal"
+                onValueChange={(value) => handleSelect("interval", value)}
+              >
+                <SelectTrigger className="w-full mt-1 border-zinc-500">
+                  <SelectValue>{values.interval}</SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Interval</SelectLabel>
+                    {[
+                      {
+                        label: "1 minute",
+                        value: "ONE_MINUTE",
+                      },
+                      {
+                        label: "3 minute",
+                        value: "THREE_MINUTE",
+                      },
+                      {
+                        label: "5 minute",
+                        value: "FIVE_MINUTE",
+                      },
+
+                      {
+                        label: "15 minute",
+                        value: "FIFTEEN_MINUTE",
+                      },
+                      {
+                        label: "30 minute",
+                        value: "THIRTY_MINUTE",
+                      },
+                      {
+                        label: "1 hour",
+                        value: "ONE_HOUR",
+                      },
+                      {
+                        label: "1 day",
+                        value: "ONE_DAY",
+                      },
+                    ]?.map((suggestion) => (
+                      <SelectItem
+                        key={suggestion.value}
+                        value={suggestion.value}
+                      >
+                        {suggestion.label}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
               <Button onClick={handleSubmit} size="xs" className="p-2">
                 Submit
               </Button>
@@ -370,6 +437,7 @@ export const LivePage = () => {
               LTP : {socketData?.last_traded_price} &nbsp; &nbsp; Master LTP :
               {socketMastertData?.last_traded_price} &nbsp; &nbsp; RSI Live :{" "}
               {data.data.rsiValue} &nbsp; &nbsp;
+              ATR Value : {data.data.atrValue}
             </button>
 
    

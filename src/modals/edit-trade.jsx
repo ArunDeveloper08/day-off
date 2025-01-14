@@ -98,6 +98,13 @@ export const EditTrade = () => {
     if (!values.isMaster && values.tradingOptions == "") {
       return alert("Please select Trading Option");
     }
+    if (
+      values.indexValue === 2 && 
+      (!values.dynamicEntryPercentage || !values.priceDecPercent || !values.atrMf || !values.dExitMf || !values.targetLevel || !values.entryCandle)
+    ) {
+      return alert("Please fill in all the required inputs for index 2.");
+    }
+    
     // if (values?.rangeBoundPercent > values?.rangeBoundPercent2) {
     //   return alert(
     //     "Range Bound Percent 2 Should be greater than Range Bound Percent "
@@ -476,7 +483,7 @@ export const EditTrade = () => {
                         type="number"
                       />
                     </div>
-                    <div className="px-1">
+                    {/* <div className="px-1">
                       <Label>ATR Max</Label>
                       <Input
                         name="atrMax"
@@ -485,7 +492,7 @@ export const EditTrade = () => {
                         className="mt-1"
                         type="number"
                       />
-                    </div>
+                    </div> */}
                   </>
                 )}
                 {values.isMaster == true && (
