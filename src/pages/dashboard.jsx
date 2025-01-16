@@ -357,7 +357,7 @@ const Dashboard = () => {
         }
         if (
           activeFilters.includes("EQ") &&
-          item.tradingOptions == "EQ"
+          (item.tradingOptions == "EQ" || item.isMaster == 2)
         ) {
           match = true;
         }
@@ -401,6 +401,12 @@ const Dashboard = () => {
           match = true;
         }
         if (activeFilters.includes("Nifty50") && item.category === "Nifty50") {
+          match = true;
+        }
+        if (activeFilters.includes("index2") && item.tradeIndex == 2) {
+          match = true;
+        }
+        if (activeFilters.includes("index7") && item.tradeIndex == 7) {
           match = true;
         }
         if (activeFilters.includes("BankNifty") && item.category === "BankNifty") {
@@ -530,7 +536,7 @@ const Dashboard = () => {
     }
   };
 
-  // console.log("Trade Identification" , trades)
+  // console.log("Trade Identification" , filteredTrades)
 
 
   return (
@@ -786,6 +792,26 @@ const Dashboard = () => {
             }`}
           >
        15 Min
+          </Button>
+          <Button
+            onClick={() => handleButtonClick("index2")}
+            className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
+              activeButtons["index2"]
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-black"
+            }`}
+          >
+   Index 2
+          </Button>
+          <Button
+            onClick={() => handleButtonClick("index7")}
+            className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
+              activeButtons["index7"]
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-black"
+            }`}
+          >
+     Index 7
           </Button>
       
           <Button

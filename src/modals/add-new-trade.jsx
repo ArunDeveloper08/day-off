@@ -757,23 +757,23 @@ export const AddNewtrade = () => {
             <div className="px-1">
               <Label>Is Master</Label>
               <Select
-                value={String(values.isMaster)} // Convert boolean to string for the select value
+                value={String(values.isMaster )} // Convert boolean to string for the select value
                 name="isMaster"
                 onValueChange={(value) => handleSelect("isMaster", value)}
               >
                 <SelectTrigger className="w-full mt-1 border-zinc-500">
-                  <SelectValue>{String(values.isMaster)}</SelectValue>
+                  <SelectValue>{String(values.isMaster == 2 ? "self" : values.isMaster)}</SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Is Master</SelectLabel>
-                    {[{ isMaster: true }, { isMaster: false }]?.map(
+                    {[{ isMaster: true }, { isMaster: false } , {isMaster : 2}]?.map(
                       (suggestion) => (
                         <SelectItem
                           key={String(suggestion.isMaster)}
-                          value={suggestion.isMaster}
+                          value={suggestion.isMaster }
                         >
-                          {String(suggestion.isMaster)}
+                          {String(suggestion.isMaster == 2 ? "self" : suggestion.isMaster )}
                         </SelectItem>
                       )
                     )}

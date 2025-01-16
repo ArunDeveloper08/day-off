@@ -115,16 +115,8 @@ function tooltipContent(underlyingValue) {
           stroke: "black",
         },
 
-        {
-          label: "Micro Profit",
-          value: currentItem?.microProfit?.toFixed(2),
-          stroke: "black",
-        },
-        {
-          label: "Exit Support",
-          value: currentItem?.exitSupport?.toFixed(2),
-          stroke: "black",
-        },
+        
+  
         {
           label: "Candle close",
           value: currentItem?.close && formatPrice(currentItem?.close),
@@ -135,62 +127,28 @@ function tooltipContent(underlyingValue) {
           value: (currentItem?.close - currentItem?.open)?.toFixed(2),
           stroke: currentItem?.close - currentItem?.open < 0 ? "red" : "green",
         },
-        {
-          label: "Pivot diff",
-          value: currentItem?.pivotDifference?.toFixed(2),
-          stroke: "black",
-        },
-        {
-          label: "Intitial Time",
-          value: currentItem?.initialTime?.slice(11, 19),
-          stroke: "black",
-        },
+      
 
         {
           label: "D_Exit_Value",
           value: currentItem?.dynamicExitValue?.toFixed(2),
           stroke: "black",
         },
-        {
-          label: "D_Entry_Value",
-          value: currentItem?.dynamicEntryValue?.toFixed(2),
-          stroke: "black",
-        },
+        
         {
           label: "Last Lowest LTP",
           value: currentItem?.InitialLow?.toFixed(2),
           stroke: "black",
         },
-        {
-          label: "Moving Avg WMA",
-          value: currentItem?.movingAvgWMA?.toFixed(2),
-          stroke: "black",
-        },
+      
         {
           label: "volume",
           value: currentItem?.volume?.toFixed(2),
           stroke: "black",
         },
-        {
-          label: "Target profit",
-          value: currentItem?.RangeBoundTargetProfit?.toFixed(2),
-          stroke: "black",
-        },
-        {
-          label: "RSI Value",
-          value: currentItem?.RSI_Value?.toFixed(2),
-          stroke: "black",
-        },
-        {
-          label: "Moving Avg 1",
-          value: currentItem?.movingAvgMA1?.toFixed(2),
-          stroke: "black",
-        },
-        {
-          label: "Moving Avg 2",
-          value: currentItem?.movingAvgMA2?.toFixed(2),
-          stroke: "black",
-        },
+       
+      
+      
       ].filter((line) => line?.value),
     };
   };
@@ -730,7 +688,7 @@ const CandleChart = ({
         let name =
           ind < AlertLineArray.length ? AlertLineArray[ind]?.name : "Alert";
         let width =
-          ind < AlertLineArray.length ? AlertLineArray[ind].strokeWidth : 2;
+          ind < AlertLineArray.length ? AlertLineArray[ind]?.strokeWidth : 2;
 
         return {
           ...item,
@@ -754,9 +712,9 @@ const CandleChart = ({
         "Alert lines saved."
       );
     };
+
     const onDrawCompleteNoAction = (newAlerts) => {
       setEnableNoActionLine(false);
-
       let coloredAlerts = newAlerts?.map((item, ind) => {
         let startIndex = Math.min(Math.floor(item.start[0]), data?.length - 1);
         let startTime = data[startIndex]?.timestamp;
@@ -786,7 +744,7 @@ const CandleChart = ({
       setActiveLineType(null);
       sendDataToAPI(
         { trendLines: coloredAlerts },
-        "/config/edit",
+        "/config/edit",        
         "Extra lines saved."
       );
     };
@@ -996,7 +954,7 @@ const CandleChart = ({
     //   .accessor((d) => d.macd);
 
     const rsiCalculator = rsi()
-      .options({ windowSize: 14 }) // 14-period RSI
+      .options({ windowSize: master?.rsiCandle ?? 14 }) // 14-period RSI
       .merge((d, c) => {
         // console.log(d.rsi, c)
         d.rsi = c;
@@ -1004,7 +962,7 @@ const CandleChart = ({
       .accessor((d) => d.rsi);
 
     const atrCalculator = atr()
-      .options({ windowSize: 14 }) // 14-period ATR
+      .options({windowSize: master?.rsiCandle ?? 14 }) // 14-period ATR
       .merge((d, c) => {
         d.atr = c;
       })
@@ -1145,7 +1103,7 @@ const CandleChart = ({
       setEnableHorizontalLine(true);
     };
 
-    //console.log("Hii")
+  // console.log("Hii")
     return (
       <div className="flex flex-col">
         {window.location.pathname == "/future/back" ? (
@@ -1177,7 +1135,7 @@ const CandleChart = ({
           <>
             <hr />
             <div className="flex flex-col gap-4 md:flex-row justify-evenly mt-1">
-              {master?.isMaster && master?.tradeIndex == 4 && (
+              {/* {master?.isMaster && master?.tradeIndex == 4 && (
                 <>
                   <div className="flex flex-col gap-2 md:flex-row md:justify-around">
                     <button
@@ -1217,9 +1175,9 @@ const CandleChart = ({
                     </button>
                   </div>
                 </>
-              )}
+              )} */}
 
-              {master?.isMaster && (
+              {master?.isMaster ? 
                 <div className="flex flex-col gap-2 md:flex-row md:justify-around">
                   {master?.tradeIndex == 4 ? (
                     <button
@@ -1328,9 +1286,12 @@ const CandleChart = ({
                     </button>
                   </div>
                 </div>
-              )}
+                :
+                <>
+                </>
+              }
 
-              {master?.isMaster && master?.tradeIndex == 4 && (
+              {/* {master?.isMaster && master?.tradeIndex == 4 && (
                 <>
                   <div className="flex flex-col gap-2 md:flex-row md:justify-around">
                     <button
@@ -1349,9 +1310,9 @@ const CandleChart = ({
                     </button>
                   </div>
                 </>
-              )}
+              )} */}
 
-              {master?.isMaster && master?.tradeIndex == 4 && (
+              {/* {master?.isMaster && master?.tradeIndex == 4 && (
                 <>
                   <div className="flex flex-col gap-2 md:flex-row md:justify-around">
                     <button
@@ -1370,7 +1331,7 @@ const CandleChart = ({
                     </button>
                   </div>
                 </>
-              )}
+              )} */}
             </div>
           </>
         )}
@@ -1563,7 +1524,7 @@ const CandleChart = ({
                   <LineSeries
                     strokeDasharray="Dash"
                     strokeWidth={2}
-                    stroke="green"
+                    stroke="red"
                     yAccessor={(d) =>
                       d.stopLoss != null ? Number(d.stopLoss) : undefined
                     }

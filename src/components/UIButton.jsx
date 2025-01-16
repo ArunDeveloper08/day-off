@@ -317,6 +317,33 @@ const UIButton = ({
       >
         Tool Tip
       </button>
+      <button
+                  onClick={() =>
+                    setShowRow((p) => ({
+                      ...p,
+                      rsi: !p.rsi,
+                    }))
+                  }
+                  className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
+                    showRow.rsi ? "bg-blue-500 text-gray-100" : "bg-gray-300 "
+                  }`}
+                >
+                  RSI
+                </button>
+                <button
+                  onClick={() =>
+                    setShowRow((p) => ({
+                      ...p,
+                      atr: !p.atr,
+                    }))
+                  }
+                  className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
+                    showRow.atr ? "bg-blue-500 text-gray-100" : "bg-gray-300 "
+                  }`}
+                >
+                  ATR
+                </button>
+
       {data?.data?.isMaster == true && (
         <>
           <button

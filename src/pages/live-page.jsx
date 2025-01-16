@@ -88,6 +88,8 @@ export const LivePage = () => {
     suppRes: false,
     toolTip: false,
     alertLine: false,
+    rsi: false,
+    atr: false,
   });
 
   const [apiData, setApiData] = useState([]);
@@ -153,18 +155,18 @@ export const LivePage = () => {
   useEffect(() => {
     getTradeConfig();
     const interval = setInterval(getTradeConfig, 60 * 1000);
-    intervalRef.current = interval;
+    //intervalRef.current = interval;
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
-   // if (isUserScroll) return;
+   
     getChartData();
     const interval = setInterval(getChartData, 60 * 1000);
-    intervalRef.current = interval;
+  //  intervalRef.current = interval;
 
     return () => clearInterval(interval);
-  }, [id, prevDate, isUserScroll, trendLineActive]);
+  }, [ prevDate]);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -184,8 +186,8 @@ export const LivePage = () => {
     };
   }, [id, prevDate]);
 
-  const lastUpdateTimeRef = useRef(Date.now());
-  const currentTime = Date.now();
+  // const lastUpdateTimeRef = useRef(Date.now());
+  // const currentTime = Date.now();
 
   useEffect(() => {
     if (!isConnected || !data?.data?.instrument_token) return;
@@ -194,14 +196,8 @@ export const LivePage = () => {
 
       if (socketdata.token === data?.data.instrument_token) {
         setSocketData(socketdata);
-      }
-      if (socketdata.token == data?.data.masterChart_InstrumentToken) {
-        setSocketMasterData(socketdata);
-      }
-
-    //  if (currentTime - lastUpdateTimeRef.current > 10 * 1000) {
-        //console.log("hii")
-        lastUpdateTimeRef.current = currentTime;
+       
+      
 
         setApiData((prevApiData) => {
           if (!prevApiData || prevApiData.length === 0) return prevApiData;
@@ -212,12 +208,21 @@ export const LivePage = () => {
           // Replace the `close` value in the last candle with `last_traded_price`
           updatedData[updatedData.length - 1] = {
             ...updatedData[updatedData.length - 1],
-            close: socketData.last_traded_price,
+            close: socketdata.last_traded_price,
           };
 
           return updatedData;
         });
+      }
+     
+      if (socketdata.token == data?.data.masterChart_InstrumentToken) {
+        setSocketMasterData(socketdata);
+    
+     // if (currentTime - lastUpdateTimeRef.current > 10 * 1000) {
+       //lastUpdateTimeRef.current = currentTime;
+    
      // }
+    }
     });
 
     return () => {
@@ -449,8 +454,8 @@ export const LivePage = () => {
           <div className="w-full h-auto flex justify-center">
             {apiData?.length > 0 && (
               <CandleChart
-                getChartData={getChartData}
-                handleCreateTrendLines={handleCreateTrendLines}
+              //  getChartData={getChartData}
+               // handleCreateTrendLines={handleCreateTrendLines}
                 data={apiData}
                 intractiveData={intractiveData}
                 ratio={1}

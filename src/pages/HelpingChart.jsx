@@ -630,8 +630,8 @@ const HelpingChart = () => {
         setSocketData(socketdata);
 
         // Throttle updates to once per second
-        if (currentTime - lastUpdateTimeRef.current > 10 * 1000) {
-          //console.log("hii")
+       // if (currentTime - lastUpdateTimeRef.current > 10 * 1000) {
+        //  console.log("arun")
           lastUpdateTimeRef.current = currentTime;
 
           setApiData((prevApiData) => {
@@ -643,12 +643,12 @@ const HelpingChart = () => {
             // Replace the `close` value in the last candle with `last_traded_price`
             updatedData[updatedData.length - 1] = {
               ...updatedData[updatedData.length - 1],
-              close: socketData.last_traded_price,
+              close: socketdata.last_traded_price,
             };
 
             return updatedData;
           });
-        }
+      //  }
       }
     });
 

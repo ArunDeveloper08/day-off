@@ -99,12 +99,17 @@ export const EditTrade = () => {
       return alert("Please select Trading Option");
     }
     if (
-      values.indexValue === 2 && 
-      (!values.dynamicEntryPercentage || !values.priceDecPercent || !values.atrMf || !values.dExitMf || !values.targetLevel || !values.entryCandle)
+      values.indexValue === 2 &&
+      (!values.dynamicEntryPercentage ||
+        !values.priceDecPercent ||
+        !values.atrMf ||
+        !values.dExitMf ||
+        !values.targetLevel ||
+        !values.entryCandle)
     ) {
       return alert("Please fill in all the required inputs for index 2.");
     }
-    
+
     // if (values?.rangeBoundPercent > values?.rangeBoundPercent2) {
     //   return alert(
     //     "Range Bound Percent 2 Should be greater than Range Bound Percent "
@@ -381,44 +386,51 @@ export const EditTrade = () => {
                 <div className="px-1">
                   <Label>Is Master</Label>
                   <Select
-                    value={String(values.isMaster)} // Convert boolean to string for the select value
+                    value={String(
+                      values.isMaster == true
+                        ? "true"
+                        : values.isMaster == false
+                        ? "false"
+                        : "self"
+                    )} // Map numeric value to string for the select value
                     name="isMaster"
+                    // onValueChange={(value) => {
+                    //   // Map display value back to numeric value
+                    //   const numericValue =
+                    //     value === "true" ? 1 : value === "false" ? 0 : 2;
+                    //   handleSelect("isMaster", numericValue);
+                    // }}
                     onValueChange={(value) => handleSelect("isMaster", value)}
                   >
                     <SelectTrigger className="w-full mt-1 border-zinc-500">
-                      <SelectValue>{String(values?.isMaster)}</SelectValue>
+                      <SelectValue>
+                        {String(
+                          values.isMaster == true
+                            ? "true"
+                            : values.isMaster == false
+                            ? "false"
+                            : "self"
+                        )}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
                         <SelectLabel>Is Master</SelectLabel>
-                        {[{ isMaster: true }, { isMaster: false }]?.map(
-                          (suggestion) => (
-                            <SelectItem
-                              key={String(suggestion.isMaster)}
-                              value={suggestion.isMaster}
-                            >
-                              {String(suggestion.isMaster)}
-                            </SelectItem>
-                          )
-                        )}
+                        {[
+                          { label: "true", value: true },
+                          { label: "false", value: false },
+                          { label: "self", value: 2 },
+                        ].map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
                       </SelectGroup>
                     </SelectContent>
                   </Select>
                 </div>
-                {values?.isMaster == true && (
-                  <>
-                    {/* <div className="px-1">
-                      <Label>Strike Difference</Label>
-                      <Input
-                        name="strikeDiff"
-                        onChange={handleChange}
-                        value={values.strikeDiff}
-                        className="mt-1"
-                        type="text"
-                      />
-                    </div> */}
-                  </>
-                )}
+
+           
 
                 {values?.isMaster == false && (
                   <>
@@ -437,9 +449,9 @@ export const EditTrade = () => {
                         <SelectContent>
                           <SelectGroup>
                             <SelectLabel>Master Name</SelectLabel>
-                            {/* <SelectItem value={{ masterName: "self" }}>
-                            Self
-                          </SelectItem> */}
+                            <SelectItem value={{ masterName: "self" }}>
+                              Self
+                            </SelectItem>
                             {trades?.map((item, index) => (
                               <SelectItem key={index} value={item}>
                                 {item.masterName}
@@ -1323,55 +1335,7 @@ export const EditTrade = () => {
                   </div>
                 )} */}
 
-                {values?.isMaster == false && (
-                  <>
-                    {values.indexValue != 6 && values.indexValue != 4 && (
-                      <>
-                        {/* {values.indexValue != 4 && (
-                          <div className="px-1">
-                            <Label>Loss Count</Label>
-                            <Input
-                              name="lossLimit"
-                              onChange={handleChange}
-                              value={values.lossLimit}
-                              className="mt-1"
-                              type="number"
-                            />
-                          </div>
-                        )} */}
-
-                        {/* <div className="px-1">
-                          <Label>Order Type</Label>
-                          <Select
-                            // disabled={loading}
-                            value={values.orderType}
-                            name="orderType"
-                            onValueChange={(value) =>
-                              handleSelect("orderType", value)
-                            }
-                          >
-                            <SelectTrigger className="w-full mt-1 border-zinc-500">
-                              <SelectValue>{values.orderType}</SelectValue>
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectGroup>
-                                <SelectLabel>Order Type</SelectLabel>
-                                {["Buy", "Sell"]?.map((suggestion) => (
-                                  <SelectItem
-                                    key={suggestion}
-                                    value={suggestion}
-                                  >
-                                    {suggestion}
-                                  </SelectItem>
-                                ))}
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                        </div> */}
-                      </>
-                    )}
-                  </>
-                )}
+               
                 {/* {values.indexValue != 4 && values?.isMaster == true && (
                   <div className="px-1">
                     <Label>Minimum Profit (%)</Label>
