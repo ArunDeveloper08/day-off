@@ -29,6 +29,7 @@ import CustomTab from "./pages/CustomTab";
 // import AngelLogin from "./pages/AngelLogin";
 import secureLocalStorage from "react-secure-storage";
 import ModalProvider from "./providers/modal-provider";
+import Scanner from "./pages/Scanner";
 // import IdentifierLooserGainer from "./pages/IdentifierLooserGainer";
 // import PcrChart from "./pages/PcrChart";
 
@@ -106,6 +107,14 @@ export default function Home() {
               <ProtectedRoute>
                 <DashboardPage />
               </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/future/scanner"
+            element={
+             // <ProtectedRoute>
+                <Scanner />
+             // </ProtectedRoute>
             }
           />
           <Route path="/future/live" element={<LivePageLayout />} />

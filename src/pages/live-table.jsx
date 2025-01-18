@@ -98,14 +98,14 @@ const LiveDataTable = ({ id, socketData ,socketMastertData , values}) => {
               <th className="p-2 border border-gray-300">Entry Time</th>
               <th className="p-2 border border-gray-300">Entry Order Type</th>
             {/* <th className="p-2 border border-gray-300">Entry RSI Value</th> */}
-              <th className="p-2 border border-gray-300">D_Entry Value</th>
+              {/* <th className="p-2 border border-gray-300">D_Entry Value</th> */}
               <th className="p-2 border border-gray-300">Entry Price</th>
               <th className="p-2 border border-gray-300">Exit Time</th>
               {/* <th className="p-2 border border-gray-300">Exit Ref Value</th>
               <th className="p-2 border border-gray-300">D_Exit Value</th> */}
               <th className="p-2 border border-gray-300">Exit Price</th>
               <th className="p-2 border border-gray-300">Exit Order Type</th>
-              <th className="p-2 border border-gray-300">Exit RSI Value</th>
+              {/* <th className="p-2 border border-gray-300">Exit RSI Value</th> */}
               <th className="p-2 border border-gray-300">Exit Reason</th>
               <th className="p-2 border border-gray-300">Price Diff</th>
             </tr>
@@ -139,9 +139,9 @@ const LiveDataTable = ({ id, socketData ,socketMastertData , values}) => {
                   {/* <td className="p-2 border border-gray-300 text-center text-sm">
                     {item.RSI_Value?.toFixed(2)}
                   </td> */}
-                  <td className="p-2 border border-gray-300 text-center text-sm">
+                  {/* <td className="p-2 border border-gray-300 text-center text-sm">
                     {item.dynamicEntryValue}
-                  </td>
+                  </td> */}
                   <td className="p-2 border border-gray-300 text-center text-sm">
                     {item.entryPivot?.toFixed(2)}
                   </td>
@@ -162,9 +162,9 @@ const LiveDataTable = ({ id, socketData ,socketMastertData , values}) => {
                       {item.exitOrderType}
                     </button>
                   </td>
-                  <td className="p-2 border border-gray-300 text-center text-sm">
+                  {/* <td className="p-2 border border-gray-300 text-center text-sm">
                     {item.exitRSI_Value}
-                  </td>
+                  </td> */}
                   <td className="p-2 border border-gray-300 text-center text-sm">
                     {item.exitReason}
                   </td>

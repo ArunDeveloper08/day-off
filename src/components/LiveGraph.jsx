@@ -109,46 +109,40 @@ function tooltipContent(underlyingValue) {
           stroke: "black",
         },
 
-        {
-          label: "Last highest LTP",
-          value: currentItem?.Last_Highest_LTP?.toFixed(2),
-          stroke: "black",
-        },
+        // {
+        //   label: "Last highest LTP",
+        //   value: currentItem?.Last_Highest_LTP?.toFixed(2),
+        //   stroke: "black",
+        // },
 
-        
-  
-        {
-          label: "Candle close",
-          value: currentItem?.close && formatPrice(currentItem?.close),
-          stroke: "black",
-        },
+        // {
+        //   label: "Candle close",
+        //   value: currentItem?.close && formatPrice(currentItem?.close),
+        //   stroke: "black",
+        // },
         {
           label: "Candle Size",
           value: (currentItem?.close - currentItem?.open)?.toFixed(2),
           stroke: currentItem?.close - currentItem?.open < 0 ? "red" : "green",
         },
-      
 
         {
           label: "D_Exit_Value",
           value: currentItem?.dynamicExitValue?.toFixed(2),
           stroke: "black",
         },
-        
+
         {
           label: "Last Lowest LTP",
           value: currentItem?.InitialLow?.toFixed(2),
           stroke: "black",
         },
-      
+
         {
           label: "volume",
           value: currentItem?.volume?.toFixed(2),
           stroke: "black",
         },
-       
-      
-      
       ].filter((line) => line?.value),
     };
   };
@@ -744,7 +738,7 @@ const CandleChart = ({
       setActiveLineType(null);
       sendDataToAPI(
         { trendLines: coloredAlerts },
-        "/config/edit",        
+        "/config/edit",
         "Extra lines saved."
       );
     };
@@ -962,7 +956,7 @@ const CandleChart = ({
       .accessor((d) => d.rsi);
 
     const atrCalculator = atr()
-      .options({windowSize: master?.rsiCandle ?? 14 }) // 14-period ATR
+      .options({ windowSize: master?.rsiCandle ?? 14 }) // 14-period ATR
       .merge((d, c) => {
         d.atr = c;
       })
@@ -1103,7 +1097,7 @@ const CandleChart = ({
       setEnableHorizontalLine(true);
     };
 
-  // console.log("Hii")
+    // console.log("Hii")
     return (
       <div className="flex flex-col">
         {window.location.pathname == "/future/back" ? (
@@ -1177,7 +1171,7 @@ const CandleChart = ({
                 </>
               )} */}
 
-              {master?.isMaster ? 
+              {master?.isMaster ? (
                 <div className="flex flex-col gap-2 md:flex-row md:justify-around">
                   {master?.tradeIndex == 4 ? (
                     <button
@@ -1286,10 +1280,9 @@ const CandleChart = ({
                     </button>
                   </div>
                 </div>
-                :
-                <>
-                </>
-              }
+              ) : (
+                <></>
+              )}
 
               {/* {master?.isMaster && master?.tradeIndex == 4 && (
                 <>
@@ -1452,8 +1445,8 @@ const CandleChart = ({
                     strokeWidth={1}
                     stroke="blue"
                     yAccessor={(d) => Number(d.dEntry2)}
-                  /> 
-                  {(master.callLine )  && (
+                  />
+                  {master.callLine && (
                     <LineSeries
                       strokeDasharray="Dash"
                       strokeWidth={1}
@@ -1462,7 +1455,7 @@ const CandleChart = ({
                     />
                   )}
 
-                  {( master.callLine2)  && (
+                  {master.callLine2 && (
                     <LineSeries
                       strokeDasharray="Dash"
                       strokeWidth={2}
@@ -1471,7 +1464,7 @@ const CandleChart = ({
                     />
                   )}
 
-                  {(master.callLine ) && (
+                  {master.callLine && (
                     <LineSeries
                       strokeDasharray="Dash"
                       strokeWidth={1}
@@ -1480,7 +1473,7 @@ const CandleChart = ({
                     />
                   )}
 
-                  {( master.callLine2) && (
+                  {master.callLine2 && (
                     <LineSeries
                       strokeDasharray="Dash"
                       strokeWidth={2}
@@ -1488,7 +1481,7 @@ const CandleChart = ({
                       yAccessor={(d) => Number(d.DEntryCE2)}
                     />
                   )}
-                  {(master.putLine ) && (
+                  {master.putLine && (
                     <LineSeries
                       strokeDasharray="Dash"
                       strokeWidth={1}
@@ -1496,7 +1489,7 @@ const CandleChart = ({
                       yAccessor={(d) => Number(d.DEntryPE2)}
                     />
                   )}
-                  {( master.putLine2) && (
+                  {master.putLine2 && (
                     <LineSeries
                       strokeDasharray="Dash"
                       strokeWidth={2}
@@ -1504,7 +1497,7 @@ const CandleChart = ({
                       yAccessor={(d) => Number(d.DEntryPE2)}
                     />
                   )}
-                  {( master.putLine ) && ( 
+                  {master.putLine && (
                     <LineSeries
                       strokeDasharray="Dash"
                       strokeWidth={1}
@@ -1512,7 +1505,7 @@ const CandleChart = ({
                       yAccessor={(d) => Number(d.DEntryPE1)}
                     />
                   )}
-                  {( master.putLine2) && (
+                  {master.putLine2 && (
                     <LineSeries
                       strokeDasharray="Dash"
                       strokeWidth={2}
@@ -1529,13 +1522,28 @@ const CandleChart = ({
                       d.stopLoss != null ? Number(d.stopLoss) : undefined
                     }
                   />
-                  <LineSeries
-                    strokeWidth={2}
-                    stroke="violet"
-                    yAccessor={(d) =>
-                      d.targetPrice != null ? Number(d.targetPrice) : undefined
-                    }
-                  />
+                  {master?.tradeIndex == 2 && (
+                    <LineSeries
+                      strokeWidth={2}
+                      stroke="violet"
+                      yAccessor={(d) =>
+                        d.targetPrice != null
+                          ? Number(d.targetPrice)
+                          : undefined
+                      }
+                    />
+                  )}
+                  {master?.tradeIndex == 12 && (
+                    <LineSeries
+                      strokeWidth={2}
+                      stroke="orange"
+                      yAccessor={(d) =>
+                        d.targetPrice != null
+                          ? Number(d.targetPrice)
+                          : undefined
+                      }
+                    />
+                  )}
                   <LineSeries
                     strokeWidth={2}
                     stroke="green"
@@ -1561,7 +1569,7 @@ const CandleChart = ({
                     stroke="orange"
                     yAccessor={(d) => Number(d.PEStopLoss)}
                   />
-                                    
+
                   <LineSeries
                     strokeDasharray="Dash"
                     strokeWidth={3}
@@ -1570,7 +1578,7 @@ const CandleChart = ({
                   />
 
                   <LineSeries
-                    strokeDasharray="Dash"   
+                    strokeDasharray="Dash"
                     strokeWidth={3}
                     stroke="red"
                     yAccessor={(d) => Number(d.PEStopLossForIndex7)}
@@ -2337,7 +2345,7 @@ const CandleChart = ({
                   id={3}
                   yExtents={[0, 100]} // RSI range
                   height={150} // Height for RSI chart
-                  origin={(w, h) => [0, h - 275]} // Properly stack this chart above the ATR chart
+                  origin={(w, h) => [0, h - 150]} // Properly stack this chart above the ATR chart
                   padding={{ top: 10, bottom: 10 }}
                 >
                   {showRow?.rsi && (
@@ -2366,7 +2374,7 @@ const CandleChart = ({
                   id={4}
                   yExtents={atrCalculator.accessor()} // ATR range
                   height={125} // Height for ATR chart
-                  origin={(w, h) => [0, h - 150]} // Place this chart at the bottom
+                  origin={(w, h) => [0, h - 120]} // Place this chart at the bottom
                   padding={{ top: 10, bottom: 10 }}
                 >
                   {showRow?.atr && (

@@ -87,10 +87,23 @@ th {
   padding: 4px 4px;
   text-align: center;
   background-color: rgb(53, 53, 53);
+ 
   color: rgb(236, 236, 236);
 }
 
 .dashboard-table>tbody>tr>td {
+  padding: 2px 2px;
+  text-align: center;
+}
+.dashboard-table2>thead>tr>th {
+  padding: 4px 4px;
+  text-align: center;
+  background-color: "black";
+ 
+  color: rgb(236, 236, 236);
+}
+
+.dashboard-table2>tbody>tr>td {
   padding: 2px 2px;
   text-align: center;
 }

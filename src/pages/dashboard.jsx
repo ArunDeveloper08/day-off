@@ -30,7 +30,6 @@ export const groupBy = function (xs, key) {
 };
 
 const Dashboard = () => {
-
   // const { theme, setTheme } = useTheme();
   // useEffect(() => {
   //   setTheme("light");
@@ -48,7 +47,7 @@ const Dashboard = () => {
   });
   const [narration, setNarration] = useState(false);
   const [editMode, setEditMode] = useState(null); // State to manage edit mode
-   const [editValues, setEditValues] = useState({}); // State to manage the current values being edited
+  const [editValues, setEditValues] = useState({}); // State to manage the current values being edited
   const lastExecutionTimeRef = useRef(0);
   const [showOffTerminals, setShowOffTerminals] = useState(true);
   //const [filter, setFilter] = useState("ALL");
@@ -178,8 +177,6 @@ const Dashboard = () => {
     };
   }, [socket, isConnected, trades]);
 
-  
-
   const getAllTrades = async () => {
     try {
       setTrades((p) => ({ ...p, loading: true }));
@@ -262,7 +259,7 @@ const Dashboard = () => {
       candleSize: item.candleSize,
       lossLimit: item.lossLimit,
       tradeIndex: item.tradeIndex,
-      category : item.category
+      category: item.category,
     });
   };
 
@@ -367,49 +364,46 @@ const Dashboard = () => {
         ) {
           match = true;
         }
-        if (
-          activeFilters.includes("Large") &&
-          item.category === "Large"
-        ) {
+        if (activeFilters.includes("Large") && item.category === "Large") {
           match = true;
         }
-        if (
-          activeFilters.includes("haveTrade") &&
-          item.haveTrade 
-        ) {
+        if (activeFilters.includes("haveTrade") && item.haveTrade) {
           match = true;
         }
         if (
           activeFilters.includes("buyTrendLineDate") &&
-          item.buyTrendLineDate 
+          item.buyTrendLineDate
         ) {
           match = true;
         }
         // if (activeFilters.includes("Index") && item.category === "Index") {
         //   match = true;
         // }
-        if (
-          activeFilters.includes("Medium") &&
-          item.category === "Medium"
-        ) {
+        if (activeFilters.includes("Medium") && item.category === "Medium") {
           match = true;
         }
-        if (
-          activeFilters.includes("Small") &&
-          item.category === "Small"
-        ) {
+        if (activeFilters.includes("Small") && item.category === "Small") {
           match = true;
         }
         if (activeFilters.includes("Nifty50") && item.category === "Nifty50") {
           match = true;
         }
-        if (activeFilters.includes("index2") && item.tradeIndex == 2) {
+        if (
+          activeFilters.includes("index2") &&
+          (item.tradeIndex == 2 || item.tradeIndex == 12)
+        ) {
           match = true;
         }
-        if (activeFilters.includes("index7") && item.tradeIndex == 7) {
+        if (
+          activeFilters.includes("index7") &&
+          (item.tradeIndex == 7 || item.tradeIndex == 17)
+        ) {
           match = true;
         }
-        if (activeFilters.includes("BankNifty") && item.category === "BankNifty") {
+        if (
+          activeFilters.includes("S.D. Yadav") &&
+          item.category === "SDYadav"
+        ) {
           match = true;
         }
         if (activeFilters.includes("daily") && item.category === "daily") {
@@ -421,7 +415,7 @@ const Dashboard = () => {
         if (activeFilters.includes("15Min") && item.category === "15Min") {
           match = true;
         }
-      
+
         if (item?.isMaster && item.targetAbove && item.targetBelow) {
           const LTP = socketData[item.instrument_token]?.last_traded_price;
 
@@ -538,7 +532,6 @@ const Dashboard = () => {
 
   // console.log("Trade Identification" , filteredTrades)
 
-
   return (
     <>
       <React.Fragment>
@@ -576,6 +569,12 @@ const Dashboard = () => {
             Angel-Login
           </Button>
           <Button
+            onClick={() => window.open("/future/scanner", "_blank")}
+            className="px-5 py-2 rounded-md border-2"
+          >
+            Scanner
+          </Button>
+          <Button
             onClick={() => {
               handleResetDataOnServer();
             }}
@@ -590,6 +589,7 @@ const Dashboard = () => {
           >
             {showGainer ? "Hide Losser/Gainer" : "Show Losser/Gainer"}
           </Button>
+
           <Button
             onClick={() =>
               window.open(
@@ -659,7 +659,9 @@ const Dashboard = () => {
           <Button
             onClick={() => handleButtonClick("tradingStockPE")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["tradingStockPE"] ? "bg-red-500 hover:bg-red-600" : "bg-black"
+              activeButtons["tradingStockPE"]
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-black"
             }`}
           >
             Trading Stock PE
@@ -667,10 +669,12 @@ const Dashboard = () => {
           <Button
             onClick={() => handleButtonClick("Future")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["Future"] ? "bg-red-500 hover:bg-red-600" : "bg-black"
+              activeButtons["Future"]
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-black"
             }`}
           >
-       Future
+            Future
           </Button>
           <Button
             onClick={() => handleButtonClick("EQ")}
@@ -678,9 +682,9 @@ const Dashboard = () => {
               activeButtons["EQ"] ? "bg-red-500 hover:bg-red-600" : "bg-black"
             }`}
           >
-     EQ
+            EQ
           </Button>
-       
+
           <Button
             onClick={() => handleButtonClick("Small")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
@@ -689,7 +693,7 @@ const Dashboard = () => {
                 : "bg-black"
             }`}
           >
-           Small
+            Small
           </Button>
           <Button
             onClick={() => handleButtonClick("Medium")}
@@ -709,9 +713,8 @@ const Dashboard = () => {
                 : "bg-black"
             }`}
           >
-         Large
+            Large
           </Button>
-
 
           <Button
             onClick={() => handleButtonClick("Nifty50")}
@@ -721,17 +724,17 @@ const Dashboard = () => {
                 : "bg-black"
             }`}
           >
-           Nifty 50
+            Nifty 50
           </Button>
           <Button
-            onClick={() => handleButtonClick("BankNifty")}
+            onClick={() => handleButtonClick("S.D. Yadav")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["BankNifty"]
+              activeButtons["S.D. Yadav"]
                 ? "bg-red-500 hover:bg-red-600"
                 : "bg-black"
             }`}
           >
-            Bank Nifty
+           S.D. Yadav
           </Button>
           <Button
             onClick={() => handleButtonClick("todayTrade")}
@@ -741,7 +744,7 @@ const Dashboard = () => {
                 : "bg-black"
             }`}
           >
-           Today Trade
+            Today Trade
           </Button>
           <Button
             onClick={() => handleButtonClick("haveTrade")}
@@ -771,7 +774,7 @@ const Dashboard = () => {
                 : "bg-black"
             }`}
           >
-          Daily
+            Daily
           </Button>
           <Button
             onClick={() => handleButtonClick("hourly")}
@@ -781,7 +784,7 @@ const Dashboard = () => {
                 : "bg-black"
             }`}
           >
-        Hourly
+            Hourly
           </Button>
           <Button
             onClick={() => handleButtonClick("15Min")}
@@ -791,7 +794,7 @@ const Dashboard = () => {
                 : "bg-black"
             }`}
           >
-       15 Min
+            15 Min
           </Button>
           <Button
             onClick={() => handleButtonClick("index2")}
@@ -801,7 +804,7 @@ const Dashboard = () => {
                 : "bg-black"
             }`}
           >
-   Index 2
+            Index 2 & 12
           </Button>
           <Button
             onClick={() => handleButtonClick("index7")}
@@ -811,9 +814,9 @@ const Dashboard = () => {
                 : "bg-black"
             }`}
           >
-     Index 7
+            Index 7 & 17
           </Button>
-      
+
           <Button
             onClick={() => handleButtonClick("ALL")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
@@ -862,7 +865,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div >
+        <div>
           <table
             className="dashboard-table w-[900px]  mx-auto "
             // className={`${!activeFilters.includes("isMaster") ? 'dashboard-table w-[1200px]  mx-auto' : 'dashboard-table w-[1700px]  mx-auto'}`}
@@ -886,7 +889,6 @@ const Dashboard = () => {
                     <th>Traling stop loss</th> */}
 
                     {/* <th>WMA</th> */}
-                   
                   </>
                 )}
                 {/* <th>Interval</th> */}
@@ -898,33 +900,35 @@ const Dashboard = () => {
                   </>
                 )} */}
                 {
-                // (activeFilters.includes("isMaster") ||
-                //   activeFilters.includes("MyBullishMaster") ||
-                //   activeFilters.includes("MyBearishMaster")) &&
+                  // (activeFilters.includes("isMaster") ||
+                  //   activeFilters.includes("MyBullishMaster") ||
+                  //   activeFilters.includes("MyBearishMaster")) &&
                   !narration && (
                     <>
                       <th>Looser/Gainer</th>
-                      <th>Date Loss/Gain</th>
+                      {/* <th>Date Loss/Gain</th> */}
                       <th>TrendLine Update Date</th>
                     </>
-                   )}
+                  )
+                }
                 {!narration && (
                   <>
                     <th>Trade Type</th>
                     <th>Have Tarde</th>
-                   
+
                     <th>Is Hedge</th>
                     {/* <th>  Hedging Trade</th> */}
-                <th> Identifier Under Hedge</th>
+                    <th> Identifier Under Hedge</th>
                     {/* <th>Call Entry Value</th> */}
                     <th>LTP</th>
                     {/* <th>Put Entry Value</th> */}
                     <th>Lot Size</th>
-                    <th>Loss Limit</th>
-                  {/* <th>Entry Line Below</th> */}
-                
+                    <th>RSI Value</th>
+                    <th>Trade Limit</th>
+                    {/* <th>Entry Line Below</th> */}
+
                     {/* <th>Entry Line Above</th> */}
-                     <th>Category</th> 
+                    <th>Category</th>
                     <th>ON/OFF</th>
                   </>
                 )}
@@ -935,7 +939,7 @@ const Dashboard = () => {
 
                 {/* <th>Have Trade</th> */}
                 {/* <th>Market Trend</th> */}
-                 {/* <th>Edit</th>
+                {/* <th>Edit</th>
                 <th>Update</th>  */}
                 <th>Live</th>
                 <th>Testing</th>
@@ -964,9 +968,12 @@ const Dashboard = () => {
 
                     // Priority 2: Rows with valid dateOfLooserGainer come next
                     if (a.buyTrendLineDate && b.buyTrendLineDate) {
-                      return new Date(b.buyTrendLineDate) - new Date(a.buyTrendLineDate);
+                      return (
+                        new Date(b.buyTrendLineDate) -
+                        new Date(a.buyTrendLineDate)
+                      );
                     }
-                
+
                     // Priority 3: Rows with valid buyTrendLineDate come next
                     if (a.buyTrendLineDate && !b.buyTrendLineDate) return -1;
                     if (!a.buyTrendLineDate && b.buyTrendLineDate) return 1;
@@ -979,30 +986,30 @@ const Dashboard = () => {
                     return 0;
                   })
                   ?.map((item, index) => {
-
                     const a =
-                    tradeOptions?.find((option) => option.value === item.tradeIdentification)
-                      ?.label || "";
+                      tradeOptions?.find(
+                        (option) => option.value === item.tradeIdentification
+                      )?.label || "";
                     return (
                       <tr key={index}>
                         <td>{index + 1}</td>
                         <td
-                              className={`w-32  ${
-                                //item.isMaster &&
-                                //(item.targetAbove || item.targetBelow) &&
-                                // (socketData[item.instrument_token]?.last_traded_price < item.targetBelow ||
-                                //   socketData[item.instrument_token]?.last_traded_price > item.targetAbove)
-                                //?
-                                item.isHedging
-                                  ? "text-pink-600 font-bold"
-                                  : "text-black"
-                                //: "text-black"
-                              }`}
-                            >
-                              {item.identifier}
-                            </td>
-                            <td>{item.exchange}</td>
-                            <td>{item.tradeIndex}</td>
+                          className={`w-32  ${
+                            //item.isMaster &&
+                            //(item.targetAbove || item.targetBelow) &&
+                            // (socketData[item.instrument_token]?.last_traded_price < item.targetBelow ||
+                            //   socketData[item.instrument_token]?.last_traded_price > item.targetAbove)
+                            //?
+                            item.isHedging
+                              ? "text-pink-600 font-bold"
+                              : "text-black"
+                            //: "text-black"
+                          }`}
+                        >
+                          {item.identifier}
+                        </td>
+                        <td>{item.exchange}</td>
+                        <td>{item.tradeIndex}</td>
 
                         {narration && <td>{item.narration}</td>}
                         {!activeFilters?.includes("isMaster") && (
@@ -1079,7 +1086,6 @@ const Dashboard = () => {
                                 item.WMA
                               )}
                             </td> */}
-                          
                           </>
                         )}
 
@@ -1107,23 +1113,24 @@ const Dashboard = () => {
                               >
                                 {item.looserGainer}
                               </td>
-                              <td>{item.dateOfLooserGainer?.slice(0, 10)}</td>
+                              {/* <td>{item.dateOfLooserGainer?.slice(0, 10)}</td> */}
                               <td>{item.buyTrendLineDate?.slice(0, 10)}</td>
                             </>
-                          )} 
+                          )
+                        }
 
                         {!narration && (
                           <>
                             <td
-                              // className={`${
-                              //   a == 0
-                              //     ? "text-green-600 font-semibold"
-                              //     : a == 1
-                              //     ? "text-red-600 font-semibold"
-                              //     : "font-semibold"
-                              // }`}
+                            // className={`${
+                            //   a == 0
+                            //     ? "text-green-600 font-semibold"
+                            //     : a == 1
+                            //     ? "text-red-600 font-semibold"
+                            //     : "font-semibold"
+                            // }`}
                             >
-                         {a}
+                              {a}
                             </td>
                             <td
                               className={`${
@@ -1134,7 +1141,7 @@ const Dashboard = () => {
                             >
                               {item?.haveTrade ? "true" : "false"}
                             </td>
-                        
+
                             <td
                               className={
                                 item.isHedging
@@ -1162,12 +1169,12 @@ const Dashboard = () => {
                               {item.ResistancePrice?.toFixed(1)}
                             </td> */}
                             <td className="w-32">
-                              {                    
+                              {
                                 socketData[item.instrument_token]
                                   ?.last_traded_price
                               }
                             </td>
-                            
+
                             {/* <td
                               className={`${
                                 item.SupportPrice &&
@@ -1176,10 +1183,11 @@ const Dashboard = () => {
                             >
                               {item.SupportPrice?.toFixed(1)}
                             </td> */}
-                 
+
                             <td>{item.lotSize}</td>
+                            <td>{item.rsiValue}</td>
                             <td>{item.maxLoss}</td>
-                     
+
                             {/* <td
                               className={`${
                                 socketData[item.instrument_token]
@@ -1190,7 +1198,6 @@ const Dashboard = () => {
                             >
                               {item.targetBelow}
                             </td> */}
-                     
 
                             {/* <td
                               className={`${
@@ -1211,34 +1218,34 @@ const Dashboard = () => {
                                   onChange={handleInputChange}
                                   className="w-full border-[1px] border-black p-2 rounded-md"
                                 >
-                                   <option value="MyBullishMaster">
-                                                           My Bullish Master
-                                                         </option>
-                                                         <option value="MyBearishMaster">
-                                                           My Bearish Master
-                                                         </option>
-                                                         <option value="MyCommonMaster">
-                                                           My Common Master
-                                                         </option>
-                                                         <option value="Index">Index</option>
-                                                         <option value="PE">PE</option>
-                                                         <option value="CE">CE</option>
-                                                         <option value="Nifty50">Nifty 50</option>
-                                                         <option value="BankNifty">Bank Nifty</option>
-                                                          <option value="todayTrade">Today Trade</option>
-                                                         {/* <option value="IT">IT</option>
+                                  <option value="MyBullishMaster">
+                                    My Bullish Master
+                                  </option>
+                                  <option value="MyBearishMaster">
+                                    My Bearish Master
+                                  </option>
+                                  <option value="MyCommonMaster">
+                                    My Common Master
+                                  </option>
+                                  <option value="Index">Index</option>
+                                  <option value="PE">PE</option>
+                                  <option value="CE">CE</option>
+                                  <option value="Nifty50">Nifty 50</option>
+                                  <option value="BankNifty">Bank Nifty</option>
+                                  <option value="todayTrade">
+                                    Today Trade
+                                  </option>
+                                  {/* <option value="IT">IT</option>
                                                      <option value="Energy">Energy</option>
                                                      <option value="Auto">Auto</option>
                                                      <option value="RangeBound">RangeBound</option>
                                                      <option value="Chemical">Chemical</option>
                                                      <option value="Defence">Defence</option>
                                                      <option value="RealEstate">Real Estate</option> */}
-                                                         <option value="Others">Others</option>
+                                  <option value="Others">Others</option>
                                 </select>
                               ) : (
-                                <span>
-                                {item.category}
-                                </span>
+                                <span>{item.category}</span>
                               )}
                             </td>
                             <td>
@@ -1300,7 +1307,7 @@ const Dashboard = () => {
                             {item.rangeBound}
                           </p>
                         </td> */}
-                        
+
                         {/* <td>
                           <Button onClick={() => handleEdit(item)}>Edit</Button>
                         </td>
@@ -1322,7 +1329,7 @@ const Dashboard = () => {
                           >
                             <SquareArrowOutUpRight className="w-4 h-4" />
                           </Button>
-                        </td>        
+                        </td>
                         <td>
                           <Button
                             size="icon"
@@ -1337,7 +1344,7 @@ const Dashboard = () => {
                         <td className="text-center flex gap-x-2">
                           <Button
                             onClick={() =>
-                              onOpen("edit-trade", {                
+                              onOpen("edit-trade", {
                                 data: {
                                   id: item.id,
                                   symbol: item.symbol,
@@ -1428,9 +1435,9 @@ const Dashboard = () => {
                                   hedgeDeviation: item.hedgeDeviation,
                                   dynamicExitPercent: item.dynamicExitPercent,
                                   tradingOptions: item.tradingOptions,
-                                  exitSelection:item.exitSelection,
-                                  entryCandle:item.entryCandle,
-                                  atrMf:item.atrMf,
+                                  exitSelection: item.exitSelection,
+                                  entryCandle: item.entryCandle,
+                                  atrMf: item.atrMf,
                                   tradeIdentification: item.tradeIdentification,
                                   RSDeviation: item.RSDeviation,
                                   maxLoss: item.maxLoss,
@@ -1439,8 +1446,9 @@ const Dashboard = () => {
                                   dExitMf: item.dExitMf,
                                   targetMf: item.targetMf,
                                   atrMax: item.atrMax,
-                                  
-
+                                  shortTimeInterval: item.shortTimeInterval,
+                                  longTimeInterval: item.longTimeInterval,
+                                  lastDayCloseMode: item.lastDayCloseMode,
                                 },
                                 getAllTrades,
                                 trades,
