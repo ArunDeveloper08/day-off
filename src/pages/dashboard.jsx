@@ -396,7 +396,7 @@ const Dashboard = () => {
         }
         if (
           activeFilters.includes("index7") &&
-          (item.tradeIndex == 7 || item.tradeIndex == 17)
+          ((item.tradeIndex == 7 || item.tradeIndex == 17 ) && !item.isMaster )
         ) {
           match = true;
         }

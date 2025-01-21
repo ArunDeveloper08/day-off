@@ -14,7 +14,15 @@ import BackTestingTablePage from "./back-test-table";
 import { useLiveSocket } from "@/providers/live-socket-provider";
 import { useTheme } from "@/components/theme-provider";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export const BackTestingPage = () => {
   const { theme, setTheme } = useTheme();
@@ -29,8 +37,8 @@ export const BackTestingPage = () => {
   const [apiData, setApiData] = useState([]);
   const [updateTrigger, setUpdateTrigger] = useState(false);
   // const [chartType, setChartType] = useState("canvas");
- const [trends3, setTrends3] = useState([]);
- const [alert3, setAlert3] = useState([]);
+  const [trends3, setTrends3] = useState([]);
+  const [alert3, setAlert3] = useState([]);
   const [intractiveData, setIntractiveData] = useState([]);
   const [entryLine, setEntryLine] = useState([]);
   const [chartType, setChartType] = useState("svg");
@@ -45,9 +53,9 @@ export const BackTestingPage = () => {
     timestamp2: new Date().toISOString().split("T")[0] + "T23:30",
   });
   const [isPlaying, setIsPlaying] = useState(true);
-  const [values , setValues] = useState({
-    interval :"FIVE_MINUTE"
-  })
+  const [values, setValues] = useState({
+    interval: "FIVE_MINUTE",
+  });
 
   const [showRow, setShowRow] = useState({
     showAvg: false,
@@ -67,8 +75,8 @@ export const BackTestingPage = () => {
     RangeBoundTargetProfit: false,
     suppRes: false,
     entryLine: true,
-    toolTip: false,
-    bollingerBand:false,
+    toolTip: true,
+    bollingerBand: false,
   });
 
   const [latestValues, setLatestValues] = useState({
@@ -78,7 +86,6 @@ export const BackTestingPage = () => {
     BaseExitValue: 0,
   });
 
-
   const getTradeConfig = async () => {
     setData((p) => ({ ...p, loading: true }));
     try {
@@ -86,7 +93,6 @@ export const BackTestingPage = () => {
         `${BASE_URL_OVERALL}/config/get?id=${id}`
       );
       setData((p) => ({ ...p, data: data.data }));
-    
     } catch (error) {
       setData((p) => ({
         ...p,
@@ -127,16 +133,15 @@ export const BackTestingPage = () => {
   //   }
   // };
 
-  
   const handleStart = () => {
     axios
       .post(`${BASE_URL_OVERALL}/test/startTesting`, {
         ...data.data,
         ...dateTime,
         socketID: socket?.id,
+        interval: values.interval,
       })
       .then((res) => {
-      
         console.log("response", res.data);
       })
       .catch((err) => {
@@ -178,7 +183,6 @@ export const BackTestingPage = () => {
     }
   }, [socket, isConnected]);
 
-
   const handleSubmit = async (data) => {
     try {
       await axios.put(`${BASE_URL_OVERALL}/config/edit`, {
@@ -191,8 +195,8 @@ export const BackTestingPage = () => {
     } catch (err) {
       console.error("Error saving data:", err);
     }
-  };           
-      
+  };
+
   const handleRESET = async () => {
     await setEntryLine([]);
     socket.emit("playInterval");
@@ -200,15 +204,11 @@ export const BackTestingPage = () => {
     window.location.reload();
   };
 
-
   useEffect(() => {
     if (data?.data?.identifier) {
       document.title = `BackTest ${data?.data?.identifier}`;
     }
   }, [data?.data?.identifier]);
-
-  
-
 
   const handleCreateTrendLines = async (
     trendline,
@@ -267,27 +267,25 @@ export const BackTestingPage = () => {
     }
   };
 
-
-  const handlePlayPause = () => {  
+  const handlePlayPause = () => {
     const command = isPlaying ? "pauseInterval" : "playInterval";
     socket.emit(command);
-    setIsPlaying((prev) => !prev); 
+    setIsPlaying((prev) => !prev);
   };
-    
+
   const handleSelect = (key, value) => {
     setValues((prev) => ({ ...prev, [key]: value }));
-  }
-  
+  };
 
- //  return  <div> Loading ...</div>;
+  //  return  <div> Loading ...</div>;
 
-  return (  
+  return (
     <div>
       {data.loading ? (
         "Loading"
       ) : (
         <>
-          <p className="font-serif text-center  text-[20px] text-green-600" >
+          <p className="font-serif text-center  text-[20px] text-green-600">
             Angel-One(Back Testing Chart)
           </p>
           <div className="flex flex-wrap gap-x-10 font-serif py-2">
@@ -310,35 +308,10 @@ export const BackTestingPage = () => {
             <p className="text-[14px]">Trade Index: {data?.data?.tradeIndex}</p>
             <p className="text-[14px]">WMA : {data?.data?.WMA}</p>
 
-            <p className="text-[14px]">
-              Candle Size : {data?.data?.candleSize}
-            </p>
-            <p className="text-[14px]">
-              D_Exit : {latestValues?.dynamicExitValue?.toFixed(2)}
-            </p>
-            <p className="text-[14px]">
-              D_Entry : {latestValues?.D_Entry?.toFixed(2)}
-            </p>
-            <p className="text-[14px]">
-              Initial_Exit : {latestValues?.BaseExitValue?.toFixed(2)}
-            </p>
-            <p className="text-[14px]">
-              Range Bound1: {data?.data?.rangeBoundPercent} %
-            </p>
-            <p className="text-[14px]">
-              Range Bound2: {data?.data?.rangeBoundPercent2} %
-            </p>
-            <p className="text-[14px]">SMA1 : {data?.data?.SMA1}</p>
-            <p className="text-[14px]">SMA2 : {data?.data?.SMA2}</p>
-            <p className="text-[14px]">MV Source1 : {data?.data?.mvSource1}</p>
-            <p className="text-[14px]">MV Source2 : {data?.data?.mvSource2}</p>
-            <p className="text-[14px]">RSI Max : {data?.data?.rsiMax}</p>
-            <p className="text-[14px]">RSI Live : {latestValues?.RSI_Value}</p>
-            <p className="text-[14px]">RSI Min : {data?.data?.rsiMin}</p>
             <p className="text-[14px]">Order Type : {data?.data?.orderType}</p>
           </div>
 
-           <div>
+          <div>
             <button
               onClick={() =>
                 setShowRow((p) => ({
@@ -413,20 +386,20 @@ export const BackTestingPage = () => {
               Target Profit
             </button>
             <button
-                  onClick={() =>
-                    setShowRow((p) => ({
-                      ...p,
-                      bollingerBand: !p.bollingerBand,
-                    }))
-                  }
-                  className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
-                    showRow.bollingerBand
-                      ? "bg-blue-500 text-gray-100"
-                      : "bg-gray-300 "
-                  }`}
-                >
-                  Bollinger 
-                </button>
+              onClick={() =>
+                setShowRow((p) => ({
+                  ...p,
+                  bollingerBand: !p.bollingerBand,
+                }))
+              }
+              className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
+                showRow.bollingerBand
+                  ? "bg-blue-500 text-gray-100"
+                  : "bg-gray-300 "
+              }`}
+            >
+              Bollinger
+            </button>
             {/* 
               &nbsp; &nbsp;
          <button
@@ -534,9 +507,22 @@ export const BackTestingPage = () => {
             >
               Volume
             </button>
+            &nbsp; &nbsp;
+            <button
+              onClick={() =>
+                setShowRow((p) => ({
+                  ...p,
+                  toolTip: !p.toolTip,
+                }))
+              }
+              className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                showRow.toolTip ? "bg-blue-500 text-gray-100" : "bg-gray-300 "
+              }`}
+            >
+              Tool Tip
+            </button>
             &nbsp; &nbsp; &nbsp; &nbsp;
-           </div>
-           
+          </div>
 
           <div className="flex pt-2 justify-around items-center mt-2">
             <div className="flex ">
@@ -544,54 +530,53 @@ export const BackTestingPage = () => {
                 value={dateTime.timestamp1}
                 name="timestamp1"
                 type="datetime-local"
-                className="border-black border-2 w-full max-w-[200px] rounded-md"
+                className="border-black border-2  w-[200px] rounded-md"
                 onChange={handleChange}
               />
-              
-              <p className="text-xl font-serif"> --To-- </p>
+
+              <p className="text-xl font-serif"> -- To -- </p>
               <input
-                value={dateTime.timestamp2} 
+                value={dateTime.timestamp2}
                 name="timestamp2"
                 type="datetime-local"
-                className="border-black border-2 w-full max-w-[200px] rounded-md"
+                className="border-black border-2  w-[200px] rounded-md"
                 onChange={handleChange}
               />
             </div>
             <div className="flex flex-col w-full sm:w-auto">
-                <Label>Interval</Label>
-                <Select
-                  value={values.interval}
-                  onValueChange={(value) => {
-                    handleSelect("interval", value);
-                  }}
-          
-                >
-                  <SelectTrigger className="w-full sm:w-[150px] mt-1 border-zinc-500">
-                    <SelectValue>{values.interval}</SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Interval</SelectLabel>
-                      {[
-                        { label: "1 minute", value: "ONE_MINUTE" },
-                        { label: "3 minute", value: "THREE_MINUTE" },
-                        { label: "5 minute", value: "FIVE_MINUTE" },
-                        { label: "15 minute", value: "FIFTEEN_MINUTE" },
-                        { label: "30 minute", value: "THIRTY_MINUTE" },
-                        { label: "1 hour", value: "ONE_HOUR" },
-                        { label: "1 day", value: "ONE_DAY" },
-                      ]?.map((suggestion) => (
-                        <SelectItem
-                          key={suggestion.value}
-                          value={suggestion.value}
-                        >
-                          {suggestion.label}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
+              <Label>Interval</Label>
+              <Select
+                value={values.interval}
+                onValueChange={(value) => {
+                  handleSelect("interval", value);
+                }}
+              >
+                <SelectTrigger className="w-full sm:w-[150px] mt-1 border-zinc-500">
+                  <SelectValue>{values.interval}</SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Interval</SelectLabel>
+                    {[
+                      { label: "1 minute", value: "ONE_MINUTE" },
+                      { label: "3 minute", value: "THREE_MINUTE" },
+                      { label: "5 minute", value: "FIVE_MINUTE" },
+                      { label: "15 minute", value: "FIFTEEN_MINUTE" },
+                      { label: "30 minute", value: "THIRTY_MINUTE" },
+                      { label: "1 hour", value: "ONE_HOUR" },
+                      { label: "1 day", value: "ONE_DAY" },
+                    ]?.map((suggestion) => (
+                      <SelectItem
+                        key={suggestion.value}
+                        value={suggestion.value}
+                      >
+                        {suggestion.label}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
             <button
               className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
                 showRow.entryLine ? "bg-black text-gray-100" : "bg-white"
@@ -602,8 +587,8 @@ export const BackTestingPage = () => {
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 28 28"
-                    width="28"                                                                 
-                    height="28"                                              
+                    width="28"
+                    height="28"
                   >
                     <g fill="currentColor" fillRule="nonzero">
                       <path d="M7.354 21.354l14-14-.707-.707-14 14z"></path>

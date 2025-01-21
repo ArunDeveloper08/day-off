@@ -13,8 +13,8 @@ const Scanner = () => {
   const fetchStockData = async () => {
     try {
       const response = await axios.get(`${BASE_URL_OVERALL}/scanner`);
-      setData(response.data.data);
-      setFilteredData(response.data.data); // Initially, all data is shown
+      setData(response?.data?.data);
+      setFilteredData(response?.data?.data); // Initially, all data is shown
     } catch (err) {
       console.error("Error fetching stock data:", err);
     }
@@ -33,7 +33,7 @@ const Scanner = () => {
 
     // Apply RSI filter
     if (rsiFilter) {
-      const [condition, value] = rsiFilter.split("-");
+      const [condition, value] = rsiFilter?.split("-");
       const rsiValue = parseFloat(value);
       filtered = filtered.filter((item) => {
         if (condition === "less") return item.OneDay_RSI < rsiValue;
@@ -44,7 +44,7 @@ const Scanner = () => {
 
     // Apply ATR filter
     if (atrFilter) {
-      const [condition, value] = atrFilter.split("-");
+      const [condition, value] = atrFilter?.split("-");
       const atrValue = parseFloat(value);
       filtered = filtered.filter((item) => {
         if (condition === "less") return item.OneHour_ATR < atrValue;
@@ -126,8 +126,10 @@ const Scanner = () => {
                   <th>OI PCR</th>
                   <th>Long Interval</th>
                   <th>Short Interval</th>
-                  <th>Long Int Date</th>
-                  <th>Short Int Date</th>
+                  <th>Long Int From Date</th>
+                  <th>Short Int From Date</th>
+                  <th>Swing Low</th>
+                  <th>Swing High</th>
                   <th>Terminal</th>
                 </tr>
               </thead>
@@ -154,6 +156,8 @@ const Scanner = () => {
                     <td>{item.ShortInterval}</td>
                     <td>{item.LongIntervalFromDate}</td>
                     <td>{item.ShortIntervalFromDate}</td>
+                    <td>{item.SwingLow}</td>
+                    <td>{item.SwingHigh}</td>
                     <td
                       className={`${
                         item.terminal === "ON" ? "text-red-500" : "text-green-500"

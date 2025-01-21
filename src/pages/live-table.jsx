@@ -4,7 +4,7 @@ import { formatDate } from "@/lib/utils";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-const LiveDataTable = ({ id, socketData ,socketMastertData , values}) => {
+const LiveDataTable = ({ id, socketData, socketMastertData, values }) => {
   const { theme } = useTheme();
   const [data, setData] = useState([]);
   const [sum, setSum] = useState(0);
@@ -26,10 +26,8 @@ const LiveDataTable = ({ id, socketData ,socketMastertData , values}) => {
   useEffect(() => {
     const total = data?.reduce((acc, item) => {
       if (item.entryPrice !== null && item.exitPrice !== null) {
-        const diff =
-          item.CallType === "PE"
-            ? item.entryPrice - item?.exitPrice
-            : item.exitPrice - item?.entryPrice;
+        const diff = item.exitPrice - item?.entryPrice;
+
         return acc + diff;
       }
       return acc;
@@ -54,15 +52,19 @@ const LiveDataTable = ({ id, socketData ,socketMastertData , values}) => {
       item?.exitPivot
     )
       return null;
-  
+
     let diff = null;
-  
+
     // Check tradeIndex condition
     if (values?.tradeIndex === 7 || values?.tradeIndex === 17) {
       if (item.CallType === "CE") {
-        diff = (socketMastertData.last_traded_price - item.entryPivot)?.toFixed(2);
+        diff = (socketMastertData.last_traded_price - item.entryPivot)?.toFixed(
+          2
+        );
       } else if (item.CallType === "PE") {
-        diff = (item.entryPivot - socketMastertData.last_traded_price)?.toFixed(2);
+        diff = (item.entryPivot - socketMastertData.last_traded_price)?.toFixed(
+          2
+        );
       }
     } else {
       if (item.entryOrderType === "BUY") {
@@ -71,12 +73,9 @@ const LiveDataTable = ({ id, socketData ,socketMastertData , values}) => {
         diff = (item.entryPivot - socketData.last_traded_price)?.toFixed(2);
       }
     }
-  
+
     return { identifier: item.identifier, diff };
   };
-  
-  
-
 
   return (
     <div className="p-4">
@@ -97,7 +96,7 @@ const LiveDataTable = ({ id, socketData ,socketMastertData , values}) => {
               <th className="p-2 border border-gray-300">Sr No.</th>
               <th className="p-2 border border-gray-300">Entry Time</th>
               <th className="p-2 border border-gray-300">Entry Order Type</th>
-            {/* <th className="p-2 border border-gray-300">Entry RSI Value</th> */}
+              {/* <th className="p-2 border border-gray-300">Entry RSI Value</th> */}
               {/* <th className="p-2 border border-gray-300">D_Entry Value</th> */}
               <th className="p-2 border border-gray-300">Entry Price</th>
               <th className="p-2 border border-gray-300">Exit Time</th>
@@ -115,9 +114,7 @@ const LiveDataTable = ({ id, socketData ,socketMastertData , values}) => {
               // console.log("item.entryOrderType",item.entryOrderType)
               const priceDiff =
                 item.entryPrice !== null && item.exitPrice !== null
-                  ? item.CallType === "PE"
-                    ? (item.entryPrice - item.exitPrice)?.toFixed(2)
-                    : (item.exitPrice - item.entryPrice)?.toFixed(2)
+                  ? (item.exitPrice - item.entryPrice)?.toFixed(2)
                   : null;
 
               return (
@@ -136,12 +133,14 @@ const LiveDataTable = ({ id, socketData ,socketMastertData , values}) => {
                   <td className="p-2 border border-gray-300 text-center text-sm">
                     {item.entryOrderType}
                   </td>
+
                   {/* <td className="p-2 border border-gray-300 text-center text-sm">
                     {item.RSI_Value?.toFixed(2)}
                   </td> */}
                   {/* <td className="p-2 border border-gray-300 text-center text-sm">
                     {item.dynamicEntryValue}
                   </td> */}
+
                   <td className="p-2 border border-gray-300 text-center text-sm">
                     {item.entryPivot?.toFixed(2)}
                   </td>
@@ -158,9 +157,9 @@ const LiveDataTable = ({ id, socketData ,socketMastertData , values}) => {
                     {item.exitPivot?.toFixed(2)}
                   </td>
                   <td className="p-2 border border-gray-300 text-center text-sm">
-                    <button className="rounded-sm text-sm p-1">
-                      {item.exitOrderType}
-                    </button>
+                    {/* <button className="rounded-sm text-sm p-1"> */}
+                    {item.exitOrderType}
+                    {/* </button> */}
                   </td>
                   {/* <td className="p-2 border border-gray-300 text-center text-sm">
                     {item.exitRSI_Value}

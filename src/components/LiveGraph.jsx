@@ -1446,72 +1446,83 @@ const CandleChart = ({
                     stroke="blue"
                     yAccessor={(d) => Number(d.dEntry2)}
                   />
-                  {master.callLine && (
-                    <LineSeries
-                      strokeDasharray="Dash"
-                      strokeWidth={1}
-                      stroke="blue"
-                      yAccessor={(d) => Number(d.DEntryCE1)}
-                    />
+
+                  {showRow.ceEntryLine && (
+                    <>
+                      {master.callLine && (
+                        <LineSeries
+                          strokeDasharray="Dash"
+                          strokeWidth={1}
+                          stroke="blue"
+                          yAccessor={(d) => Number(d.DEntryCE1)}
+                        />
+                      )}
+
+                      {master.callLine2 && (
+                        <LineSeries
+                          strokeDasharray="Dash"
+                          strokeWidth={2}
+                          stroke="blue"
+                          yAccessor={(d) => Number(d.DEntryCE1)}
+                        />
+                      )}
+
+                      {master.callLine && (
+                        <LineSeries
+                          strokeDasharray="Dash"
+                          strokeWidth={1}
+                          stroke="blue"
+                          yAccessor={(d) => Number(d.DEntryCE2)}
+                        />
+                      )}
+
+                      {master.callLine2 && (
+                        <LineSeries
+                          strokeDasharray="Dash"
+                          strokeWidth={2}
+                          stroke="blue"
+                          yAccessor={(d) => Number(d.DEntryCE2)}
+                        />
+                      )}
+                    </>
                   )}
 
-                  {master.callLine2 && (
-                    <LineSeries
-                      strokeDasharray="Dash"
-                      strokeWidth={2}
-                      stroke="blue"
-                      yAccessor={(d) => Number(d.DEntryCE1)}
-                    />
-                  )}
 
-                  {master.callLine && (
-                    <LineSeries
-                      strokeDasharray="Dash"
-                      strokeWidth={1}
-                      stroke="blue"
-                      yAccessor={(d) => Number(d.DEntryCE2)}
-                    />
-                  )}
-
-                  {master.callLine2 && (
-                    <LineSeries
-                      strokeDasharray="Dash"
-                      strokeWidth={2}
-                      stroke="blue"
-                      yAccessor={(d) => Number(d.DEntryCE2)}
-                    />
-                  )}
-                  {master.putLine && (
-                    <LineSeries
-                      strokeDasharray="Dash"
-                      strokeWidth={1}
-                      stroke="brown"
-                      yAccessor={(d) => Number(d.DEntryPE2)}
-                    />
-                  )}
-                  {master.putLine2 && (
-                    <LineSeries
-                      strokeDasharray="Dash"
-                      strokeWidth={2}
-                      stroke="brown"
-                      yAccessor={(d) => Number(d.DEntryPE2)}
-                    />
-                  )}
-                  {master.putLine && (
-                    <LineSeries
-                      strokeDasharray="Dash"
-                      strokeWidth={1}
-                      stroke="brown"
-                      yAccessor={(d) => Number(d.DEntryPE1)}
-                    />
-                  )}
-                  {master.putLine2 && (
-                    <LineSeries
-                      strokeDasharray="Dash"
-                      strokeWidth={2}
-                      stroke="brown"
-                      yAccessor={(d) => Number(d.DEntryPE1)}
-                    />
+                  {showRow.peEntryLine && (
+                    <>
+                      {master.putLine && (
+                        <LineSeries
+                          strokeDasharray="Dash"
+                          strokeWidth={1}
+                          stroke="brown"
+                          yAccessor={(d) => Number(d.DEntryPE2)}
+                        />
+                      )}
+                      {master.putLine2 && (
+                        <LineSeries
+                          strokeDasharray="Dash"
+                          strokeWidth={2}
+                          stroke="brown"
+                          yAccessor={(d) => Number(d.DEntryPE2)}
+                        />
+                      )}
+                      {master.putLine && (
+                        <LineSeries
+                          strokeDasharray="Dash"
+                          strokeWidth={1}
+                          stroke="brown"
+                          yAccessor={(d) => Number(d.DEntryPE1)}
+                        />
+                      )}
+                      {master.putLine2 && (
+                        <LineSeries
+                          strokeDasharray="Dash"
+                          strokeWidth={2}
+                          stroke="brown"
+                          yAccessor={(d) => Number(d.DEntryPE1)}
+                        />
+                      )}
+                    </>
                   )}
 
                   <LineSeries

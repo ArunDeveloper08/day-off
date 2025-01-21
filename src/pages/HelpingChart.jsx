@@ -88,7 +88,6 @@ const HelpingChart = () => {
   useEffect(() => {
     if (data?.data?.identifier) {
       document.title = `${data?.data?.identifier}`;
-      //tradeIndex = data.data.tradeIndex;
     }
   }, [data?.data?.identifier]);
 
@@ -145,6 +144,8 @@ const HelpingChart = () => {
     bollingerBand: false,
     noActionLine: true,
     horizontalLine: true,
+    ceEntryLine:true,
+    peEntryLine:true
   });
   const [hideConfig, setHideConfig] = useState(true);
 
@@ -1559,6 +1560,32 @@ const HelpingChart = () => {
                 >
                   ATR
                 </button>
+                <button
+                  onClick={() =>
+                    setShowRow((p) => ({
+                      ...p,
+                      ceEntryLine: !p.ceEntryLine,
+                    }))
+                  }
+                  className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
+                    showRow.ceEntryLine ? "bg-blue-500 text-gray-100" : "bg-gray-300 "
+                  }`}
+                >
+                CE Entry Line
+                </button>
+                <button
+                  onClick={() =>
+                    setShowRow((p) => ({
+                      ...p,
+                      peEntryLine: !p.peEntryLine,
+                    }))
+                  }
+                  className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
+                    showRow.peEntryLine ? "bg-blue-500 text-gray-100" : "bg-gray-300 "
+                  }`}
+                >
+                 PE Entry Line
+                </button>
                 {/* <button
                     onClick={()=>navigate("/future/pcrchart")}
                     className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
@@ -1570,7 +1597,7 @@ const HelpingChart = () => {
                     PCR Chart
                   </button> */}
 
-                {data?.data?.index == 4 && (
+                {/* {data?.data?.index == 4 && (
                   <>
                     <button
                       onClick={setCETrendLine}
@@ -1594,7 +1621,7 @@ const HelpingChart = () => {
                       PE TrendLine
                     </button>
                   </>
-                )}
+                )} */}
               </div>
             </div>
 

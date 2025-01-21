@@ -43,18 +43,16 @@ const BackTestingTablePage = ({
   }, [updateTrigger, handleOFF]);
 
   useEffect(() => {
-    const total = data && data?.reduce((acc, item) => {
-      if (item.entryPrice !== null && item.exitPrice !== null) {
-        const diff =
-          item.CallType === "SELL"
-            ? item.entryPrice - item?.exitPrice
-            : item.exitPrice - item?.entryPrice;
+    const total = data?.data?.reduce((acc, item) => {
+      if (item.entryPivot !== null && item.exitPivot !== null) {
+        const diff = item.exitPivot - item?.entryPivot;
+
         return acc + diff;
       }
       return acc;
     }, 0);
     setSum(total);
-  }, []);
+  }, [data?.data]);
 
   return (
     <div className="p-2 overflow-x-auto">
@@ -67,17 +65,17 @@ const BackTestingTablePage = ({
                 {/* <th className="p-1 border border-gray-300">Identifier</th> */}
                 <th className="p-1 border border-gray-300">Entry Time</th>
                 <th className="p-1 border border-gray-300">Entry Order Type</th>
-                <th className="p-1 border border-gray-300">Entry RSI Value</th>
-                <th className="p-1 border border-gray-300">D_Entry Value</th>
+                {/* <th className="p-1 border border-gray-300">Entry RSI Value</th>
+                <th className="p-1 border border-gray-300">D_Entry Value</th> */}
                 <th className="p-1 border border-gray-300">Entry Price</th>
                 <th className="p-1 border border-gray-300">Call Type</th>
                 &nbsp; &nbsp; &nbsp;
                 <th className="p-1 border border-gray-300">Exit Time</th>
-                <th className="p-1 border border-gray-300">Exit Ref Value</th>
-                <th className="p-1 border border-gray-300">D_Exit Value</th>
+                {/* <th className="p-1 border border-gray-300">Exit Ref Value</th>
+                <th className="p-1 border border-gray-300">D_Exit Value</th> */}
                 <th className="p-1 border border-gray-300">Exit Price</th>
                 <th className="p-1 border border-gray-300">Exit Order Type</th>
-                <th className="p-1 border border-gray-300">Exit RSI Value</th>
+                {/* <th className="p-1 border border-gray-300">Exit RSI Value</th> */}
                 {/* <th className="p-1 border border-gray-300">Order Type</th> */}
                 {/* <th className="p-1 border border-gray-300">D_Exit Value</th> */}
                 <th className="p-1 border border-gray-300">Exit Reason</th>
@@ -87,13 +85,10 @@ const BackTestingTablePage = ({
             </thead>
             <tbody>
               {data?.data?.map((item, index) => {
-                // let priceDiff = null;
                 const priceDiff =
-                item.entryPrice !== null && item.exitPrice !== null
-                  ? item.entryOrderType === "SELL"
-                    ? (item.entryPrice - item.exitPrice)?.toFixed(2)
-                    : (item.exitPrice - item.entryPrice)?.toFixed(2)
-                  : null;
+                  item.entryPivot !== null && item.exitPivot !== null
+                    ? (item.exitPivot - item.entryPivot)?.toFixed(2)
+                    : null;
                 return (
                   <tr
                     key={index}
@@ -115,12 +110,12 @@ const BackTestingTablePage = ({
                     <td className="border border-gray-300 text-center text-[13px] p-1">
                       {item.entryOrderType}
                     </td>
-                    <td className="border border-gray-300 text-center text-[13px] p-1">
+                    {/* <td className="border border-gray-300 text-center text-[13px] p-1">
                       {item.RSI_Value?.toFixed(2)}
                     </td>
                     <td className="p-1 border border-gray-300 text-center text-[13px]">     
                       {item.dynamicEntryValue}
-                    </td>
+                    </td> */}
                     <td className="border border-gray-300 text-center text-[13px] p-1">
                       {item.entryPivot?.toFixed(2)}
                     </td>
@@ -131,12 +126,12 @@ const BackTestingTablePage = ({
                     <td className="border border-gray-300 text-center text-[13px] p-1">
                       {formatDate(item.realExitTime)}
                     </td>
-                    <td className="border border-gray-300 text-center text-[13px] p-1">
+                    {/* <td className="border border-gray-300 text-center text-[13px] p-1">
                     {item.DExitRefValue}
                   </td>
                   <td className="border border-gray-300 text-center text-[13px] p-1">
                     {(item.DExitRefValue - item.dynamicExitValue)?.toFixed(2)}
-                  </td>
+                  </td> */}
                     <td className="border border-gray-300 text-center text-[13px] p-1">
                       {item?.exitPivot?.toFixed(2)}
                     </td>
@@ -145,14 +140,12 @@ const BackTestingTablePage = ({
                         {item.exitOrderType}
                       </button>
                     </td>
-                    <td className="p-1 border border-gray-300 text-center text-[13px]">
+                    {/* <td className="p-1 border border-gray-300 text-center text-[13px]">
                       {item.exitRSI_Value}
-                    </td>
-
+                    </td> */}
                     {/* <td className="border border-gray-300 text-center text-[13px] p-1">
                       {item.dynamicExitValue?.toFixed(2)}
                     </td> */}
-
                     <td className="p-1 border border-gray-300 text-center text-[13px]">
                       {item.exitReason}
                     </td>
@@ -163,12 +156,12 @@ const BackTestingTablePage = ({
                     p-1 border border-gray-300 text-center text-[13px] font-semibold
                   `}
                     >
-                      {priceDiff}    
+                      {priceDiff}
                     </td>
                     <td className="p-1 border border-gray-300 text-center text-[13px]">
-                      <button 
-                      className="bg-red-500 hover:bg-red-700 px-1  border-black border-[1px] rounded-sm text-white font-semibold"
-                       onClick={handleDelete}
+                      <button
+                        className="bg-red-500 hover:bg-red-700 px-1  border-black border-[1px] rounded-sm text-white font-semibold"
+                        onClick={handleDelete}
                       >
                         Delete
                       </button>
@@ -178,7 +171,7 @@ const BackTestingTablePage = ({
               })}
             </tbody>
           </table>
-          
+
           {/* <table className="w-fit mx-auto mb-20">
             <thead>
               <tr className="bg-[#3a2d7d] text-white">

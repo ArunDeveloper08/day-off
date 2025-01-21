@@ -16,6 +16,7 @@ const BackTestingGraph = () => {
   });
   const [showRow, setShowRow] = useState({
     showAvg: true,
+   
   });
   const { socket, isConnected } = useBackTestSocket();
   console.log(isConnected)

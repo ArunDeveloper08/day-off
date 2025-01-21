@@ -116,10 +116,10 @@ const initialState = {
   entryLineTime: "1",
   dExitMf: "1",
   targetMf: "1",
-  atrMax:"60",
-  shortTimeInterval:"THIRTY_MINUTE",
-  longTimeInterval :"ONE_DAY",
-  lastDayCloseMode:"1"
+  atrMax: "60",
+  shortTimeInterval: "THIRTY_MINUTE",
+  longTimeInterval: "ONE_DAY",
+  lastDayCloseMode: "1",
   // Min_Order_Qty:"1"
 };
 
@@ -216,10 +216,10 @@ const alternateInitialState = {
   entryLineTime: "1",
   dExitMf: "1",
   targetMf: "1",
-    atrMax:"60",
-      shortTimeInterval:"THIRTY_MINUTE",
-  longTimeInterval :"ONE_DAY",
-    lastDayCloseMode:"1",
+  atrMax: "60",
+  shortTimeInterval: "THIRTY_MINUTE",
+  longTimeInterval: "ONE_DAY",
+  lastDayCloseMode: "1",
 };
 // tradeIndex =2
 const gammaBlastInitialState = {
@@ -320,10 +320,10 @@ const gammaBlastInitialState = {
   entryLineTime: "1",
   dExitMf: "1",
   targetMf: "1",
-    atrMax:"60",
-      shortTimeInterval:"THIRTY_MINUTE",
-  longTimeInterval :"ONE_DAY",
-    lastDayCloseMode:"1"
+  atrMax: "60",
+  shortTimeInterval: "THIRTY_MINUTE",
+  longTimeInterval: "ONE_DAY",
+  lastDayCloseMode: "1",
 };
 // tradeIndex =6
 
@@ -480,12 +480,17 @@ export const AddNewtrade = () => {
     }
 
     if (
-      values.indexValue === 2 && 
-      (!values.dynamicEntryPercentage || !values.priceDecPercent || !values.atrMf || !values.dExitMf || !values.targetLevel || !values.entryCandle)
+      values.indexValue === 2 &&
+      (!values.dynamicEntryPercentage ||
+        !values.priceDecPercent ||
+        !values.atrMf ||
+        !values.dExitMf ||
+        !values.targetLevel ||
+        !values.entryCandle)
     ) {
       return alert("Please fill in all the required inputs for index 2.");
     }
-    
+
     // if (values?.rangeBoundPercent > values?.rangeBoundPercent2) {
     //   return alert(
     //     "Range Bound Percent 2 Should be greater than Range Bound Percent"
@@ -697,6 +702,43 @@ export const AddNewtrade = () => {
                 </SelectContent>
               </Select>
             </div>
+            <div className="px-1">
+                  <Label>Category</Label>
+                  <Select
+                    value={values?.category}
+                    name="category"
+                    onValueChange={(value) => handleSelect("category", value)}
+                  >
+                    <SelectTrigger className="w-full mt-1 border-zinc-500">
+                      <SelectValue>{values?.category}</SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>category</SelectLabel>
+                        <SelectItem value="Small">Small</SelectItem>
+                        <SelectItem value="Medium">Medium</SelectItem>
+                        <SelectItem value="Large">Large</SelectItem>
+                        <SelectItem value="Index">Index</SelectItem>
+                        <SelectItem value="PE">PE</SelectItem>
+                        <SelectItem value="CE">CE</SelectItem>
+                        <SelectItem value="Nifty50">Nifty 50</SelectItem>
+                        <SelectItem value="SDYadav">S.D. Yadav</SelectItem>
+                        <SelectItem value="todayTrade">Today Trade</SelectItem>
+                        <SelectItem value="daily">Daily</SelectItem>
+                        <SelectItem value="hourly">Hourly</SelectItem>
+                        <SelectItem value="15Min">15 Min</SelectItem>
+                        {/* <SelectItem value="IT">IT</SelectItem>
+                    <SelectItem value="Energy">Energy</SelectItem>
+                    <SelectItem value="Auto">Auto</SelectItem>
+                    <SelectItem value="RangeBound">RangeBound</SelectItem>
+                    <SelectItem value="Chemical">Chemical</SelectItem>
+                    <SelectItem value="Defence">Defence</SelectItem>
+                    <SelectItem value="RealEstate">Real Estate</SelectItem> */}
+                        <SelectItem value="Others">Others</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
 
             {values?.isHedging == 1 && (
               <>
@@ -769,7 +811,7 @@ export const AddNewtrade = () => {
             <div className="px-1">
               <Label>Is Master</Label>
               <Select
-                value={String(values.isMaster )} // Convert boolean to string for the select value
+                value={String(values.isMaster)} // Convert boolean to string for the select value
                 name="isMaster"
                 onValueChange={(value) => handleSelect("isMaster", value)}
               >
@@ -779,13 +821,13 @@ export const AddNewtrade = () => {
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Is Master</SelectLabel>
-                    {[{ isMaster: true }, { isMaster: false } ]?.map(
+                    {[{ isMaster: true }, { isMaster: false }]?.map(
                       (suggestion) => (
                         <SelectItem
                           key={String(suggestion.isMaster)}
-                          value={suggestion.isMaster }
+                          value={suggestion.isMaster}
                         >
-                          {String(suggestion.isMaster  )}
+                          {String(suggestion.isMaster)}
                         </SelectItem>
                       )
                     )}
@@ -793,6 +835,7 @@ export const AddNewtrade = () => {
                 </SelectContent>
               </Select>
             </div>
+
 
             {values?.isMaster == false && (
               <>
@@ -846,15 +889,15 @@ export const AddNewtrade = () => {
                   </Select>
                 </div>
                 <div className="px-1">
-                      <Label>RSI Max</Label>
-                      <Input
-                        name="rsiMax"
-                        onChange={handleChange}
-                        value={values.rsiMax}
-                        className="mt-1"
-                        type="number"
-                      />
-                    </div>
+                  <Label>RSI Max</Label>
+                  <Input
+                    name="rsiMax"
+                    onChange={handleChange}
+                    value={values.rsiMax}
+                    className="mt-1"
+                    type="number"
+                  />
+                </div>
                 {/* <div className="px-1">
                       <Label>ATR Max</Label>
                       <Input
@@ -931,49 +974,7 @@ export const AddNewtrade = () => {
                   />
                 </div>
 
-                <div className="px-1">
-                  <Label>Category</Label>
-                  <Select
-                    value={values?.category}
-                    name="category"
-                    onValueChange={(value) => handleSelect("category", value)}
-                  >
-                    <SelectTrigger className="w-full mt-1 border-zinc-500">
-                      <SelectValue>{values?.category}</SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>category</SelectLabel>
-                        <SelectItem value="Small">
-                          Small
-                        </SelectItem>
-                        <SelectItem value="Medium">
-                       Medium
-                        </SelectItem>
-                        <SelectItem value="Large">
-                          Large
-                        </SelectItem>
-                        <SelectItem value="Index">Index</SelectItem>
-                        <SelectItem value="PE">PE</SelectItem>
-                        <SelectItem value="CE">CE</SelectItem>
-                        <SelectItem value="Nifty50">Nifty 50</SelectItem>
-                        <SelectItem value="SDYadav">S.D. Yadav</SelectItem>
-                        <SelectItem value="todayTrade">Today Trade</SelectItem>
-                        <SelectItem value="daily">Daily</SelectItem>
-                        <SelectItem value="hourly">Hourly</SelectItem>
-                        <SelectItem value="15Min">15 Min</SelectItem>
-                        {/* <SelectItem value="IT">IT</SelectItem>
-                    <SelectItem value="Energy">Energy</SelectItem>
-                    <SelectItem value="Auto">Auto</SelectItem>
-                    <SelectItem value="RangeBound">RangeBound</SelectItem>
-                    <SelectItem value="Chemical">Chemical</SelectItem>
-                    <SelectItem value="Defence">Defence</SelectItem>
-                    <SelectItem value="RealEstate">Real Estate</SelectItem> */}
-                        <SelectItem value="Others">Others</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
+               
                 <div className="px-1">
                   <Label>Entry Time Delay</Label>
                   <Select
@@ -1062,137 +1063,131 @@ export const AddNewtrade = () => {
 
             {values?.isMaster && (
               <>
-              
-              <div className="px-1">
-                <Label>Lot Size</Label>
-                <Input
-                  name="lotSize"
-                  onChange={handleChange}
-                  value={values.lotSize}
-                  className="mt-1"
-                  type="number"
-                />
-              </div>
-              <div className="px-1">
-                      <Label> Long Time Interval</Label>
-                      <Select
-                        value={values.longTimeInterval}
-                        name="longTimeInterval"
-                        onValueChange={(value) =>
-                          handleSelect("longTimeInterval", value)
-                        }
-                      >
-                        <SelectTrigger className="w-full mt-1 border-zinc-500">
-                          <SelectValue>{values.longTimeInterval}</SelectValue>
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>Long Time Interval</SelectLabel>
-                            {[
-                              {
-                                label: "1 minute",
-                                value: "ONE_MINUTE",
-                              },
-                              {
-                                label: "3 minute",
-                                value: "THREE_MINUTE",
-                              },
-                              {
-                                label: "5 minute",
-                                value: "FIVE_MINUTE",
-                              },
+                <div className="px-1">
+                  <Label>Lot Size</Label>
+                  <Input
+                    name="lotSize"
+                    onChange={handleChange}
+                    value={values.lotSize}
+                    className="mt-1"
+                    type="number"
+                  />
+                </div>
+                <div className="px-1">
+                  <Label> Long Time Interval</Label>
+                  <Select
+                    value={values.longTimeInterval}
+                    name="longTimeInterval"
+                    onValueChange={(value) =>
+                      handleSelect("longTimeInterval", value)
+                    }
+                  >
+                    <SelectTrigger className="w-full mt-1 border-zinc-500">
+                      <SelectValue>{values.longTimeInterval}</SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Long Time Interval</SelectLabel>
+                        {[
+                          {
+                            label: "1 minute",
+                            value: "ONE_MINUTE",
+                          },
+                          {
+                            label: "3 minute",
+                            value: "THREE_MINUTE",
+                          },
+                          {
+                            label: "5 minute",
+                            value: "FIVE_MINUTE",
+                          },
 
-                              {
-                                label: "15 minute",
-                                value: "FIFTEEN_MINUTE",
-                              },
-                              {
-                                label: "30 minute",
-                                value: "THIRTY_MINUTE",
-                              },
-                              {
-                                label: "1 hour",
-                                value: "ONE_HOUR",
-                              },
-                              {
-                                label: "1 day",
-                                value: "ONE_DAY",
-                              },
-                            ]?.map((suggestion) => (
-                              <SelectItem
-                                key={suggestion.value}
-                                value={suggestion.value}
-                              >
-                                {suggestion.label}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </div>
-              <div className="px-1">
-                      <Label>Short Time Interval</Label>
-                      <Select
-                        value={values.shortTimeInterval}
-                        name="longTimeInterval"
-                        onValueChange={(value) =>
-                          handleSelect("longTimeInterval", value)
-                        }
-                      >
-                        <SelectTrigger className="w-full mt-1 border-zinc-500">
-                          <SelectValue>{values.shortTimeInterval}</SelectValue>
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>Short Time Interval</SelectLabel>
-                            {[
-                              {
-                                label: "1 minute",
-                                value: "ONE_MINUTE",
-                              },
-                              {
-                                label: "3 minute",
-                                value: "THREE_MINUTE",
-                              },
-                              {
-                                label: "5 minute",
-                                value: "FIVE_MINUTE",
-                              },
+                          {
+                            label: "15 minute",
+                            value: "FIFTEEN_MINUTE",
+                          },
+                          {
+                            label: "30 minute",
+                            value: "THIRTY_MINUTE",
+                          },
+                          {
+                            label: "1 hour",
+                            value: "ONE_HOUR",
+                          },
+                          {
+                            label: "1 day",
+                            value: "ONE_DAY",
+                          },
+                        ]?.map((suggestion) => (
+                          <SelectItem
+                            key={suggestion.value}
+                            value={suggestion.value}
+                          >
+                            {suggestion.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="px-1">
+                  <Label>Short Time Interval</Label>
+                  <Select
+                    value={values.shortTimeInterval}
+                    name="longTimeInterval"
+                    onValueChange={(value) =>
+                      handleSelect("longTimeInterval", value)
+                    }
+                  >
+                    <SelectTrigger className="w-full mt-1 border-zinc-500">
+                      <SelectValue>{values.shortTimeInterval}</SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Short Time Interval</SelectLabel>
+                        {[
+                          {
+                            label: "1 minute",
+                            value: "ONE_MINUTE",
+                          },
+                          {
+                            label: "3 minute",
+                            value: "THREE_MINUTE",
+                          },
+                          {
+                            label: "5 minute",
+                            value: "FIVE_MINUTE",
+                          },
 
-                              {
-                                label: "15 minute",
-                                value: "FIFTEEN_MINUTE",
-                              },
-                              {
-                                label: "30 minute",
-                                value: "THIRTY_MINUTE",
-                              },
-                              {
-                                label: "1 hour",
-                                value: "ONE_HOUR",
-                              },
-                              {
-                                label: "1 day",
-                                value: "ONE_DAY",
-                              },
-                            ]?.map((suggestion) => (
-                              <SelectItem
-                                key={suggestion.value}
-                                value={suggestion.value}
-                              >
-                                {suggestion.label}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </div>
+                          {
+                            label: "15 minute",
+                            value: "FIFTEEN_MINUTE",
+                          },
+                          {
+                            label: "30 minute",
+                            value: "THIRTY_MINUTE",
+                          },
+                          {
+                            label: "1 hour",
+                            value: "ONE_HOUR",
+                          },
+                          {
+                            label: "1 day",
+                            value: "ONE_DAY",
+                          },
+                        ]?.map((suggestion) => (
+                          <SelectItem
+                            key={suggestion.value}
+                            value={suggestion.value}
+                          >
+                            {suggestion.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
               </>
-              
-
-        
-
-
             )}
 
             {values.indexValue != 6 || values?.indexValue != 7 || (
@@ -1357,62 +1352,66 @@ export const AddNewtrade = () => {
                   </>
                 )}
 
-                {(values.indexValue == 2 || values.indexValue == 12) && values.isMaster == false && (
-                  <>
-                    <div className="px-1">
-                      <Label>Candle Type</Label>
-                      <Select
-                        // disabled={loading}
-                        value={values.candleType}
-                        name="candleType"
-                        onValueChange={(value) =>
-                          handleSelect("candleType", value)
-                        }
-                      >
-                        <SelectTrigger className="w-full mt-1 border-zinc-500">
-                          <SelectValue>{values.candleType}</SelectValue>
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>Candle Type</SelectLabel>
-                            {["HeikinAshi", "Normal"]?.map((suggestion) => (
-                              <SelectItem key={suggestion} value={suggestion}>
-                                {suggestion}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="px-1">
-                      <Label>Last Day Close</Label>
-                      <Select
-                        // disabled={loading}
-                        value={values.lastDayCloseMode == 1 ? "Active" : "Deactive"}
-                        name="lastDayCloseMode"
-                        onValueChange={(value) =>
-                          handleSelect("lastDayCloseMode", value)
-                        }
-                      >
-                        <SelectTrigger className="w-full mt-1 border-zinc-500">
-                          <SelectValue>{values.lastDayCloseMode == 1 ? "Active" : "Deactive"}</SelectValue>
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>Candle Type</SelectLabel>
-                        
-                              <SelectItem value={1}>
-                               Active
-                              </SelectItem>
-                              <SelectItem value={0}>
-                               Deactive
-                              </SelectItem>
-                          
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    {/* <div className="px-1">
+                {(values.indexValue == 2 || values.indexValue == 12) &&
+                  values.isMaster == false && (
+                    <>
+                      <div className="px-1">
+                        <Label>Candle Type</Label>
+                        <Select
+                          // disabled={loading}
+                          value={values.candleType}
+                          name="candleType"
+                          onValueChange={(value) =>
+                            handleSelect("candleType", value)
+                          }
+                        >
+                          <SelectTrigger className="w-full mt-1 border-zinc-500">
+                            <SelectValue>{values.candleType}</SelectValue>
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectLabel>Candle Type</SelectLabel>
+                              {["HeikinAshi", "Normal"]?.map((suggestion) => (
+                                <SelectItem key={suggestion} value={suggestion}>
+                                  {suggestion}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="px-1">
+                        <Label>Last Day Close</Label>
+                        <Select
+                          // disabled={loading}
+                          value={
+                            values.lastDayCloseMode == 1
+                              ? "Activate"
+                              : "Deactivate"
+                          }
+                          name="lastDayCloseMode"
+                          onValueChange={(value) =>
+                            handleSelect("lastDayCloseMode", value)
+                          }
+                        >
+                          <SelectTrigger className="w-full mt-1 border-zinc-500">
+                            <SelectValue>
+                              {values.lastDayCloseMode == 1
+                                ? "Activate"
+                                : "Deactivate"}
+                            </SelectValue>
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectLabel>Last Day Close</SelectLabel>
+
+                              <SelectItem value={1}>Activate</SelectItem>
+                              <SelectItem value={0}>Deactivate</SelectItem>
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      {/* <div className="px-1">
                       <Label>Exit Selection</Label>
                       <Select
                         // disabled={loading}
@@ -1437,81 +1436,83 @@ export const AddNewtrade = () => {
                         </SelectContent>
                       </Select>
                     </div> */}
-                    <div className="px-1">
-                      <Label>Entry Candle</Label>
-                      <Select
-                        // disabled={loading}
-                        value={values.entryCandle}
-                        name="entryCandle"
-                        onValueChange={(value) =>
-                          handleSelect("entryCandle", value)
-                        }
-                      >
-                        <SelectTrigger className="w-full mt-1 border-zinc-500">
-                          <SelectValue>{values.entryCandle}</SelectValue>
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>Entry Candle</SelectLabel>
-                            {["green", "both"]?.map((suggestion) => (
-                              <SelectItem key={suggestion} value={suggestion}>
-                                {suggestion}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="px-1">
-                  <Label>Entry Time Delay</Label>
-                  <Select
-                    value={values?.entryLineTime}
-                    name="entryLineTime"
-                    onValueChange={(value) =>
-                      handleSelect("entryLineTime", value)
-                    }
-                  >
-                    <SelectTrigger className="w-full mt-1 border-zinc-500">
-                      <SelectValue>{values?.entryLineTime}</SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel> Time Delay</SelectLabel>
-                        <SelectItem value="1">1 min</SelectItem>
-                        <SelectItem value="3">3 min</SelectItem>
-                        <SelectItem value="5">5 min</SelectItem>
-                        <SelectItem value="10">10 min</SelectItem>
-                        <SelectItem value="15">15 min</SelectItem>
-                        <SelectItem value="20">20 min</SelectItem>
-                        <SelectItem value="30">30 min</SelectItem>
-                        <SelectItem value="45">45 min</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
+                      <div className="px-1">
+                        <Label>Entry Candle</Label>
+                        <Select
+                          // disabled={loading}
+                          value={values.entryCandle}
+                          name="entryCandle"
+                          onValueChange={(value) =>
+                            handleSelect("entryCandle", value)
+                          }
+                        >
+                          <SelectTrigger className="w-full mt-1 border-zinc-500">
+                            <SelectValue>{values.entryCandle}</SelectValue>
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectLabel>Entry Candle</SelectLabel>
+                              {["green", "both"]?.map((suggestion) => (
+                                <SelectItem key={suggestion} value={suggestion}>
+                                  {suggestion}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="px-1">
+                        <Label>Entry Time Delay</Label>
+                        <Select
+                          value={values?.entryLineTime}
+                          name="entryLineTime"
+                          onValueChange={(value) =>
+                            handleSelect("entryLineTime", value)
+                          }
+                        >
+                          <SelectTrigger className="w-full mt-1 border-zinc-500">
+                            <SelectValue>{values?.entryLineTime}</SelectValue>
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectLabel> Time Delay</SelectLabel>
+                              <SelectItem value="1">1 min</SelectItem>
+                              <SelectItem value="3">3 min</SelectItem>
+                              <SelectItem value="5">5 min</SelectItem>
+                              <SelectItem value="10">10 min</SelectItem>
+                              <SelectItem value="15">15 min</SelectItem>
+                              <SelectItem value="20">20 min</SelectItem>
+                              <SelectItem value="30">30 min</SelectItem>
+                              <SelectItem value="45">45 min</SelectItem>
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      </div>
 
-                    <div className="px-1">
-                      <Label>WMA</Label>
-                      <Input
-                        name="wma"
-                        onChange={handleChange}
-                        value={values.wma}
-                        className="mt-1"
-                        type="number"
-                      />
-                    </div>
-            
-                    <div className="px-1">
-                      <Label>RSI / ATR Candle</Label>
-                      <Input
-                        name="rsiCandle"
-                        onChange={handleChange}
-                        value={values.rsiCandle}
-                        className="mt-1"
-                        type="rsiCandle"
-                      />
-                    </div>
-{/* 
+                      <div className="px-1">
+                        <Label>WMA</Label>
+                        <Input
+                          name="wma"
+                          onChange={handleChange}
+                          value={values.wma}
+                          className="mt-1"
+                          type="number"
+                          min={0}
+                        />
+                      </div>
+
+                      <div className="px-1">
+                        <Label>RSI / ATR Candle</Label>
+                        <Input
+                          name="rsiCandle"
+                          onChange={handleChange}
+                          value={values.rsiCandle}
+                          className="mt-1"
+                          type="number"
+                          min={0}
+                        />
+                      </div>
+                      {/* 
                     <div className="px-1">
                       <Label>D_Exit (%)</Label>
                       <Input
@@ -1522,27 +1523,29 @@ export const AddNewtrade = () => {
                         type="number"
                       />
                     </div> */}
-                    <div className="px-1">
-                      <Label>D_Entry1 MF (%)</Label>
-                      <Input
-                        name="dynamicEntryPercentage"
-                        onChange={handleChange}
-                        value={values.dynamicEntryPercentage}
-                        className="mt-1"  
-                        type="number"
-                      />
-                    </div>
-                    <div className="px-1">
-                      <Label>D_Entry2 MF(%)</Label>
-                      <Input
-                        name="priceDecPercent"
-                        onChange={handleChange}
-                        value={values.priceDecPercent}
-                        className="mt-1"
-                        type="text"
-                      />
-                    </div>
-                    {/* <div className="px-1">
+                      <div className="px-1">
+                        <Label>D_Entry1 MF (%)</Label>
+                        <Input
+                          name="dynamicEntryPercentage"
+                          onChange={handleChange}
+                          value={values.dynamicEntryPercentage}
+                          className="mt-1"
+                          type="number"
+                          min={0}
+                        />
+                      </div>
+                      <div className="px-1">
+                        <Label>D_Entry2 MF(%)</Label>
+                        <Input
+                          name="priceDecPercent"
+                          onChange={handleChange}
+                          value={values.priceDecPercent}
+                          className="mt-1"
+                          type="text"
+                          min={0}
+                        />
+                      </div>
+                      {/* <div className="px-1">
                       <Label>Target Level(%)</Label>
                       <Input
                         name="targetLevel"
@@ -1552,95 +1555,98 @@ export const AddNewtrade = () => {
                         type="number"
                       />
                     </div> */}
-                    <div className="px-1">
-                      <Label>StopLoss MF (%)</Label>
-                      <Input
-                        name="atrMf"
-                        onChange={handleChange}
-                        value={values.atrMf}
-                        className="mt-1"
-                        type="number"
-                      />
-                    </div>
-                    <div className="px-1">
-                      <Label>Target MF (%)</Label>
-                      <Input
-                        name="targetLevel"
-                        onChange={handleChange}
-                        value={values.targetLevel}
-                        className="mt-1"
-                        type="number"
-                      />
-                    </div>
-                    <div className="px-1">
-                      <Label>D_Exit MF (%)</Label>
-                      <Input
-                        name="dExitMf"
-                        onChange={handleChange}
-                        value={values.dExitMf}
-                        className="mt-1"
-                        type="number"
-                      />
-                    </div>
-                    <div className="px-1">
-                      <Label>Interval</Label>
-                      <Select
-                        value={values.interval}
-                        name="terminal"
-                        onValueChange={(value) =>
-                          handleSelect("interval", value)
-                        }
-                      >
-                        <SelectTrigger className="w-full mt-1 border-zinc-500">
-                          <SelectValue>{values.interval}</SelectValue>
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>Interval</SelectLabel>
-                            {[
-                              {
-                                label: "1 minute",
-                                value: "ONE_MINUTE",
-                              },
-                              {
-                                label: "3 minute",
-                                value: "THREE_MINUTE",
-                              },
-                              {
-                                label: "5 minute",
-                                value: "FIVE_MINUTE",
-                              },
+                      <div className="px-1">
+                        <Label>StopLoss MF (%)</Label>
+                        <Input
+                          name="atrMf"
+                          onChange={handleChange}
+                          value={values.atrMf}
+                          className="mt-1"
+                          min={0}
+                          type="number"
+                        />
+                      </div>
+                      <div className="px-1">
+                        <Label>Target MF (%)</Label>
+                        <Input
+                          name="targetLevel"
+                          onChange={handleChange}
+                          value={values.targetLevel}
+                          className="mt-1"
+                         min={0}
+                          type="number"
+                        />
+                      </div>
+                      <div className="px-1">
+                        <Label>D_Exit MF (%)</Label>
+                        <Input
+                          name="dExitMf"
+                          onChange={handleChange}
+                          value={values.dExitMf}
+                          className="mt-1"
+                          min={0}
+                          type="number"
+                        />
+                      </div>
+                      {/* <div className="px-1">
+                        <Label>Interval</Label>
+                        <Select
+                          value={values.interval}
+                          name="terminal"
+                          onValueChange={(value) =>
+                            handleSelect("interval", value)
+                          }
+                        >
+                          <SelectTrigger className="w-full mt-1 border-zinc-500">
+                            <SelectValue>{values.interval}</SelectValue>
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectLabel>Interval</SelectLabel>
+                              {[
+                                {
+                                  label: "1 minute",
+                                  value: "ONE_MINUTE",
+                                },
+                                {
+                                  label: "3 minute",
+                                  value: "THREE_MINUTE",
+                                },
+                                {
+                                  label: "5 minute",
+                                  value: "FIVE_MINUTE",
+                                },
 
-                              {
-                                label: "15 minute",
-                                value: "FIFTEEN_MINUTE",
-                              },
-                              {
-                                label: "30 minute",
-                                value: "THIRTY_MINUTE",
-                              },
-                              {
-                                label: "1 hour",
-                                value: "ONE_HOUR",
-                              },
-                              {
-                                label: "1 day",
-                                value: "ONE_DAY",
-                              },
-                            ]?.map((suggestion) => (
-                              <SelectItem
-                                key={suggestion.value}
-                                value={suggestion.value}
-                              >
-                                {suggestion.label}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </>
-                )}
+                                {
+                                  label: "15 minute",
+                                  value: "FIFTEEN_MINUTE",
+                                },
+                                {
+                                  label: "30 minute",
+                                  value: "THIRTY_MINUTE",
+                                },
+                                {
+                                  label: "1 hour",
+                                  value: "ONE_HOUR",
+                                },
+                                {
+                                  label: "1 day",
+                                  value: "ONE_DAY",
+                                },
+                              ]?.map((suggestion) => (
+                                <SelectItem
+                                  key={suggestion.value}
+                                  value={suggestion.value}
+                                >
+                                  {suggestion.label}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      </div> */}
+                    </>
+                  )}
 
                 {/* {values.isMaster == false && (
                   <div className="px-1">
