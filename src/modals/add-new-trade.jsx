@@ -120,6 +120,7 @@ const initialState = {
   shortTimeInterval: "THIRTY_MINUTE",
   longTimeInterval: "ONE_DAY",
   lastDayCloseMode: "1",
+  strikeDeviation:""
   // Min_Order_Qty:"1"
 };
 
@@ -220,6 +221,7 @@ const alternateInitialState = {
   shortTimeInterval: "THIRTY_MINUTE",
   longTimeInterval: "ONE_DAY",
   lastDayCloseMode: "1",
+  strikeDeviation:""
 };
 // tradeIndex =2
 const gammaBlastInitialState = {
@@ -324,6 +326,7 @@ const gammaBlastInitialState = {
   shortTimeInterval: "THIRTY_MINUTE",
   longTimeInterval: "ONE_DAY",
   lastDayCloseMode: "1",
+  strikeDeviation:""
 };
 // tradeIndex =6
 
@@ -465,18 +468,21 @@ export const AddNewtrade = () => {
     if (parseFloat(values.minExitPercent) > parseFloat(values.maxExitPercent)) {
       return alert("Max Exit Percent Should be greater than Min Exit Percent");
     }
-    if (values?.microProfitPercent > 50) {
-      return alert("Micro Profit Percent Should be less than 50%");
-    }
-    if (values?.entryHystresisPercent > 25) {
-      return alert("Entry Hystresis Percent Should be less than 25%");
-    }
+    // if (values?.microProfitPercent > 50) {
+    //   return alert("Micro Profit Percent Should be less than 50%");
+    // }
+    // if (values?.entryHystresisPercent > 25) {
+    //   return alert("Entry Hystresis Percent Should be less than 25%");
+    // }
     if (String(values?.isHedging) === "1" && values.hedgingIdentifier == "") {
       return alert("This Trade is Hedge Trade . Enter Main Identifier");
     }
 
     if (!values.isMaster && values.tradingOptions == "") {
       return alert("Please select Trading Option");
+    }
+    if (values.isMaster && values.strikeDeviation == "") {
+      return alert("Please fill Strike Deviation");
     }
 
     if (
@@ -594,6 +600,7 @@ export const AddNewtrade = () => {
         shortTimeInterval: values.shortTimeInterval,
         longTimeInterval: values.longTimeInterval,
         lastDayCloseMode: values.lastDayCloseMode,
+        strikeDeviation: values.strikeDeviation,
       });
       alert("Add Successfully");
     } catch (error) {
@@ -1069,6 +1076,16 @@ export const AddNewtrade = () => {
                     name="lotSize"
                     onChange={handleChange}
                     value={values.lotSize}
+                    className="mt-1"
+                    type="number"
+                  />
+                </div>
+                <div className="px-1">
+                  <Label>Strike Deviation</Label>
+                  <Input
+                    name="strikeDeviation"
+                    onChange={handleChange}
+                    value={values.strikeDeviation}
                     className="mt-1"
                     type="number"
                   />

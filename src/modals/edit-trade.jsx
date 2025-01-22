@@ -87,17 +87,20 @@ export const EditTrade = () => {
     if (parseFloat(values.minExitPercent) > parseFloat(values.maxExitPercent)) {
       return alert("Max Exit Percent Should be greater than Min Exit Percent");
     }
-    if (values?.microProfitPercent > 50) {
-      return alert("Micro Profit Percent Should be less than 50%");
-    }
-    if (values?.entryHystresisPercent > 25) {
-      return alert("Entry Hystresis Percent Should be less than 25%");
-    }
+    // if (values?.microProfitPercent > 50) {
+    //   return alert("Micro Profit Percent Should be less than 50%");
+    // }
+    // if (values?.entryHystresisPercent > 25) {
+    //   return alert("Entry Hystresis Percent Should be less than 25%");
+    // }
     if (String(values?.isHedging) === "1" && values.hedgingIdentifier == "") {
       return alert("This Trade is Hedge Trade . Enter Main Identifier");
     }
     if (!values.isMaster && values.tradingOptions == "") {
       return alert("Please select Trading Option");
+    }
+    if (values.isMaster && values.strikeDeviation == "") {
+      return alert("Please fill Strike Deviation");
     }
     if (
       (values.indexValue === 2 || values.indexValue === 12) &&
@@ -211,7 +214,7 @@ export const EditTrade = () => {
         longTimeInterval: values.longTimeInterval,
         shortTimeInterval: values.shortTimeInterval,
         lastDayCloseMode: values.lastDayCloseMode,
-
+        strikeDeviation: values.strikeDeviation,
         // targetProfit: values.targetProfit,
       });
       alert("Update Successfully");
@@ -429,6 +432,16 @@ export const EditTrade = () => {
                         type="number"
                       />
                     </div>
+                           <div className="px-1">
+                                      <Label>Strike Deviation</Label>
+                                      <Input
+                                        name="strikeDeviation"
+                                        onChange={handleChange}
+                                        value={values.strikeDeviation}
+                                        className="mt-1"
+                                        type="number"
+                                      />
+                                    </div>
                     <div className="px-1">
                       <Label> Long Time Interval</Label>
                       <Select

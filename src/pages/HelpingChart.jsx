@@ -144,8 +144,8 @@ const HelpingChart = () => {
     bollingerBand: false,
     noActionLine: true,
     horizontalLine: true,
-    ceEntryLine:true,
-    peEntryLine:true
+    ceEntryLine: true,
+    peEntryLine: true,
   });
   const [hideConfig, setHideConfig] = useState(true);
 
@@ -551,6 +551,8 @@ const HelpingChart = () => {
     tradeStatus?.haveTradeOfPE,
     tradeStatus?.haveTradeOfCEBuy,
     tradeStatus?.haveTradeOfPEBuy,
+    tradeStatus?.haveTradeOfEQBuy,
+    tradeStatus?.haveTradeOfEQSell,
   ]);
   const pcrlog = async () => {
     try {
@@ -629,27 +631,23 @@ const HelpingChart = () => {
       // Proceed if the token matches the instrument token
       if (socketdata.token === data?.data.instrument_token) {
         setSocketData(socketdata);
-
         // Throttle updates to once per second
-       // if (currentTime - lastUpdateTimeRef.current > 10 * 1000) {
+        // if (currentTime - lastUpdateTimeRef.current > 10 * 1000) {
         //  console.log("arun")
-          lastUpdateTimeRef.current = currentTime;
+        lastUpdateTimeRef.current = currentTime;
+        setApiData((prevApiData) => {
+          if (!prevApiData || prevApiData.length === 0) return prevApiData;
+          // Clone the previous data to avoid direct mutation
+          const updatedData = [...prevApiData];
+          // Replace the `close` value in the last candle with `last_traded_price`
+          updatedData[updatedData.length - 1] = {
+            ...updatedData[updatedData.length - 1],
+            close: socketdata.last_traded_price ,
+          };
 
-          setApiData((prevApiData) => {
-            if (!prevApiData || prevApiData.length === 0) return prevApiData;
-
-            // Clone the previous data to avoid direct mutation
-            const updatedData = [...prevApiData];
-
-            // Replace the `close` value in the last candle with `last_traded_price`
-            updatedData[updatedData.length - 1] = {
-              ...updatedData[updatedData.length - 1],
-              close: socketdata.last_traded_price,
-            };
-
-            return updatedData;
-          });
-      //  }
+          return updatedData;
+        });
+        //  }
       }
     });
 
@@ -995,6 +993,17 @@ const HelpingChart = () => {
                   PE Buy Status: {getValue("haveTradeOfPE") ? "True" : "False"}
                 </p>
                 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                <p
+                  className={`${
+                    getValue("haveTradeOfEQBuy")
+                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
+                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
+                  }`}
+                >
+                  EQ Buy Status:{" "}
+                  {getValue("haveTradeOfEQBuy") ? "True" : "False"}
+                </p>
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                 {/* CE SELL Status */}
                 <p
                   className={`${
@@ -1019,6 +1028,17 @@ const HelpingChart = () => {
                   {getValue("haveTradeOfPEBuy") ? "True" : "False"}
                 </p>
                 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                <p
+                  className={`${
+                    getValue("haveTradeOfEQSell")
+                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
+                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
+                  }`}
+                >
+                  EQ SELL Status:{" "}
+                  {getValue("haveTradeOfEQSell") ? "True" : "False"}
+                </p>
+                &nbsp; &nbsp; &nbsp;
                 {/* FUT Buy Status */}
                 <p
                   className={`${
@@ -1030,7 +1050,7 @@ const HelpingChart = () => {
                   FUT Buy Status:{" "}
                   {getValue("haveTradeOfFUTBuy") ? "True" : "False"}
                 </p>
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                &nbsp; &nbsp;
                 {/* FUT Sell Status */}
                 <p
                   className={`${
@@ -1042,20 +1062,6 @@ const HelpingChart = () => {
                   FUT Sell Status:{" "}
                   {getValue("haveTradeOfFUTSell") ? "True" : "False"}
                 </p>
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-                <button
-                  onClick={openChartInNewTab}
-                  className="bg-green-600 text-white px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]"
-                >
-                  BankNifty PCR Chart
-                </button>
-                &nbsp;
-                <button
-                  onClick={openChartInNewTab2}
-                  className="bg-green-600 text-white px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]"
-                >
-                  Nifty PCR Chart
-                </button>
               </div>
 
               <div className="flex flex-wrap   font-semibold py-2  justify-start">
@@ -1147,6 +1153,19 @@ const HelpingChart = () => {
                 &nbsp; &nbsp; &nbsp; &nbsp;
                 <p>Put Entry Line2: {data.data.putLine2}</p>
                 &nbsp; &nbsp; &nbsp; &nbsp;
+                <button
+                  onClick={openChartInNewTab}
+                  className="bg-green-600 text-white px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]"
+                >
+                  BankNifty PCR Chart
+                </button>
+                &nbsp;
+                <button
+                  onClick={openChartInNewTab2}
+                  className="bg-green-600 text-white px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]"
+                >
+                  Nifty PCR Chart
+                </button>
               </div>
 
               {data.data.tradeIndex == 4 && (
@@ -1568,10 +1587,12 @@ const HelpingChart = () => {
                     }))
                   }
                   className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
-                    showRow.ceEntryLine ? "bg-blue-500 text-gray-100" : "bg-gray-300 "
+                    showRow.ceEntryLine
+                      ? "bg-blue-500 text-gray-100"
+                      : "bg-gray-300 "
                   }`}
                 >
-                CE Entry Line
+                  CE Entry Line
                 </button>
                 <button
                   onClick={() =>
@@ -1581,10 +1602,12 @@ const HelpingChart = () => {
                     }))
                   }
                   className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
-                    showRow.peEntryLine ? "bg-blue-500 text-gray-100" : "bg-gray-300 "
+                    showRow.peEntryLine
+                      ? "bg-blue-500 text-gray-100"
+                      : "bg-gray-300 "
                   }`}
                 >
-                 PE Entry Line
+                  PE Entry Line
                 </button>
                 {/* <button
                     onClick={()=>navigate("/future/pcrchart")}

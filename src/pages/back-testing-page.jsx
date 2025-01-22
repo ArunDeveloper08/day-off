@@ -54,7 +54,7 @@ export const BackTestingPage = () => {
   });
   const [isPlaying, setIsPlaying] = useState(true);
   const [values, setValues] = useState({
-    interval: "FIVE_MINUTE",
+    interval: "ONE_MINUTE",
   });
 
   const [showRow, setShowRow] = useState({
@@ -93,6 +93,7 @@ export const BackTestingPage = () => {
         `${BASE_URL_OVERALL}/config/get?id=${id}`
       );
       setData((p) => ({ ...p, data: data.data }));
+      setValues((p)=>({...p , interval :data.data.interval}))
     } catch (error) {
       setData((p) => ({
         ...p,
@@ -617,9 +618,9 @@ export const BackTestingPage = () => {
               handleCreateTrendLines={handleCreateTrendLines}
               ratio={1}
               master={data?.data}
-              width={width}
+              width={width + 30}
               showRow={showRow}
-              height={(height * 7) / 10}
+              height={height ? (height * 8) / 10 : "60vh"}
               chartType={chartType}
               trends3={trends3}
               setTrends3={setTrends3}
