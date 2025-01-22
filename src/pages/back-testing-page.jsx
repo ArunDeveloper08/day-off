@@ -75,8 +75,10 @@ export const BackTestingPage = () => {
     RangeBoundTargetProfit: false,
     suppRes: false,
     entryLine: true,
+    dEntryLine:true,
     toolTip: true,
     bollingerBand: false,
+  
   });
 
   const [latestValues, setLatestValues] = useState({
@@ -400,6 +402,21 @@ export const BackTestingPage = () => {
               }`}
             >
               Bollinger
+            </button>
+            <button
+              onClick={() =>
+                setShowRow((p) => ({
+                  ...p,
+                  dEntryLine: !p.dEntryLine,
+                }))
+              }
+              className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
+                showRow.dEntryLine
+                  ? "bg-blue-500 text-gray-100"
+                  : "bg-gray-300 "
+              }`}
+            >
+             D_Entry Line
             </button>
             {/* 
               &nbsp; &nbsp;

@@ -126,11 +126,11 @@ function tooltipContent(underlyingValue) {
           stroke: currentItem?.close - currentItem?.open < 0 ? "red" : "green",
         },
 
-        {
-          label: "D_Exit_Value",
-          value: currentItem?.dynamicExitValue?.toFixed(2),
-          stroke: "black",
-        },
+        // {
+        //   label: "D_Exit_Value",
+        //   value: currentItem?.dynamicExitValue?.toFixed(2),
+        //   stroke: "black",
+        // },
 
         {
           label: "Last Lowest LTP",
@@ -1434,18 +1434,22 @@ const CandleChart = ({
                     stroke="blue"
                     yAccessor={(d) => Number(d.CEStopLoss)}
                   />
-                  <LineSeries
-                    strokeDasharray="Dash"
-                    strokeWidth={1}
-                    stroke="blue"
-                    yAccessor={(d) => Number(d.dEntry1)}
-                  />
-                  <LineSeries
-                    strokeDasharray="Dash"
-                    strokeWidth={1}
-                    stroke="blue"
-                    yAccessor={(d) => Number(d.dEntry2)}
-                  />
+                  {showRow.dEntryLine && (
+                    <>
+                      <LineSeries
+                        strokeDasharray="Dash"
+                        strokeWidth={1}
+                        stroke="blue"
+                        yAccessor={(d) => Number(d.dEntry1)}
+                      />
+                      <LineSeries
+                        strokeDasharray="Dash"
+                        strokeWidth={1}
+                        stroke="blue"
+                        yAccessor={(d) => Number(d.dEntry2)}
+                      />
+                    </>
+                  )}
 
                   {showRow.ceEntryLine && (
                     <>
@@ -1486,7 +1490,6 @@ const CandleChart = ({
                       )}
                     </>
                   )}
-
 
                   {showRow.peEntryLine && (
                     <>
