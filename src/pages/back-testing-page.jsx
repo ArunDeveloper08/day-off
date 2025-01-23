@@ -388,6 +388,7 @@ export const BackTestingPage = () => {
             >
               Target Profit
             </button>
+            &nbsp;
             <button
               onClick={() =>
                 setShowRow((p) => ({
@@ -403,6 +404,7 @@ export const BackTestingPage = () => {
             >
               Bollinger
             </button>
+            &nbsp;
             <button
               onClick={() =>
                 setShowRow((p) => ({

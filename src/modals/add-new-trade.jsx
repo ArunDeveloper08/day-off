@@ -120,7 +120,8 @@ const initialState = {
   shortTimeInterval: "THIRTY_MINUTE",
   longTimeInterval: "ONE_DAY",
   lastDayCloseMode: "1",
-  strikeDeviation:""
+  strikeDeviation:"",
+  rsiDifference:""
   // Min_Order_Qty:"1"
 };
 
@@ -221,7 +222,8 @@ const alternateInitialState = {
   shortTimeInterval: "THIRTY_MINUTE",
   longTimeInterval: "ONE_DAY",
   lastDayCloseMode: "1",
-  strikeDeviation:""
+  strikeDeviation:"",
+  rsiDifference:""
 };
 // tradeIndex =2
 const gammaBlastInitialState = {
@@ -326,7 +328,8 @@ const gammaBlastInitialState = {
   shortTimeInterval: "THIRTY_MINUTE",
   longTimeInterval: "ONE_DAY",
   lastDayCloseMode: "1",
-  strikeDeviation:""
+  strikeDeviation:"",
+  rsiDifference:""
 };
 // tradeIndex =6
 
@@ -601,6 +604,7 @@ export const AddNewtrade = () => {
         longTimeInterval: values.longTimeInterval,
         lastDayCloseMode: values.lastDayCloseMode,
         strikeDeviation: values.strikeDeviation,
+        rsiDifference: values.rsiDifference,
       });
       alert("Add Successfully");
     } catch (error) {
@@ -980,6 +984,7 @@ export const AddNewtrade = () => {
                     type="text"
                   />
                 </div>
+               
 
                
                 <div className="px-1">
@@ -1562,6 +1567,16 @@ export const AddNewtrade = () => {
                           min={0}
                         />
                       </div>
+                      <div className="px-1">
+                  <Label>RSI Difference</Label>
+                  <Input
+                    name="rsiDifference"
+                    onChange={handleChange}
+                    value={values.rsiDifference}
+                    className="mt-1"
+                    type="text"
+                  />
+                </div>
                       {/* <div className="px-1">
                       <Label>Target Level(%)</Label>
                       <Input

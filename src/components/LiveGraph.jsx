@@ -977,7 +977,7 @@ const CandleChart = ({
       xScaleProvider(dataWithIndicators);
     // xScaleProvider(calculatedData);
 
-    const start = xAccessor(data[Math.max(0, data.length - 180)]);
+    const start = xAccessor(data[Math.max(0, data.length - 120)]);
     const end = xAccessor(last(data));
     const padding = (end - start) * 0.1;
     const xExtents = [start, end + padding];

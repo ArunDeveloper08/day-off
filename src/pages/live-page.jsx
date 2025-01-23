@@ -24,7 +24,15 @@ import { Button } from "@/components/ui/button";
 import UIButton from "../components/UIButton";
 import { IoPlay, IoPause } from "react-icons/io5";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export const LivePage = () => {
   const { theme, setTheme } = useTheme();
@@ -47,12 +55,11 @@ export const LivePage = () => {
   const [socketData, setSocketData] = useState([]);
   const [socketMastertData, setSocketMasterData] = useState([]);
   // const [instrumentData, setInstrumentData] = useState("");
-  const [isUserScroll, setIsUserScroll] = useState(false);
+  //const [isUserScroll, setIsUserScroll] = useState(false);
   const [masterId, setMasterId] = useState("");
   const [trends3, setTrends3] = useState([]);
   const [noActionLine, setNoActionLine] = useState([]);
   const [horizontalLine, setHorizontalLine] = useState([]);
-  
 
   const [values, setValues] = useState({
     s1: null,
@@ -61,7 +68,7 @@ export const LivePage = () => {
     r1: null,
     r2: null,
     r3: null,
-    interval:"ONE_MINUTE"
+    interval: "ONE_MINUTE",
   });
 
   const [showRow, setShowRow] = useState({
@@ -90,7 +97,7 @@ export const LivePage = () => {
     alertLine: false,
     rsi: false,
     atr: false,
-    dEntryLine: true
+    dEntryLine: true,
   });
 
   const [apiData, setApiData] = useState([]);
@@ -120,22 +127,22 @@ export const LivePage = () => {
     }
   };
 
-  
   const getChartData = async () => {
     const maxRetries = 5; // Maximum number of retries
     const delay = 3000; // Delay in milliseconds between retries
     let attempts = 0;
-  
     const fetchData = async () => {
       try {
-        const res = await axios.get(`${BASE_URL_OVERALL}/chart?id=${id}&date=${prevDate}`);
+        const res = await axios.get(
+          `${BASE_URL_OVERALL}/chart?id=${id}&date=${prevDate}`
+        );
         setIntractiveData(res.data);
         setApiData(res.data.data);
         setMasterId(res.data.masterID);
         setLiveTrendValue(res.data.liveTrendValue);
         setTrends3(res.data.trendLines);
-        console.log("API call succeeded");
-        return true; // Success
+       //console.log("API call succeeded");
+        return true;  //Success
       } catch (err) {
         attempts += 1;
         console.log(`API failed on attempt ${attempts}. Retrying...`);
@@ -148,10 +155,8 @@ export const LivePage = () => {
         }
       }
     };
-  
     return await fetchData();
   };
-  
 
   useEffect(() => {
     getTradeConfig();
@@ -161,13 +166,12 @@ export const LivePage = () => {
   }, []);
 
   useEffect(() => {
-   
     getChartData();
     const interval = setInterval(getChartData, 60 * 1000);
-  //  intervalRef.current = interval;
+    //  intervalRef.current = interval;
 
     return () => clearInterval(interval);
-  }, [ prevDate]);
+  }, [prevDate]);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -176,7 +180,10 @@ export const LivePage = () => {
       } else {
         getChartData();
         getTradeConfig();
-        intervalRef.current = setInterval({getChartData , getTradeConfig}, 120 * 1000);
+        intervalRef.current = setInterval(
+          { getChartData, getTradeConfig },
+          120 * 1000
+        );
       }
     };
 
@@ -187,8 +194,8 @@ export const LivePage = () => {
     };
   }, [id, prevDate]);
 
-  // const lastUpdateTimeRef = useRef(Date.now());
-  // const currentTime = Date.now();
+    // const lastUpdateTimeRef = useRef(Date.now());
+   // const currentTime = Date.now();  
 
   useEffect(() => {
     if (!isConnected || !data?.data?.instrument_token) return;
@@ -197,8 +204,6 @@ export const LivePage = () => {
 
       if (socketdata.token === data?.data.instrument_token) {
         setSocketData(socketdata);
-       
-      
 
         setApiData((prevApiData) => {
           if (!prevApiData || prevApiData.length === 0) return prevApiData;
@@ -215,50 +220,25 @@ export const LivePage = () => {
           return updatedData;
         });
       }
-     
+
       if (socketdata.token == data?.data.masterChart_InstrumentToken) {
         setSocketMasterData(socketdata);
-    
-     // if (currentTime - lastUpdateTimeRef.current > 10 * 1000) {
-       //lastUpdateTimeRef.current = currentTime;
-    
-     // }
-    }
+
+        // if (currentTime - lastUpdateTimeRef.current > 10 * 1000) {
+        //lastUpdateTimeRef.current = currentTime;
+        // }
+          
+      }
     });
 
     return () => {
       socket.off("getLiveData");
     };
   }, [socket, data, isConnected]);
+
   
-  // console.log(socketData)
-  //console.log(socketData)
-  // useEffect(() => {
-  //   if (!isConnected || !data?.data?.instrument_token) return;
-  //   socket?.on("getLiveData", (socketdata) => {
-  //     // Check if token is a string before applying replace
-  //     if (typeof socketdata?.token === "string") {
-  //       socketdata.token = Number(socketdata?.token?.replace(/"/g, ""));
-  //     } else {
-  //       // If it's not a string, attempt to convert it to a number directly
-  //       socketdata.token = Number(socketdata?.token);
-  //     }
-
-  //     // Proceed if the token matches the instrument token
-  //     if (socketdata.token === data?.data.instrument_token) {
-  //       setSocketData(socketdata);
-  //     }
-  //   });
-
-  //   return () => {
-  //     socket?.off("getLiveData"); // Clean up the event listener when the component unmounts
-  //   };
-  // }, [socket, data, isConnected]);
-
-  // console.log("data?.data?.instrument_token",data?.data.masterChart_InstrumentToken)
 
   const handleSubmit = async () => {
-    // getChartData();
     try {
       const res = await axios.put(
         `${BASE_URL_OVERALL}/config/edit?date=${prevDate}`,
@@ -276,39 +256,41 @@ export const LivePage = () => {
     }
   };
 
-  const handleCreateTrendLines = useCallback(
-    async (trendline, textList1, retracements3, channels1, alert) => {
-      // if (trendline?.some(line => line?.endTime === undefined && line?.startTime)) {
-      //   return alert(
-      //     "Please ensure the TrendLine remains inside the chart. The TrendLine's endpoint should not go outside the chart"
-      //   );
-      // }
-      const textLabel = JSON.stringify(textList1);
 
-      // for (let i = 0; i <= 7; i++) {
-      //   if (trendline[i]?.endTime === undefined && trendline[i]?.startTime) {
-      //     return alert(
-      //       "Please ensure the TrendLine remains inside the chart. The TrendLine's endpoint should not go outside the chart"
-      //     );
-      //   }
-      // }
-      try {
-        await axios.put(`${BASE_URL_OVERALL}/config/edit`, {
-          id,
-          trendLines: trendline,
-          textLabel: textLabel,
-          retracements: retracements3,
-          channels: channels1,
-          alertLine: alert,
-        });
-        getChartData(); // Ensure this is defined and working correctly
-        alert("Successfully updated trend lines");
-      } catch (err) {
-        console.error(err);
-      }
-    },
-    [] // Add dependencies if necessary
-  );
+
+  // const handleCreateTrendLines = useCallback(
+  //   async (trendline, textList1, retracements3, channels1, alert) => {
+  //     // if (trendline?.some(line => line?.endTime === undefined && line?.startTime)) {
+  //     //   return alert(
+  //     //     "Please ensure the TrendLine remains inside the chart. The TrendLine's endpoint should not go outside the chart"
+  //     //   );
+  //     // }
+  //     const textLabel = JSON.stringify(textList1);
+
+  //     // for (let i = 0; i <= 7; i++) {
+  //     //   if (trendline[i]?.endTime === undefined && trendline[i]?.startTime) {
+  //     //     return alert(
+  //     //       "Please ensure the TrendLine remains inside the chart. The TrendLine's endpoint should not go outside the chart"
+  //     //     );
+  //     //   }
+  //     // }
+  //     try {
+  //       await axios.put(`${BASE_URL_OVERALL}/config/edit`, {
+  //         id,
+  //         trendLines: trendline,
+  //         textLabel: textLabel,
+  //         retracements: retracements3,
+  //         channels: channels1,
+  //         alertLine: alert,
+  //       });
+  //       getChartData(); // Ensure this is defined and working correctly
+  //       alert("Successfully updated trend lines");
+  //     } catch (err) {
+  //       console.error(err);
+  //     }
+  //   },
+  //   [] // Add dependencies if necessary
+  // );
 
   // const handleChange = (e) => {
   //   const { name, value } = e.target;
@@ -322,6 +304,7 @@ export const LivePage = () => {
   //   setIsUserScroll((prevState) => !prevState);
   // };
 
+
   const getHighLowLines = async () => {
     try {
       await axios.get(`${BASE_URL_OVERALL}/chart/makeHighLow?id=${id}`);
@@ -331,16 +314,16 @@ export const LivePage = () => {
       alert("Some error Occured");
     }
   };
-  //  console.log("socketdata",socketData)
-  
+
+  //console.log("socketdata",socketData)
+
   const handleSelect = (key, value) => {
     setValues((prev) => ({ ...prev, [key]: value }));
   };
-  
- 
 
-  return (  
+  return (
     <div>
+
       {/* {data.error ? ( */}
       {/* // "Some Error Occcured" */}
       {/* // ) : ( */}
@@ -379,61 +362,61 @@ export const LivePage = () => {
                 className="w-full md:w-[150px] border-black border-[1px] rounded-md"
                 onChange={(e) => setPrevDate(e.target.value)}
               />
-                 <div className="px-1">
-              {/* <Label>Interval</Label> */}
-              <Select
-                value={values.interval}
-                name="terminal"
-                onValueChange={(value) => handleSelect("interval", value)}
-              >
-                <SelectTrigger className="w-full mt-1 border-zinc-500">
-                  <SelectValue>{values.interval}</SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Interval</SelectLabel>
-                    {[
-                      {
-                        label: "1 minute",
-                        value: "ONE_MINUTE",
-                      },
-                      {
-                        label: "3 minute",
-                        value: "THREE_MINUTE",
-                      },
-                      {
-                        label: "5 minute",
-                        value: "FIVE_MINUTE",
-                      },
+              <div className="px-1">
+                {/* <Label>Interval</Label> */}
+                <Select
+                  value={values.interval}
+                  name="terminal"
+                  onValueChange={(value) => handleSelect("interval", value)}
+                >
+                  <SelectTrigger className="w-full mt-1 border-zinc-500">
+                    <SelectValue>{values.interval}</SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Interval</SelectLabel>
+                      {[
+                        {
+                          label: "1 minute",
+                          value: "ONE_MINUTE",
+                        },
+                        {
+                          label: "3 minute",
+                          value: "THREE_MINUTE",
+                        },
+                        {
+                          label: "5 minute",
+                          value: "FIVE_MINUTE",
+                        },
 
-                      {
-                        label: "15 minute",
-                        value: "FIFTEEN_MINUTE",
-                      },
-                      {
-                        label: "30 minute",
-                        value: "THIRTY_MINUTE",
-                      },
-                      {
-                        label: "1 hour",
-                        value: "ONE_HOUR",
-                      },
-                      {
-                        label: "1 day",
-                        value: "ONE_DAY",
-                      },
-                    ]?.map((suggestion) => (
-                      <SelectItem
-                        key={suggestion.value}
-                        value={suggestion.value}
-                      >
-                        {suggestion.label}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
+                        {
+                          label: "15 minute",
+                          value: "FIFTEEN_MINUTE",
+                        },
+                        {
+                          label: "30 minute",
+                          value: "THIRTY_MINUTE",
+                        },
+                        {
+                          label: "1 hour",
+                          value: "ONE_HOUR",
+                        },
+                        {
+                          label: "1 day",
+                          value: "ONE_DAY",
+                        },
+                      ]?.map((suggestion) => (
+                        <SelectItem
+                          key={suggestion.value}
+                          value={suggestion.value}
+                        >
+                          {suggestion.label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
               <Button onClick={handleSubmit} size="xs" className="p-2">
                 Submit
               </Button>
@@ -442,21 +425,18 @@ export const LivePage = () => {
             <button className="text-sm md:text-lg text-center font-semibold text-green-600">
               LTP : {socketData?.last_traded_price} &nbsp; &nbsp; Master LTP :
               {socketMastertData?.last_traded_price} &nbsp; &nbsp; RSI Live :{" "}
-              {data.data.rsiValue} &nbsp; &nbsp;
-              ATR Value : {data.data.atrValue}
+              {data.data.rsiValue} &nbsp; &nbsp; ATR Value : {" "}
+              {data.data.atrValue}
             </button>
-
-   
           </div>
         </div>
 
         <div className="flex">
-
           <div className="w-full h-auto flex justify-center">
             {apiData?.length > 0 && (
               <CandleChart
-              //  getChartData={getChartData}
-               // handleCreateTrendLines={handleCreateTrendLines}
+                //  getChartData={getChartData}
+                // handleCreateTrendLines={handleCreateTrendLines}
                 data={apiData}
                 intractiveData={intractiveData}
                 ratio={1}

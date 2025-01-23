@@ -1450,6 +1450,7 @@ const Dashboard = () => {
                                   longTimeInterval: item.longTimeInterval,
                                   lastDayCloseMode: item.lastDayCloseMode,
                                   strikeDeviation: item.strikeDeviation,
+                                  rsiDifference: item.rsiDifference,
                                 },
                                 getAllTrades,
                                 trades,

@@ -215,6 +215,7 @@ export const EditTrade = () => {
         shortTimeInterval: values.shortTimeInterval,
         lastDayCloseMode: values.lastDayCloseMode,
         strikeDeviation: values.strikeDeviation,
+        rsiDifference: values.rsiDifference,
         // targetProfit: values.targetProfit,
       });
       alert("Update Successfully");
@@ -343,36 +344,32 @@ export const EditTrade = () => {
                   </Select>
                 </div>
                 <div className="px-1">
-                      <Label>Category</Label>
-                      <Select
-                        value={values?.category}
-                        name="category"
-                        onValueChange={(value) =>
-                          handleSelect("category", value)
-                        }
-                      >
-                        <SelectTrigger className="w-full mt-1 border-zinc-500">
-                          <SelectValue>{values?.category}</SelectValue>
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>category</SelectLabel>
-                            <SelectItem value="Small">Small</SelectItem>
-                            <SelectItem value="Medium">Medium</SelectItem>
-                            <SelectItem value="Large">Large</SelectItem>
-                            <SelectItem value="Index">Index</SelectItem>
-                            <SelectItem value="PE">PE</SelectItem>
-                            <SelectItem value="CE">CE</SelectItem>
-                            <SelectItem value="Nifty50">Nifty 50</SelectItem>
-                            <SelectItem value="SDYadav">S.D. Yadav</SelectItem>
-                            <SelectItem value="todayTrade">
-                              Today Trade
-                            </SelectItem>
-                            <SelectItem value="daily">Daily</SelectItem>
-                            <SelectItem value="hourly">Hourly</SelectItem>
-                            <SelectItem value="15Min">15 Min</SelectItem>
-                            {/* <SelectItem value="IT">IT</SelectItem> */}
-                            {/* <SelectItem value="Energy">Energy</SelectItem>
+                  <Label>Category</Label>
+                  <Select
+                    value={values?.category}
+                    name="category"
+                    onValueChange={(value) => handleSelect("category", value)}
+                  >
+                    <SelectTrigger className="w-full mt-1 border-zinc-500">
+                      <SelectValue>{values?.category}</SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>category</SelectLabel>
+                        <SelectItem value="Small">Small</SelectItem>
+                        <SelectItem value="Medium">Medium</SelectItem>
+                        <SelectItem value="Large">Large</SelectItem>
+                        <SelectItem value="Index">Index</SelectItem>
+                        <SelectItem value="PE">PE</SelectItem>
+                        <SelectItem value="CE">CE</SelectItem>
+                        <SelectItem value="Nifty50">Nifty 50</SelectItem>
+                        <SelectItem value="SDYadav">S.D. Yadav</SelectItem>
+                        <SelectItem value="todayTrade">Today Trade</SelectItem>
+                        <SelectItem value="daily">Daily</SelectItem>
+                        <SelectItem value="hourly">Hourly</SelectItem>
+                        <SelectItem value="15Min">15 Min</SelectItem>
+                        {/* <SelectItem value="IT">IT</SelectItem> */}
+                        {/* <SelectItem value="Energy">Energy</SelectItem>
                           <SelectItem value="Auto">Auto</SelectItem>
                           <SelectItem value="RangeBound">RangeBound</SelectItem>
                           <SelectItem value="Chemical">Chemical</SelectItem>
@@ -380,11 +377,11 @@ export const EditTrade = () => {
                           <SelectItem value="RealEstate">
                             Real Estate
                           </SelectItem> */}
-                            <SelectItem value="Others">Others</SelectItem>
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </div>
+                        <SelectItem value="Others">Others</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
                 {values?.isHedging == 1 && (
                   <>
                     <div className="px-1">
@@ -432,16 +429,16 @@ export const EditTrade = () => {
                         type="number"
                       />
                     </div>
-                           <div className="px-1">
-                                      <Label>Strike Deviation</Label>
-                                      <Input
-                                        name="strikeDeviation"
-                                        onChange={handleChange}
-                                        value={values.strikeDeviation}
-                                        className="mt-1"
-                                        type="number"
-                                      />
-                                    </div>
+                    <div className="px-1">
+                      <Label>Strike Deviation</Label>
+                      <Input
+                        name="strikeDeviation"
+                        onChange={handleChange}
+                        value={values.strikeDeviation}
+                        className="mt-1"
+                        type="number"
+                      />
+                    </div>
                     <div className="px-1">
                       <Label> Long Time Interval</Label>
                       <Select
@@ -762,7 +759,7 @@ export const EditTrade = () => {
                         type="text"
                       />
                     </div>
-                 
+
                     <div className="px-1">
                       <Label>Entry Time Delay</Label>
                       <Select
@@ -1162,7 +1159,7 @@ export const EditTrade = () => {
                               min={0}
                             />
                           </div>
-                       
+
                           <div className="px-1">
                             <Label>D_Entry1 MF(%)</Label>
                             <Input
@@ -1183,6 +1180,16 @@ export const EditTrade = () => {
                               className="mt-1"
                               type="number"
                               min={0}
+                            />
+                          </div>
+                          <div className="px-1">
+                            <Label>RSI Difference</Label>
+                            <Input
+                              name="rsiDifference"
+                              onChange={handleChange}
+                              value={values.rsiDifference}
+                              className="mt-1"
+                              type="text"
                             />
                           </div>
                           {/* <div className="px-1">
@@ -1228,67 +1235,66 @@ export const EditTrade = () => {
                               min={0}
                             />
                           </div>
-                         
                         </>
                       )}
-                       <div className="px-1">
-                            <Label>Interval</Label>
-                            <Select
-                              // disabled={loading}
-                              value={values.interval}
-                              name="terminal"
-                              onValueChange={(value) =>
-                                handleSelect("interval", value)
-                              }
-                            >
-                              <SelectTrigger className="w-full mt-1 border-zinc-500">
-                                <SelectValue>{values.interval}</SelectValue>
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectGroup>
-                                  <SelectLabel>Interval</SelectLabel>
-                                  {[
-                                    {
-                                      label: "1 minute",
-                                      value: "ONE_MINUTE",
-                                    },
-                                    {
-                                      label: "3 minute",
-                                      value: "THREE_MINUTE",
-                                    },
-                                    {
-                                      label: "5 minute",
-                                      value: "FIVE_MINUTE",
-                                    },
+                    <div className="px-1">
+                      <Label>Interval</Label>
+                      <Select
+                        // disabled={loading}
+                        value={values.interval}
+                        name="terminal"
+                        onValueChange={(value) =>
+                          handleSelect("interval", value)
+                        }
+                      >
+                        <SelectTrigger className="w-full mt-1 border-zinc-500">
+                          <SelectValue>{values.interval}</SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Interval</SelectLabel>
+                            {[
+                              {
+                                label: "1 minute",
+                                value: "ONE_MINUTE",
+                              },
+                              {
+                                label: "3 minute",
+                                value: "THREE_MINUTE",
+                              },
+                              {
+                                label: "5 minute",
+                                value: "FIVE_MINUTE",
+                              },
 
-                                    {
-                                      label: "15 minute",
-                                      value: "FIFTEEN_MINUTE",
-                                    },
-                                    {
-                                      label: "30 minute",
-                                      value: "THIRTY_MINUTE",
-                                    },
-                                    {
-                                      label: "1 hour",
-                                      value: "ONE_HOUR",
-                                    },
-                                    {
-                                      label: "1 day",
-                                      value: "ONE_DAY",
-                                    },
-                                  ]?.map((suggestion) => (
-                                    <SelectItem
-                                      key={suggestion.value}
-                                      value={suggestion.value}
-                                    >
-                                      {suggestion.label}
-                                    </SelectItem>
-                                  ))}
-                                </SelectGroup>
-                              </SelectContent>
-                            </Select>
-                          </div>
+                              {
+                                label: "15 minute",
+                                value: "FIFTEEN_MINUTE",
+                              },
+                              {
+                                label: "30 minute",
+                                value: "THIRTY_MINUTE",
+                              },
+                              {
+                                label: "1 hour",
+                                value: "ONE_HOUR",
+                              },
+                              {
+                                label: "1 day",
+                                value: "ONE_DAY",
+                              },
+                            ]?.map((suggestion) => (
+                              <SelectItem
+                                key={suggestion.value}
+                                value={suggestion.value}
+                              >
+                                {suggestion.label}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
                     {/* <div className="px-1">
                       <Label>Candle Type</Label>
                       <Select
