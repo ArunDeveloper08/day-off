@@ -9,6 +9,8 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+
+  
   // server: {
   //   host: true, // Enables access via local IP
   //   open: false, // Prevents automatic opening of the browser
@@ -22,6 +24,9 @@ export default defineConfig({
 
   
 });
+
+
+
 
 
 

@@ -109,6 +109,7 @@ export const EditTrade = () => {
         !values.atrMf ||
         !values.dExitMf ||
         !values.targetLevel ||
+        !values.targetMf ||
         !values.entryCandle)
     ) {
       return alert("Please fill in all the required inputs for index 2.");
@@ -215,7 +216,8 @@ export const EditTrade = () => {
         shortTimeInterval: values.shortTimeInterval,
         lastDayCloseMode: values.lastDayCloseMode,
         strikeDeviation: values.strikeDeviation,
-        rsiDifference: values.rsiDifference,
+        targetConstant: values.targetConstant,
+        // rsiDifference: values.rsiDifference,
         // targetProfit: values.targetProfit,
       });
       alert("Update Successfully");
@@ -1182,7 +1184,7 @@ export const EditTrade = () => {
                               min={0}
                             />
                           </div>
-                          <div className="px-1">
+                          {/* <div className="px-1">
                             <Label>RSI Difference</Label>
                             <Input
                               name="rsiDifference"
@@ -1191,7 +1193,7 @@ export const EditTrade = () => {
                               className="mt-1"
                               type="text"
                             />
-                          </div>
+                          </div> */}
                           {/* <div className="px-1">
                           <Label>Target Level(%)</Label>
                           <Input
@@ -1225,14 +1227,25 @@ export const EditTrade = () => {
                             />
                           </div>
                           <div className="px-1">
-                            <Label>D_Exit MF (%)</Label>
+                            <Label>D_Exit Constant</Label>
                             <Input
                               name="dExitMf"
                               onChange={handleChange}
                               value={values.dExitMf}
                               className="mt-1"
-                              type="number"
                               min={0}
+                              type="number"
+                            />
+                          </div>
+                          <div className="px-1">
+                            <Label>Target Constant</Label>
+                            <Input
+                              name="targetMf"
+                              onChange={handleChange}
+                              value={values.targetMf}
+                              className="mt-1"
+                              min={0}
+                              type="number"
                             />
                           </div>
                         </>

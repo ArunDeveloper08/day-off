@@ -1101,76 +1101,11 @@ const CandleChart = ({
     return (
       <div className="flex flex-col">
         {window.location.pathname == "/future/back" ? (
-          <>
-            {/* <div className="flex flex-col gap-2 md:flex-row md:justify-around mt-2">
-                    <button
-                      className={`px-2 py-1 rounded-sm w-full md:w-fit mx-auto ${
-                        activeLineType === "entryLine"
-                          ? "bg-green-600 text-white"
-                          : "bg-gray-600 text-black"
-                      }`}
-                      onClick={handleActivateEntryLine}
-                    >
-                      Activate Entry Line
-                    </button>
-                    <button
-                      className={`px-2 py-1 rounded-sm w-full md:w-fit mx-auto ${
-                        activeLineType === "alertLine"
-                          ? "bg-green-600 text-white"
-                          : "bg-gray-600 text-black"
-                      }`}
-                      onClick={handleActivateAlertLine}
-                    >
-                      Activate Analiysis Line
-                    </button>
-                  </div> */}
-          </>
+          <></>
         ) : (
           <>
             <hr />
             <div className="flex flex-col gap-4 md:flex-row justify-evenly mt-1">
-              {/* {master?.isMaster && master?.tradeIndex == 4 && (
-                <>
-                  <div className="flex flex-col gap-2 md:flex-row md:justify-around">
-                    <button
-                      className="bg-green-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
-                      onClick={() =>
-                        MannualTrade(master.id, "INITIAL", "BUY_CE")
-                      }
-                    >
-                      INITIAL Buy CE
-                    </button>
-                    <button
-                      className="bg-red-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
-                      onClick={() => MannualTrade(master.id, "EXIT", "SELL_CE")}
-                    >
-                      EXIT Sell CE
-                    </button>
-                  </div>
-                </>
-              )}
-
-              {master?.isMaster && master?.tradeIndex == 4 && (
-                <>
-                  <div className="flex flex-col gap-2 md:flex-row md:justify-around">
-                    <button
-                      className="bg-green-600 px-3 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
-                      onClick={() =>
-                        MannualTrade(master.id, "INITIAL", "BUY_PE")
-                      }
-                    >
-                      INITIAL BUY PE
-                    </button>
-                    <button
-                      className="bg-red-600 px-3 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
-                      onClick={() => MannualTrade(master.id, "EXIT", "SELL_PE")}
-                    >
-                      EXIT SELL PE
-                    </button>
-                  </div>
-                </>
-              )} */}
-
               {master?.isMaster ? (
                 <div className="flex flex-col gap-2 md:flex-row md:justify-around">
                   {master?.tradeIndex == 4 ? (
@@ -1283,48 +1218,6 @@ const CandleChart = ({
               ) : (
                 <></>
               )}
-
-              {/* {master?.isMaster && master?.tradeIndex == 4 && (
-                <>
-                  <div className="flex flex-col gap-2 md:flex-row md:justify-around">
-                    <button
-                      className="bg-red-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
-                      onClick={() =>
-                        MannualTrade(master.id, "INITIAL", "SELL_CE")
-                      }
-                    >
-                      INITIAL SELL CE
-                    </button>
-                    <button
-                      className="bg-green-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
-                      onClick={() => MannualTrade(master.id, "EXIT", "BUY_CE")}
-                    >
-                      EXIT BUY CE
-                    </button>
-                  </div>
-                </>
-              )} */}
-
-              {/* {master?.isMaster && master?.tradeIndex == 4 && (
-                <>
-                  <div className="flex flex-col gap-2 md:flex-row md:justify-around">
-                    <button
-                      className="bg-red-600 px-3 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
-                      onClick={() =>
-                        MannualTrade(master.id, "INITIAL", "SELL_PE")
-                      }
-                    >
-                      INITIAL SELL PE
-                    </button>
-                    <button
-                      className="bg-green-600 px-3 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
-                      onClick={() => MannualTrade(master.id, "EXIT", "BUY_PE")}
-                    >
-                      EXIT BUY PE
-                    </button>
-                  </div>
-                </>
-              )} */}
             </div>
           </>
         )}
@@ -1623,60 +1516,6 @@ const CandleChart = ({
                     yAccessor={(d) => Number(d.FUTStopLossForIndex17)}
                   />
 
-                  {/* <LineSeries
-                strokeDasharray="Dash"
-                strokeWidth={2}
-                stroke="green"
-                yAccessor={(d) => Number(d.CETargetLevelValue)}
-              />
-              <LineSeries
-                strokeDasharray="Dash"
-                strokeWidth={2}
-                stroke="red"
-                yAccessor={(d) => Number(d.PETargetLevelValue )}
-              /> */}
-
-                  {/* {showRow.dynamicEntryValue && (
-                    <LineSeries
-                      strokeWidth={4}
-                      stroke="orange"
-                      yAccessor={(d) => d.dynamicEntryValue}
-                    />
-                  )} */}
-
-                  {/* {showRow.underlyingValue && (
-                    <LineSeries
-                      strokeWidth={2}
-                      stroke="black"
-                      yAccessor={(d) => Number(d.underlyingValue) + 2}
-                    />
-                  )} */}
-
-                  {/* {showRow.initialLow && (
-                    <LineSeries
-                      strokeDasharray="Dash"
-                      strokeWidth={4}
-                      stroke="gray"
-                      yAccessor={(d) => Number(d.InitialLow)}
-                    />
-                  )} */}
-                  {/* {showRow.RangeBoundTargetProfit && (
-                    <LineSeries
-                      strokeDasharray="Dash"
-                      strokeWidth={4}
-                      stroke="pink"
-                      yAccessor={(d) => Number(d.RangeBoundTargetProfit)}
-                    />
-                  )} */}
-                  {/* {showRow.dynamicExitValue && (
-                    <LineSeries
-                      strokeWidth={4}
-                      stroke="blue"
-                      yAccessor={(d) =>
-                        d?.exitSupport ? Number(d.exitSupport) : undefined
-                      }
-                    />
-                  )} */}
                   {showRow.Last_Highest_LTP && (
                     <LineSeries
                       strokeDasharray="Dash"
@@ -1689,20 +1528,6 @@ const CandleChart = ({
                       }
                     />
                   )}
-                  {/* {showRow.movingAvg && (
-                    <>
-                      <LineSeries
-                        strokeWidth={2}
-                        stroke="black"
-                        yAccessor={(d) => Number(d.movingAvgMA1)}
-                      />
-                      <LineSeries
-                        strokeWidth={3}
-                        stroke="red"
-                        yAccessor={(d) => Number(d.movingAvgMA2)}
-                      />
-                    </>
-                  )} */}
 
                   {showRow.showAvg && (
                     <>
@@ -1719,44 +1544,7 @@ const CandleChart = ({
                     </>
                   )}
 
-                  {/* {showRow.rangeBoundLine && (
-                    <>
-                      <LineSeries
-                        strokeWidth={3}
-                        stroke="#191970"
-                        yAccessor={(d) => d.R_min}
-                      />
-                      <LineSeries
-                        strokeWidth={3}
-                        stroke="#191970"
-                        yAccessor={(d) => d.R_max}
-                      />
-
-                      <LineSeries
-                        strokeWidth={2}
-                        stroke="#e75480"
-                        yAccessor={(d) => d.R_center}
-                      />
-
-                      <LineSeries
-                        strokeWidth={2}
-                        stroke="green"
-                        yAccessor={(d) => d.OuterR_min}
-                      />
-
-                      <LineSeries
-                        strokeWidth={2}
-                        stroke="red"
-                        yAccessor={(d) => d.OuterR_max}
-                      />
-                    </>
-                  )} */}
-
-                  {/* <LineSeries
-                    strokeWidth={"3"}
-                    stroke="brown"
-                    yAccessor={(d) => d.movingAvgWMA}
-                  /> */}
+            
 
                   {showRow.pivot && (
                     <LineSeries
@@ -1766,29 +1554,7 @@ const CandleChart = ({
                     />
                   )}
 
-                  {/* {showRow.suppRes && (
-          <>
-            <LineSeries
-              strokeWidth={2}
-              stroke="green"
-              yAccessor={(d) => d.s1}
-            />
-            <LineSeries
-              strokeWidth={2}
-              stroke="green"
-              yAccessor={(d) => d.s2}
-            />
-
-            <LineSeries
-              strokeWidth={4}
-              stroke="green"
-              yAccessor={(d) => d.s3}
-            />
-            <LineSeries strokeWidth={2} stroke="red" yAccessor={(d) => d.r1} />
-            <LineSeries strokeWidth={3} stroke="red" yAccessor={(d) => d.r2} />
-            <LineSeries strokeWidth={4} stroke="red" yAccessor={(d) => d.r3} />
-          </>
-        )} */}
+                
 
                   {showRow.monthlyHigh && (
                     <>

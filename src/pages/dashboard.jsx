@@ -1235,13 +1235,7 @@ const Dashboard = () => {
                                   <option value="todayTrade">
                                     Today Trade
                                   </option>
-                                  {/* <option value="IT">IT</option>
-                                                     <option value="Energy">Energy</option>
-                                                     <option value="Auto">Auto</option>
-                                                     <option value="RangeBound">RangeBound</option>
-                                                     <option value="Chemical">Chemical</option>
-                                                     <option value="Defence">Defence</option>
-                                                     <option value="RealEstate">Real Estate</option> */}
+                             
                                   <option value="Others">Others</option>
                                 </select>
                               ) : (
@@ -1451,6 +1445,7 @@ const Dashboard = () => {
                                   lastDayCloseMode: item.lastDayCloseMode,
                                   strikeDeviation: item.strikeDeviation,
                                   rsiDifference: item.rsiDifference,
+                                  targetConstant : item.targetConstant
                                 },
                                 getAllTrades,
                                 trades,

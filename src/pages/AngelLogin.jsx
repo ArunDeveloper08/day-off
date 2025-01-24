@@ -15,49 +15,56 @@ const AngelLogin = () => {
       const search = new URLSearchParams(url);
       // console.log(search.getAll("auth_token"));
       let arr = [];
-      search.forEach((value) => arr.push(value));
-      const { data } = await axios.post(
-        "https://apiconnect.angelbroking.com/rest/auth/angelbroking/jwt/v1/generateTokens",
-        {
-          refreshToken: arr[2],
-        },
-        {
-          headers: {
-            "X-PrivateKey": "RuarMoF2",
-            Accept: "application/json, application/json",
-            "X-SourceID": "WEB",
-            "X-ClientLocalIP": "192.168.31.149",
-            "X-ClientPublicIP": "152.58.117.211",
-            "X-MACAddress": "74-56-3C-65-97-50",
-            "X-UserType": "USER",
-            Authorization: `Bearer ${arr[0]}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      search?.forEach((value) => arr.push(value));
+      //console.log("hello",arr)
+      // const { data } = await axios.post(
+      //   "https://apiconnect.angelbroking.com/rest/auth/angelbroking/jwt/v1/generateTokens",
+      //   {
+      //     refreshToken: arr[2],
+      //   },
+      //   {
+      //     headers: {
+      //       "X-PrivateKey": "RuarMoF2",
+      //       Accept: "application/json, application/json",
+      //       "X-SourceID": "WEB",
+      //       "X-ClientLocalIP": "192.168.31.149",
+      //       "X-ClientPublicIP": "152.58.117.211",
+      //       "X-MACAddress": "74-56-3C-65-97-50",
+      //       "X-UserType": "USER",
+      //       Authorization: `Bearer ${arr[0]}`,
+      //       "Content-Type": "application/json",
+      //     },
+      //   }
+      // );
       const { data: response } = await axios.post(`${BASE_URL_OVERALL}/auth/updateAuth `, {
         loginToken: {
           auth_token: arr[0],
           feed_token: arr[1],
           refresh_token: arr[2],
         },
-        seesionToken: data.data,
+        sessionToken :{
+          auth_token: arr[0],
+          feed_token: arr[1],
+          refresh_token: arr[2],
+        },
+        //seesionToken: data.data,
         api_key: "RuarMoF2",
       });
-      console.log({ response });
-      console.log(
-        JSON.stringify({
-          loginToken: {
-            auth_token: arr[0],
-            feed_token: arr[1],
-            refresh_token: arr[2],
-          },
-          seesionToken: data.data,
-        })
-      );
+           
+      //console.log({ response });
+      // console.log(
+      //   JSON.stringify({
+      //     loginToken: {
+      //       auth_token: arr[0],
+      //       feed_token: arr[1],
+      //       refresh_token: arr[2],
+      //     },
+      //     seesionToken: data.data,
+      //   })
+      // );
       alert("Logged in Successfully");
     } catch (error) {
-      console.log("Retry Login, Sothiing Went wrong!!!");
+      console.log("Retry Login, something Went wrong!!");
     }
   };
 
