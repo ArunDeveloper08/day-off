@@ -30,6 +30,7 @@ import CustomTab from "./pages/CustomTab";
 import secureLocalStorage from "react-secure-storage";
 import ModalProvider from "./providers/modal-provider";
 import Scanner from "./pages/Scanner";
+import ScannerConfig from "./pages/ScannerConfig";
 // import IdentifierLooserGainer from "./pages/IdentifierLooserGainer";
 // import PcrChart from "./pages/PcrChart";
 
@@ -114,6 +115,14 @@ export default function Home() {
             element={
              // <ProtectedRoute>
                 <Scanner />
+             // </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/future/scannerconfig"
+            element={
+             // <ProtectedRoute>
+                <ScannerConfig />
              // </ProtectedRoute>
             }
           />

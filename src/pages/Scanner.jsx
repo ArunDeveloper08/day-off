@@ -120,16 +120,14 @@ const Scanner = () => {
                   <th>1 Hour ATR</th>
                   <th>15 Min ATR</th>
                   <th>5 Min ATR</th>
-                  <th>CE Percent</th>
-                  <th>PE Percent</th>
-                  <th>COI PCR</th>
-                  <th>OI PCR</th>
-                  <th>Long Interval</th>
-                  <th>Short Interval</th>
-                  <th>Long Int From Date</th>
-                  <th>Short Int From Date</th>
-                  <th>Swing Low</th>
-                  <th>Swing High</th>
+                 <th>Day Candle above R2</th>
+                 <th>Hour Candle above R2</th>
+                 <th>15Min Candle above R2</th>
+                 <th>Day Candle above S2</th>
+                 <th>Hour Candle above S2</th>
+                 <th>15Min Candle above S2</th>
+                 <th>Highest ATR on 1Hr</th>
+                 <th>Lowest ATR on 1Hr</th>
                   <th>Terminal</th>
                 </tr>
               </thead>
@@ -156,8 +154,6 @@ const Scanner = () => {
                     <td>{item.ShortInterval}</td>
                     <td>{item.LongIntervalFromDate}</td>
                     <td>{item.ShortIntervalFromDate}</td>
-                    <td>{item.SwingLow}</td>
-                    <td>{item.SwingHigh}</td>
                     <td
                       className={`${
                         item.terminal === "ON" ? "text-red-500" : "text-green-500"

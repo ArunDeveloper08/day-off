@@ -575,6 +575,12 @@ const Dashboard = () => {
             Scanner
           </Button>
           <Button
+            onClick={() => window.open("/future/scannerconfig", "_blank")}
+            className="px-5 py-2 rounded-md border-2"
+          >
+            Scanner Config
+          </Button>
+          <Button
             onClick={() => {
               handleResetDataOnServer();
             }}
@@ -905,8 +911,7 @@ const Dashboard = () => {
                   //   activeFilters.includes("MyBearishMaster")) &&
                   !narration && (
                     <>
-                      <th>Looser/Gainer</th>
-                      {/* <th>Date Loss/Gain</th> */}
+                      <th>Looser/Gainer</th>                   
                       <th>TrendLine Update Date</th>
                     </>
                   )
@@ -926,7 +931,6 @@ const Dashboard = () => {
                     <th>RSI Value</th>
                     <th>Trade Limit</th>
                     {/* <th>Entry Line Below</th> */}
-
                     {/* <th>Entry Line Above</th> */}
                     <th>Category</th>
                     <th>ON/OFF</th>
