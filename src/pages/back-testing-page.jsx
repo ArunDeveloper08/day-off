@@ -75,10 +75,10 @@ export const BackTestingPage = () => {
     RangeBoundTargetProfit: false,
     suppRes: false,
     entryLine: true,
-    dEntryLine:true,
+    dEntryLine: true,
+    dExitLine: true,
     toolTip: true,
     bollingerBand: false,
-  
   });
 
   const [latestValues, setLatestValues] = useState({
@@ -95,7 +95,7 @@ export const BackTestingPage = () => {
         `${BASE_URL_OVERALL}/config/get?id=${id}`
       );
       setData((p) => ({ ...p, data: data.data }));
-      setValues((p)=>({...p , interval :data.data.interval}))
+      setValues((p) => ({ ...p, interval: data.data.interval }));
     } catch (error) {
       setData((p) => ({
         ...p,
@@ -418,7 +418,21 @@ export const BackTestingPage = () => {
                   : "bg-gray-300 "
               }`}
             >
-             D_Entry Line
+              D_Entry Line
+            </button>
+            &nbsp;
+            <button
+              onClick={() =>
+                setShowRow((p) => ({
+                  ...p,
+                  dExitLine: !p.dExitLine,
+                }))
+              }
+              className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
+                showRow.dExitLine ? "bg-blue-500 text-gray-100" : "bg-gray-300 "
+              }`}
+            >
+              D_Exit Line
             </button>
             {/* 
               &nbsp; &nbsp;

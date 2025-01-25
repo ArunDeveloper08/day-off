@@ -146,7 +146,8 @@ const HelpingChart = () => {
     horizontalLine: true,
     ceEntryLine: true,
     peEntryLine: true,
-    dEntryLine:true
+    dEntryLine:true,
+    dExitLine : true
   });
   const [hideConfig, setHideConfig] = useState(true);
 

@@ -1460,15 +1460,20 @@ const CandleChart = ({
                         : undefined
                     }
                   />
-                  <LineSeries
-                    strokeWidth={2}
-                    stroke="red"
-                    yAccessor={(d) =>
-                      d.dynamicExitValue != null
-                        ? Number(d.dynamicExitValue)
-                        : undefined
-                    }
-                  />
+
+                  {showRow?.dExitLine && (
+                    <>
+                      <LineSeries
+                        strokeWidth={2}
+                        stroke="red"
+                        yAccessor={(d) =>
+                          d.dynamicExitValue != null
+                            ? Number(d.dynamicExitValue)
+                            : undefined
+                        }
+                      />
+                    </>
+                  )}
 
                   <LineSeries
                     strokeDasharray="Dash"
@@ -1544,8 +1549,6 @@ const CandleChart = ({
                     </>
                   )}
 
-            
-
                   {showRow.pivot && (
                     <LineSeries
                       strokeWidth={2}
@@ -1553,8 +1556,6 @@ const CandleChart = ({
                       yAccessor={(d) => d.pivot}
                     />
                   )}
-
-                
 
                   {showRow.monthlyHigh && (
                     <>
