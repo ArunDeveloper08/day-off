@@ -99,6 +99,8 @@ export const LivePage = () => {
     atr: false,
     dEntryLine: true,
     dExitLine : true,
+    stopLoss:true,
+    targetLine : true,
   });
 
   const [apiData, setApiData] = useState([]);

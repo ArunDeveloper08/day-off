@@ -1421,15 +1421,20 @@ const CandleChart = ({
                     </>
                   )}
 
-                  <LineSeries
-                    strokeDasharray="Dash"
-                    strokeWidth={2}
-                    stroke="red"
-                    yAccessor={(d) =>
-                      d.stopLoss != null ? Number(d.stopLoss) : undefined
-                    }
-                  />
-                  {master?.tradeIndex == 2 && (
+                  {showRow?.stopLoss && (
+                    <>
+                      <LineSeries
+                        strokeDasharray="Dash"
+                        strokeWidth={2}
+                        stroke="red"
+                        yAccessor={(d) =>
+                          d.stopLoss != null ? Number(d.stopLoss) : undefined
+                        }
+                      />
+                    </>
+                  )}
+
+                  {(master?.tradeIndex == 2 && showRow?.targetLine )&& (
                     <LineSeries
                       strokeWidth={2}
                       stroke="violet"
@@ -1793,7 +1798,7 @@ const CandleChart = ({
                       />
                     </>
                   )}
-
+                 
                   {showRow.daily && (
                     <>
                       <Annotate
@@ -1848,7 +1853,7 @@ const CandleChart = ({
                       />
                     </>
                   )}
-
+                
                   {showRow.MouseCoordinates && (
                     <>
                       <MouseCoordinateX

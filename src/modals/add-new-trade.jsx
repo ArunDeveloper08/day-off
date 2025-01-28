@@ -120,9 +120,13 @@ const initialState = {
   shortTimeInterval: "THIRTY_MINUTE",
   longTimeInterval: "ONE_DAY",
   lastDayCloseMode: "1",
-  strikeDeviation:"",
-  rsiDifference:"",
-  targetConstant:""
+  strikeDeviation: "",
+  rsiDifference: "",
+  targetConstant: "",
+  setUpPrice: "",
+  strikeBase: "",
+   targetMean:"",
+  dExitMean:""
   // Min_Order_Qty:"1"
 };
 
@@ -223,9 +227,13 @@ const alternateInitialState = {
   shortTimeInterval: "THIRTY_MINUTE",
   longTimeInterval: "ONE_DAY",
   lastDayCloseMode: "1",
-  strikeDeviation:"",
-  rsiDifference:"",
-  targetConstant:""
+  strikeDeviation: "",
+  rsiDifference: "",
+  targetConstant: "",
+  setUpPrice: "",
+  strikeBase: "",
+   targetMean:"",
+  dExitMean:""
 };
 // tradeIndex =2
 const gammaBlastInitialState = {
@@ -330,9 +338,13 @@ const gammaBlastInitialState = {
   shortTimeInterval: "THIRTY_MINUTE",
   longTimeInterval: "ONE_DAY",
   lastDayCloseMode: "1",
-  strikeDeviation:"",
-  rsiDifference:"",
-  targetConstant:""
+  strikeDeviation: "",
+  rsiDifference: "",
+  targetConstant: "",
+  setUpPrice: "",
+  strikeBase: "",
+  targetMean:"",
+  dExitMean:""
 };
 // tradeIndex =6
 
@@ -492,14 +504,19 @@ export const AddNewtrade = () => {
     }
 
     if (
-      values.indexValue === 2 &&
+      (values.indexValue == 2 || values?.indexValue == 12) &&
       (!values.dynamicEntryPercentage ||
         !values.priceDecPercent ||
         !values.atrMf ||
         !values.dExitMf ||
         !values.targetMf ||
         !values.targetLevel ||
-        !values.entryCandle)
+        !values.entryCandle ||
+        !values.rsiReference ||
+        !values.intervalReference ||
+        !values.dExitMean ||
+        !values.targetMean 
+      )
     ) {
       return alert("Please fill in all the required inputs for index 2.");
     }
@@ -609,6 +626,12 @@ export const AddNewtrade = () => {
         lastDayCloseMode: values.lastDayCloseMode,
         strikeDeviation: values.strikeDeviation,
         targetConstant: values.targetConstant,
+        setUpPrice: values.setUpPrice,
+        strikeBase: values.strikeBase,
+        rsiReference: values.rsiReference,
+        intervalReference: values.intervalReference,
+        targetMean: values.targetMean,
+        dExitMean: values.dExitMean,
       });
       alert("Add Successfully");
     } catch (error) {
@@ -718,42 +741,114 @@ export const AddNewtrade = () => {
               </Select>
             </div>
             <div className="px-1">
-                  <Label>Category</Label>
-                  <Select
-                    value={values?.category}
-                    name="category"
-                    onValueChange={(value) => handleSelect("category", value)}
-                  >
-                    <SelectTrigger className="w-full mt-1 border-zinc-500">
-                      <SelectValue>{values?.category}</SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>category</SelectLabel>
-                        <SelectItem value="Small">Small</SelectItem>
-                        <SelectItem value="Medium">Medium</SelectItem>
-                        <SelectItem value="Large">Large</SelectItem>
-                        <SelectItem value="Index">Index</SelectItem>
-                        <SelectItem value="PE">PE</SelectItem>
-                        <SelectItem value="CE">CE</SelectItem>
-                        <SelectItem value="Nifty50">Nifty 50</SelectItem>
-                        <SelectItem value="SDYadav">S.D. Yadav</SelectItem>
-                        <SelectItem value="todayTrade">Today Trade</SelectItem>
-                        <SelectItem value="daily">Daily</SelectItem>
-                        <SelectItem value="hourly">Hourly</SelectItem>
-                        <SelectItem value="15Min">15 Min</SelectItem>
-                        {/* <SelectItem value="IT">IT</SelectItem>
+              <Label>Category</Label>
+              <Select
+                value={values?.category}
+                name="category"
+                onValueChange={(value) => handleSelect("category", value)}
+              >
+                <SelectTrigger className="w-full mt-1 border-zinc-500">
+                  <SelectValue>{values?.category}</SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>category</SelectLabel>
+                    <SelectItem value="Small">Small</SelectItem>
+                    <SelectItem value="Medium">Medium</SelectItem>
+                    <SelectItem value="Large">Large</SelectItem>
+                    <SelectItem value="Index">Index</SelectItem>
+                    <SelectItem value="PE">PE</SelectItem>
+                    <SelectItem value="CE">CE</SelectItem>
+                    <SelectItem value="Nifty50">Nifty 50</SelectItem>
+                    <SelectItem value="SDYadav">S.D. Yadav</SelectItem>
+                    <SelectItem value="todayTrade">Today Trade</SelectItem>
+                    <SelectItem value="daily">Daily</SelectItem>
+                    <SelectItem value="hourly">Hourly</SelectItem>
+                    <SelectItem value="15Min">15 Min</SelectItem>
+                    {/* <SelectItem value="IT">IT</SelectItem>
                     <SelectItem value="Energy">Energy</SelectItem>
                     <SelectItem value="Auto">Auto</SelectItem>
                     <SelectItem value="RangeBound">RangeBound</SelectItem>
                     <SelectItem value="Chemical">Chemical</SelectItem>
                     <SelectItem value="Defence">Defence</SelectItem>
                     <SelectItem value="RealEstate">Real Estate</SelectItem> */}
-                        <SelectItem value="Others">Others</SelectItem>
+                    <SelectItem value="Others">Others</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {(values?.indexValue == 2 || values?.indexValue == 12) && (
+              <>
+                <div className="px-1">
+                  <Label>Entry Interval Reference</Label>
+                  <Select
+                    value={values.intervalReference}
+                    name="intervalReference"
+                    onValueChange={(value) =>
+                      handleSelect("intervalReference", value)
+                    }
+                  >
+                    <SelectTrigger className="w-full mt-1 border-zinc-500">
+                      <SelectValue>{values.intervalReference}</SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Interval Reference</SelectLabel>
+                        {[
+                          {
+                            label: "1 minute",
+                            value: "ONE_MINUTE",
+                          },
+                          {
+                            label: "3 minute",
+                            value: "THREE_MINUTE",
+                          },
+                          {
+                            label: "5 minute",
+                            value: "FIVE_MINUTE",
+                          },
+
+                          {
+                            label: "15 minute",
+                            value: "FIFTEEN_MINUTE",
+                          },
+                          {
+                            label: "30 minute",
+                            value: "THIRTY_MINUTE",
+                          },
+                          {
+                            label: "1 hour",
+                            value: "ONE_HOUR",
+                          },
+                          {
+                            label: "1 day",
+                            value: "ONE_DAY",
+                          },
+                        ]?.map((suggestion) => (
+                          <SelectItem
+                            key={suggestion.value}
+                            value={suggestion.value}
+                          >
+                            {suggestion.label}
+                          </SelectItem>
+                        ))}
                       </SelectGroup>
                     </SelectContent>
                   </Select>
                 </div>
+                <div className="px-1">
+                  <Label>Entry RSI Reference</Label>
+                  <Input
+                    name="rsiReference"
+                    onChange={handleChange}
+                    value={values.rsiReference}
+                    className="mt-1"
+                    type="text"
+                  />
+                </div>
+              </>
+            )}
 
             {values?.isHedging == 1 && (
               <>
@@ -850,7 +945,6 @@ export const AddNewtrade = () => {
                 </SelectContent>
               </Select>
             </div>
-
 
             {values?.isMaster == false && (
               <>
@@ -988,9 +1082,7 @@ export const AddNewtrade = () => {
                     type="text"
                   />
                 </div>
-               
 
-               
                 <div className="px-1">
                   <Label>Entry Time Delay</Label>
                   <Select
@@ -1095,6 +1187,26 @@ export const AddNewtrade = () => {
                     name="strikeDeviation"
                     onChange={handleChange}
                     value={values.strikeDeviation}
+                    className="mt-1"
+                    type="number"
+                  />
+                </div>
+                <div className="px-1">
+                  <Label>Strike Base</Label>
+                  <Input
+                    name="strikeBase"
+                    onChange={handleChange}
+                    value={values.strikeBase}
+                    className="mt-1"
+                    type="number"
+                  />
+                </div>
+                <div className="px-1">
+                  <Label>Strike setup Price </Label>
+                  <Input
+                    name="setUpPrice"
+                    onChange={handleChange}
+                    value={values.setUpPrice}
                     className="mt-1"
                     type="number"
                   />
@@ -1550,7 +1662,7 @@ export const AddNewtrade = () => {
                     //   />
                     // </div> */}
                       <div className="px-1">
-                        <Label>D_Entry1 MF (%)</Label>
+                        <Label>D_Entry1 MF </Label>
                         <Input
                           name="dynamicEntryPercentage"
                           onChange={handleChange}
@@ -1561,7 +1673,7 @@ export const AddNewtrade = () => {
                         />
                       </div>
                       <div className="px-1">
-                        <Label>D_Entry2 MF(%)</Label>
+                        <Label>D_Entry2 MF</Label>
                         <Input
                           name="priceDecPercent"
                           onChange={handleChange}
@@ -1592,7 +1704,7 @@ export const AddNewtrade = () => {
                       />
                     </div> */}
                       <div className="px-1">
-                        <Label>StopLoss MF (%)</Label>
+                        <Label>StopLoss MF </Label>
                         <Input
                           name="atrMf"
                           onChange={handleChange}
@@ -1603,13 +1715,13 @@ export const AddNewtrade = () => {
                         />
                       </div>
                       <div className="px-1">
-                        <Label>Target MF (%)</Label>
+                        <Label>Target MF </Label>
                         <Input
                           name="targetLevel"
                           onChange={handleChange}
                           value={values.targetLevel}
                           className="mt-1"
-                         min={0}
+                          min={0}
                           type="number"
                         />
                       </div>
@@ -1630,6 +1742,28 @@ export const AddNewtrade = () => {
                           name="targetMf"
                           onChange={handleChange}
                           value={values.targetMf}
+                          className="mt-1"
+                          min={0}
+                          type="number"
+                        />
+                      </div>
+                      <div className="px-1">
+                        <Label>Target Mean</Label>
+                        <Input
+                          name="targetMean"
+                          onChange={handleChange}
+                          value={values.targetMean}
+                          className="mt-1"
+                          min={0}
+                          type="number"
+                        />
+                      </div>
+                      <div className="px-1">
+                        <Label>D_Exit Mean</Label>
+                        <Input
+                          name="dExitMean"
+                          onChange={handleChange}
+                          value={values.dExitMean}
                           className="mt-1"
                           min={0}
                           type="number"

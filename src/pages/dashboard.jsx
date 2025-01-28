@@ -396,7 +396,8 @@ const Dashboard = () => {
         }
         if (
           activeFilters.includes("index7") &&
-          ((item.tradeIndex == 7 || item.tradeIndex == 17 ) && !item.isMaster )
+          (item.tradeIndex == 7 || item.tradeIndex == 17) &&
+          !item.isMaster
         ) {
           match = true;
         }
@@ -740,7 +741,7 @@ const Dashboard = () => {
                 : "bg-black"
             }`}
           >
-           S.D. Yadav
+            S.D. Yadav
           </Button>
           <Button
             onClick={() => handleButtonClick("todayTrade")}
@@ -911,7 +912,7 @@ const Dashboard = () => {
                   //   activeFilters.includes("MyBearishMaster")) &&
                   !narration && (
                     <>
-                      <th>Looser/Gainer</th>                   
+                      <th>Looser/Gainer</th>
                       <th>TrendLine Update Date</th>
                     </>
                   )
@@ -1239,7 +1240,7 @@ const Dashboard = () => {
                                   <option value="todayTrade">
                                     Today Trade
                                   </option>
-                             
+
                                   <option value="Others">Others</option>
                                 </select>
                               ) : (
@@ -1449,7 +1450,13 @@ const Dashboard = () => {
                                   lastDayCloseMode: item.lastDayCloseMode,
                                   strikeDeviation: item.strikeDeviation,
                                   rsiDifference: item.rsiDifference,
-                                  targetConstant : item.targetConstant
+                                  targetConstant: item.targetConstant,
+                                  setUpPrice: item.setUpPrice,
+                                  strikeBase: item.strikeBase,
+                                  rsiReference: item.rsiReference,
+                                  intervalReference: item.intervalReference,
+                                  targetMean: item.targetMean,
+                                  dExitMean: item.dExitMean,
                                 },
                                 getAllTrades,
                                 trades,

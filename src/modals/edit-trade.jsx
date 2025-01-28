@@ -110,7 +110,12 @@ export const EditTrade = () => {
         !values.dExitMf ||
         !values.targetLevel ||
         !values.targetMf ||
-        !values.entryCandle)
+        !values.entryCandle ||
+        !values.rsiReference ||
+        !values.intervalReference ||
+        !values.dExitMean ||
+        !values.targetMean 
+      )
     ) {
       return alert("Please fill in all the required inputs for index 2.");
     }
@@ -217,6 +222,12 @@ export const EditTrade = () => {
         lastDayCloseMode: values.lastDayCloseMode,
         strikeDeviation: values.strikeDeviation,
         targetConstant: values.targetConstant,
+        strikeBase: values.strikeBase,
+        setUpPrice: values.setUpPrice,
+        rsiReference: values.rsiReference,
+        intervalReference: values.intervalReference,
+        targetMean: values.targetMean,
+        dExitMean: values.dExitMean,
         // rsiDifference: values.rsiDifference,
         // targetProfit: values.targetProfit,
       });
@@ -384,6 +395,78 @@ export const EditTrade = () => {
                     </SelectContent>
                   </Select>
                 </div>
+
+                {(values.indexValue == 2 || values.indexValue == 12) && (
+                  <>
+                    <div className="px-1">
+                      <Label>Entry Interval Reference</Label>
+                      <Select
+                        value={values.intervalReference}
+                        name="intervalReference"
+                        onValueChange={(value) =>
+                          handleSelect("intervalReference", value)
+                        }
+                      >
+                        <SelectTrigger className="w-full mt-1 border-zinc-500">
+                          <SelectValue>{values.intervalReference}</SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Interval Reference</SelectLabel>
+                            {[
+                              {
+                                label: "1 minute",
+                                value: "ONE_MINUTE",
+                              },
+                              {
+                                label: "3 minute",
+                                value: "THREE_MINUTE",
+                              },
+                              {
+                                label: "5 minute",
+                                value: "FIVE_MINUTE",
+                              },
+                              {
+                                label: "15 minute",
+                                value: "FIFTEEN_MINUTE",
+                              },
+                              {
+                                label: "30 minute",
+                                value: "THIRTY_MINUTE",
+                              },
+                              {
+                                label: "1 hour",
+                                value: "ONE_HOUR",
+                              },
+                              {
+                                label: "1 day",
+                                value: "ONE_DAY",
+                              },
+                            ]?.map((suggestion) => (
+                              <SelectItem
+                                key={suggestion.value}
+                                value={suggestion.value}
+                              >
+                                {suggestion.label}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="px-1">
+                      <Label>Entry RSI Reference</Label>
+                      <Input
+                        name="rsiReference"
+                        onChange={handleChange}
+                        value={values.rsiReference}
+                        className="mt-1"
+                        type="text"
+                      />
+                    </div>
+                  </>
+                )}
+
                 {values?.isHedging == 1 && (
                   <>
                     <div className="px-1">
@@ -441,6 +524,27 @@ export const EditTrade = () => {
                         type="number"
                       />
                     </div>
+                    <div className="px-1">
+                      <Label>Strike Base</Label>
+                      <Input
+                        name="strikeBase"
+                        onChange={handleChange}
+                        value={values.strikeBase}
+                        className="mt-1"
+                        type="number"
+                      />
+                    </div>
+                    <div className="px-1">
+                      <Label>Strike setup Price </Label>
+                      <Input
+                        name="setUpPrice"
+                        onChange={handleChange}
+                        value={values.setUpPrice}
+                        className="mt-1"
+                        type="number"
+                      />
+                    </div>
+
                     <div className="px-1">
                       <Label> Long Time Interval</Label>
                       <Select
@@ -1163,7 +1267,7 @@ export const EditTrade = () => {
                           </div>
 
                           <div className="px-1">
-                            <Label>D_Entry1 MF(%)</Label>
+                            <Label>D_Entry1 MF</Label>
                             <Input
                               name="dynamicEntryPercentage"
                               onChange={handleChange}
@@ -1174,7 +1278,7 @@ export const EditTrade = () => {
                             />
                           </div>
                           <div className="px-1">
-                            <Label>D_Entry2 MF(%)</Label>
+                            <Label>D_Entry2 MF</Label>
                             <Input
                               name="priceDecPercent"
                               onChange={handleChange}
@@ -1205,7 +1309,7 @@ export const EditTrade = () => {
                           />
                         </div> */}
                           <div className="px-1">
-                            <Label>StopLoss MF (%)</Label>
+                            <Label>StopLoss MF </Label>
                             <Input
                               name="atrMf"
                               onChange={handleChange}
@@ -1216,7 +1320,7 @@ export const EditTrade = () => {
                             />
                           </div>
                           <div className="px-1">
-                            <Label>Target MF (%)</Label>
+                            <Label>Target MF </Label>
                             <Input
                               name="targetLevel"
                               onChange={handleChange}
@@ -1243,6 +1347,28 @@ export const EditTrade = () => {
                               name="targetMf"
                               onChange={handleChange}
                               value={values.targetMf}
+                              className="mt-1"
+                              min={0}
+                              type="number"
+                            />
+                          </div>
+                          <div className="px-1">
+                            <Label>Target Mean</Label>
+                            <Input
+                              name="targetMean"
+                              onChange={handleChange}
+                              value={values.targetMean}
+                              className="mt-1"
+                              min={0}
+                              type="number"
+                            />
+                          </div>
+                          <div className="px-1">
+                            <Label>D_Exit Mean</Label>
+                            <Input
+                              name="dExitMean"
+                              onChange={handleChange}
+                              value={values.dExitMean}
                               className="mt-1"
                               min={0}
                               type="number"

@@ -79,6 +79,8 @@ export const BackTestingPage = () => {
     dExitLine: true,
     toolTip: true,
     bollingerBand: false,
+    stopLoss:true,
+    targetLine : true
   });
 
   const [latestValues, setLatestValues] = useState({
@@ -454,32 +456,32 @@ export const BackTestingPage = () => {
               onClick={() =>
                 setShowRow((p) => ({
                   ...p,
-                  dynamicEntryValue: !p.dynamicEntryValue,
+                  targetLine: !p.targetLine,
                 }))
               }
               className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-                showRow.dynamicEntryValue
+                showRow.targetLine
                   ? "bg-blue-500 text-gray-100"
                   : "bg-gray-300 "
               }`}
             >
-              D_Entry Value
+             Target Line
             </button>
             &nbsp; &nbsp;
             <button
               onClick={() =>
                 setShowRow((p) => ({
                   ...p,
-                  initialLow: !p.initialLow,
+                  stopLoss: !p.stopLoss,
                 }))
               }
               className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-                showRow.initialLow
+                showRow.stopLoss
                   ? "bg-blue-500 text-gray-100"
                   : "bg-gray-300 "
               }`}
             >
-              Initial Low
+           Stop Loss
             </button>
             &nbsp; &nbsp;
             <button

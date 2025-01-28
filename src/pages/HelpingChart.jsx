@@ -147,7 +147,9 @@ const HelpingChart = () => {
     ceEntryLine: true,
     peEntryLine: true,
     dEntryLine:true,
-    dExitLine : true
+    dExitLine : true,
+    stopLoss:true,
+    targetLine : true,
   });
   const [hideConfig, setHideConfig] = useState(true);
 
@@ -480,6 +482,7 @@ const HelpingChart = () => {
         alert(err.response?.data?.message || "An error occurred");
       });
   };
+
   const handleSubmit2 = () => {
     axios
       .put(`${BASE_URL_OVERALL}/config/editMaster?id=${id}`, {
@@ -498,11 +501,12 @@ const HelpingChart = () => {
         // Update the previous value to the current value
         // prevTrendLineActive.current = values.trendLineActive;
       })
-      .catch((err) => {
+      .catch((err) => {       
         console.log(err);
         alert(err.response?.data?.message || "An error occurred");
       });
   };
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;

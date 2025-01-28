@@ -128,6 +128,7 @@ const BackTestingTablePage = ({
                       <td className="border border-gray-300 text-center text-[13px]">
                         {index + 1}
                       </td>
+
                       {/* <td className="border border-gray-300 text-center text-[13px] p-1">
                     {item.identifier}
                     </td> */}
@@ -172,7 +173,7 @@ const BackTestingTablePage = ({
                           className="bg-red-500 hover:bg-red-700 px-1  border-black border-[1px] rounded-sm text-white font-semibold"
                           onClick={handleDelete}
                         >
-                          Delete
+                          Delete 
                         </button>
                       </td>
                       <td className="p-1 border border-gray-300 text-center text-[13px]">
