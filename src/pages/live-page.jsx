@@ -357,7 +357,13 @@ export const LivePage = () => {
           )}
 
           <div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-6 p-2">
-            <div className="flex items-center gap-4">
+
+            {
+              (data?.data?.tradeIndex == 7 || data?.data?.tradeIndex == 17 ) ?
+              <>
+              </>
+              :
+              <div className="flex items-center gap-4">
               <Input
                 type="date"
                 value={prevDate}
@@ -424,6 +430,8 @@ export const LivePage = () => {
                 Submit
               </Button>
             </div>
+            }
+         
 
             <button className="text-sm md:text-lg text-center font-semibold text-green-600">
               LTP : {socketData?.last_traded_price} &nbsp; &nbsp; Master LTP :

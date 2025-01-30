@@ -74,23 +74,15 @@ const BackTestingTablePage = ({
           <table className="w-fit mx-auto mb-20">
             <thead>
               <tr>
-                <th className="p-1 border border-gray-300">Sr No.</th>
-                {/* <th className="p-1 border border-gray-300">Identifier</th> */}
+                <th className="p-1 border border-gray-300">Sr No.</th>           
                 <th className="p-1 border border-gray-300">Entry Time</th>
                 <th className="p-1 border border-gray-300">Entry Order Type</th>
-                {/* <th className="p-1 border border-gray-300">Entry RSI Value</th>
-                <th className="p-1 border border-gray-300">D_Entry Value</th> */}
                 <th className="p-1 border border-gray-300">Entry Price</th>
                 <th className="p-1 border border-gray-300">Call Type</th>
                 &nbsp; &nbsp; &nbsp;
                 <th className="p-1 border border-gray-300">Exit Time</th>
-                {/* <th className="p-1 border border-gray-300">Exit Ref Value</th>
-                <th className="p-1 border border-gray-300">D_Exit Value</th> */}
                 <th className="p-1 border border-gray-300">Exit Price</th>
                 <th className="p-1 border border-gray-300">Exit Order Type</th>
-                {/* <th className="p-1 border border-gray-300">Exit RSI Value</th> */}
-                {/* <th className="p-1 border border-gray-300">Order Type</th> */}
-                {/* <th className="p-1 border border-gray-300">D_Exit Value</th> */}
                 <th className="p-1 border border-gray-300">Exit Reason</th>
                 <th className="p-1 border border-gray-300">Price Diff</th>
                 <th className="p-1 border border-gray-300">Option</th>
@@ -107,8 +99,6 @@ const BackTestingTablePage = ({
                   // Sort in ascending order (oldest to newest)
                   return timeA - timeB;
 
-                  // For descending order, swap the subtraction:
-                  // return timeB - timeA;
                 })
 
                 ?.map((item, index) => {
@@ -130,7 +120,7 @@ const BackTestingTablePage = ({
                       </td>
 
                       {/* <td className="border border-gray-300 text-center text-[13px] p-1">
-                    {item.identifier}
+                        {item.identifier}
                     </td> */}
                       <td className="border border-gray-300 text-center text-[13px] p-1">
                         {formatDate(item.realEntryTime)}

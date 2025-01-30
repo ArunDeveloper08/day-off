@@ -412,7 +412,7 @@ export const EditTrade = () => {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectGroup>
-                            <SelectLabel>Interval Reference</SelectLabel>
+                            <SelectLabel>Entry Interval Reference</SelectLabel>
                             {[
                               {
                                 label: "1 minute",
