@@ -742,6 +742,7 @@ const CandleChart = ({
         "Extra lines saved."
       );
     };
+
     const onDrawCompleteHorizontal = (newAlerts) => {
       setEnableHorizontalLine(false);
 
@@ -936,16 +937,7 @@ const CandleChart = ({
 
     useKeyPress(onKeyPress);
 
-    // const macdCalculator = macd()
-    //   .options({
-    //     fast: 12,
-    //     slow: 26,
-    //     signal: 9,
-    //   })
-    //   .merge((d, c) => {
-    //     d.macd = c;
-    //   })
-    //   .accessor((d) => d.macd);
+   
 
     const rsiCalculator = rsi()
       .options({ windowSize: master?.rsiCandle ?? 14 }) // 14-period RSI

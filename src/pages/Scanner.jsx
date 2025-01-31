@@ -58,7 +58,7 @@ const Scanner = () => {
 
   useEffect(() => {
     handleFilterChange();
-  }, [rsiFilter, atrFilter]);
+  }, [rsiFilter , atrFilter]);
 
   return (
     <div className="relative w-full h-screen">
@@ -113,7 +113,7 @@ const Scanner = () => {
                   <th>Index</th>
                   <th>Lot Size</th>
                   <th>Exchange</th>
-                  <th>1 Day RSI</th>
+                  <th>1 Day RSI</th>                                                                        
                   <th>1 Hour RSI</th>
                   <th>15 Min RSI</th>
                   <th>5 Min RSI</th>
