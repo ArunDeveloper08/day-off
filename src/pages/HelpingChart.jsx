@@ -576,6 +576,10 @@ const HelpingChart = () => {
     // if (!values) return;
     const interval = setInterval(getChartData, 120 * 1000);
 
+
+
+
+
     return () => clearInterval(interval);
   }, [
     tradeStatus?.haveTradeOfCE,

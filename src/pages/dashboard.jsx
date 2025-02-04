@@ -1457,6 +1457,8 @@ const Dashboard = () => {
                                   intervalReference: item.intervalReference,
                                   targetMean: item.targetMean,
                                   dExitMean: item.dExitMean,
+                                  downBand : item.downBand,
+                                  upBand: item.upBand,
                                 },
                                 getAllTrades,
                                 trades,

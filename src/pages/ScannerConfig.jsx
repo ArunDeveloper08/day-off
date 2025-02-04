@@ -48,7 +48,7 @@ const ScannerConfig = () => {
   }, []);
 
  
-  const handleSubmit =() =>{
+  const handleSubmit =() =>{               
   console.log(values)
  }
 

@@ -126,7 +126,9 @@ const initialState = {
   setUpPrice: "",
   strikeBase: "",
    targetMean:"",
-  dExitMean:""
+  dExitMean:"",
+  upBand:"",
+  downBand:"",
   // Min_Order_Qty:"1"
 };
 
@@ -233,7 +235,9 @@ const alternateInitialState = {
   setUpPrice: "",
   strikeBase: "",
    targetMean:"",
-  dExitMean:""
+  dExitMean:"",
+  upBand:"",
+  downBand:"",
 };
 // tradeIndex =2
 const gammaBlastInitialState = {
@@ -344,7 +348,9 @@ const gammaBlastInitialState = {
   setUpPrice: "",
   strikeBase: "",
   targetMean:"",
-  dExitMean:""
+  dExitMean:"",
+  upBand:"",
+  downBand:"",
 };
 // tradeIndex =6
 
@@ -515,7 +521,9 @@ export const AddNewtrade = () => {
         !values.rsiReference ||
         !values.intervalReference ||
         !values.dExitMean ||
-        !values.targetMean 
+        !values.targetMean ||
+        !values.downBand ||
+        !values.upBand
       )
     ) {
       return alert("Please fill in all the required inputs for index 2.");
@@ -632,6 +640,8 @@ export const AddNewtrade = () => {
         intervalReference: values.intervalReference,
         targetMean: values.targetMean,
         dExitMean: values.dExitMean,
+        upBand: values.upBand,
+        downBand: values.downBand,
       });
       alert("Add Successfully");
     } catch (error) {
@@ -663,17 +673,17 @@ export const AddNewtrade = () => {
               <Label>Index Value (Please fill this first )</Label>
               <Select
                 //disabled={values.isMaster}
-                value={values.indexValue}
+                value={values?.indexValue}
                 name="indexValue"
                 onValueChange={(value) => handleSelect("indexValue", value)}
               >
                 <SelectTrigger className="w-full mt-1 border-zinc-500">
-                  <SelectValue>{values.indexValue}</SelectValue>
+                  <SelectValue>{values?.indexValue}</SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Trade Index</SelectLabel>
-                    {[2, 7, 8, 12, 17, 18]?.map((suggestion) => (
+                    {[2, 3, 7,8, 12, 13 , 17, 18]?.map((suggestion) => (
                       <SelectItem key={suggestion} value={suggestion}>
                         {suggestion}
                       </SelectItem>
@@ -1680,6 +1690,28 @@ export const AddNewtrade = () => {
                           value={values.priceDecPercent}
                           className="mt-1"
                           type="text"
+                          min={0}
+                        />
+                      </div>
+                      <div className="px-1">
+                        <Label>No Trade Up Band</Label>
+                        <Input
+                          name="upBand"
+                          onChange={handleChange}
+                          value={values.upBand}
+                          className="mt-1"
+                          type="number"
+                          min={0}
+                        />
+                      </div>
+                      <div className="px-1">
+                        <Label>No Trade Down Band</Label>
+                        <Input
+                          name="downBand"
+                          onChange={handleChange}
+                          value={values.downBand}
+                          className="mt-1"
+                          type="number"
                           min={0}
                         />
                       </div>

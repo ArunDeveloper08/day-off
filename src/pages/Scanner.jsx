@@ -108,18 +108,18 @@ const Scanner = () => {
             <table className="dashboard-table2 w-[1400px] mx-auto">
               <thead  className="sticky top-0 bg-black z-10">
                 <tr className="font-mono">
-                  <th>Sr. No.</th>
-                  <th>Identifier</th>
-                  <th>Index</th>
-                  <th>Lot Size</th>
-                  <th>Exchange</th>
-                  <th>1 Day RSI</th>                                                                        
-                  <th>1 Hour RSI</th>
-                  <th>15 Min RSI</th>
-                  <th>5 Min RSI</th>
-                  <th>1 Hour ATR</th>
-                  <th>15 Min ATR</th>
-                  <th>5 Min ATR</th>
+                 <th>Sr. No.</th>
+                 <th>Identifier</th>
+                 <th>Index</th>
+                 <th>Lot Size</th>
+                 <th>Exchange</th>
+                 <th>1 Day RSI</th>                                                                        
+                 <th>1 Hour RSI</th>
+                 <th>15 Min RSI</th>
+                 <th>5 Min RSI</th>
+                 <th>1 Hour ATR</th>
+                 <th>15 Min ATR</th>
+                 <th>5 Min ATR</th>
                  <th>Day Candle above R2</th>
                  <th>Hour Candle above R2</th>
                  <th>15Min Candle above R2</th>
@@ -128,11 +128,11 @@ const Scanner = () => {
                  <th>15Min Candle above S2</th>
                  <th>Highest ATR on 1Hr</th>
                  <th>Lowest ATR on 1Hr</th>
-                  <th>Terminal</th>
+                 <th>Terminal</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredData.map((item, index) => (
+                {filteredData?.map((item, index) => (
                   <tr className="font-mono text-pink-600 font-semibold" key={item.masterIdentifier}>
                     <td>{index + 1}</td>
                     <td>{item.masterIdentifier}</td>

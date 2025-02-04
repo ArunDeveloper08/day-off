@@ -114,8 +114,9 @@ export const EditTrade = () => {
         !values.rsiReference ||
         !values.intervalReference ||
         !values.dExitMean ||
-        !values.targetMean 
-      )
+        !values.targetMean ||
+        !values.downBand ||
+        !values.upBand)
     ) {
       return alert("Please fill in all the required inputs for index 2.");
     }
@@ -228,8 +229,8 @@ export const EditTrade = () => {
         intervalReference: values.intervalReference,
         targetMean: values.targetMean,
         dExitMean: values.dExitMean,
-        // rsiDifference: values.rsiDifference,
-        // targetProfit: values.targetProfit,
+        upBand: values.upBand,
+        downBand: values.downBand,
       });
       alert("Update Successfully");
     } catch (error) {
@@ -280,7 +281,7 @@ export const EditTrade = () => {
                     <SelectContent>
                       <SelectGroup>
                         <SelectLabel>Trade Index</SelectLabel>
-                        {[2, 7, 8, 12, 17, 18]?.map((suggestion) => (
+                        {[2, 3, 7,8, 12, 13 , 17, 18]?.map((suggestion) => (
                           <SelectItem key={suggestion} value={suggestion}>
                             {suggestion}
                           </SelectItem>
@@ -865,6 +866,7 @@ export const EditTrade = () => {
                         type="text"
                       />
                     </div>
+        
 
                     <div className="px-1">
                       <Label>Entry Time Delay</Label>
@@ -1288,6 +1290,28 @@ export const EditTrade = () => {
                               min={0}
                             />
                           </div>
+                          <div className="px-1">
+                      <Label>No Trade Up Band</Label>
+                      <Input
+                        name="upBand"
+                        onChange={handleChange}
+                        value={values.upBand}
+                        className="mt-1"
+                        type="number"
+                        min={0}
+                      />
+                    </div>
+                    <div className="px-1">
+                      <Label>No Trade Down Band</Label>
+                      <Input
+                        name="downBand"
+                        onChange={handleChange}
+                        value={values.downBand}
+                        className="mt-1"
+                        type="number"
+                        min={0}
+                      />
+                    </div>
                           {/* <div className="px-1">
                             <Label>RSI Difference</Label>
                             <Input

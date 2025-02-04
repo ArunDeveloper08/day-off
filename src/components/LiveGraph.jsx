@@ -138,9 +138,19 @@ function tooltipContent(underlyingValue) {
           stroke: "black",
         },
 
+        // {
+        //   label: "volume",
+        //   value: currentItem?.volume?.toFixed(2),
+        //   stroke: "black",
+        // },
         {
-          label: "volume",
-          value: currentItem?.volume?.toFixed(2),
+          label: "RSI",
+          value: currentItem?.rsi?.toFixed(2),
+          stroke: "black",
+        },
+        {
+          label: "ATR",
+          value: currentItem?.atr?.toFixed(2),
           stroke: "black",
         },
       ].filter((line) => line?.value),

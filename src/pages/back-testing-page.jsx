@@ -312,7 +312,6 @@ export const BackTestingPage = () => {
             </p>
             <p className="text-[14px]">Trade Index: {data?.data?.tradeIndex}</p>
             <p className="text-[14px]">WMA : {data?.data?.WMA}</p>
-
             <p className="text-[14px]">Order Type : {data?.data?.orderType}</p>
           </div>
 
