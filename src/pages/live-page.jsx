@@ -356,14 +356,14 @@ export const LivePage = () => {
             </div>
           )}
 
-          <div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-6 p-2">
+          <div className="flex flex-col md:flex-row justify-center  gap-4  md:gap-6 p-2">
 
             {
               (data?.data?.tradeIndex == 7 || data?.data?.tradeIndex == 17 ) ?
               <>
               </>
               :
-              <div className="flex items-center gap-4">
+              <div className="flex items-center  gap-4">
               <Input
                 type="date"
                 value={prevDate}
@@ -433,14 +433,18 @@ export const LivePage = () => {
             }
          
 
-            <button className="text-sm md:text-lg text-center font-semibold text-green-600">
-              LTP : {socketData?.last_traded_price} &nbsp; &nbsp; Master LTP :
-              {socketMastertData?.last_traded_price} &nbsp; &nbsp; RSI Live :{" "}
-              {data.data.rsiValue} &nbsp; &nbsp; ATR Value : {" "}
-              {data.data.atrValue} &nbsp;  &nbsp;
-              A :{(data?.data.callTargetLevelPrice)?.toFixed(2)} &nbsp;  &nbsp;
-              B :{(data?.data.putTargetLevelPrice)?.toFixed(2)} &nbsp;  &nbsp;
-              C :{(data?.data.entryLine)?.toFixed(2)}
+            <button className="text-sm md:text-[16px] text-center font-semibold text-green-600">
+              LTP : {socketData?.last_traded_price} &nbsp;  Master LTP :
+              {socketMastertData?.last_traded_price} &nbsp;  RSI  :{" "}
+              {data.data.rsiValue} &nbsp;  ATR Value : {" "}
+              {data.data.atrValue} &nbsp;  
+              V_WMA: {data?.data?.wmaLtp} &nbsp;
+              A :{(data?.data.callTargetLevelPrice)?.toFixed(2)} &nbsp;  
+              B :{(data?.data.putTargetLevelPrice)?.toFixed(2)} &nbsp;  
+              C :{(data?.data.entryLine)?.toFixed(2)} &nbsp;
+              a :{(data?.data.callLowerDeadZone)?.toFixed(2)} &nbsp;
+              b :{(data?.data.putUpperDeadZone)?.toFixed(2)} &nbsp;
+              c :{(data?.data.targetPrice)?.toFixed(2)}  
             </button>
           </div>
         </div>

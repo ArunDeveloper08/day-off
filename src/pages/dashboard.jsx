@@ -442,45 +442,109 @@ const Dashboard = () => {
 
   // Function to handle the filter toggle
 
+  // const toggleFilter = (filterType) => {
+  //   //console.log(filterType)
+  //   setActiveFilters((prevFilters) => {
+  //     if (filterType === "ALL") {
+  //       return ["ALL"]; // Reset to "ALL"
+  //     }
+  //     const updatedFilters = prevFilters.includes("ALL")
+  //       ? [filterType]
+  //       : prevFilters.includes(filterType)
+  //       ? prevFilters.filter((f) => f !== filterType)
+  //       : [...prevFilters, filterType];
+
+  //     return updatedFilters.length === 0 ? ["ALL"] : updatedFilters;
+  //   });
+
+  //   if (
+  //     filterType !== "isMaster" &&
+  //     filterType !== "MyBullishMaster" &&
+  //     filterType !== "MyBearishMaster"
+  //   ) {
+  //     setNarration(false); // Reset narration automatically
+  //   }
+  // };
+  // const handleButtonClick = (filterType) => {
+  //   toggleFilter(filterType);
+
+  //   // Manage button color state
+  //   setActiveButtons((prevState) => {
+  //     if (filterType === "ALL") {
+  //       return { ALL: true }; // Reset to only highlight "ALL"
+  //     }
+
+  //     return {
+  //       ...prevState,
+  //       ALL: false,
+  //       [filterType]: !prevState[filterType],
+  //     };
+  //   });
+  // };
+
+
   const toggleFilter = (filterType) => {
-    //console.log(filterType)
     setActiveFilters((prevFilters) => {
+      let updatedFilters;
+  
       if (filterType === "ALL") {
-        return ["ALL"]; // Reset to "ALL"
+        updatedFilters = ["ALL"]; // Reset to only "ALL"
+      } else {
+        if (prevFilters.includes("ALL")) {
+          updatedFilters = [filterType]; // Replace "ALL" with selected filter
+        } else if (prevFilters.includes(filterType)) {
+          updatedFilters = prevFilters.filter((f) => f !== filterType); // Remove filter if already active
+        } else {
+          updatedFilters = [...prevFilters, filterType]; // Add new filter
+        }
+  
+        if (updatedFilters.length === 0) {
+          updatedFilters = ["ALL"]; // Default to "ALL" when all filters are removed
+        }
       }
-      const updatedFilters = prevFilters.includes("ALL")
-        ? [filterType]
-        : prevFilters.includes(filterType)
-        ? prevFilters.filter((f) => f !== filterType)
-        : [...prevFilters, filterType];
-
-      return updatedFilters.length === 0 ? ["ALL"] : updatedFilters;
+  
+      return updatedFilters;
     });
-
+  
+    setActiveButtons((prevState) => {
+      let newButtonState = {};
+  
+      if (filterType === "ALL") {
+        newButtonState = { ALL: true }; // If "ALL" is selected, only highlight "ALL"
+      } else {
+        newButtonState = { ...prevState, [filterType]: !prevState[filterType] };
+  
+        // If no filters remain active, ensure "ALL" stays highlighted
+        const remainingFilters = Object.keys(newButtonState).filter(
+          (key) => newButtonState[key]
+        );
+        if (remainingFilters.length === 0) {
+          newButtonState = { ALL: true };
+        } else {
+          newButtonState.ALL = false;
+        }
+      }
+  
+      return newButtonState;
+    });
+  
+    // Reset narration except for specific master filters
     if (
       filterType !== "isMaster" &&
       filterType !== "MyBullishMaster" &&
       filterType !== "MyBearishMaster"
     ) {
-      setNarration(false); // Reset narration automatically
+      setNarration(false);
     }
   };
+  
   const handleButtonClick = (filterType) => {
     toggleFilter(filterType);
-
-    // Manage button color state
-    setActiveButtons((prevState) => {
-      if (filterType === "ALL") {
-        return { ALL: true }; // Reset to only highlight "ALL"
-      }
-
-      return {
-        ...prevState,
-        ALL: false,
-        [filterType]: !prevState[filterType],
-      };
-    });
   };
+  
+
+
+
   const toggleState = async (itemId, currentState) => {
     const newState = currentState === "ON" ? "OFF" : "ON";
     try {
@@ -616,9 +680,9 @@ const Dashboard = () => {
           </Button>
           <Button
             onClick={toggleShowOffTerminals}
-            className="px-5 py-2 rounded-md border-2"
+            className={`px-5 py-2 rounded-md border-2 ${!showOffTerminals ?"bg-red-600 hover:bg-red-600" : ""}`}
           >
-            {showOffTerminals ? "Show" : "Hide"}
+            {showOffTerminals ? "All" : "ON"}
           </Button>
           <Button
             onClick={clearNotification}
@@ -937,7 +1001,7 @@ const Dashboard = () => {
                     <th>ON/OFF</th>
                   </>
                 )}
-
+         
                 {/* {!activeFilters.includes("isMaster") && (
                  
                 )} */}
@@ -1258,7 +1322,7 @@ const Dashboard = () => {
                                     : "bg-green-500  text-white"
                                 } "cursor-pointer font-bold px-2 py-1 rounded-sm "`}
                               >
-                                {" "}
+                                
                                 {item.terminal}
                               </button>
                             </td>
@@ -1457,8 +1521,8 @@ const Dashboard = () => {
                                   intervalReference: item.intervalReference,
                                   targetMean: item.targetMean,
                                   dExitMean: item.dExitMean,
-                                  downBand : item.downBand,
-                                  upBand: item.upBand,
+                                  // downBand : item.downBand,
+                                  // upBand: item.upBand,
                                 },
                                 getAllTrades,
                                 trades,

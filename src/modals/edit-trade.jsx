@@ -114,9 +114,10 @@ export const EditTrade = () => {
         !values.rsiReference ||
         !values.intervalReference ||
         !values.dExitMean ||
-        !values.targetMean ||
-        !values.downBand ||
-        !values.upBand)
+        !values.targetMean 
+        // !values.downBand 
+        // !values.upBand
+      )
     ) {
       return alert("Please fill in all the required inputs for index 2.");
     }
@@ -229,8 +230,8 @@ export const EditTrade = () => {
         intervalReference: values.intervalReference,
         targetMean: values.targetMean,
         dExitMean: values.dExitMean,
-        upBand: values.upBand,
-        downBand: values.downBand,
+        // upBand: values.upBand,
+        // downBand: values.downBand,
       });
       alert("Update Successfully");
     } catch (error) {
@@ -536,7 +537,7 @@ export const EditTrade = () => {
                       />
                     </div>
                     <div className="px-1">
-                      <Label>Strike setup Price </Label>
+                      <Label>Strike Difference Price </Label>
                       <Input
                         name="setUpPrice"
                         onChange={handleChange}
@@ -868,7 +869,7 @@ export const EditTrade = () => {
                     </div>
         
 
-                    <div className="px-1">
+                    {/* <div className="px-1">
                       <Label>Entry Time Delay</Label>
                       <Select
                         value={values?.entryLineTime}
@@ -894,7 +895,7 @@ export const EditTrade = () => {
                           </SelectGroup>
                         </SelectContent>
                       </Select>
-                    </div>
+                    </div> */}
                     <div className="px-1">
                       <Label> Target Time Delay</Label>
                       <Select
@@ -1215,7 +1216,7 @@ export const EditTrade = () => {
                               </SelectContent>
                             </Select>
                           </div>
-                          <div className="px-1">
+                          {/* <div className="px-1">
                             <Label>Entry Time Delay</Label>
                             <Select
                               value={values?.entryLineTime}
@@ -1243,7 +1244,7 @@ export const EditTrade = () => {
                                 </SelectGroup>
                               </SelectContent>
                             </Select>
-                          </div>
+                          </div> */}
                           <div className="px-1">
                             <Label>WMA</Label>
                             <Input
@@ -1290,7 +1291,7 @@ export const EditTrade = () => {
                               min={0}
                             />
                           </div>
-                          <div className="px-1">
+                          {/* <div className="px-1">
                       <Label>No Trade Up Band</Label>
                       <Input
                         name="upBand"
@@ -1311,7 +1312,7 @@ export const EditTrade = () => {
                         type="number"
                         min={0}
                       />
-                    </div>
+                    </div> */}
                           {/* <div className="px-1">
                             <Label>RSI Difference</Label>
                             <Input

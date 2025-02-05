@@ -79,7 +79,7 @@ const UIButton = ({
           Entry Candle: {data?.data?.entryCandle}
         </p>
         <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
-          D_Exit: {data?.data?.dynamicExitValue}
+          D_Exit: {(data?.data?.dynamicExitValue)?.toFixed(2)}
         </p>
         <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
           Last High: {data?.data?.LastHigh}
@@ -88,6 +88,7 @@ const UIButton = ({
         <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
           RSI Max: {data?.data?.rsiMax}
         </p>
+     
  
         {liveTrendValue && (
           <div className="flex flex-wrap gap-2 w-full mt-2">

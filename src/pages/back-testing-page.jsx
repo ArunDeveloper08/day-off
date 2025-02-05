@@ -480,7 +480,7 @@ export const BackTestingPage = () => {
                   : "bg-gray-300 "
               }`}
             >
-           Stop Loss
+               Stop Loss
             </button>
             &nbsp; &nbsp;
             <button
@@ -569,7 +569,8 @@ export const BackTestingPage = () => {
                 onChange={handleChange}
               />
 
-              <p className="text-xl font-serif"> -- To -- </p>
+              <p className="text-xl font-serif" > -- To -- </p>
+
               <input
                 value={dateTime.timestamp2}
                 name="timestamp2"
