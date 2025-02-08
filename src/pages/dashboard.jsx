@@ -906,7 +906,7 @@ const Dashboard = () => {
             className="p-1 mb-1 w-[150px]"
           />
 
-          <div className=" mb-1 ">
+          {/* <div className=" mb-1 ">
             <Select
               className="w-[150px] "
               value={tradeIdentification}
@@ -934,7 +934,7 @@ const Dashboard = () => {
           </div>
           <div>
             <Button onClick={handleSubmit}>Submit</Button>
-          </div>
+          </div> */}
         </div>
 
         <div>
