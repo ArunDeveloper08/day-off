@@ -43,11 +43,11 @@ const initialState = {
   minExitPercent: "5",
   maxExitPercent: "30",
   priceIncPercent: "20",
-  priceDecPercent: "0.5",
+  priceDecPercent: "1.5",
   earningPercentLimit: "1",
   orderType: "Buy",
   isMaster: false,
-  dynamicEntryPercentage: "0.1",
+  dynamicEntryPercentage: "0.3",
   lossLimit: "10",
   candleSize: "3",
   // maxLoss: "1",
@@ -108,7 +108,7 @@ const initialState = {
   tradingOptions: "",
   exitSelection: "low",
   entryCandle: "both",
-  atrMf: "1.5",
+  atrMf: "3",
   tradeIdentification: "2",
   RSDeviation: "",
   maxLoss: "5",
@@ -129,8 +129,11 @@ const initialState = {
   dExitMean:"",
   upBand:"",
   downBand:"",
-  masterRsiReference :"",
-  masterIntervalReference:""
+  masterRsiReference :"5",
+  masterIntervalReference:"ONE_HOUR",
+  intervalReference:"FIFTEEN_MINUTE",
+  rsiReference:"5",
+  s1:"10"
   // Min_Order_Qty:"1"
 };
 
@@ -150,11 +153,11 @@ const alternateInitialState = {
   interval: "FIVE_MINUTE",
   indexValue: "2",
   priceIncPercent: "20",
-  priceDecPercent: "0.5",
+  priceDecPercent: "1.5",
   earningPercentLimit: "1",
   orderType: "Buy",
   isMaster: false,
-  dynamicEntryPercentage: "0.1",
+  dynamicEntryPercentage: "0.3",
   lossLimit: "10",
   candleSize: "3",
   // maxLoss: "1",
@@ -219,7 +222,7 @@ const alternateInitialState = {
   tradingOptions: "",
   exitSelection: "low",
   entryCandle: "both",
-  atrMf: "1.5",
+  atrMf: "3",
   tradeIdentification: "2",
   RSDeviation: "",
   maxLoss: "5",
@@ -240,8 +243,11 @@ const alternateInitialState = {
   dExitMean:"",
   upBand:"",
   downBand:"",
-   masterRsiReference :"",
-  masterIntervalReference:""
+   masterRsiReference :"5",
+  masterIntervalReference:"ONE_HOUR",
+  intervalReference:"FIFTEEN_MINUTE",
+  rsiReference:"5",
+  s1:"10"
 };
 // tradeIndex =2
 const gammaBlastInitialState = {
@@ -261,11 +267,11 @@ const gammaBlastInitialState = {
   indexValue: "6",
 
   priceIncPercent: "20",
-  priceDecPercent: "0.5",
+  priceDecPercent: "1.5",
   earningPercentLimit: "1",
   orderType: "Buy",
   isMaster: false,
-  dynamicEntryPercentage: "0.1",
+  dynamicEntryPercentage: "0.3",
   lossLimit: "10",
   candleSize: "3",
   // maxLoss: "1",
@@ -334,7 +340,7 @@ const gammaBlastInitialState = {
   tradingOptions: "",
   exitSelection: "low",
   entryCandle: "both",
-  atrMf: "1.5",
+  atrMf: "3",
   tradeIdentification: "2",
   RSDeviation: "",
   maxLoss: "5",
@@ -355,8 +361,11 @@ const gammaBlastInitialState = {
   dExitMean:"",
   upBand:"",
   downBand:"",
-   masterRsiReference :"",
-  masterIntervalReference:""
+   masterRsiReference :"5",
+  masterIntervalReference:"ONE_HOUR",
+  intervalReference:"FIFTEEN_MINUTE",
+  rsiReference:"5",
+  s1:"10"
 };
 // tradeIndex =6
 
@@ -529,7 +538,8 @@ export const AddNewtrade = () => {
         !values.dExitMean ||
         !values.targetMean ||
         !values.masterIntervalReference || 
-        !values.masterRsiReference 
+        !values.masterRsiReference || 
+        !values.s1 
         // !values.downBand ||
         // !values.upBand
       )
@@ -650,6 +660,7 @@ export const AddNewtrade = () => {
         dExitMean: values.dExitMean,
         masterRsiReference: values.masterRsiReference,
         masterIntervalReference: values.masterIntervalReference,
+        s1: values.s1,
         // upBand: values.upBand,
         // downBand: values.downBand,
       });
@@ -798,7 +809,7 @@ export const AddNewtrade = () => {
               </Select>
             </div>
 
-            {(values?.indexValue == 2 || values?.indexValue == 12) && (
+            { values?.indexValue == 18 && (
               <>
                 <div className="px-1">
                   <Label>Medium Interval Reference</Label>
@@ -934,6 +945,28 @@ export const AddNewtrade = () => {
                     type="text"
                   />
                 </div>
+                <div className="px-1">
+                        <Label>RSI / ATR Candle</Label>
+                        <Input
+                          name="rsiCandle"
+                          onChange={handleChange}
+                          value={values.rsiCandle}
+                          className="mt-1"
+                          type="number"
+                          min={0}
+                        />
+                      </div>
+                      <div className="px-1">
+                        <Label>VDEM Constant</Label>
+                        <Input
+                          name="s1"
+                          onChange={handleChange}
+                          value={values.s1}
+                          className="mt-1"
+                          min={0}
+                          type="number"
+                        />
+                      </div>
               </>
             )}
 
@@ -1726,17 +1759,7 @@ export const AddNewtrade = () => {
                         />
                       </div>
 
-                      <div className="px-1">
-                        <Label>RSI / ATR Candle</Label>
-                        <Input
-                          name="rsiCandle"
-                          onChange={handleChange}
-                          value={values.rsiCandle}
-                          className="mt-1"
-                          type="number"
-                          min={0}
-                        />
-                      </div>
+               
                       {/* 
                     // <div className="px-1">
                     //   <Label>D_Exit (%)</Label>
@@ -1867,6 +1890,7 @@ export const AddNewtrade = () => {
                           type="number"
                         />
                       </div>
+            
                       <div className="px-1">
                         <Label>D_Exit Mean</Label>
                         <Input

@@ -1449,7 +1449,7 @@ const Dashboard = () => {
                                   trendLine1: item.trendLine1,
                                   trendLine2: item.trendLine2,
                                   candleType: item.candleType,
-                                  master: item.master,
+                                  master: item.master, 
                                   // rangeBoundEntryExitPercent: item.rangeBoundEntryExitPercent,
                                   minReEntryatMinProfitPercent:
                                     item.minReEntryatMinProfitPercent,
@@ -1517,7 +1517,7 @@ const Dashboard = () => {
                                   masterRsiReference: item.masterRsiReference,
                                   masterIntervalReference:
                                     item.masterIntervalReference,
-                                  // downBand : item.downBand,
+                                   s1 : item.s1,
                                   // upBand: item.upBand,
                                 },
                                 getAllTrades,

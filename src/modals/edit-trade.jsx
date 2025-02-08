@@ -114,11 +114,9 @@ export const EditTrade = () => {
         !values.rsiReference ||
         !values.intervalReference ||
         !values.dExitMean ||
-        !values.targetMean || 
-        !values.masterIntervalReference || 
-        !values.masterRsiReference 
-      
-      )
+        !values.targetMean ||
+        !values.masterIntervalReference ||
+        !values.masterRsiReference)
       // !values.downBand
       // !values.upBand
     ) {
@@ -235,6 +233,7 @@ export const EditTrade = () => {
         dExitMean: values.dExitMean,
         masterRsiReference: values.masterRsiReference,
         masterIntervalReference: values.masterIntervalReference,
+        s1: values.s1,
         // upBand: values.upBand,
         // downBand: values.downBand,
       });
@@ -403,7 +402,7 @@ export const EditTrade = () => {
                   </Select>
                 </div>
 
-                {(values.indexValue == 2 || values.indexValue == 12) && (
+                { values.indexValue == 18  && (
                   <>
                     <div className="px-1">
                       <Label>Medium Interval Reference</Label>
@@ -540,6 +539,28 @@ export const EditTrade = () => {
                         type="text"
                       />
                     </div>
+                    <div className="px-1">
+                            <Label>RSI/ATR Candle</Label>
+                            <Input
+                              name="rsiCandle"
+                              onChange={handleChange}
+                              value={values.rsiCandle}
+                              className="mt-1"
+                              type="number"
+                              min={0}
+                            />
+                          </div>
+                          <div className="px-1">
+                            <Label>VDEM Constant</Label>
+                            <Input
+                              name="s1"
+                              onChange={handleChange}
+                              value={values.s1}
+                              className="mt-1"
+                              min={0}
+                              type="number"
+                            />
+                          </div>
                   </>
                 )}
 
@@ -853,7 +874,7 @@ export const EditTrade = () => {
                         <SelectTrigger className="w-full mt-1 border-zinc-500">
                           <SelectValue>{values?.tradingOptions}</SelectValue>
                         </SelectTrigger>
-                        <SelectContent>               
+                        <SelectContent>
                           <SelectGroup>
                             <SelectLabel>Trading Option</SelectLabel>
                             <SelectItem value="CE">CE</SelectItem>
@@ -864,7 +885,7 @@ export const EditTrade = () => {
                         </SelectContent>
                       </Select>
                     </div>
-             
+
                     {/* <div className="px-1">
                       <Label>ATR Max</Label>
                       <Input
@@ -1332,17 +1353,7 @@ export const EditTrade = () => {
                             />
                           </div>
 
-                          <div className="px-1">
-                            <Label>RSI/ATR Candle</Label>
-                            <Input
-                              name="rsiCandle"
-                              onChange={handleChange}
-                              value={values.rsiCandle}
-                              className="mt-1"
-                              type="number"
-                              min={0}
-                            />
-                          </div>
+                  
 
                           <div className="px-1">
                             <Label>Entry1 MF</Label>
@@ -1463,6 +1474,7 @@ export const EditTrade = () => {
                               type="number"
                             />
                           </div>
+                       
                           <div className="px-1">
                             <Label>D_Exit Mean</Label>
                             <Input
