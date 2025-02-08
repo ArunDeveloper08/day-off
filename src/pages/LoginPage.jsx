@@ -71,7 +71,7 @@ const LoginPage = () => {
       })
       .catch((err) => {
         console.log(err);
-        alert(err.response.data.message)
+        toast.error(err.response.data.message)
       });
   };
   useEffect(() => {
@@ -83,13 +83,17 @@ const LoginPage = () => {
     <>
       <ToastContainer />
       <div className="bg-[#dde1f7] flex justify-center items-center h-screen w-screen">
+    
         <div className=" border-t-8 rounded-sm border-indigo-600 bg-white p-5 shadow-2xl w-96">
+        <div className="text-3xl  font-bold font-serif flex justify-center p-2 text-black  rounded-sm">
+          PES CAPITAL
+        </div>
           <img
             src="https://wallpaperaccess.com/full/1393720.jpg"
             alt="stock image"
             className="w-[100%] h-[130px] object-cover rounded-md"
           />
-          <h1 className="font-bold text-center block text-2xl"> Log In </h1>
+      
 
           <div>
             <Input

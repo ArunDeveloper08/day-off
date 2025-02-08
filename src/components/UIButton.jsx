@@ -43,12 +43,12 @@ const UIButton = ({
   return (
     <div>
       <div className="flex flex-wrap gap-4 font-semibold py-2">
-        <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+        {/* <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
           Trade Terminal:{" "}
           {data?.data?.terminal === "manualIn"
             ? "Manual In"
             : data?.data?.terminal}
-        </p>
+        </p> */}
         &nbsp;
         <p className="text-green-600 text-[13px] md:text-[16px] w-full sm:w-auto">
           Candle:{" "}
@@ -63,9 +63,9 @@ const UIButton = ({
           Trade Index: {data?.data?.tradeIndex}
         </p>
         <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
-          WMA: {data?.data?.WMA}
+          WMA: {data?.data?.WMA}  
         </p>
-
+    
         <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
           Target Level: {data?.data?.targetPrice?.toFixed(2)}
         </p>
@@ -88,6 +88,10 @@ const UIButton = ({
         <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
           RSI Max: {data?.data?.rsiMax}
         </p>
+        <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+          VDEM: {data?.data?.R_min}  
+        </p>
+
      
  
         {liveTrendValue && (
@@ -191,66 +195,6 @@ const UIButton = ({
         >
           D_Entry Value
         </button>
-
-        {/* <button
-          onClick={() =>
-            setShowRow((p) => ({
-              ...p,
-              initialLow: !p.initialLow,
-            }))
-          }
-          className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-            showRow.initialLow ? "bg-blue-500 text-gray-100" : "bg-gray-300 "
-          }`}
-        >
-          {data?.data?.orderType == "Sell" ? "Initial High" : "Initial Low"}
-        </button> */}
-
-        {/* <button
-          onClick={() =>
-            setShowRow((p) => ({
-              ...p,
-              Last_Highest_LTP: !p.Last_Highest_LTP,
-            }))
-          }
-          className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-            showRow.Last_Highest_LTP
-              ? "bg-blue-500 text-gray-100"    
-              : "bg-gray-300 "
-          }`}
-        >
-          {data?.data?.orderType == "Sell" ? "Last Low LTP" : " Last High LTP"}
-        </button> */}
-
-        {/* <button
-          onClick={() =>
-            setShowRow((p) => ({
-              ...p,
-              rangeBoundLine: !p.rangeBoundLine,
-            }))
-          }
-          className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-            showRow.rangeBoundLine
-              ? "bg-blue-500 text-gray-100"
-              : "bg-gray-300 "
-          }`}
-        >
-          Range Bound
-        </button> */}
-
-        {/* <button
-          onClick={() =>
-            setShowRow((p) => ({
-              ...p,
-              movingAvg: !p.movingAvg,
-            }))
-          }
-          className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-            showRow.movingAvg ? "bg-blue-500 text-gray-100" : "bg-gray-300 "
-          }`}
-        >
-          Moving Avg
-        </button> */}
 
         <button
           onClick={() =>

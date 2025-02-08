@@ -98,9 +98,9 @@ export const LivePage = () => {
     rsi: false,
     atr: false,
     dEntryLine: true,
-    dExitLine : true,
-    stopLoss:true,
-    targetLine : true,
+    dExitLine: true,
+    stopLoss: true,
+    targetLine: true,
   });
 
   const [apiData, setApiData] = useState([]);
@@ -144,8 +144,8 @@ export const LivePage = () => {
         setMasterId(res.data.masterID);
         setLiveTrendValue(res.data.liveTrendValue);
         setTrends3(res.data.trendLines);
-       //console.log("API call succeeded");
-        return true;  //Success
+        //console.log("API call succeeded");
+        return true; //Success
       } catch (err) {
         attempts += 1;
         console.log(`API failed on attempt ${attempts}. Retrying...`);
@@ -197,8 +197,8 @@ export const LivePage = () => {
     };
   }, [id, prevDate]);
 
-    // const lastUpdateTimeRef = useRef(Date.now());
-   // const currentTime = Date.now();  
+  // const lastUpdateTimeRef = useRef(Date.now());
+  // const currentTime = Date.now();
 
   useEffect(() => {
     if (!isConnected || !data?.data?.instrument_token) return;
@@ -230,7 +230,6 @@ export const LivePage = () => {
         // if (currentTime - lastUpdateTimeRef.current > 10 * 1000) {
         //lastUpdateTimeRef.current = currentTime;
         // }
-          
       }
     });
 
@@ -238,8 +237,6 @@ export const LivePage = () => {
       socket.off("getLiveData");
     };
   }, [socket, data, isConnected]);
-
-  
 
   const handleSubmit = async () => {
     try {
@@ -258,8 +255,6 @@ export const LivePage = () => {
       console.log(err);
     }
   };
-
-
 
   // const handleCreateTrendLines = useCallback(
   //   async (trendline, textList1, retracements3, channels1, alert) => {
@@ -307,7 +302,6 @@ export const LivePage = () => {
   //   setIsUserScroll((prevState) => !prevState);
   // };
 
-
   const getHighLowLines = async () => {
     try {
       await axios.get(`${BASE_URL_OVERALL}/chart/makeHighLow?id=${id}`);
@@ -326,7 +320,6 @@ export const LivePage = () => {
 
   return (
     <div>
-
       {/* {data.error ? ( */}
       {/* // "Some Error Occcured" */}
       {/* // ) : ( */}
@@ -334,7 +327,22 @@ export const LivePage = () => {
       <>
         <div>
           <p className="font-semibold text-center font-mono text-[20px] text-green-600">
-            Angel-One(Main Chart)
+            <span
+              className={`text-[13px] md:text-[16px] w-full sm:w-auto ${
+                data?.data?.terminal == "ON" ? "text-red-600" : "text-green-600"
+              }`}
+            >
+              Trade Terminal: {data?.data?.terminal}
+            </span>
+            &nbsp; Angel-One &nbsp; {" "}  
+            <span
+              className={`text-[13px] md:text-[16px] w-full sm:w-auto ${
+                data?.data?.haveTrade == 1 ? "text-red-600" : "text-green-600"
+              }`}
+            >
+              In Trade :{data?.data?.haveTrade == 1 ? "True" : "False"}
+            </span>
+            &nbsp;
             <Button size="sm" onClick={() => setHideConfig((prev) => !prev)}>
               {hideConfig ? "Hide Config Data" : "Show Config Data"}
             </Button>
@@ -357,94 +365,89 @@ export const LivePage = () => {
           )}
 
           <div className="flex flex-col md:flex-row justify-center  gap-4  md:gap-6 p-2">
-
-            {
-              (data?.data?.tradeIndex == 7 || data?.data?.tradeIndex == 17 ) ?
-              <>
-              </>
-              :
+            {data?.data?.tradeIndex == 7 || data?.data?.tradeIndex == 17 ? (
+              <></>
+            ) : (
               <div className="flex items-center  gap-4">
-              <Input
-                type="date"
-                value={prevDate}
-                placeholder="date"
-                className="w-full md:w-[150px] border-black border-[1px] rounded-md"
-                onChange={(e) => setPrevDate(e.target.value)}
-              />
-              <div className="px-1">
-                {/* <Label>Interval</Label> */}
-                <Select
-                  value={values.interval}
-                  name="terminal"
-                  onValueChange={(value) => handleSelect("interval", value)}
-                >
-                  <SelectTrigger className="w-full mt-1 border-zinc-500">
-                    <SelectValue>{values.interval}</SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Interval</SelectLabel>
-                      {[
-                        {
-                          label: "1 minute",
-                          value: "ONE_MINUTE",
-                        },
-                        {
-                          label: "3 minute",
-                          value: "THREE_MINUTE",
-                        },
-                        {
-                          label: "5 minute",
-                          value: "FIVE_MINUTE",
-                        },
+                <Input
+                  type="date"
+                  value={prevDate}
+                  placeholder="date"
+                  className="w-full md:w-[150px] border-black border-[1px] rounded-md"
+                  onChange={(e) => setPrevDate(e.target.value)}
+                />
+                <div className="px-1">
+                  {/* <Label>Interval</Label> */}
+                  <Select
+                    value={values.interval}
+                    name="terminal"
+                    onValueChange={(value) => handleSelect("interval", value)}
+                  >
+                    <SelectTrigger className="w-full mt-1 border-zinc-500">
+                      <SelectValue>{values.interval}</SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Interval</SelectLabel>
+                        {[
+                          {
+                            label: "1 minute",
+                            value: "ONE_MINUTE",
+                          },
+                          {
+                            label: "3 minute",
+                            value: "THREE_MINUTE",
+                          },
+                          {
+                            label: "5 minute",
+                            value: "FIVE_MINUTE",
+                          },
 
-                        {
-                          label: "15 minute",
-                          value: "FIFTEEN_MINUTE",
-                        },
-                        {
-                          label: "30 minute",
-                          value: "THIRTY_MINUTE",
-                        },
-                        {
-                          label: "1 hour",
-                          value: "ONE_HOUR",
-                        },
-                        {
-                          label: "1 day",
-                          value: "ONE_DAY",
-                        },
-                      ]?.map((suggestion) => (
-                        <SelectItem
-                          key={suggestion.value}
-                          value={suggestion.value}
-                        >
-                          {suggestion.label}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+                          {
+                            label: "15 minute",
+                            value: "FIFTEEN_MINUTE",
+                          },
+                          {
+                            label: "30 minute",
+                            value: "THIRTY_MINUTE",
+                          },
+                          {
+                            label: "1 hour",
+                            value: "ONE_HOUR",
+                          },
+                          {
+                            label: "1 day",
+                            value: "ONE_DAY",
+                          },
+                        ]?.map((suggestion) => (
+                          <SelectItem
+                            key={suggestion.value}
+                            value={suggestion.value}
+                          >
+                            {suggestion.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button onClick={handleSubmit} size="xs" className="p-2">
+                  Submit
+                </Button>
               </div>
-              <Button onClick={handleSubmit} size="xs" className="p-2">
-                Submit
-              </Button>
-            </div>
-            }
-         
+            )}
 
             <button className="text-sm md:text-[16px] text-center font-semibold text-green-600">
-              LTP : {socketData?.last_traded_price} &nbsp;  Master LTP :
-              {socketMastertData?.last_traded_price} &nbsp;  RSI  :{" "}
-              {data.data.rsiValue} &nbsp;  ATR Value : {" "}
-              {data.data.atrValue} &nbsp;  
-              V_WMA: {data?.data?.wmaLtp} &nbsp;
-              A :{(data?.data.callTargetLevelPrice)?.toFixed(2)} &nbsp;  
-              B :{(data?.data.putTargetLevelPrice)?.toFixed(2)} &nbsp;  
-              C :{(data?.data.entryLine)?.toFixed(2)} &nbsp;
-              a :{(data?.data.callLowerDeadZone)?.toFixed(2)} &nbsp;
-              b :{(data?.data.putUpperDeadZone)?.toFixed(2)} &nbsp;
-              c :{(data?.data.targetPrice)?.toFixed(2)}  
+              LTP : {socketData?.last_traded_price} &nbsp; Master LTP :
+              {socketMastertData?.last_traded_price} &nbsp; RSI :{" "}
+              {data.data.rsiValue} &nbsp; ATR Value : {data.data.atrValue}{" "}
+              &nbsp; V_WMA: {data?.data?.wmaLtp} &nbsp; A :
+              {data?.data.callTargetLevelPrice?.toFixed(2)} &nbsp; B :
+              {data?.data.putTargetLevelPrice?.toFixed(2)} &nbsp; C :
+              {data?.data.entryLine?.toFixed(2)} &nbsp; a :
+              {data?.data.callLowerDeadZone?.toFixed(2)} &nbsp; b :
+              {data?.data.putUpperDeadZone?.toFixed(2)} &nbsp; c :
+              {data?.data.targetPrice?.toFixed(2)}
             </button>
           </div>
         </div>

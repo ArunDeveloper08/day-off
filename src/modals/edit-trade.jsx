@@ -114,10 +114,13 @@ export const EditTrade = () => {
         !values.rsiReference ||
         !values.intervalReference ||
         !values.dExitMean ||
-        !values.targetMean 
-        // !values.downBand 
-        // !values.upBand
+        !values.targetMean || 
+        !values.masterIntervalReference || 
+        !values.masterRsiReference 
+      
       )
+      // !values.downBand
+      // !values.upBand
     ) {
       return alert("Please fill in all the required inputs for index 2.");
     }
@@ -224,12 +227,14 @@ export const EditTrade = () => {
         lastDayCloseMode: values.lastDayCloseMode,
         strikeDeviation: values.strikeDeviation,
         targetConstant: values.targetConstant,
-        strikeBase: values.strikeBase,
-        setUpPrice: values.setUpPrice,
+        strikeBasePrice: values.strikeBasePrice,
+        stepUpPrice: values.stepUpPrice,
         rsiReference: values.rsiReference,
         intervalReference: values.intervalReference,
         targetMean: values.targetMean,
         dExitMean: values.dExitMean,
+        masterRsiReference: values.masterRsiReference,
+        masterIntervalReference: values.masterIntervalReference,
         // upBand: values.upBand,
         // downBand: values.downBand,
       });
@@ -282,7 +287,7 @@ export const EditTrade = () => {
                     <SelectContent>
                       <SelectGroup>
                         <SelectLabel>Trade Index</SelectLabel>
-                        {[2, 3, 7,8, 12, 13 , 17, 18]?.map((suggestion) => (
+                        {[2, 3, 7, 8, 12, 13, 17, 18]?.map((suggestion) => (
                           <SelectItem key={suggestion} value={suggestion}>
                             {suggestion}
                           </SelectItem>
@@ -401,7 +406,7 @@ export const EditTrade = () => {
                 {(values.indexValue == 2 || values.indexValue == 12) && (
                   <>
                     <div className="px-1">
-                      <Label>Entry Interval Reference</Label>
+                      <Label>Medium Interval Reference</Label>
                       <Select
                         value={values.intervalReference}
                         name="intervalReference"
@@ -414,7 +419,7 @@ export const EditTrade = () => {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectGroup>
-                            <SelectLabel>Entry Interval Reference</SelectLabel>
+                            <SelectLabel>Medium Interval Reference</SelectLabel>
                             {[
                               {
                                 label: "1 minute",
@@ -457,11 +462,80 @@ export const EditTrade = () => {
                       </Select>
                     </div>
                     <div className="px-1">
-                      <Label>Entry RSI Reference</Label>
+                      <Label>Medium RSI Reference</Label>
                       <Input
                         name="rsiReference"
                         onChange={handleChange}
                         value={values.rsiReference}
+                        className="mt-1"
+                        type="text"
+                      />
+                    </div>
+                    <div className="px-1">
+                      <Label>Higher Interval Reference</Label>
+                      <Select
+                        value={values.masterIntervalReference}
+                        name="masterIntervalReference"
+                        onValueChange={(value) =>
+                          handleSelect("masterIntervalReference", value)
+                        }
+                      >
+                        <SelectTrigger className="w-full mt-1 border-zinc-500">
+                          <SelectValue>
+                            {values.masterIntervalReference}
+                          </SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Higher Interval Reference</SelectLabel>
+                            {[
+                              {
+                                label: "1 minute",
+                                value: "ONE_MINUTE",
+                              },
+                              {
+                                label: "3 minute",
+                                value: "THREE_MINUTE",
+                              },
+                              {
+                                label: "5 minute",
+                                value: "FIVE_MINUTE",
+                              },
+
+                              {
+                                label: "15 minute",
+                                value: "FIFTEEN_MINUTE",
+                              },
+                              {
+                                label: "30 minute",
+                                value: "THIRTY_MINUTE",
+                              },
+                              {
+                                label: "1 hour",
+                                value: "ONE_HOUR",
+                              },
+                              {
+                                label: "1 day",
+                                value: "ONE_DAY",
+                              },
+                            ]?.map((suggestion) => (
+                              <SelectItem
+                                key={suggestion.value}
+                                value={suggestion.value}
+                              >
+                                {suggestion.label}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="px-1">
+                      <Label>Higher RSI Reference</Label>
+                      <Input
+                        name="masterRsiReference"
+                        onChange={handleChange}
+                        value={values.masterRsiReference}
                         className="mt-1"
                         type="text"
                       />
@@ -529,9 +603,9 @@ export const EditTrade = () => {
                     <div className="px-1">
                       <Label>Strike Base</Label>
                       <Input
-                        name="strikeBase"
+                        name="strikeBasePrice"
                         onChange={handleChange}
-                        value={values.strikeBase}
+                        value={values.strikeBasePrice}
                         className="mt-1"
                         type="number"
                       />
@@ -539,9 +613,9 @@ export const EditTrade = () => {
                     <div className="px-1">
                       <Label>Strike Difference Price </Label>
                       <Input
-                        name="setUpPrice"
+                        name="stepUpPrice"
                         onChange={handleChange}
-                        value={values.setUpPrice}
+                        value={values.stepUpPrice}
                         className="mt-1"
                         type="number"
                       />
@@ -663,6 +737,7 @@ export const EditTrade = () => {
                     </div>
                   </>
                 )}
+
                 {/* <div className="px-1">
                   <Label>Is Master</Label>
                   <Select
@@ -754,6 +829,17 @@ export const EditTrade = () => {
                         </SelectContent>
                       </Select>
                     </div>
+                    <div className="px-1">
+                      <Label>Lower RSI Reference</Label>
+                      <Input
+                        name="rsiMax"
+                        onChange={handleChange}
+                        value={values.rsiMax}
+                        className="mt-1"
+                        type="number"
+                        min={0}
+                      />
+                    </div>
 
                     <div className="px-1">
                       <Label>Trading CE/PE</Label>
@@ -767,7 +853,7 @@ export const EditTrade = () => {
                         <SelectTrigger className="w-full mt-1 border-zinc-500">
                           <SelectValue>{values?.tradingOptions}</SelectValue>
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent>               
                           <SelectGroup>
                             <SelectLabel>Trading Option</SelectLabel>
                             <SelectItem value="CE">CE</SelectItem>
@@ -778,17 +864,7 @@ export const EditTrade = () => {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div className="px-1">
-                      <Label>RSI Max</Label>
-                      <Input
-                        name="rsiMax"
-                        onChange={handleChange}
-                        value={values.rsiMax}
-                        className="mt-1"
-                        type="number"
-                        min={0}
-                      />
-                    </div>
+             
                     {/* <div className="px-1">
                       <Label>ATR Max</Label>
                       <Input
@@ -867,7 +943,6 @@ export const EditTrade = () => {
                         type="text"
                       />
                     </div>
-        
 
                     {/* <div className="px-1">
                       <Label>Entry Time Delay</Label>
@@ -1270,7 +1345,7 @@ export const EditTrade = () => {
                           </div>
 
                           <div className="px-1">
-                            <Label>D_Entry1 MF</Label>
+                            <Label>Entry1 MF</Label>
                             <Input
                               name="dynamicEntryPercentage"
                               onChange={handleChange}
@@ -1281,7 +1356,7 @@ export const EditTrade = () => {
                             />
                           </div>
                           <div className="px-1">
-                            <Label>D_Entry2 MF</Label>
+                            <Label>Entry2 MF</Label>
                             <Input
                               name="priceDecPercent"
                               onChange={handleChange}

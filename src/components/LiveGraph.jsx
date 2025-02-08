@@ -257,15 +257,17 @@ const useKeyPress = (callback) => {
   }, [callback]);
 };
 
-const macdAppearance = {
-  stroke: {
-    macd: "#FF0000",
-    signal: "#00F300",
-  },
-  fill: {
-    divergence: "#4682B4",
-  },
-};
+// const macdAppearance = {
+//   stroke: {
+//     macd: "#FF0000",
+//     signal: "#00F300",
+//   },
+//   fill: {
+//     divergence: "#4682B4",
+//   },
+// };
+
+
 let trendLineArray = [
   {
     width: 2,
@@ -643,8 +645,7 @@ const CandleChart = ({
 
     const sendDataToAPI = async (
       data
-      // endpoint,
-      // alertMessage = "Successfully saved."
+ 
     ) => {
       const trendLineNames = [
         "Support",

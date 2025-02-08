@@ -482,11 +482,10 @@ const Dashboard = () => {
   //   });
   // };
 
-
   const toggleFilter = (filterType) => {
     setActiveFilters((prevFilters) => {
       let updatedFilters;
-  
+
       if (filterType === "ALL") {
         updatedFilters = ["ALL"]; // Reset to only "ALL"
       } else {
@@ -497,23 +496,23 @@ const Dashboard = () => {
         } else {
           updatedFilters = [...prevFilters, filterType]; // Add new filter
         }
-  
+
         if (updatedFilters.length === 0) {
           updatedFilters = ["ALL"]; // Default to "ALL" when all filters are removed
         }
       }
-  
+
       return updatedFilters;
     });
-  
+
     setActiveButtons((prevState) => {
       let newButtonState = {};
-  
+
       if (filterType === "ALL") {
         newButtonState = { ALL: true }; // If "ALL" is selected, only highlight "ALL"
       } else {
         newButtonState = { ...prevState, [filterType]: !prevState[filterType] };
-  
+
         // If no filters remain active, ensure "ALL" stays highlighted
         const remainingFilters = Object.keys(newButtonState).filter(
           (key) => newButtonState[key]
@@ -524,10 +523,10 @@ const Dashboard = () => {
           newButtonState.ALL = false;
         }
       }
-  
+
       return newButtonState;
     });
-  
+
     // Reset narration except for specific master filters
     if (
       filterType !== "isMaster" &&
@@ -537,13 +536,10 @@ const Dashboard = () => {
       setNarration(false);
     }
   };
-  
+
   const handleButtonClick = (filterType) => {
     toggleFilter(filterType);
   };
-  
-
-
 
   const toggleState = async (itemId, currentState) => {
     const newState = currentState === "ON" ? "OFF" : "ON";
@@ -600,6 +596,9 @@ const Dashboard = () => {
   return (
     <>
       <React.Fragment>
+        <div className="text-3xl  font-bold font-serif flex justify-center p-2 text-white bg-[#272626] rounded-sm">
+          PES CAPITAL
+        </div>
         <div className="text-center">
           <Button
             onClick={() => onOpen("add-new-trade", { getAllTrades, trades })}
@@ -680,7 +679,9 @@ const Dashboard = () => {
           </Button>
           <Button
             onClick={toggleShowOffTerminals}
-            className={`px-5 py-2 rounded-md border-2 ${!showOffTerminals ?"bg-red-600 hover:bg-red-600" : ""}`}
+            className={`px-5 py-2 rounded-md border-2 ${
+              !showOffTerminals ? "bg-red-600 hover:bg-red-600" : ""
+            }`}
           >
             {showOffTerminals ? "All" : "ON"}
           </Button>
@@ -993,7 +994,7 @@ const Dashboard = () => {
                     <th>LTP</th>
                     {/* <th>Put Entry Value</th> */}
                     <th>Lot Size</th>
-                    <th>RSI Value</th>
+                    {/* <th>RSI Value</th> */}
                     <th>Trade Limit</th>
                     {/* <th>Entry Line Below</th> */}
                     {/* <th>Entry Line Above</th> */}
@@ -1001,7 +1002,7 @@ const Dashboard = () => {
                     <th>ON/OFF</th>
                   </>
                 )}
-         
+
                 {/* {!activeFilters.includes("isMaster") && (
                  
                 )} */}
@@ -1244,17 +1245,10 @@ const Dashboard = () => {
                               }
                             </td>
 
-                            {/* <td
-                              className={`${
-                                item.SupportPrice &&
-                                "text-red-500 font-semibold"
-                              }`}
-                            >
-                              {item.SupportPrice?.toFixed(1)}
-                            </td> */}
+                         
 
                             <td>{item.lotSize}</td>
-                            <td>{item.rsiValue}</td>
+                           
                             <td>{item.maxLoss}</td>
 
                             {/* <td
@@ -1322,7 +1316,6 @@ const Dashboard = () => {
                                     : "bg-green-500  text-white"
                                 } "cursor-pointer font-bold px-2 py-1 rounded-sm "`}
                               >
-                                
                                 {item.terminal}
                               </button>
                             </td>
@@ -1515,12 +1508,15 @@ const Dashboard = () => {
                                   strikeDeviation: item.strikeDeviation,
                                   rsiDifference: item.rsiDifference,
                                   targetConstant: item.targetConstant,
-                                  setUpPrice: item.setUpPrice,
-                                  strikeBase: item.strikeBase,
+                                  stepUpPrice: item.stepUpPrice,
+                                  strikeBasePrice: item.strikeBasePrice,
                                   rsiReference: item.rsiReference,
                                   intervalReference: item.intervalReference,
                                   targetMean: item.targetMean,
                                   dExitMean: item.dExitMean,
+                                  masterRsiReference: item.masterRsiReference,
+                                  masterIntervalReference:
+                                    item.masterIntervalReference,
                                   // downBand : item.downBand,
                                   // upBand: item.upBand,
                                 },
