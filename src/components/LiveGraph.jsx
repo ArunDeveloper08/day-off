@@ -125,6 +125,11 @@ function tooltipContent(underlyingValue) {
           value: (currentItem?.close - currentItem?.open)?.toFixed(2),
           stroke: currentItem?.close - currentItem?.open < 0 ? "red" : "green",
         },
+        {
+          label: "Wick",
+          value: (currentItem?.high - currentItem?.close)?.toFixed(2),
+        
+        },
 
         // {
         //   label: "D_Exit_Value",
@@ -1428,7 +1433,7 @@ const CandleChart = ({
                     <>
                       <LineSeries
                         strokeDasharray="Dash"
-                        strokeWidth={2}
+                        strokeWidth={4}
                         stroke="red"
                         yAccessor={(d) =>
                           d.stopLoss != null ? Number(d.stopLoss) : undefined
@@ -1436,10 +1441,22 @@ const CandleChart = ({
                       />
                     </>
                   )}
+                  {showRow?.stopLoss && (
+                    <>
+                      <LineSeries
+                        strokeDasharray = "Dash"
+                        strokeWidth = {2}
+                        stroke="red"
+                        yAccessor={(d) =>
+                          d.stopLoss2 != null ? Number(d.stopLoss2) : undefined
+                        }
+                      />
+                    </>
+                  )}     
 
                   {(master?.tradeIndex == 2 && showRow?.targetLine )&& (
                     <LineSeries
-                      strokeWidth={2}
+                      strokeWidth={4}
                       stroke="violet"
                       yAccessor={(d) =>
                         d.targetPrice != null
@@ -1448,6 +1465,18 @@ const CandleChart = ({
                       }
                     />
                   )}
+                  {(master?.tradeIndex == 2 && showRow?.targetLine )&& (
+                    <LineSeries
+                      strokeWidth={2}
+                      stroke="violet"
+                      yAccessor={(d) =>
+                        d.targetPrice2 != null
+                          ? Number(d.targetPrice2)
+                          : undefined
+                      }
+                    />
+                  )}
+
                   {master?.tradeIndex == 12 && (
                     <LineSeries
                       strokeWidth={2}

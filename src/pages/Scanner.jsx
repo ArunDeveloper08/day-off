@@ -6,16 +6,17 @@ const Scanner = () => {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
 
-  // State for RSI Filters
+  // State for Filters
   const [rsi1DayFilter, setRsi1DayFilter] = useState("");
   const [rsi1HourFilter, setRsi1HourFilter] = useState("");
   const [rsi15MinFilter, setRsi15MinFilter] = useState("");
   const [rsi5MinFilter, setRsi5MinFilter] = useState("");
-
-  // State for ATR Filters
   const [atr1HourFilter, setAtr1HourFilter] = useState("");
   const [atr15MinFilter, setAtr15MinFilter] = useState("");
   const [atr5MinFilter, setAtr5MinFilter] = useState("");
+  
+  // State for Identifier Search
+  const [searchIdentifier, setSearchIdentifier] = useState("");
 
   // Fetch stock data
   const fetchStockData = async () => {
@@ -37,8 +38,8 @@ const Scanner = () => {
 
   // Function to apply all filters
   const handleFilterChange = () => {
-    let filtered = [...data]; // Always start with the full dataset
-  
+    let filtered = [...data];
+
     // Generic filter function
     const applyFilter = (filter, key) => {
       if (filter) {
@@ -51,8 +52,8 @@ const Scanner = () => {
         });
       }
     };
-  
-    // Apply filters for RSI and ATR
+
+    // Apply RSI & ATR filters
     applyFilter(rsi1DayFilter, "OneDay_RSI");
     applyFilter(rsi1HourFilter, "OneHour_RSI");
     applyFilter(rsi15MinFilter, "FifteenMin_RSI");
@@ -60,24 +61,34 @@ const Scanner = () => {
     applyFilter(atr1HourFilter, "OneHour_ATR");
     applyFilter(atr15MinFilter, "FifteenMin_ATR");
     applyFilter(atr5MinFilter, "FiveMin_ATR");
-  
-    console.log("✅ Before setFilteredData:", filtered);
-    setFilteredData([...filtered]); // ✅ Ensures new state reference
-  };
-  
-  useEffect(() => {
-    console.log("✅ Updated Filtered Data in State:", filteredData);
-  }, [filteredData]);
 
-  // Run filter function whenever filters change
+    // Apply identifier search filter
+    if (searchIdentifier) {
+      filtered = filtered.filter((item) =>
+        item.masterIdentifier.toLowerCase().includes(searchIdentifier.toLowerCase())
+      );
+    }
+
+    setFilteredData([...filtered]);
+  };
+
   useEffect(() => {
     handleFilterChange();
-  }, [rsi1DayFilter, rsi1HourFilter, rsi15MinFilter, rsi5MinFilter, atr1HourFilter, atr15MinFilter, atr5MinFilter]);
+  }, [rsi1DayFilter, rsi1HourFilter, rsi15MinFilter, rsi5MinFilter, atr1HourFilter, atr15MinFilter, atr5MinFilter, searchIdentifier]);
 
   return (
     <div className="relative w-full h-screen">
       <div className="relative z-10 flex flex-col items-center justify-center h-full px-4">
         <h2 className="text-3xl font-bold font-serif text-center mt-4 underline">SCANNER</h2>
+
+        {/* Identifier Search Input */}
+        <input
+          type="text"
+          className="p-2 mt-4 border rounded-md w-1/2 text-center"
+          placeholder="Search Identifier"
+          value={searchIdentifier}
+          onChange={(e) => setSearchIdentifier(e.target.value)}
+        />
 
         {/* Filter Options */}
         <div className="flex flex-wrap gap-4 mt-4 justify-center">
@@ -113,31 +124,6 @@ const Scanner = () => {
             <option value="less-50">Less than 50</option>
             <option value="more-70">More than 70</option>
           </select>
-
-          {/* ATR Filters */}
-          <select className="p-2 border rounded-md" value={atr1HourFilter} onChange={(e) => setAtr1HourFilter(e.target.value)}>
-            <option value="">Filter 1H ATR</option>
-            <option value="less-30">Less than 30</option>
-            <option value="more-50">More than 50</option>
-            <option value="less-50">Less than 50</option>
-            <option value="more-70">More than 70</option>
-          </select>
-
-          <select className="p-2 border rounded-md" value={atr15MinFilter} onChange={(e) => setAtr15MinFilter(e.target.value)}>
-            <option value="">Filter 15M ATR</option>
-            <option value="less-30">Less than 30</option>
-            <option value="more-50">More than 50</option>
-            <option value="less-50">Less than 50</option>
-            <option value="more-70">More than 70</option>
-          </select>
-
-          <select className="p-2 border rounded-md" value={atr5MinFilter} onChange={(e) => setAtr5MinFilter(e.target.value)}>
-            <option value="">Filter 5M ATR</option>
-            <option value="less-30">Less than 30</option>
-            <option value="more-50">More than 50</option>
-            <option value="less-50">Less than 50</option>
-            <option value="more-70">More than 70</option>
-          </select>
         </div>
 
         {/* Stock data table */}
@@ -154,6 +140,8 @@ const Scanner = () => {
                 <th>1H ATR</th>
                 <th>15M ATR</th>
                 <th>5M ATR</th>
+                <th>Support Slope</th>
+                <th>Resistance Slope</th>
               </tr>
             </thead>
             <tbody>
@@ -168,6 +156,8 @@ const Scanner = () => {
                   <td>{item.OneHour_ATR}</td>
                   <td>{item.FifteenMin_ATR}</td>
                   <td>{item.FiveMin_ATR}</td>
+                  <td>{item.supportSlope}</td>
+                  <td>{item.resistanceSlope}</td>
                 </tr>
               ))}
             </tbody>

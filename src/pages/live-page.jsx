@@ -320,10 +320,11 @@ export const LivePage = () => {
 
   return (
     <div>
+
       {/* {data.error ? ( */}
       {/* // "Some Error Occcured" */}
       {/* // ) : ( */}
-
+   
       <>
         <div>
           <p className="font-semibold text-center font-mono text-[20px] text-green-600">
@@ -340,7 +341,7 @@ export const LivePage = () => {
                 data?.data?.haveTrade == 1 ? "text-red-600" : "text-green-600"
               }`}
             >
-              In Trade :{data?.data?.haveTrade == 1 ? "True" : "False"}
+              In Trade : {data?.data?.haveTrade == 1 ? "True" : "False"}
             </span>
             &nbsp;
             <Button size="sm" onClick={() => setHideConfig((prev) => !prev)}>

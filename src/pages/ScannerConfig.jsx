@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { BASE_URL_OVERALL2 } from "@/lib/constants";
+import { BASE_URL_OVERALL, BASE_URL_OVERALL2 } from "@/lib/constants";
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 
 const ScannerConfig = () => {
@@ -24,6 +25,7 @@ const ScannerConfig = () => {
     aboveFifteenthMinPrevClose: "",
     bullishLowestVolume: "",
     bearishLowestVolume: "",
+    rsiCandle: "",
 
     //aboveFifteenthMinRsiBearish:"" ,
     //aboveHourRsiBearish:"" ,
@@ -43,17 +45,38 @@ const ScannerConfig = () => {
     // belowPrevDayClose:""
   });
 
+  const getConfigData = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL_OVERALL}/scanner/getconfig`);
+
+      console.log(response?.data?.data?.[0]);
+      if (
+        response.data &&
+        response.data.data &&
+        response.data.data.length > 0
+      ) {
+        setValues((prevValues) => ({
+          ...prevValues,
+          ...response.data.data[0],
+        }));
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   useEffect(() => {
     document.title = "Scanner Config";
+    getConfigData();
   }, []);
 
   const handleSubmit = async () => {
-    console.log(values);
-
     try {
-      const response = await axios.post(`${BASE_URL_OVERALL2}`);
-      setValues(response.data);
-    } catch (err) {
+      const response = await axios.post(`${BASE_URL_OVERALL}/scanner/config`, {
+        ...values,
+      });
+      alert(response.data.message);
+    } catch (err) {-
       console.log(err);
     }
   };
@@ -76,7 +99,7 @@ const ScannerConfig = () => {
 
   return (
     <div className="ml-2">
-      <div>       
+      <div>
         <div className="font-bold text-3xl flex justify-center">
           Entry Condition for Trade
         </div>
@@ -94,16 +117,19 @@ const ScannerConfig = () => {
                 name="aboveDayRsi"
                 className="w-[200px]"
                 onChange={handleChange}
+                value={values?.aboveDayRsi}
               />
               <Input
                 name="aboveHourRsi"
                 className="w-[200px]"
                 onChange={handleChange}
+                value={values?.aboveHourRsi}
               />
               <Input
                 name="aboveFifteenthMinRsi"
                 className="w-[200px]"
                 onChange={handleChange}
+                value={values?.aboveFifteenthMinRsi}
               />
             </div>
           </div>
@@ -114,16 +140,19 @@ const ScannerConfig = () => {
                 name="belowDayRsi"
                 className="w-[200px]"
                 onChange={handleChange}
+                value={values?.belowDayRsi}
               />
               <Input
                 name="belowHourRsi"
                 className="w-[200px]"
                 onChange={handleChange}
+                value={values?.belowHourRsi}
               />
               <Input
                 name="belowFifteenthMinRsi"
                 className="w-[200px]"
                 onChange={handleChange}
+                value={values?.belowFifteenthMinRsi}
               />
             </div>
           </div>
@@ -139,6 +168,7 @@ const ScannerConfig = () => {
                 name="aboveAtrOnHourCandle"
                 className="w-[200px]"
                 onChange={handleChange}
+                value={values?.aboveAtrOnHourCandle}
               />
             </div>
           </div>
@@ -148,6 +178,7 @@ const ScannerConfig = () => {
                 name="belowAtrOnHourCandle"
                 className="w-[200px]"
                 onChange={handleChange}
+                value={values?.belowAtrOnHourCandle}
               />
             </div>
           </div>
@@ -165,6 +196,7 @@ const ScannerConfig = () => {
                 onCheckedChange={(checked) =>
                   handleCheckboxChange("aboveR2OneHourCandle", checked)
                 }
+                checked={values?.aboveR2OneHourCandle}
               />
             </div>
           </div>
@@ -176,6 +208,7 @@ const ScannerConfig = () => {
                 onCheckedChange={(checked) =>
                   handleCheckboxChange("aboveR1OneHourCandle", checked)
                 }
+                checked={values?.aboveR1OneHourCandle}
               />
             </div>
           </div>
@@ -191,6 +224,7 @@ const ScannerConfig = () => {
                 onCheckedChange={(checked) =>
                   handleCheckboxChange("aboveR2FifteenthMinCandle", checked)
                 }
+                checked={values?.aboveR2FifteenthMinCandle}
               />
             </div>
           </div>
@@ -201,6 +235,7 @@ const ScannerConfig = () => {
                 onCheckedChange={(checked) =>
                   handleCheckboxChange("aboveR1FifteenthMinCandle", checked)
                 }
+                checked={values?.aboveR1FifteenthMinCandle}
               />
             </div>
           </div>
@@ -216,6 +251,7 @@ const ScannerConfig = () => {
                 onCheckedChange={(checked) =>
                   handleCheckboxChange("aboveR2DayCandle", checked)
                 }
+                checked={values?.aboveR2DayCandle}
               />
             </div>
           </div>
@@ -226,6 +262,7 @@ const ScannerConfig = () => {
                 onCheckedChange={(checked) =>
                   handleCheckboxChange("aboveR1DayCandle", checked)
                 }
+                checked={values?.aboveR1DayCandle}
               />
             </div>
           </div>
@@ -243,6 +280,7 @@ const ScannerConfig = () => {
                 onCheckedChange={(checked) =>
                   handleCheckboxChange("abovePrevDayClose", checked)
                 }
+                checked={values?.abovePrevDayClose}
               />
             </div>
           </div>
@@ -254,6 +292,7 @@ const ScannerConfig = () => {
                 onCheckedChange={(checked) =>
                   handleCheckboxChange("aboveFifteenthMinPrevClose", checked)
                 }
+                checked={values?.aboveFifteenthMinPrevClose}
               />
             </div>
           </div>
@@ -269,6 +308,7 @@ const ScannerConfig = () => {
                 onCheckedChange={(checked) =>
                   handleCheckboxChange("bearishLowestVolume", checked)
                 }
+                checked={values?.bearishLowestVolume}
               />
             </div>
           </div>
@@ -413,6 +453,23 @@ const ScannerConfig = () => {
                 onCheckedChange={(checked) =>
                   handleCheckboxChange("bullishLowestVolume", checked)
                 }
+                checked={values?.bullishLowestVolume}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className=" grid grid-cols-3 mt-4">
+          <div className="grid grid-cols-1 mt-5">
+            <label className="font-bold">RSI/ATR Candle Count</label>
+          </div>
+          <div>
+            <div className="grid grid-cols-1 space-y-1">
+              <Input
+                name="rsiCandle"
+                className="w-[200px]"
+                onChange={handleChange}
+                value={values?.rsiCandle}
               />
             </div>
           </div>
