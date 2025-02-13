@@ -92,7 +92,10 @@ const UIButton = ({
           VDEM: {data?.data?.R_min}  
         </p>
         <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
-          Doji Candle: {data?.data?.CEBuyRegion}  
+         VTM: {(data?.data?.R_max)?.toFixed(2)}  
+        </p>
+        <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+           Candle Ratio: {data?.data?.CEBuyRegion}  
         </p>
 
      

@@ -133,7 +133,8 @@ const initialState = {
   masterIntervalReference:"ONE_HOUR",
   intervalReference:"FIFTEEN_MINUTE",
   rsiReference:"5",
-  s1:"10"
+  s1:"10",
+  candleRatio:"75"
   // Min_Order_Qty:"1"
 };
 
@@ -247,7 +248,8 @@ const alternateInitialState = {
   masterIntervalReference:"ONE_HOUR",
   intervalReference:"FIFTEEN_MINUTE",
   rsiReference:"5",
-  s1:"10"
+  s1:"10",
+   candleRatio:"75"
 };
 // tradeIndex =2
 const gammaBlastInitialState = {
@@ -365,7 +367,8 @@ const gammaBlastInitialState = {
   masterIntervalReference:"ONE_HOUR",
   intervalReference:"FIFTEEN_MINUTE",
   rsiReference:"5",
-  s1:"10"
+  s1:"10",
+   candleRatio:"75"
 };
 // tradeIndex =6
 
@@ -390,7 +393,6 @@ export const AddNewtrade = () => {
   const isModalOpen = isOpen && type === "add-new-trade";
 
   // React.useEffect(() => {
-
   //   if (values.indexValue == 2) {
   //     setValues(alternateInitialState);
   //   } else if (values.indexValue == 6) {
@@ -399,7 +401,7 @@ export const AddNewtrade = () => {
   //     setValues({ ...initialState, indexValue: values.indexValue });
   //   }
   // }, [values.indexValue]);
-
+     
   React.useEffect(() => {
     let newState;
 
@@ -661,6 +663,7 @@ export const AddNewtrade = () => {
         masterRsiReference: values.masterRsiReference,
         masterIntervalReference: values.masterIntervalReference,
         s1: values.s1,
+        candleRatio: values.candleRatio,
         // upBand: values.upBand,
         // downBand: values.downBand,
       });
@@ -962,6 +965,28 @@ export const AddNewtrade = () => {
                           name="s1"
                           onChange={handleChange}
                           value={values.s1}
+                          className="mt-1"
+                          min={0}
+                          type="number"
+                        />
+                      </div>
+                      <div className="px-1">
+                        <Label>Candle Ratio</Label>
+                        <Input
+                          name="candleRatio"
+                          onChange={handleChange}
+                          value={values.candleRatio}
+                          className="mt-1"
+                          min={0}
+                          type="number"
+                        />
+                      </div>
+                      <div className="px-1">
+                        <Label>Target Mean</Label>
+                        <Input
+                          name="targetMean"
+                          onChange={handleChange}
+                          value={values.targetMean}
                           className="mt-1"
                           min={0}
                           type="number"
@@ -1771,7 +1796,7 @@ export const AddNewtrade = () => {
                     //     type="number"
                     //   />
                     // </div> */}
-                      <div className="px-1">
+                      {/* <div className="px-1">
                         <Label>Entry1 MF </Label>
                         <Input
                           name="dynamicEntryPercentage"
@@ -1781,7 +1806,7 @@ export const AddNewtrade = () => {
                           type="number"
                           min={0}
                         />
-                      </div>
+                      </div> */}
                       <div className="px-1">
                         <Label>Entry2 MF</Label>
                         <Input
@@ -1868,6 +1893,7 @@ export const AddNewtrade = () => {
                           type="number"
                         />
                       </div>
+              
                       <div className="px-1">
                         <Label>Target Constant</Label>
                         <Input
@@ -1879,19 +1905,9 @@ export const AddNewtrade = () => {
                           type="number"
                         />
                       </div>
-                      <div className="px-1">
-                        <Label>Target Mean</Label>
-                        <Input
-                          name="targetMean"
-                          onChange={handleChange}
-                          value={values.targetMean}
-                          className="mt-1"
-                          min={0}
-                          type="number"
-                        />
-                      </div>
+             
             
-                      <div className="px-1">
+                      {/* <div className="px-1">
                         <Label>D_Exit Mean</Label>
                         <Input
                           name="dExitMean"
@@ -1901,7 +1917,7 @@ export const AddNewtrade = () => {
                           min={0}
                           type="number"
                         />
-                      </div>
+                      </div> */}
                       {/* <div className="px-1">
                         <Label>Interval</Label>
                         <Select

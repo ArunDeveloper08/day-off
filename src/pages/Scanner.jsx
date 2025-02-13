@@ -124,6 +124,15 @@ const Scanner = () => {
             <option value="less-50">Less than 50</option>
             <option value="more-70">More than 70</option>
           </select>
+<select className="p-2 border rounded-sm" value= {atr5MinFilter} onChange={(e)=>setAtr5MinFilter(e.target.value)}>
+<option value="">Filter 5M RSI</option>
+            <option value="less-30">Less than 30</option>
+            <option value="more-50">More than 50</option>
+            <option value="less-50">Less than 50</option>
+            <option value="more-70">More than 70</option>
+
+</select>
+
         </div>
 
         {/* Stock data table */}
@@ -145,7 +154,7 @@ const Scanner = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredData.map((item, index) => (
+              {filteredData?.map((item, index) => (
                 <tr key={index}>
                   <td>{index + 1}</td>
                   <td>{item.masterIdentifier}</td>

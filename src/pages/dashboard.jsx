@@ -402,6 +402,18 @@ const Dashboard = () => {
           match = true;
         }
         if (
+          activeFilters.includes("gainer") &&
+          (item.looserGainer == "Gainer" )
+        ) {
+          match = true;
+        }
+        if (
+          activeFilters.includes("looser") &&
+          (item.looserGainer == "Looser" ) 
+        ) {
+          match = true;
+        }
+        if (
           activeFilters.includes("S.D. Yadav") &&
           item.category === "SDYadav"
         ) {
@@ -887,6 +899,26 @@ const Dashboard = () => {
             }`}
           >
             Index 7 & 17
+          </Button>
+          <Button
+            onClick={() => handleButtonClick("gainer")}
+            className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
+              activeButtons["gainer"]
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-black"
+            }`}
+          >
+           Gainer
+          </Button>
+          <Button
+            onClick={() => handleButtonClick("looser")}
+            className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
+              activeButtons["looser"]
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-black"
+            }`}
+          >
+           Looser
           </Button>
 
           <Button
@@ -1518,10 +1550,10 @@ const Dashboard = () => {
                                   masterIntervalReference:
                                     item.masterIntervalReference,
                                    s1 : item.s1,
-                                  // upBand: item.upBand,
+                                   candleRatio: item.candleRatio,
                                 },
                                 getAllTrades,
-                                trades,
+                                trades, 
                               })
                             }
                             className="px-2 rounded-md"

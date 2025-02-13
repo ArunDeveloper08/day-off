@@ -101,6 +101,7 @@ export const LivePage = () => {
     dExitLine: true,
     stopLoss: true,
     targetLine: true,
+    entryPivotValue:true,
   });
 
   const [apiData, setApiData] = useState([]);
@@ -442,7 +443,7 @@ export const LivePage = () => {
               LTP : {socketData?.last_traded_price} &nbsp; Master LTP :
               {socketMastertData?.last_traded_price} &nbsp; RSI :{" "}
               {data.data.rsiValue} &nbsp; ATR Value : {data.data.atrValue}{" "}
-              &nbsp; V_WMA: {data?.data?.wmaLtp} &nbsp; A :
+              &nbsp;  A :
               {data?.data.callTargetLevelPrice?.toFixed(2)} &nbsp; B :
               {data?.data.putTargetLevelPrice?.toFixed(2)} &nbsp; C :
               {data?.data.entryLine?.toFixed(2)} &nbsp; a :

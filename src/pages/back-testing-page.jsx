@@ -80,7 +80,8 @@ export const BackTestingPage = () => {
     toolTip: true,
     bollingerBand: false,
     stopLoss:true,
-    targetLine : true
+    targetLine : true,
+    entryPivotValue:true,
   });
 
   const [latestValues, setLatestValues] = useState({
@@ -420,6 +421,22 @@ export const BackTestingPage = () => {
               }`}
             >
               D_Entry Line
+            </button>
+            &nbsp;
+            <button
+              onClick={() =>
+                setShowRow((p) => ({
+                  ...p,
+                  entryPivotValue: !p.entryPivotValue,
+                }))
+              }
+              className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
+                showRow.entryPivotValue
+                  ? "bg-blue-500 text-gray-100"
+                  : "bg-gray-300 "
+              }`}
+            >
+              Entry Line
             </button>
             &nbsp;
             <button

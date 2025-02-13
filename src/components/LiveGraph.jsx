@@ -125,10 +125,13 @@ function tooltipContent(underlyingValue) {
           value: (currentItem?.close - currentItem?.open)?.toFixed(2),
           stroke: currentItem?.close - currentItem?.open < 0 ? "red" : "green",
         },
+        // {
+        //   label: "Wick",
+        //   value: (currentItem?.high - currentItem?.close)?.toFixed(2),
+        // },
         {
-          label: "Wick",
-          value: (currentItem?.high - currentItem?.close)?.toFixed(2),
-        
+          label: "Candle Ratio",
+          value: (((currentItem?.close - currentItem?.open)/(currentItem?.high - currentItem?.low))*100)?.toFixed(2),
         },
 
         // {
@@ -271,7 +274,6 @@ const useKeyPress = (callback) => {
 //     divergence: "#4682B4",
 //   },
 // };
-
 
 let trendLineArray = [
   {
@@ -648,10 +650,7 @@ const CandleChart = ({
       );
     };
 
-    const sendDataToAPI = async (
-      data
- 
-    ) => {
+    const sendDataToAPI = async (data) => {
       const trendLineNames = [
         "Support",
         "Resistance",
@@ -952,8 +951,6 @@ const CandleChart = ({
     };
 
     useKeyPress(onKeyPress);
-
-   
 
     const rsiCalculator = rsi()
       .options({ windowSize: master?.rsiCandle ?? 14 }) // 14-period RSI
@@ -1442,19 +1439,20 @@ const CandleChart = ({
                     </>
                   )}
                   {showRow?.stopLoss && (
+                  
                     <>
                       <LineSeries
-                        strokeDasharray = "Dash"
-                        strokeWidth = {2}
+                        strokeDasharray="Dash"
+                        strokeWidth={2}
                         stroke="red"
                         yAccessor={(d) =>
                           d.stopLoss2 != null ? Number(d.stopLoss2) : undefined
                         }
                       />
-                    </>
-                  )}     
+                    </>                 
+                  )}
 
-                  {(master?.tradeIndex == 2 && showRow?.targetLine )&& (
+                  {master?.tradeIndex == 2 && showRow?.targetLine && (
                     <LineSeries
                       strokeWidth={4}
                       stroke="violet"
@@ -1465,7 +1463,7 @@ const CandleChart = ({
                       }
                     />
                   )}
-                  {(master?.tradeIndex == 2 && showRow?.targetLine )&& (
+                  {master?.tradeIndex == 2 && showRow?.targetLine && (
                     <LineSeries
                       strokeWidth={2}
                       stroke="violet"
@@ -1488,15 +1486,21 @@ const CandleChart = ({
                       }
                     />
                   )}
-                  <LineSeries
-                    strokeWidth={2}
-                    stroke="green"
-                    yAccessor={(d) =>
-                      d.entryPivotValue != null
-                        ? Number(d.entryPivotValue)
-                        : undefined
-                    }
-                  />
+
+                  {
+                    showRow.entryPivotValue && (
+                      <LineSeries
+                      strokeWidth={2}
+                      stroke="green"
+                      yAccessor={(d) =>
+                        d.entryPivotValue != null
+                          ? Number(d.entryPivotValue)
+                          : undefined
+                      }
+                    />
+                    )
+                  }
+                
 
                   {showRow?.dExitLine && (
                     <>
@@ -1830,7 +1834,7 @@ const CandleChart = ({
                       />
                     </>
                   )}
-                 
+
                   {showRow.daily && (
                     <>
                       <Annotate
@@ -1885,7 +1889,7 @@ const CandleChart = ({
                       />
                     </>
                   )}
-                
+
                   {showRow.MouseCoordinates && (
                     <>
                       <MouseCoordinateX

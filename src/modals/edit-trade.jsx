@@ -234,7 +234,7 @@ export const EditTrade = () => {
         masterRsiReference: values.masterRsiReference,
         masterIntervalReference: values.masterIntervalReference,
         s1: values.s1,
-        // upBand: values.upBand,
+      candleRatio: values.candleRatio,
         // downBand: values.downBand,
       });
       alert("Update Successfully");
@@ -402,7 +402,7 @@ export const EditTrade = () => {
                   </Select>
                 </div>
 
-                { values.indexValue == 18  && (
+                {values.indexValue == 18 && (
                   <>
                     <div className="px-1">
                       <Label>Medium Interval Reference</Label>
@@ -540,22 +540,44 @@ export const EditTrade = () => {
                       />
                     </div>
                     <div className="px-1">
-                            <Label>RSI/ATR Candle</Label>
+                      <Label>RSI/ATR Candle</Label>
+                      <Input
+                        name="rsiCandle"
+                        onChange={handleChange}
+                        value={values.rsiCandle}
+                        className="mt-1"
+                        type="number"
+                        min={0}
+                      />
+                    </div>
+                    <div className="px-1">
+                      <Label>VDEM Constant</Label>
+                      <Input
+                        name="s1"
+                        onChange={handleChange}
+                        value={values.s1}
+                        className="mt-1"
+                        min={0}
+                        type="number"
+                      />
+                    </div>
+                    <div className="px-1">
+                            <Label>Candle Ratio</Label>
                             <Input
-                              name="rsiCandle"
+                              name="candleRatio"
                               onChange={handleChange}
-                              value={values.rsiCandle}
+                              value={values.candleRatio}
                               className="mt-1"
-                              type="number"
                               min={0}
+                              type="number"
                             />
                           </div>
                           <div className="px-1">
-                            <Label>VDEM Constant</Label>
+                            <Label>Target Mean</Label>
                             <Input
-                              name="s1"
+                              name="targetMean"
                               onChange={handleChange}
-                              value={values.s1}
+                              value={values.targetMean}
                               className="mt-1"
                               min={0}
                               type="number"
@@ -1353,9 +1375,7 @@ export const EditTrade = () => {
                             />
                           </div>
 
-                  
-
-                          <div className="px-1">
+                          {/* <div className="px-1">
                             <Label>Entry1 MF</Label>
                             <Input
                               name="dynamicEntryPercentage"
@@ -1365,7 +1385,7 @@ export const EditTrade = () => {
                               type="number"
                               min={0}
                             />
-                          </div>
+                          </div> */}
                           <div className="px-1">
                             <Label>Entry2 MF</Label>
                             <Input
@@ -1452,6 +1472,7 @@ export const EditTrade = () => {
                               type="number"
                             />
                           </div>
+                 
                           <div className="px-1">
                             <Label>Target Constant</Label>
                             <Input
@@ -1463,19 +1484,9 @@ export const EditTrade = () => {
                               type="number"
                             />
                           </div>
-                          <div className="px-1">
-                            <Label>Target Mean</Label>
-                            <Input
-                              name="targetMean"
-                              onChange={handleChange}
-                              value={values.targetMean}
-                              className="mt-1"
-                              min={0}
-                              type="number"
-                            />
-                          </div>
-                       
-                          <div className="px-1">
+                
+
+                          {/* <div className="px-1">
                             <Label>D_Exit Mean</Label>
                             <Input
                               name="dExitMean"
@@ -1485,7 +1496,7 @@ export const EditTrade = () => {
                               min={0}
                               type="number"
                             />
-                          </div>
+                          </div> */}
                         </>
                       )}
                     <div className="px-1">
