@@ -89,7 +89,7 @@ const UIButton = ({
           RSI Max: {data?.data?.rsiMax}
         </p>
         <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
-          VDEM: {data?.data?.R_min}  
+          VDEM: {(data?.data?.R_min)?.toFixed(2)}  
         </p>
         <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
          VTM: {(data?.data?.R_max)?.toFixed(2)}  
@@ -185,6 +185,22 @@ const UIButton = ({
         >
           Target Profit
         </button>
+       
+            <button
+              onClick={() =>
+                setShowRow((p) => ({
+                  ...p,
+                  Last_Highest_LTP: !p.Last_Highest_LTP,
+                }))
+              }
+              className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                showRow.Last_Highest_LTP
+                  ? "bg-blue-500 text-gray-100"
+                  : "bg-gray-300 "
+              }`}
+            >
+              Last High LTP
+            </button>
 
         <button
           onClick={() =>

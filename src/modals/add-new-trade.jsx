@@ -134,7 +134,8 @@ const initialState = {
   intervalReference:"FIFTEEN_MINUTE",
   rsiReference:"5",
   s1:"10",
-  candleRatio:"75"
+  candleRatio:"75",
+  incCandleRatio : ""
   // Min_Order_Qty:"1"
 };
 
@@ -249,7 +250,8 @@ const alternateInitialState = {
   intervalReference:"FIFTEEN_MINUTE",
   rsiReference:"5",
   s1:"10",
-   candleRatio:"75"
+   candleRatio:"75",
+   incCandleRatio:""
 };
 // tradeIndex =2
 const gammaBlastInitialState = {
@@ -368,7 +370,8 @@ const gammaBlastInitialState = {
   intervalReference:"FIFTEEN_MINUTE",
   rsiReference:"5",
   s1:"10",
-   candleRatio:"75"
+   candleRatio:"75",
+   incCandleRatio:""
 };
 // tradeIndex =6
 
@@ -664,6 +667,7 @@ export const AddNewtrade = () => {
         masterIntervalReference: values.masterIntervalReference,
         s1: values.s1,
         candleRatio: values.candleRatio,
+        incCandleRatio: values.incCandleRatio,
         // upBand: values.upBand,
         // downBand: values.downBand,
       });
@@ -1316,6 +1320,17 @@ export const AddNewtrade = () => {
 
             {values?.isMaster && (
               <>
+                  <div className="px-1">
+                        <Label>Inc Candle Ratio</Label>
+                        <Input
+                          name="incCandleRatio"
+                          onChange={handleChange}
+                          value={values.incCandleRatio}
+                          className="mt-1"
+                          type="number"
+                          min={0}
+                        />
+                      </div>
                 <div className="px-1">
                   <Label>Lot Size</Label>
                   <Input
@@ -1783,6 +1798,7 @@ export const AddNewtrade = () => {
                           min={0}
                         />
                       </div>
+                  
 
                
                       {/* 

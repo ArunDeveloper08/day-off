@@ -1566,7 +1566,7 @@ const CandleChart = ({
                     <LineSeries
                       strokeDasharray="Dash"
                       strokeWidth={4}
-                      stroke="red"
+                      stroke="blue"
                       yAccessor={(d) =>
                         d?.Last_Highest_LTP
                           ? Number(d.Last_Highest_LTP)

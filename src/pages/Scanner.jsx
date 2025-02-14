@@ -14,7 +14,7 @@ const Scanner = () => {
   const [atr1HourFilter, setAtr1HourFilter] = useState("");
   const [atr15MinFilter, setAtr15MinFilter] = useState("");
   const [atr5MinFilter, setAtr5MinFilter] = useState("");
-  
+
   // State for Identifier Search
   const [searchIdentifier, setSearchIdentifier] = useState("");
 
@@ -65,7 +65,9 @@ const Scanner = () => {
     // Apply identifier search filter
     if (searchIdentifier) {
       filtered = filtered.filter((item) =>
-        item.masterIdentifier.toLowerCase().includes(searchIdentifier.toLowerCase())
+        item.masterIdentifier
+          .toLowerCase()
+          .includes(searchIdentifier.toLowerCase())
       );
     }
 
@@ -74,12 +76,23 @@ const Scanner = () => {
 
   useEffect(() => {
     handleFilterChange();
-  }, [rsi1DayFilter, rsi1HourFilter, rsi15MinFilter, rsi5MinFilter, atr1HourFilter, atr15MinFilter, atr5MinFilter, searchIdentifier]);
+  }, [
+    rsi1DayFilter,
+    rsi1HourFilter,
+    rsi15MinFilter,
+    rsi5MinFilter,
+    atr1HourFilter,
+    atr15MinFilter,
+    atr5MinFilter,
+    searchIdentifier,
+  ]);
 
   return (
     <div className="relative w-full h-screen">
       <div className="relative z-10 flex flex-col items-center justify-center h-full px-4">
-        <h2 className="text-3xl font-bold font-serif text-center mt-4 underline">SCANNER</h2>
+        <h2 className="text-3xl font-bold font-serif text-center mt-4 underline">
+          SCANNER
+        </h2>
 
         {/* Identifier Search Input */}
         <input
@@ -93,7 +106,11 @@ const Scanner = () => {
         {/* Filter Options */}
         <div className="flex flex-wrap gap-4 mt-4 justify-center">
           {/* RSI Filters */}
-          <select className="p-2 border rounded-md" value={rsi1DayFilter} onChange={(e) => setRsi1DayFilter(e.target.value)}>
+          <select
+            className="p-2 border rounded-md"
+            value={rsi1DayFilter}
+            onChange={(e) => setRsi1DayFilter(e.target.value)}
+          >
             <option value="">Filter 1D RSI</option>
             <option value="less-30">Less than 30</option>
             <option value="more-50">More than 50</option>
@@ -101,7 +118,11 @@ const Scanner = () => {
             <option value="more-70">More than 70</option>
           </select>
 
-          <select className="p-2 border rounded-md" value={rsi1HourFilter} onChange={(e) => setRsi1HourFilter(e.target.value)}>
+          <select
+            className="p-2 border rounded-md"
+            value={rsi1HourFilter}
+            onChange={(e) => setRsi1HourFilter(e.target.value)}
+          >
             <option value="">Filter 1H RSI</option>
             <option value="less-30">Less than 30</option>
             <option value="more-50">More than 50</option>
@@ -109,7 +130,11 @@ const Scanner = () => {
             <option value="more-70">More than 70</option>
           </select>
 
-          <select className="p-2 border rounded-md" value={rsi15MinFilter} onChange={(e) => setRsi15MinFilter(e.target.value)}>
+          <select
+            className="p-2 border rounded-md"
+            value={rsi15MinFilter}
+            onChange={(e) => setRsi15MinFilter(e.target.value)}
+          >
             <option value="">Filter 15M RSI</option>
             <option value="less-30">Less than 30</option>
             <option value="more-50">More than 50</option>
@@ -117,22 +142,28 @@ const Scanner = () => {
             <option value="more-70">More than 70</option>
           </select>
 
-          <select className="p-2 border rounded-md" value={rsi5MinFilter} onChange={(e) => setRsi5MinFilter(e.target.value)}>
+          <select
+            className="p-2 border rounded-md"
+            value={rsi5MinFilter}
+            onChange={(e) => setRsi5MinFilter(e.target.value)}
+          >
             <option value="">Filter 5M RSI</option>
             <option value="less-30">Less than 30</option>
             <option value="more-50">More than 50</option>
             <option value="less-50">Less than 50</option>
             <option value="more-70">More than 70</option>
           </select>
-<select className="p-2 border rounded-sm" value= {atr5MinFilter} onChange={(e)=>setAtr5MinFilter(e.target.value)}>
-<option value="">Filter 5M RSI</option>
+          <select
+            className="p-2 border rounded-sm"
+            value={atr5MinFilter}
+            onChange={(e) => setAtr5MinFilter(e.target.value)}
+          >
+            <option value="">Filter 5M RSI</option>
             <option value="less-30">Less than 30</option>
             <option value="more-50">More than 50</option>
             <option value="less-50">Less than 50</option>
             <option value="more-70">More than 70</option>
-
-</select>
-
+          </select>
         </div>
 
         {/* Stock data table */}

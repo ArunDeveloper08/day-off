@@ -102,6 +102,7 @@ export const LivePage = () => {
     stopLoss: true,
     targetLine: true,
     entryPivotValue:true,
+    
   });
 
   const [apiData, setApiData] = useState([]);

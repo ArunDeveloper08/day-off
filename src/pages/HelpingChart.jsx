@@ -150,6 +150,7 @@ const HelpingChart = () => {
     dExitLine : true,
     stopLoss:true,
     targetLine : true,
+    entryPivotValue:true,
   });
   const [hideConfig, setHideConfig] = useState(true);
 

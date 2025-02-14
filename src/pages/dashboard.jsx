@@ -57,6 +57,7 @@ const Dashboard = () => {
   const [tradeIdentification, setTradeIdentification] = useState(2);
   const debounceRef = useRef(null);
   const intervalRef = useRef(null);
+  const [strikeToggle, setStrikeToggle] = useState(true);
 
   //const showNotification = (message) => {
   // alert(message); // Basic popup. You can replace this with a custom notification component if needed.
@@ -313,16 +314,16 @@ const Dashboard = () => {
     secureLocalStorage.clear();
     navigate("/future");
   };
-  const clearNotification = async () => {
-    try {
-      const response = await axios.put(
-        `${BASE_URL_OVERALL}/config/resetAllNotification`
-      );
-      alert(response.data.message);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const clearNotification = async () => {
+  //   try {
+  //     const response = await axios.put(
+  //       `${BASE_URL_OVERALL}/config/resetAllNotification`
+  //     );
+  //     alert(response.data.message);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   useEffect(() => {
     if (trades?.data && socketData) {
@@ -401,16 +402,10 @@ const Dashboard = () => {
         ) {
           match = true;
         }
-        if (
-          activeFilters.includes("gainer") &&
-          (item.looserGainer == "Gainer" )
-        ) {
+        if (activeFilters.includes("gainer") && item.looserGainer == "Gainer") {
           match = true;
         }
-        if (
-          activeFilters.includes("looser") &&
-          (item.looserGainer == "Looser" ) 
-        ) {
+        if (activeFilters.includes("looser") && item.looserGainer == "Looser") {
           match = true;
         }
         if (
@@ -605,6 +600,29 @@ const Dashboard = () => {
 
   // console.log("Trade Identification" , filteredTrades)
 
+  const strikeChange = async () => {
+    try {
+      setStrikeToggle((prev) => {
+        const newToggle = !prev; // Get the updated value
+  
+        // Make the API call with the updated value
+        axios.put(`${BASE_URL_OVERALL}/config/resetAllNotification`, {
+          autoStrikeMode: newToggle, 
+        })
+        .then((response) => {
+          alert(response.data.message);
+        })
+        .catch((err) => console.log(err));
+  
+        return newToggle; // Update state with new value
+      });
+  
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  
+
   return (
     <>
       <React.Fragment>
@@ -617,6 +635,14 @@ const Dashboard = () => {
             className="px-5 py-2 rounded-md border-2"
           >
             Add New Trade
+          </Button>
+          <Button
+            onClick={() => strikeChange()}
+            className={`px-5 py-2 rounded-md border-2  ${
+              strikeToggle ? "bg-red-600 hover:bg-red-600" : ""
+            }`}
+          >
+            {strikeToggle ? "Auto Strike Activate" : "Auto Strike Deactivate"}
           </Button>
           {/* <Button
             onClick={() => navigate("/future/angel-one")}
@@ -697,13 +723,13 @@ const Dashboard = () => {
           >
             {showOffTerminals ? "All" : "ON"}
           </Button>
-          <Button
+          {/* <Button
             onClick={clearNotification}
             variant="destructive"
             className="px-5 py-2 rounded-md border-2 "
           >
             Clear Notification
-          </Button>
+          </Button> */}
           {/* <ModeToggle /> */}
         </div>
 
@@ -908,7 +934,7 @@ const Dashboard = () => {
                 : "bg-black"
             }`}
           >
-           Gainer
+            Gainer
           </Button>
           <Button
             onClick={() => handleButtonClick("looser")}
@@ -918,7 +944,7 @@ const Dashboard = () => {
                 : "bg-black"
             }`}
           >
-           Looser
+            Looser
           </Button>
 
           <Button
@@ -1277,10 +1303,8 @@ const Dashboard = () => {
                               }
                             </td>
 
-                         
-
                             <td>{item.lotSize}</td>
-                           
+
                             <td>{item.maxLoss}</td>
 
                             {/* <td
@@ -1481,7 +1505,7 @@ const Dashboard = () => {
                                   trendLine1: item.trendLine1,
                                   trendLine2: item.trendLine2,
                                   candleType: item.candleType,
-                                  master: item.master, 
+                                  master: item.master,
                                   // rangeBoundEntryExitPercent: item.rangeBoundEntryExitPercent,
                                   minReEntryatMinProfitPercent:
                                     item.minReEntryatMinProfitPercent,
@@ -1549,11 +1573,12 @@ const Dashboard = () => {
                                   masterRsiReference: item.masterRsiReference,
                                   masterIntervalReference:
                                     item.masterIntervalReference,
-                                   s1 : item.s1,
-                                   candleRatio: item.candleRatio,
+                                  s1: item.s1,
+                                  candleRatio: item.candleRatio,
+                                  incCandleRatio: item.incCandleRatio,
                                 },
                                 getAllTrades,
-                                trades, 
+                                trades,
                               })
                             }
                             className="px-2 rounded-md"

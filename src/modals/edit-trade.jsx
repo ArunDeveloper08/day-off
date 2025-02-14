@@ -81,6 +81,8 @@ export const EditTrade = () => {
   };
 
   const handleSubmit = async () => {
+
+     
     if (values.isMaster && values.lotSize === "") {
       return alert("Please enter Lot Size .");
     }
@@ -234,7 +236,8 @@ export const EditTrade = () => {
         masterRsiReference: values.masterRsiReference,
         masterIntervalReference: values.masterIntervalReference,
         s1: values.s1,
-      candleRatio: values.candleRatio,
+        candleRatio: values.candleRatio,
+        incCandleRatio: values.incCandleRatio,
         // downBand: values.downBand,
       });
       alert("Update Successfully");
@@ -562,27 +565,27 @@ export const EditTrade = () => {
                       />
                     </div>
                     <div className="px-1">
-                            <Label>Candle Ratio</Label>
-                            <Input
-                              name="candleRatio"
-                              onChange={handleChange}
-                              value={values.candleRatio}
-                              className="mt-1"
-                              min={0}
-                              type="number"
-                            />
-                          </div>
-                          <div className="px-1">
-                            <Label>Target Mean</Label>
-                            <Input
-                              name="targetMean"
-                              onChange={handleChange}
-                              value={values.targetMean}
-                              className="mt-1"
-                              min={0}
-                              type="number"
-                            />
-                          </div>
+                      <Label>Candle Ratio</Label>
+                      <Input
+                        name="candleRatio"
+                        onChange={handleChange}
+                        value={values.candleRatio}
+                        className="mt-1"
+                        min={0}
+                        type="number"
+                      />
+                    </div>
+                    <div className="px-1">
+                      <Label>Target Mean</Label>
+                      <Input
+                        name="targetMean"
+                        onChange={handleChange}
+                        value={values.targetMean}
+                        className="mt-1"
+                        min={0}
+                        type="number"
+                      />
+                    </div>
                   </>
                 )}
 
@@ -623,6 +626,17 @@ export const EditTrade = () => {
 
                 {values?.isMaster && (
                   <>
+                  <div className="px-1">
+                      <Label>Inc Candle Ratio</Label>
+                      <Input
+                        name="incCandleRatio"
+                        onChange={handleChange}
+                        value={values.incCandleRatio}
+                        className="mt-1"
+                        type="number"
+                        min={0}
+                      />
+                    </div>
                     <div className="px-1">
                       <Label>Lot Size</Label>
                       <Input
@@ -922,6 +936,7 @@ export const EditTrade = () => {
                 )}
                 {values.isMaster == true && (
                   <>
+                    
                     <div className=" mb-1 ">
                       <Label>Trade Identification</Label>
                       <Select
@@ -1472,7 +1487,7 @@ export const EditTrade = () => {
                               type="number"
                             />
                           </div>
-                 
+
                           <div className="px-1">
                             <Label>Target Constant</Label>
                             <Input
@@ -1484,7 +1499,6 @@ export const EditTrade = () => {
                               type="number"
                             />
                           </div>
-                
 
                           {/* <div className="px-1">
                             <Label>D_Exit Mean</Label>
