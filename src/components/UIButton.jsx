@@ -63,9 +63,8 @@ const UIButton = ({
           Trade Index: {data?.data?.tradeIndex}
         </p>
         <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
-          WMA: {data?.data?.WMA}  
+          WMA: {data?.data?.WMA}
         </p>
-    
         <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
           Target Level: {data?.data?.targetPrice?.toFixed(2)}
         </p>
@@ -79,27 +78,23 @@ const UIButton = ({
           Entry Candle: {data?.data?.entryCandle}
         </p>
         <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
-          D_Exit: {(data?.data?.dynamicExitValue)?.toFixed(2)}
+          D_Exit: {data?.data?.dynamicExitValue?.toFixed(2)}
         </p>
         <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
           Last High: {data?.data?.LastHigh}
         </p>
-
         <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
           RSI Max: {data?.data?.rsiMax}
         </p>
         <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
-          VDEM: {(data?.data?.R_min)?.toFixed(2)}  
+          VDEM: {data?.data?.R_min?.toFixed(2)}
         </p>
         <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
-         VTM: {(data?.data?.R_max)?.toFixed(2)}  
+          VTM: {data?.data?.R_max?.toFixed(2)}
         </p>
         <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
-           Candle Ratio: {data?.data?.CEBuyRegion}  
+          Candle Ratio: {data?.data?.CEBuyRegion}
         </p>
-
-     
- 
         {liveTrendValue && (
           <div className="flex flex-wrap gap-2 w-full mt-2">
             {liveTrendValue?.map((item, index) => (
@@ -185,22 +180,22 @@ const UIButton = ({
         >
           Target Profit
         </button>
-       
-            <button
-              onClick={() =>
-                setShowRow((p) => ({
-                  ...p,
-                  Last_Highest_LTP: !p.Last_Highest_LTP,
-                }))
-              }
-              className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-                showRow.Last_Highest_LTP
-                  ? "bg-blue-500 text-gray-100"
-                  : "bg-gray-300 "
-              }`}
-            >
-              Last High LTP
-            </button>
+
+        <button
+          onClick={() =>
+            setShowRow((p) => ({
+              ...p,
+              Last_Highest_LTP: !p.Last_Highest_LTP,
+            }))
+          }
+          className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+            showRow.Last_Highest_LTP
+              ? "bg-blue-500 text-gray-100"
+              : "bg-gray-300 "
+          }`}
+        >
+          Last High LTP
+        </button>
 
         <button
           onClick={() =>

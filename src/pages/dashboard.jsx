@@ -583,20 +583,20 @@ const Dashboard = () => {
     { label: "None", value: 3 },
   ];
 
-  const handleSubmit = async () => {
-    try {
-      const response = await axios.put(
-        `${BASE_URL_OVERALL}/config/updateAllTradeIdentification`,
-        {
-          tradeIdentification,
-        }
-      );
-      alert(response.data.message);
-      await getAllTrades();
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const handleSubmit = async () => {
+  //   try {
+  //     const response = await axios.put(
+  //       `${BASE_URL_OVERALL}/config/updateAllTradeIdentification`,
+  //       {
+  //         tradeIdentification,
+  //       }
+  //     );
+  //     alert(response.data.message);
+  //     await getAllTrades();
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   // console.log("Trade Identification" , filteredTrades)
 
@@ -604,24 +604,34 @@ const Dashboard = () => {
     try {
       setStrikeToggle((prev) => {
         const newToggle = !prev; // Get the updated value
-  
+
         // Make the API call with the updated value
-        axios.put(`${BASE_URL_OVERALL}/config/resetAllNotification`, {
-          autoStrikeMode: newToggle, 
-        })
-        .then((response) => {
-          alert(response.data.message);
-        })
-        .catch((err) => console.log(err));
-  
+        axios
+          .put(`${BASE_URL_OVERALL}/config/resetAllNotification`, {
+            autoStrikeMode: newToggle,
+          })
+          .then((response) => {
+            alert(response.data.message);
+          })
+          .catch((err) => console.log(err));
+
         return newToggle; // Update state with new value
       });
-  
     } catch (err) {
       console.log(err);
     }
   };
-  
+
+  const deleteChild = async () => {
+    try {
+      const response = await axios.delete(
+        `${BASE_URL_OVERALL}/config/deleteAllChild`
+      );
+      alert(response.data.message);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <>
@@ -644,12 +654,12 @@ const Dashboard = () => {
           >
             {strikeToggle ? "Auto Strike Activate" : "Auto Strike Deactivate"}
           </Button>
-          {/* <Button
-            onClick={() => navigate("/future/angel-one")}
-            className="px-5 py-2 rounded-md border-2"
+          <Button
+            onClick={deleteChild}
+            className="px-5 py-2 rounded-md border-2 bg-red-600 hover:bg-red-600"
           >
-            Looser/Gainer
-          </Button> */}
+            Delete Child Trade
+          </Button>
           <Button
             onClick={() =>
               navigate("/future/particular-identifier-losser-gainer")
@@ -665,12 +675,18 @@ const Dashboard = () => {
             SOP
           </Button>
           <Button
+            onClick={() => navigate("/future/tardelog")}
+            className="px-5 py-2 rounded-md border-2"
+          >
+        Trade Log
+          </Button>
+          <Button
             onClick={() => navigate("/future/angel-login")}
             className="px-5 py-2 rounded-md border-2"
           >
             Angel-Login
           </Button>
-          <Button
+          {/* <Button
             onClick={() => window.open("/future/scanner", "_blank")}
             className="px-5 py-2 rounded-md border-2"
           >
@@ -681,7 +697,7 @@ const Dashboard = () => {
             className="px-5 py-2 rounded-md border-2"
           >
             Scanner Config
-          </Button>
+          </Button> */}
           <Button
             onClick={() => {
               handleResetDataOnServer();
@@ -1576,6 +1592,7 @@ const Dashboard = () => {
                                   s1: item.s1,
                                   candleRatio: item.candleRatio,
                                   incCandleRatio: item.incCandleRatio,
+                                  decCandleRatio: item.decCandleRatio,
                                 },
                                 getAllTrades,
                                 trades,

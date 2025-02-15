@@ -238,6 +238,7 @@ export const EditTrade = () => {
         s1: values.s1,
         candleRatio: values.candleRatio,
         incCandleRatio: values.incCandleRatio,
+        decCandleRatio: values.decCandleRatio,
         // downBand: values.downBand,
       });
       alert("Update Successfully");
@@ -632,6 +633,17 @@ export const EditTrade = () => {
                         name="incCandleRatio"
                         onChange={handleChange}
                         value={values.incCandleRatio}
+                        className="mt-1"
+                        type="number"
+                        min={0}
+                      />
+                    </div>
+                  <div className="px-1">
+                      <Label>Dec Candle Ratio</Label>
+                      <Input
+                        name="decCandleRatio"
+                        onChange={handleChange}
+                        value={values.decCandleRatio}
                         className="mt-1"
                         type="number"
                         min={0}

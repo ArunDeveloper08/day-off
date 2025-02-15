@@ -31,6 +31,7 @@ import secureLocalStorage from "react-secure-storage";
 import ModalProvider from "./providers/modal-provider";
 import Scanner from "./pages/Scanner";
 import ScannerConfig from "./pages/ScannerConfig";
+import TradeLogs from "./pages/TradeLogs";
 // import IdentifierLooserGainer from "./pages/IdentifierLooserGainer";
 // import PcrChart from "./pages/PcrChart";
 
@@ -115,6 +116,14 @@ export default function Home() {
             element={
              // <ProtectedRoute>
                 <Scanner />
+             // </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/future/tardelog"
+            element={
+             // <ProtectedRoute>
+                <TradeLogs />
              // </ProtectedRoute>
             }
           />

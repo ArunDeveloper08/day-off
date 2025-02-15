@@ -135,7 +135,8 @@ const initialState = {
   rsiReference:"5",
   s1:"10",
   candleRatio:"75",
-  incCandleRatio : ""
+   incCandleRatio:"75",
+   decCandleRatio:"65"
   // Min_Order_Qty:"1"
 };
 
@@ -251,7 +252,8 @@ const alternateInitialState = {
   rsiReference:"5",
   s1:"10",
    candleRatio:"75",
-   incCandleRatio:""
+   incCandleRatio:"75",
+   decCandleRatio:"50"
 };
 // tradeIndex =2
 const gammaBlastInitialState = {
@@ -371,7 +373,8 @@ const gammaBlastInitialState = {
   rsiReference:"5",
   s1:"10",
    candleRatio:"75",
-   incCandleRatio:""
+   incCandleRatio:"75",
+   decCandleRatio:"65"
 };
 // tradeIndex =6
 
@@ -668,6 +671,7 @@ export const AddNewtrade = () => {
         s1: values.s1,
         candleRatio: values.candleRatio,
         incCandleRatio: values.incCandleRatio,
+        decCandleRatio: values.decCandleRatio,
         // upBand: values.upBand,
         // downBand: values.downBand,
       });
@@ -1326,6 +1330,17 @@ export const AddNewtrade = () => {
                           name="incCandleRatio"
                           onChange={handleChange}
                           value={values.incCandleRatio}
+                          className="mt-1"
+                          type="number"
+                          min={0}
+                        />
+                      </div>
+                  <div className="px-1">
+                        <Label>Dec Candle Ratio</Label>
+                        <Input
+                          name="decCandleRatio"
+                          onChange={handleChange}
+                          value={values.decCandleRatio}
                           className="mt-1"
                           type="number"
                           min={0}
