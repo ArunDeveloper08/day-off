@@ -40,7 +40,7 @@ export const LivePage = () => {
   const [liveTrendValue, setLiveTrendValue] = useState([]);
   const [intractiveData, setIntractiveData] = useState([]);
   const [chartType, setChartType] = useState("svg");
-  const [alert3, setAlert3] = useState([]);
+ 
   const intervalRef = useRef(null);
   useEffect(() => {
     setTheme("light");
@@ -57,9 +57,12 @@ export const LivePage = () => {
   // const [instrumentData, setInstrumentData] = useState("");
   //const [isUserScroll, setIsUserScroll] = useState(false);
   const [masterId, setMasterId] = useState("");
-  const [trends3, setTrends3] = useState([]);
+
   const [noActionLine, setNoActionLine] = useState([]);
+ const [trends3, setTrends3] = useState([]);
+  const [alert3, setAlert3] = useState([]);
   const [horizontalLine, setHorizontalLine] = useState([]);
+  const [entryLine, setEntryLine] = useState([]);
 
   const [values, setValues] = useState({
     s1: null,
@@ -94,7 +97,7 @@ export const LivePage = () => {
     daily: false,
     suppRes: false,
     toolTip: false,
-    alertLine: false,
+    
     rsi: false,
     atr: false,
     dEntryLine: true,
@@ -102,6 +105,11 @@ export const LivePage = () => {
     stopLoss: true,
     targetLine: true,
     entryPivotValue:true,
+    noActionLine:true,
+    entryLine:true,
+    alertLine:true,
+    horizontalLine:true
+
     
   });
 
@@ -146,6 +154,24 @@ export const LivePage = () => {
         setMasterId(res.data.masterID);
         setLiveTrendValue(res.data.liveTrendValue);
         setTrends3(res.data.trendLines);
+        if (res?.data?.buyTrendLines?.length > 0) {
+          setEntryLine(res?.data?.buyTrendLines);
+          setApiResponseReceived(true);
+        }
+
+        // Process alert lines
+        if (res?.data?.analysisLine?.length > 0) {
+          setAlert3(res.data?.analysisLine);
+          setApiResponseReceived(true);
+        }
+        if (res?.data?.trendLines?.length > 0) {
+          setNoActionLine(res.data?.trendLines);
+          setApiResponseReceived(true);
+        }
+        if (res?.data?.horizontalLine?.length > 0) {
+          setHorizontalLine(res.data?.horizontalLine);
+          setApiResponseReceived(true);
+        }
         //console.log("API call succeeded");
         return true; //Success
       } catch (err) {
@@ -320,6 +346,8 @@ export const LivePage = () => {
     setValues((prev) => ({ ...prev, [key]: value }));
   };
 
+
+
   return (
     <div>
 
@@ -478,6 +506,9 @@ export const LivePage = () => {
                 setHorizontalLine={setHorizontalLine}
                 setNoActionLine={setNoActionLine}
                 master={data?.data}
+                entryLine={entryLine}
+                setEntryLine={setEntryLine}
+                id={id}
               />
             )}
           </div>

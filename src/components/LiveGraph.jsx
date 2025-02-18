@@ -560,6 +560,7 @@ const CandleChart = ({
 
     const onDrawCompleteChart3 = (newTrends) => {
       // setEnableTrendLine(false);
+      
 
       let coloredNewTrends = newTrends?.map((item, ind) => {
         let startIndex = Math?.min(Math.floor(item.start[0]), data?.length - 1);
@@ -679,6 +680,7 @@ const CandleChart = ({
     };
 
     const onDrawCompleteAlert3 = (newAlerts) => {
+     
       setEnableAlertLine(false);
 
       let coloredAlerts = newAlerts?.map((item, ind) => {
@@ -796,6 +798,7 @@ const CandleChart = ({
     };
 
     const onDrawCompleteEntryLine3 = (newAlerts) => {
+   
       setEnableEntryLine(false);
       let coloredAlerts = newAlerts?.map((item, ind) => {
         let startIndex = Math.min(Math.floor(item.start[0]), data?.length - 1);
@@ -1080,6 +1083,7 @@ const CandleChart = ({
     };
 
     const handleActivateAlertLine = () => {
+      
       setActiveLineType("alertLine");
       setEnableAlertLine(true);
       setEnableEntryLine(false);
@@ -1111,16 +1115,9 @@ const CandleChart = ({
           <>
             <hr />
             <div className="flex flex-col gap-4 md:flex-row justify-evenly mt-1">
-              {master?.isMaster ? (
+           
                 <div className="flex flex-col gap-2 md:flex-row md:justify-around">
-                  {master?.tradeIndex == 4 ? (
-                    <button
-                      className="bg-red-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
-                      onClick={handleResetTrendLines}
-                    >
-                      Remove TrendLine
-                    </button>
-                  ) : (
+               
                     <button
                       disabled={
                         tradeStatus?.haveTradeOfCE ||
@@ -1135,21 +1132,9 @@ const CandleChart = ({
                     >
                       Remove EntryLine2
                     </button>
-                  )}
+                
 
-                  {/* <button
-                    className="bg-green-600 px-2 py-1 rounded-sm border-blue-50 w-full md:w-fit mx-auto text-white"
-                    onClick={() =>
-                      handleCreateTrendLines(
-                        trends3,
-                        textList1,
-                        alert3,
-                        entryLine
-                      )
-                    }
-                  >
-                    Submit
-                  </button> */}
+    
                   <button
                     disabled={
                       tradeStatus?.haveTradeOfCE ||
@@ -1220,9 +1205,7 @@ const CandleChart = ({
                     </button>
                   </div>
                 </div>
-              ) : (
-                <></>
-              )}
+           
             </div>
           </>
         )}
@@ -1426,7 +1409,7 @@ const CandleChart = ({
                     </>
                   )}
 
-                  {showRow?.stopLoss && (
+                  {/* {showRow?.stopLoss && (
                     <>
                       <LineSeries
                         strokeDasharray="Dash"
@@ -1437,7 +1420,8 @@ const CandleChart = ({
                         }
                       />
                     </>
-                  )}
+                  )} */}
+
                   {showRow?.stopLoss && (
                   
                     <>

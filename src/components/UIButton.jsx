@@ -39,6 +39,17 @@ const UIButton = ({
       console.error(err);
     }
   };
+  const tradeOptions = [
+    { label: "Bullish", value: 0 },
+    { label: "Bearish", value: 1 },
+    { label: "Both", value: 2 },
+    { label: "None", value: 3 },
+  ];
+
+  const a =
+  tradeOptions?.find(
+    (option) => option.value === data.data.tradeIdentification
+  )?.label || ""; 
 
   return (
     <div>
@@ -61,6 +72,9 @@ const UIButton = ({
         </p>
         <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
           Trade Index: {data?.data?.tradeIndex}
+        </p>
+        <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+          Trade Type: {a}
         </p>
         <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
           WMA: {data?.data?.WMA}
@@ -149,7 +163,7 @@ const UIButton = ({
           Candle
         </button>
 
-        <button
+        {/* <button
           onClick={() =>
             setShowRow((p) => ({
               ...p,
@@ -163,9 +177,9 @@ const UIButton = ({
           }`}
         >
           D_Exit Value
-        </button>
+        </button> */}
 
-        <button
+        {/* <button
           onClick={() =>
             setShowRow((p) => ({
               ...p,
@@ -179,7 +193,7 @@ const UIButton = ({
           }`}
         >
           Target Profit
-        </button>
+        </button> */}
 
         <button
           onClick={() =>
@@ -197,7 +211,7 @@ const UIButton = ({
           Last High LTP
         </button>
 
-        <button
+        {/* <button
           onClick={() =>
             setShowRow((p) => ({
               ...p,
@@ -211,7 +225,7 @@ const UIButton = ({
           }`}
         >
           D_Entry Value
-        </button>
+        </button> */}
 
         <button
           onClick={() =>
@@ -226,6 +240,67 @@ const UIButton = ({
         >
           Volume
         </button>
+        &nbsp; &nbsp;
+            <button
+              onClick={() =>
+                setShowRow((p) => ({
+                  ...p,
+                  targetLine: !p.targetLine,
+                }))
+              }
+              className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                showRow.targetLine
+                  ? "bg-blue-500 text-gray-100"
+                  : "bg-gray-300 "
+              }`}
+            >
+             Target Line
+            </button>
+            &nbsp; &nbsp;
+            <button
+              onClick={() =>
+                setShowRow((p) => ({
+                  ...p,
+                  stopLoss: !p.stopLoss,
+                }))
+              }
+              className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
+                showRow.stopLoss
+                  ? "bg-blue-500 text-gray-100"
+                  : "bg-gray-300 "
+              }`}
+            >
+               Stop Loss
+            </button>
+            <button
+              onClick={() =>
+                setShowRow((p) => ({
+                  ...p,
+                  entryPivotValue: !p.entryPivotValue,
+                }))
+              }
+              className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
+                showRow.entryPivotValue
+                  ? "bg-blue-500 text-gray-100"
+                  : "bg-gray-300 "
+              }`}
+            >
+              Entry Line
+            </button>
+            &nbsp;
+            <button
+              onClick={() =>
+                setShowRow((p) => ({
+                  ...p,
+                  dExitLine: !p.dExitLine,
+                }))
+              }
+              className={`px-3 w-[100px] py-1 duration-300 text-xs font-semibold rounded-md ${
+                showRow.dExitLine ? "bg-blue-500 text-gray-100" : "bg-gray-300 "
+              }`}
+            >
+              D_Exit Line
+            </button>
 
         <button
           onClick={() =>

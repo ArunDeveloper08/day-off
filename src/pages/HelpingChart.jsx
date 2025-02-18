@@ -47,6 +47,7 @@ const HelpingChart = () => {
   const [chartType, setChartType] = useState("svg");
   const [trends3, setTrends3] = useState([]);
   const [alert3, setAlert3] = useState([]);
+  const [horizontalLine, setHorizontalLine] = useState([]);
   const [entryLine, setEntryLine] = useState([]);
   const [bearishLine, setBearishLine] = useState([]);
   const [trendLineValue, setTrendLineValue] = useState([]);
@@ -56,7 +57,7 @@ const HelpingChart = () => {
   const [bankNifty, setBankNifty] = useState();
   const [Nifty, setNifty] = useState();
   const [noActionLine, setNoActionLine] = useState([]);
-  const [horizontalLine, setHorizontalLine] = useState([]);
+ 
   const [tradeStatus, setTradeStatus] = useState([]);
   const [trendLineMode, setTrendLineMode] = useState(0);
 
@@ -1670,6 +1671,18 @@ const HelpingChart = () => {
                   onChange={handleChange}
                   name="date"
                   max={today}
+                />
+              </div>
+
+              <div className="flex flex-col w-full sm:w-auto">
+                <Label>WMA</Label>
+                <Input
+                  type="text"
+                  value={values.WMA}
+                  className="w-full sm:w-[140px] border-black border-[1px] rounded-md"
+                  onChange={handleChange}
+                  name="WMA"
+                  min={0}
                 />
               </div>
 
