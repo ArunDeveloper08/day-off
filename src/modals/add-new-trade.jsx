@@ -2480,7 +2480,7 @@ export const AddNewtrade = () => {
               </Select>
             </div>
 
-            <div className="px-1">
+            {/* <div className="px-1">
               <Label>Case </Label>
               <Select
                 // disabled={loading}
@@ -2504,11 +2504,11 @@ export const AddNewtrade = () => {
                   </SelectGroup>
                 </SelectContent>
               </Select>
-            </div>
+            </div> */}
 
-{
-  values.case == 1 && (
-    <>
+{/* {
+  values.case == 1 && ( */}
+    < >
               <div className="px-1">
                         <Label>Case1 Candle Ratio</Label>
                         <Input
@@ -2565,10 +2565,10 @@ export const AddNewtrade = () => {
                 </div>
     
     </>
-  )
-}
-{
-  values.case == 2 && (
+  {/* )
+} */}
+{/* {
+  values.case == 2 && ( */}
     <>
               <div className="px-1">
                         <Label>Case2 Candle Ratio</Label>
@@ -2628,10 +2628,10 @@ export const AddNewtrade = () => {
     
     
     </>
-  )
-}
-{
-  values.case == 3 && (
+  {/* )
+} */}
+{/* {
+  values.case == 3 && ( */}
     <>
               <div className="px-1">
                         <Label>Case3 Candle Ratio</Label>
@@ -2690,8 +2690,8 @@ export const AddNewtrade = () => {
     
     
     </>
-  )
-}
+{/* //   )
+// } */}
 
           </section>
           <div className="px-1">

@@ -649,14 +649,14 @@ const Dashboard = () => {
           <Button
             onClick={() => strikeChange()}
             className={`px-5 py-2 rounded-md border-2  ${
-              strikeToggle ? "bg-red-600 hover:bg-red-600" : ""
+              strikeToggle ? "" : "bg-red-600 hover:bg-red-600"
             }`}
           >
-            {strikeToggle ? "Auto Strike Activate" : "Auto Strike Deactivate"}
+            {strikeToggle ? "Auto Strike Activated" : "Auto Strike Deactivated"}
           </Button>
           <Button
             onClick={deleteChild}
-            className="px-5 py-2 rounded-md border-2 bg-red-600 hover:bg-red-600"
+            className="px-5 py-2 rounded-md border-2"
           >
             Delete Child Trade
           </Button>
@@ -852,7 +852,7 @@ const Dashboard = () => {
           >
             Nifty 50
           </Button>
-          <Button
+          {/* <Button
             onClick={() => handleButtonClick("S.D. Yadav")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
               activeButtons["S.D. Yadav"]
@@ -861,7 +861,7 @@ const Dashboard = () => {
             }`}
           >
             S.D. Yadav
-          </Button>
+          </Button> */}
           <Button
             onClick={() => handleButtonClick("todayTrade")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${

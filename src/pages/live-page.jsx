@@ -63,6 +63,7 @@ export const LivePage = () => {
   const [alert3, setAlert3] = useState([]);
   const [horizontalLine, setHorizontalLine] = useState([]);
   const [entryLine, setEntryLine] = useState([]);
+   //const [apiResponseReceived, setApiResponseReceived] = useState(false);
 
   const [values, setValues] = useState({
     s1: null,
@@ -100,11 +101,11 @@ export const LivePage = () => {
     
     rsi: false,
     atr: false,
-    dEntryLine: true,
-    dExitLine: true,
-    stopLoss: true,
-    targetLine: true,
-    entryPivotValue:true,
+    dEntryLine: false,
+    dExitLine: false,
+    stopLoss: false,
+    targetLine: false,
+    entryPivotValue:false,
     noActionLine:true,
     entryLine:true,
     alertLine:true,
@@ -156,21 +157,21 @@ export const LivePage = () => {
         setTrends3(res.data.trendLines);
         if (res?.data?.buyTrendLines?.length > 0) {
           setEntryLine(res?.data?.buyTrendLines);
-          setApiResponseReceived(true);
+         // setApiResponseReceived(true);
         }
 
         // Process alert lines
         if (res?.data?.analysisLine?.length > 0) {
           setAlert3(res.data?.analysisLine);
-          setApiResponseReceived(true);
+          //setApiResponseReceived(true);
         }
         if (res?.data?.trendLines?.length > 0) {
           setNoActionLine(res.data?.trendLines);
-          setApiResponseReceived(true);
+         // setApiResponseReceived(true);
         }
         if (res?.data?.horizontalLine?.length > 0) {
           setHorizontalLine(res.data?.horizontalLine);
-          setApiResponseReceived(true);
+         // setApiResponseReceived(true);
         }
         //console.log("API call succeeded");
         return true; //Success
@@ -189,12 +190,19 @@ export const LivePage = () => {
     return await fetchData();
   };
 
+  
   useEffect(() => {
     getTradeConfig();
     const interval = setInterval(getTradeConfig, 60 * 1000);
     //intervalRef.current = interval;
     return () => clearInterval(interval);
   }, []);
+
+
+
+
+
+
 
   useEffect(() => {
     getChartData();
@@ -203,6 +211,19 @@ export const LivePage = () => {
 
     return () => clearInterval(interval);
   }, [prevDate]);
+
+
+
+
+
+
+
+
+
+
+
+
+  
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -472,13 +493,13 @@ export const LivePage = () => {
               LTP : {socketData?.last_traded_price} &nbsp; Master LTP :
               {socketMastertData?.last_traded_price} &nbsp; RSI :{" "}
               {data.data.rsiValue} &nbsp; ATR Value : {data.data.atrValue}{" "}
-              &nbsp;  A :
+              {/* &nbsp;  A :
               {data?.data.callTargetLevelPrice?.toFixed(2)} &nbsp; B :
               {data?.data.putTargetLevelPrice?.toFixed(2)} &nbsp; C :
               {data?.data.entryLine?.toFixed(2)} &nbsp; a :
               {data?.data.callLowerDeadZone?.toFixed(2)} &nbsp; b :
               {data?.data.putUpperDeadZone?.toFixed(2)} &nbsp; c :
-              {data?.data.targetPrice?.toFixed(2)}
+              {data?.data.targetPrice?.toFixed(2)} */}
             </button>
           </div>
         </div>
