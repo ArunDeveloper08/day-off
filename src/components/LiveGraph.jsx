@@ -1454,7 +1454,7 @@ const CandleChart = ({
                       yAccessor={(d) =>
                         d.targetPrice2 != null
                           ? Number(d.targetPrice2)
-                          : undefined
+                          : undefined     
                       }
                     />
                   )}

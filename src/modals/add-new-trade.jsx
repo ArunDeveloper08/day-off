@@ -154,6 +154,8 @@ const initialState = {
    case1MasterRsiReference:"",
    case2MasterRsiReference:"",
    case3MasterRsiReference:"",
+   stopLossMf:"",
+   gainPercent:""
    
   // Min_Order_Qty:"1"
 };
@@ -288,6 +290,8 @@ const alternateInitialState = {
    case1MasterRsiReference:"",
    case2MasterRsiReference:"",
    case3MasterRsiReference:"",
+     stopLossMf:"",
+     gainPercent:""
 };
 // tradeIndex =2
 const gammaBlastInitialState = {
@@ -425,6 +429,9 @@ const gammaBlastInitialState = {
    case1MasterRsiReference:"",
    case2MasterRsiReference:"",
    case3MasterRsiReference:"",
+     stopLossMf:"",
+     gainPercent:""
+
 };
 // tradeIndex =6
 
@@ -722,23 +729,9 @@ export const AddNewtrade = () => {
         candleRatio: values.candleRatio,
         incCandleRatio: values.incCandleRatio,
         decCandleRatio: values.decCandleRatio,
-        case1RsiMax :values.case1RsiMax,
-        case2RsiMax :values.case2RsiMax,
-        case3RsiMax :values.case3RsiMax,
-        case1TargetMf :values.case1TargetMf,
-        case2TargetMf :values.case2TargetMf,
-        case3TargetMf :values.case3TargetMf,
-        case1DExitMf :values.case1DExitMf,
-        case2DExitMf :values.case2DExitMf,
-        case3DExitMf :values.case3DExitMf,
-        case1CandleRatio :values.case1CandleRatio,
-        case2CandleRatio :values.case2CandleRatio,
-        case3CandleRatio :values.case3CandleRatio,
-        // upBand: values.upBand,
-        case1MasterRsiReference :values.case1MasterRsiReference,
-        case2MasterRsiReference :values.case2MasterRsiReference,
-        case3MasterRsiReference :values.case3MasterRsiReference,
-        // downBand: values.downBand,
+        
+        stopLossMf :values.stopLossMf,
+        gainPercent: values.gainPercent,
       });
       alert("Add Successfully");
     } catch (error) {
@@ -1957,11 +1950,22 @@ export const AddNewtrade = () => {
                       />
                     </div> */}
                       <div className="px-1">
-                        <Label>StopLoss MF </Label>
+                        <Label>D_Exit MF </Label>
                         <Input
                           name="atrMf"
                           onChange={handleChange}
                           value={values.atrMf}
+                          className="mt-1"
+                          min={0}
+                          type="number"
+                        />
+                      </div>
+                      <div className="px-1">
+                        <Label>Stoploss MF </Label>
+                        <Input
+                          name="stopLossMf"
+                          onChange={handleChange}
+                          value={values.stopLossMf}
                           className="mt-1"
                           min={0}
                           type="number"
@@ -2479,219 +2483,19 @@ export const AddNewtrade = () => {
                 </SelectContent>
               </Select>
             </div>
+            <div className="px-1">
+                  <Label>Gain Percent</Label>
+                  <Input
+                    name="gainPercent"
 
-            {/* <div className="px-1">
-              <Label>Case </Label>
-              <Select
-                // disabled={loading}
-                value={values.case}
-                name="case"
-                onValueChange={(value) =>
-                  handleSelect("case", value)
-                }
-              >
-                <SelectTrigger className="w-full mt-1 border-zinc-500">
-                  <SelectValue>{values.case}</SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Case</SelectLabel>
-                    {[1, 2, 3]?.map((suggestion) => (
-                      <SelectItem key={suggestion} value={suggestion}>
-                        {suggestion}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div> */}
+                    onChange={handleChange}
+                    value={values.gainPercent}
+                    className="mt-1"
+                    type="number"
+                    min={0}
+                  />
+                </div>
 
-{/* {
-  values.case == 1 && ( */}
-    < >
-              <div className="px-1">
-                        <Label>Case1 Candle Ratio</Label>
-                        <Input
-                          name="case1CandleRatio"
-                          onChange={handleChange}
-                          value={values.case1CandleRatio}
-                          className="mt-1"
-                          min={0}
-                          type="number"
-                        />
-                      </div>
-                      <div className="px-1">
-                        <Label>Case1 D_Exit Constant</Label>
-                        <Input
-                          name="case1DExitMf"
-                          onChange={handleChange}
-                          value={values.case1DExitMf}
-                          className="mt-1"
-                          min={0}
-                          type="number"
-                        />
-                      </div>
-              
-                      <div className="px-1">
-                        <Label>Case1 Target Constant</Label>
-                        <Input
-                          name="case1TargetMf"
-                          onChange={handleChange}
-                          value={values.case1TargetMf}
-                          className="mt-1"
-                          min={0}
-                          type="number"
-                        />
-                      </div>
-                      <div className="px-1">
-                  <Label>Case1 Lower Rsi Reference</Label>
-                  <Input
-                    name="case1RsiMax"
-                    onChange={handleChange}
-                    value={values.case1RsiMax}
-                    className="mt-1"
-                    type="number"
-                  />
-                </div>
-                <div className="px-1">
-                  <Label>Case1 Higher RSI Reference</Label>
-                  <Input
-                    name="case1MasterRsiReference"
-                    onChange={handleChange}
-                    value={values.case1MasterRsiReference}
-                    className="mt-1"
-                    type="text"
-                  />
-                </div>
-    
-    </>
-  {/* )
-} */}
-{/* {
-  values.case == 2 && ( */}
-    <>
-              <div className="px-1">
-                        <Label>Case2 Candle Ratio</Label>
-                        <Input
-                          name="case2CandleRatio"
-                          onChange={handleChange}
-                          value={values.case2CandleRatio}
-                          className="mt-1"
-                          min={0}
-                          type="number"
-                        />
-                      </div>
-                      <div className="px-1">
-                        <Label>Case2 D_Exit Constant</Label>
-                        <Input
-                          name="case2DExitMf"
-                          onChange={handleChange}
-                          value={values.case2DExitMf}
-                          className="mt-1"
-                          min={0}
-                          type="number"
-                        />
-                      </div>
-              
-                      <div className="px-1">
-                        <Label>Case2 Target Constant</Label>
-                        <Input
-                          name="case2TargetMf"
-                          onChange={handleChange}
-                          value={values.case2TargetMf}
-                          className="mt-1"
-                          min={0}
-                          type="number"
-                        />
-                      </div>
-                      <div className="px-1">
-                  <Label>Case2 Lower Rsi Reference</Label>
-                  <Input
-                    name="case2RsiMax"
-                    onChange={handleChange}
-                    value={values.case2RsiMax}
-                    className="mt-1"
-                    type="number"
-                  />
-                </div>
-          
-                <div className="px-1">
-                  <Label>Case2 Higher RSI Reference</Label>
-                  <Input
-                    name="case2MasterRsiReference"
-                    onChange={handleChange}
-                    value={values.case2MasterRsiReference}
-                    className="mt-1"
-                    type="text"
-                  />
-                </div>
-    
-    
-    </>
-  {/* )
-} */}
-{/* {
-  values.case == 3 && ( */}
-    <>
-              <div className="px-1">
-                        <Label>Case3 Candle Ratio</Label>
-                        <Input
-                          name="case3CandleRatio"
-                          onChange={handleChange}
-                          value={values.case3CandleRatio}
-                          className="mt-1"
-                          min={0}
-                          type="number"
-                        />
-                      </div>
-                      <div className="px-1">
-                        <Label>Case3 D_Exit Constant</Label>
-                        <Input
-                          name="case3DExitMf"
-                          onChange={handleChange}
-                          value={values.case3DExitMf}
-                          className="mt-1"
-                          min={0}
-                          type="number"
-                        />
-                      </div>
-              
-                      <div className="px-1">
-                        <Label>Case3 Target Constant</Label>
-                        <Input
-                          name="case3TargetMf"
-                          onChange={handleChange}
-                          value={values.case3TargetMf}
-                          className="mt-1"
-                          min={0}
-                          type="number"
-                        />
-                      </div>
-                      <div className="px-1">
-                  <Label>Case3 Lower Rsi Reference</Label>
-                  <Input
-                    name="case3RsiMax"
-                    onChange={handleChange}
-                    value={values.case3RsiMax}
-                    className="mt-1"
-                    type="number"
-                  />
-                </div>
-                <div className="px-1">
-                  <Label>Case3 Higher RSI Reference</Label>
-                  <Input
-                    name="case3MasterRsiReference"
-                    onChange={handleChange}
-                    value={values.case3MasterRsiReference}
-                    className="mt-1"
-                    type="text"
-                  />
-                </div>
-    
-    
-    </>
-{/* //   )
-// } */}
 
           </section>
           <div className="px-1">
