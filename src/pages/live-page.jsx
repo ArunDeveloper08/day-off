@@ -493,13 +493,13 @@ export const LivePage = () => {
               LTP : {socketData?.last_traded_price} &nbsp; Master LTP :
               {socketMastertData?.last_traded_price} &nbsp; RSI :{" "}
               {data.data.rsiValue} &nbsp; ATR Value : {data.data.atrValue}{" "}
-              {/* &nbsp;  A :
+              &nbsp;  A :
               {data?.data.callTargetLevelPrice?.toFixed(2)} &nbsp; B :
               {data?.data.putTargetLevelPrice?.toFixed(2)} &nbsp; C :
               {data?.data.entryLine?.toFixed(2)} &nbsp; a :
               {data?.data.callLowerDeadZone?.toFixed(2)} &nbsp; b :
               {data?.data.putUpperDeadZone?.toFixed(2)} &nbsp; c :
-              {data?.data.targetPrice?.toFixed(2)} */}
+              {data?.data.targetPrice?.toFixed(2)}
             </button>
           </div>
         </div>
