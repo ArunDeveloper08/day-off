@@ -21,20 +21,21 @@ const GainerLosser = () => {
   const [logDate, setLogDate] = useState("");
   // console.log("loosergainer")
 
-  const getPrevDate = async () => {
-    try {
-      const response = await axios.get(
-        `${ANGEL_BASE_URL_LOCAL}/api/v1/logs/getPrevDate`
-      );
-      setPrevDate(response.data.data); // Assuming the response contains `prevDate`
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const getPrevDate = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       `${ANGEL_BASE_URL_LOCAL}/api/v1/logs/getPrevDate`
+  //     );
+  //     setPrevDate(response.data.data); // Assuming the response contains `prevDate`
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
-  useEffect(() => {
-    getPrevDate();
-  }, []);
+  // useEffect(() => {
+  //   getPrevDate();
+  // }, []);
+  
   // console.log(prevDate)
 
   return (
@@ -55,7 +56,7 @@ const GainerLosser = () => {
               </option>
             ))}
           </select> */}
-          <Label>Log Date</Label>
+          {/* <Label>Log Date</Label>
           <Select
             // disabled={loading}
             value={logDate}
@@ -75,7 +76,7 @@ const GainerLosser = () => {
                 ))}
               </SelectGroup>
             </SelectContent>
-          </Select>
+          </Select> */}
         </div>
         {!logDate ? (
           <p className="text-xl font-bold text-center">
@@ -152,13 +153,13 @@ const TableByOI = ({ logDate }) => {
     getGainerData().then(() => {
       setTimeout(() => {
         getLooserData();
-      }, 1000);
+      }, 2000);
     });
     let timeout = setInterval(() => {
       getGainerData().then(() => {
         setTimeout(() => {
           getLooserData();
-        }, 1000);
+        }, 2000);
       });
     }, 60 * 1000);
     return () => clearInterval(timeout);
@@ -271,14 +272,14 @@ const TableByPrice = ({ setValue, logDate }) => {
     getGainerData().then(() => {
       setTimeout(() => {
         getLooserData();
-      }, 1000);
+      }, 2000);
     });
     let timeout = setTimeout(() => {
       setValue(false);
       getGainerData().then(() => {
         setTimeout(() => {
           getLooserData();
-        }, 1000);
+        }, 2000);
       }, 60 * 1000);
     });
     return () => clearTimeout(timeout);
@@ -332,7 +333,7 @@ const TableByPrice = ({ setValue, logDate }) => {
             </thead>
             <tbody>
               { looser && looser?.map((item, ind) => (
-                <tr key={ind}>
+                <tr key={ind}>   
                   <td>{item.tradingSymbol}</td>
                   <td>{item.symbolToken}</td>
                   <td>{item.ltp}</td>
@@ -438,7 +439,7 @@ const BuilUpTable = ({ logDate }) => {
           },
         ]);
         // Wait for 1 second before the next iteration
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 2000));
       }
     };
     fetchData();

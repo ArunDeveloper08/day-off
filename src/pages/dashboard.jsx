@@ -58,6 +58,10 @@ const Dashboard = () => {
   const debounceRef = useRef(null);
   const intervalRef = useRef(null);
   const [strikeToggle, setStrikeToggle] = useState(true);
+  const [gainerLooserQty, setGainerLooserQty] = useState({
+    gainerProductQty: 3,
+    looserProductQty: 3,
+  });
 
   //const showNotification = (message) => {
   // alert(message); // Basic popup. You can replace this with a custom notification component if needed.
@@ -183,6 +187,10 @@ const Dashboard = () => {
       setTrades((p) => ({ ...p, loading: true }));
       const { data } = await axios.get(`${BASE_URL_OVERALL}/config/get`);
       setTrades((p) => ({ ...p, data: data.data }));
+      setGainerLooserQty({
+        gainerProductQty: data?.data?.[0]?.gainerProductQty,
+        looserProductQty: data?.data?.[0]?.looserProductQty,
+      });
       setTradeIdentification(data?.data?.[0]?.tradeIdentification);
     } catch (error) {
       // setTrades((p) => ({ ...p, error: error.message }));
@@ -633,6 +641,20 @@ const Dashboard = () => {
     }
   };
 
+  const handleSubmitLooserGainerQty = async () => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL_OVERALL}/config/gainerLooserProductQty`,
+        {
+          gainerLooserQty,
+        }
+      );
+      alert("Saved Successfully");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <React.Fragment>
@@ -678,7 +700,7 @@ const Dashboard = () => {
             onClick={() => navigate("/future/tardelog")}
             className="px-5 py-2 rounded-md border-2"
           >
-        Trade Log
+            Trade Log
           </Button>
           <Button
             onClick={() => navigate("/future/angel-login")}
@@ -980,6 +1002,42 @@ const Dashboard = () => {
             className="p-1 mb-1 w-[150px]"
           />
 
+          <div  >
+            <Label className="flex items-center">Gainer Qty</Label>
+
+            <Input
+              type="number"
+              onChange={(e) =>
+                setGainerLooserQty((prevState) => ({
+                  ...prevState,
+                  gainerProductQty: e.target.value,
+                }))
+              }
+              placeholder="Add Gainer QTY"
+              className="mb-1 w-[150px] h-[30px]"
+              value={gainerLooserQty.gainerProductQty}
+            />
+          </div>
+
+          <div>
+            <Label className="flex items-center">Looser Qty</Label>
+
+            <Input
+              type="number"
+              placeholder="Add Looser QTY"
+              onChange={(e) =>
+                setGainerLooserQty((prevState) => ({
+                  ...prevState,
+                  looserProductQty: e.target.value,
+                }))
+              }
+              className=" mb-1 w-[150px] h-[30px]"
+              value={gainerLooserQty.looserProductQty}
+            />
+          </div>
+
+          <Button onClick={handleSubmitLooserGainerQty}>Submit</Button>
+
           {/* <div className=" mb-1 ">
             <Select
               className="w-[150px] "
@@ -1052,6 +1110,7 @@ const Dashboard = () => {
                   !narration && (
                     <>
                       <th>Looser/Gainer</th>
+                      {/* <th>Percent Change</th> */}
                       <th>TrendLine Update Date</th>
                     </>
                   )
@@ -1257,7 +1316,7 @@ const Dashboard = () => {
                               >
                                 {item.looserGainer}
                               </td>
-                              {/* <td>{item.dateOfLooserGainer?.slice(0, 10)}</td> */}
+                              {/* <td>{(item.percentChange)?.toFixed(2)}</td> */}
                               <td>{item.buyTrendLineDate?.slice(0, 10)}</td>
                             </>
                           )
@@ -1593,9 +1652,10 @@ const Dashboard = () => {
                                   candleRatio: item.candleRatio,
                                   incCandleRatio: item.incCandleRatio,
                                   decCandleRatio: item.decCandleRatio,
-                                  
-                                  stopLossMf :item.stopLossMf,
-                                  gainPercent :item.gainPercent,
+                                  stopLossMf: item.stopLossMf,
+                                  gainPercent: item.gainPercent,
+                                  vdtmConstant: item.vdtmConstant,
+                                  dExitMax: item.dExitMax,
                                 },
                                 getAllTrades,
                                 trades,

@@ -150,7 +150,7 @@ export const BackTestingPage = () => {
       .then((res) => {
         console.log("response", res.data);
       })
-      .catch((err) => {
+      .catch((err) => {      
         console.log(err);
       });
   };

@@ -75,6 +75,7 @@ const BackTestingTablePage = ({
             <thead>
               <tr>
                 <th className="p-1 border border-gray-300">Sr No.</th>           
+                <th className="p-1 border border-gray-300">Identifier</th>           
                 <th className="p-1 border border-gray-300">Entry Time</th>
                 <th className="p-1 border border-gray-300">Entry Order Type</th>
                 <th className="p-1 border border-gray-300">Entry Price</th>
@@ -119,9 +120,9 @@ const BackTestingTablePage = ({
                         {index + 1}
                       </td>
 
-                      {/* <td className="border border-gray-300 text-center text-[13px] p-1">
+                      <td className="border border-gray-300 text-center text-[13px] p-1">
                         {item.identifier}
-                    </td> */}
+                    </td>
                       <td className="border border-gray-300 text-center text-[13px] p-1">
                         {formatDate(item.realEntryTime)}
                       </td>

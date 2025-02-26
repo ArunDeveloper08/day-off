@@ -237,9 +237,11 @@ export const EditTrade = () => {
         candleRatio: values.candleRatio,
         incCandleRatio: values.incCandleRatio,
         decCandleRatio: values.decCandleRatio,
-        
+
         stopLossMf: values.stopLossMf,
-         gainPercent: values.gainPercent,
+        gainPercent: values.gainPercent,
+        vdtmConstant: values.vdtmConstant,
+        dExitMax: values.dExitMax,
       });
       alert("Update Successfully");
     } catch (error) {
@@ -555,11 +557,22 @@ export const EditTrade = () => {
                       />
                     </div>
                     <div className="px-1">
-                      <Label>VDEM Constant</Label>
+                      <Label>DEM Min</Label>
                       <Input
                         name="s1"
                         onChange={handleChange}
                         value={values.s1}
+                        className="mt-1"
+                        min={0}
+                        type="number"
+                      />
+                    </div>
+                    <div className="px-1">
+                      <Label>DTM Min</Label>
+                      <Input
+                        name="vdtmConstant"
+                        onChange={handleChange}
+                        value={values.vdtmConstant}
                         className="mt-1"
                         min={0}
                         type="number"
@@ -577,11 +590,22 @@ export const EditTrade = () => {
                       />
                     </div>
                     <div className="px-1">
-                      <Label>Target Mean</Label>
+                      <Label>DTM Max</Label>
                       <Input
                         name="targetMean"
                         onChange={handleChange}
                         value={values.targetMean}
+                        className="mt-1"
+                        min={0}
+                        type="number"
+                      />
+                    </div>
+                    <div className="px-1">
+                      <Label>DEM Max</Label>
+                      <Input
+                        name="dExitMax"
+                        onChange={handleChange}
+                        value={values.dExitMax}
                         className="mt-1"
                         min={0}
                         type="number"
@@ -1996,18 +2020,17 @@ export const EditTrade = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                       <div className="px-1">
-                               <Label>Gain Percent</Label>
-                               <Input
-                                 name="gainPercent"
-             
-                                 onChange={handleChange}
-                                 value={values.gainPercent}
-                                 className="mt-1"
-                                 type="number"
-                                 min={0}
-                               />
-                             </div>
+                <div className="px-1">
+                  <Label>Gain Percent (+/-)</Label>
+                  <Input
+                    name="gainPercent"
+                    onChange={handleChange}
+                    value={values.gainPercent}
+                    className="mt-1"
+                    type="number"
+                    min={0}
+                  />
+                </div>
               </section>
               <div className="px-1">
                 <Label>Narration</Label>

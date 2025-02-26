@@ -27,7 +27,6 @@ const LiveDataTable = ({ id, socketData, socketMastertData, values }) => {
     const total = data?.reduce((acc, item) => {
       if (item.entryPrice !== null && item.exitPrice !== null) {
         const diff = item.exitPrice - item?.entryPrice;
-
         return acc + diff;
       }
       return acc;
@@ -42,7 +41,7 @@ const LiveDataTable = ({ id, socketData, socketMastertData, values }) => {
       setLastTwoDiffs({ diff1 });
     }
   }, [data, socketData]);
-
+ 
   const calculateDiff = (item) => {
     if (
       !item ||

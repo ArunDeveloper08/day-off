@@ -143,7 +143,7 @@ export const LivePage = () => {
 
   const getChartData = async () => {
     const maxRetries = 5; // Maximum number of retries
-    const delay = 3000; // Delay in milliseconds between retries
+    const delay = 2000; // Delay in milliseconds between retries
     let attempts = 0;
     const fetchData = async () => {
       try {
