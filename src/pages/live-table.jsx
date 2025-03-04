@@ -75,7 +75,7 @@ const LiveDataTable = ({ id, socketData, socketMastertData, values }) => {
 
     return { identifier: item.identifier, diff };
   };
-
+ 
   return (
     <div className="p-4">
       <div className="ml-3 mt-2 flex justify-around">
@@ -94,9 +94,11 @@ const LiveDataTable = ({ id, socketData, socketMastertData, values }) => {
             <tr>
               <th className="p-2 border border-gray-300">Sr No.</th>
               <th className="p-2 border border-gray-300">Entry Time</th>
+              <th className="p-2 border border-gray-300">Entry Case</th>
               <th className="p-2 border border-gray-300">Entry Order Type</th>
               <th className="p-2 border border-gray-300">Entry Price</th>
               <th className="p-2 border border-gray-300">Exit Time</th>
+              <th className="p-2 border border-gray-300">Exit Case</th>
               <th className="p-2 border border-gray-300">Exit Price</th>
               <th className="p-2 border border-gray-300">Exit Order Type</th>
               <th className="p-2 border border-gray-300">Exit Reason</th>
@@ -125,6 +127,9 @@ const LiveDataTable = ({ id, socketData, socketMastertData, values }) => {
                     {formatDate(item.realEntryTime)}
                   </td>
                   <td className="p-2 border border-gray-300 text-center text-sm">
+                    {item.EntryCase}
+                  </td>
+                  <td className="p-2 border border-gray-300 text-center text-sm">
                     {item.entryOrderType}
                   </td>                          
                   <td className="p-2 border border-gray-300 text-center text-sm">
@@ -132,6 +137,9 @@ const LiveDataTable = ({ id, socketData, socketMastertData, values }) => {
                   </td>
                   <td className="p-2 border border-gray-300 text-center text-sm">
                     {formatDate(item.realExitTime)}
+                  </td>
+                  <td className="p-2 border border-gray-300 text-center text-sm">
+                    {item.ExitCase}
                   </td>
                   <td className="p-2 border border-gray-300 text-center text-sm">
                     {item.exitPivot?.toFixed(2)}

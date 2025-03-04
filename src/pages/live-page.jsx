@@ -172,7 +172,7 @@ export const LivePage = () => {
         if (res?.data?.horizontalLine?.length > 0) {
           setHorizontalLine(res.data?.horizontalLine);
          // setApiResponseReceived(true);
-        }
+        }  
         //console.log("API call succeeded");
         return true; //Success
       } catch (err) {
@@ -499,7 +499,7 @@ export const LivePage = () => {
               {data?.data.entryLine?.toFixed(2)} &nbsp; a :
               {data?.data.callLowerDeadZone?.toFixed(2)} &nbsp; b :
               {data?.data.putUpperDeadZone?.toFixed(2)} &nbsp; c :
-              {data?.data.targetPrice?.toFixed(2)}
+              {(Number(data?.data.peBuyRegion))?.toFixed(2)}
             </button>
           </div>
         </div>

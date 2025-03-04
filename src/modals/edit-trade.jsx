@@ -410,7 +410,7 @@ export const EditTrade = () => {
 
                 {values.indexValue == 18 && (
                   <>
-                    <div className="px-1">
+                    {/* <div className="px-1">
                       <Label>Medium Interval Reference</Label>
                       <Select
                         value={values.intervalReference}
@@ -544,7 +544,7 @@ export const EditTrade = () => {
                         className="mt-1"
                         type="text"
                       />
-                    </div>
+                    </div> */}
                     <div className="px-1">
                       <Label>RSI/ATR Candle</Label>
                       <Input

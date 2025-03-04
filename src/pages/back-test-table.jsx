@@ -77,11 +77,13 @@ const BackTestingTablePage = ({
                 <th className="p-1 border border-gray-300">Sr No.</th>           
                 <th className="p-1 border border-gray-300">Identifier</th>           
                 <th className="p-1 border border-gray-300">Entry Time</th>
+                <th className="p-1 border border-gray-300">Entry Case</th>
                 <th className="p-1 border border-gray-300">Entry Order Type</th>
                 <th className="p-1 border border-gray-300">Entry Price</th>
                 <th className="p-1 border border-gray-300">Call Type</th>
                 &nbsp; &nbsp; &nbsp;
                 <th className="p-1 border border-gray-300">Exit Time</th>
+                <th className="p-1 border border-gray-300">Exit Case</th>
                 <th className="p-1 border border-gray-300">Exit Price</th>
                 <th className="p-1 border border-gray-300">Exit Order Type</th>
                 <th className="p-1 border border-gray-300">Exit Reason</th>
@@ -127,6 +129,9 @@ const BackTestingTablePage = ({
                         {formatDate(item.realEntryTime)}
                       </td>
                       <td className="border border-gray-300 text-center text-[13px] p-1">
+                        {item.EntryCase}
+                      </td>
+                      <td className="border border-gray-300 text-center text-[13px] p-1">
                         {item.entryOrderType}
                       </td>
                       <td className="border border-gray-300 text-center text-[13px] p-1">
@@ -138,6 +143,9 @@ const BackTestingTablePage = ({
                       &nbsp; &nbsp; &nbsp;
                       <td className="border border-gray-300 text-center text-[13px] p-1">
                         {formatDate(item.realExitTime)}
+                      </td>
+                      <td className="border border-gray-300 text-center text-[13px] p-1">
+                        {item.ExitCase}
                       </td>
                       <td className="border border-gray-300 text-center text-[13px] p-1">
                         {item?.exitPivot?.toFixed(2)}

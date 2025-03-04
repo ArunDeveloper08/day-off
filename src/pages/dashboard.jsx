@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import moment from "moment";
 
 export const groupBy = function (xs, key) {
   return xs?.reduce(function (rv, x) {
@@ -1002,7 +1003,7 @@ const Dashboard = () => {
             className="p-1 mb-1 w-[150px]"
           />
 
-          <div  >
+          <div>
             <Label className="flex items-center">Gainer Qty</Label>
 
             <Input
@@ -1111,7 +1112,7 @@ const Dashboard = () => {
                     <>
                       <th>Looser/Gainer</th>
                       {/* <th>Percent Change</th> */}
-                      <th>TrendLine Update Date</th>
+                      <th>Looser/Gainer Date</th>
                     </>
                   )
                 }
@@ -1317,7 +1318,15 @@ const Dashboard = () => {
                                 {item.looserGainer}
                               </td>
                               {/* <td>{(item.percentChange)?.toFixed(2)}</td> */}
-                              <td>{item.buyTrendLineDate?.slice(0, 10)}</td>
+
+                              <td>
+                                {item.dateOfLooserGainer
+                                  ? new Date(item.dateOfLooserGainer)
+                                      .toISOString()
+                                      .replace("T", " ")
+                                      .slice(0, 19)
+                                  : ""}
+                              </td>
                             </>
                           )
                         }

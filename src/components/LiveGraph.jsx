@@ -363,7 +363,6 @@ const CandleChart = ({
   setNoActionLine,
   setHorizontalLine,
   horizontalLine,
-
   id,
   getChartData,
   buyTrendLineDate,
@@ -1409,7 +1408,7 @@ const CandleChart = ({
                     </>
                   )}
 
-                  {/* {showRow?.stopLoss && (
+                  {showRow?.stopLoss && (
                     <>
                       <LineSeries
                         strokeDasharray="Dash"
@@ -1420,7 +1419,7 @@ const CandleChart = ({
                         }
                       />
                     </>
-                  )} */}
+                  )} 
 
                   {showRow?.stopLoss && (
                   

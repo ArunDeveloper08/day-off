@@ -53,13 +53,7 @@ const UIButton = ({
 
   return (
     <div>
-      <div className="flex flex-wrap gap-4 font-semibold py-2">
-        {/* <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
-          Trade Terminal:{" "}
-          {data?.data?.terminal === "manualIn"
-            ? "Manual In"
-            : data?.data?.terminal}
-        </p> */}
+      <div className="flex flex-wrap gap-4 font-semibold py-2"> 
         &nbsp;
         <p className="text-green-600 text-[13px] md:text-[16px] w-full sm:w-auto">
           Candle:{" "}
@@ -95,7 +89,7 @@ const UIButton = ({
           D_Exit: {data?.data?.dynamicExitValue?.toFixed(2)}
         </p>
         <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
-          Last High: {data?.data?.LastHigh}
+          Last High: {data?.data?.lastHighestLTP}
         </p>
         <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
           RSI Max: {data?.data?.rsiMax}
@@ -104,10 +98,27 @@ const UIButton = ({
           VDEM: {data?.data?.R_min?.toFixed(2)}
         </p>
         <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
-          VTM: {data?.data?.R_max?.toFixed(2)}
+          VDTM: {data?.data?.R_max?.toFixed(2)}
         </p>
         <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
-          Candle Ratio: {data?.data?.CEBuyRegion}
+          Candle Ratio: {(Number(data?.data?.CEBuyRegion))?.toFixed(2)}  
+        </p>
+        <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+           {(data?.data?.buyRegion)}  
+        </p>
+        <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+          Gain Five Min: {(data?.data?.gainFiveMinute)}  
+        </p>
+       
+        <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+          Gain Three Min: {(data?.data?.gainThreeMinute)}  
+        </p>
+        <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+          Gain One Min: {(data?.data?.gainOneMinute)}  
+        </p>
+       
+        <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+          Lowest Gain One Min: {(data?.data?.lowestGainOneMinute)}  
         </p>
         {liveTrendValue && (
           <div className="flex flex-wrap gap-2 w-full mt-2">
