@@ -1113,6 +1113,8 @@ const Dashboard = () => {
                       <th>Looser/Gainer</th>
                       {/* <th>Percent Change</th> */}
                       <th>Looser/Gainer Date</th>
+                      <th>Percent Change</th>
+                      <th>Curr. Percent Change</th>
                     </>
                   )
                 }
@@ -1327,6 +1329,8 @@ const Dashboard = () => {
                                       .slice(0, 19)
                                   : ""}
                               </td>
+                              <td>{item.percentChange}</td>
+                              <td>{item.currentPercentChange}</td>
                             </>
                           )
                         }

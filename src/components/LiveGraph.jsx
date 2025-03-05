@@ -342,9 +342,8 @@ const AlertLineArray = [
 ];
 
 const CandleChart = ({
-  //  handleCreateTrendLines,
+
   chartType,
-  // getChartData,
   data: initialData,
   intractiveData,
   width,
