@@ -32,6 +32,7 @@ import ModalProvider from "./providers/modal-provider";
 import Scanner from "./pages/Scanner";
 import ScannerConfig from "./pages/ScannerConfig";
 import TradeLogs from "./pages/TradeLogs";
+import GainerLooserLog from "./pages/GainerLooserLog";
 // import IdentifierLooserGainer from "./pages/IdentifierLooserGainer";
 // import PcrChart from "./pages/PcrChart";
 
@@ -124,6 +125,14 @@ export default function Home() {
             element={
              // <ProtectedRoute>
                 <TradeLogs />
+             // </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/future/gainerlooserlog"
+            element={
+             // <ProtectedRoute>
+                <GainerLooserLog />
              // </ProtectedRoute>
             }
           />

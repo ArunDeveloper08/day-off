@@ -684,8 +684,11 @@ const Dashboard = () => {
             Delete Child Trade
           </Button>
           <Button
+            // onClick={() =>
+            //   navigate("/future/particular-identifier-losser-gainer")
+            // }
             onClick={() =>
-              navigate("/future/particular-identifier-losser-gainer")
+              navigate("/future/gainerlooserlog")
             }
             className="px-5 py-2 rounded-md border-2"
           >
