@@ -1672,11 +1672,15 @@ const Dashboard = () => {
                                   gainPercent: item.gainPercent,
                                   vdtmConstant: item.vdtmConstant,
                                   dExitMax: item.dExitMax,
+                                  greenCandleRatio: item.greenCandleRatio,
+                                  sampleCandle: item.sampleCandle,
+                                  exitRsi:item.exitRsi,
+                                  greenCandleRatioUpTrend:item.greenCandleRatioUpTrend,
                                 },
                                 getAllTrades,
-                                trades,
+                                trades, 
                               })
-                            }
+                            }            
                             className="px-2 rounded-md"
                           >
                             <FilePenLine className="w-4 h-4" />

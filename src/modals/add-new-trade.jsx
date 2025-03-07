@@ -157,6 +157,10 @@ const initialState = {
   gainPercent: "5",
   vdtmConstant: "25",
   dExitMax: "100",
+  greenCandleRatio: 30,
+  sampleCandle: 50,
+  exitRsi: "",
+  greenCandleRatioUpTrend:60
 
   // Min_Order_Qty:"1"
 };
@@ -295,6 +299,10 @@ const alternateInitialState = {
   gainPercent: "5",
   vdtmConstant: "25",
   dExitMax: "100",
+  greenCandleRatio: 30,
+  sampleCandle: 50,
+  exitRsi: "",
+  greenCandleRatioUpTrend : 60,
 };
 // tradeIndex =2
 const gammaBlastInitialState = {
@@ -404,7 +412,7 @@ const gammaBlastInitialState = {
   downBand: "",
   masterRsiReference: "5",
   masterIntervalReference: "ONE_HOUR",
-  intervalReference: "FIFTEEN_MINUTE",                                                                     
+  intervalReference: "FIFTEEN_MINUTE",
   rsiReference: "5",
   s1: "10",
   candleRatio: "50",
@@ -430,6 +438,10 @@ const gammaBlastInitialState = {
   gainPercent: "5",
   vdtmConstant: "25",
   dExitMax: "100",
+  greenCandleRatio: 30,
+  sampleCandle: 50,
+  exitRsi: "",
+  greenCandleRatioUpTrend : 60
 };
 // tradeIndex =6
 
@@ -596,7 +608,7 @@ export const AddNewtrade = () => {
         !values.s1)
     ) {
       return alert("Please fill in all the required inputs for index 2.");
-    }                  
+    }
     try {
       await axios.post(`${BASE_URL_OVERALL}/config/create`, {
         terminal: values.terminal,
@@ -713,6 +725,10 @@ export const AddNewtrade = () => {
         gainPercent: values.gainPercent,
         vdtmConstant: values.vdtmConstant,
         dExitMax: values.dExitMax,
+        greenCandleRatio: values.greenCandleRatio,
+        sampleCandle: values.sampleCandle,
+        exitRsi: values.exitRsi,
+        greenCandleRatioUpTrend: values.greenCandleRatioUpTrend,
       });
       alert("Add Successfully");
     } catch (error) {
@@ -989,7 +1005,6 @@ export const AddNewtrade = () => {
                   />
                 </div> */}
 
-
                 <div className="px-1">
                   <Label>RSI / ATR Candle</Label>
                   <Input
@@ -1048,7 +1063,7 @@ export const AddNewtrade = () => {
                 </div>
 
                 <div className="px-1">
-                  <Label>DEM  Max</Label>
+                  <Label>DEM Max</Label>
                   <Input
                     name="dExitMax"
                     onChange={handleChange}
@@ -1217,8 +1232,6 @@ export const AddNewtrade = () => {
                     </SelectContent>
                   </Select>
                 </div>
-
-    
               </>
             )}
 
@@ -1254,7 +1267,7 @@ export const AddNewtrade = () => {
                     </SelectContent>
                   </Select>
                 </div>
-               
+
                 <div className="px-1">
                   <Label>Loss Limit</Label>
                   <Input
@@ -1276,7 +1289,6 @@ export const AddNewtrade = () => {
                   />
                 </div>
 
-               
                 <div className="px-1">
                   <Label> Target Time Delay</Label>
                   <Select
@@ -1313,7 +1325,6 @@ export const AddNewtrade = () => {
                     type="text"
                   />
                 </div>
-                
               </>
             )}
 
@@ -1599,7 +1610,6 @@ export const AddNewtrade = () => {
                       />
                     </div>
 
-        
                     <div className="px-1">
                       <Label>MV Source 1</Label>
                       <Select
@@ -1710,7 +1720,7 @@ export const AddNewtrade = () => {
                           </SelectContent>
                         </Select>
                       </div>
-                     
+
                       <div className="px-1">
                         <Label>Entry Candle</Label>
                         <Select
@@ -1736,7 +1746,6 @@ export const AddNewtrade = () => {
                           </SelectContent>
                         </Select>
                       </div>
-                    
 
                       <div className="px-1">
                         <Label>WMA</Label>
@@ -1750,7 +1759,6 @@ export const AddNewtrade = () => {
                         />
                       </div>
 
-                    
                       <div className="px-1">
                         <Label>Entry2 MF</Label>
                         <Input
@@ -1762,7 +1770,7 @@ export const AddNewtrade = () => {
                           min={0}
                         />
                       </div>
-                      
+
                       <div className="px-1">
                         <Label>D_Exit MF </Label>
                         <Input
@@ -1791,8 +1799,8 @@ export const AddNewtrade = () => {
                           name="targetLevel"
                           onChange={handleChange}
                           value={values.targetLevel}
-                          className="mt-1"
-                          min={0}
+                          className="mt-1"            
+                          min={0}        
                           type="number"
                         />
                       </div>
@@ -1805,8 +1813,8 @@ export const AddNewtrade = () => {
                           className="mt-1"
                           min={0}
                           type="number"
-                        />
-                      </div>
+                        />  
+                      </div>    
 
                       <div className="px-1">
                         <Label>Target Constant</Label>
@@ -1819,16 +1827,65 @@ export const AddNewtrade = () => {
                           type="number"
                         />
                       </div>
-
-                     
+                      <div className="px-1">
+                        <Label>Exit RSI (%)</Label>
+                        <Input
+                          name="exitRsi"
+                          onChange={handleChange}
+                          value={values.exitRsi}
+                          className="mt-1"
+                          min={0}
+                          type="number"
+                        />
+                      </div>
+                      <div className="px-1">
+                        <Label>Sample Candle</Label>
+                        <Input
+                          name="sampleCandle"
+                          onChange={handleChange}
+                          value={values.sampleCandle}
+                          className="mt-1"
+                          min={0}
+                          type="number"
+                        />
+                      </div>
+                      <div className="px-1">
+                        <Label>Green Candle Ratio</Label>
+                        <Input
+                          name="greenCandleRatio"
+                          onChange={handleChange}
+                          value={values.greenCandleRatio}
+                          className="mt-1"
+                          min={0}
+                          type="number"
+                        />
+                      </div>
+                      <div className="px-1">
+                        <Label>Green Candle Ratio</Label>
+                        <Input
+                          name="greenCandleRatio"
+                          onChange={handleChange}
+                          value={values.greenCandleRatio}
+                          className="mt-1"
+                          min={0}
+                          type="number"
+                        />
+                      </div>
+                      <div className="px-1">
+                        <Label>Green Candle Ratio Up Trend</Label>
+                        <Input
+                          name="greenCandleRatioUpTrend"
+                          onChange={handleChange}
+                          value={values.greenCandleRatioUpTrend}
+                          className="mt-1"
+                          min={0}
+                          type="number"
+                        />
+                      </div>
                     </>
                   )}
-
-               
               </>
             )}
-
-          
 
             {(values.indexValue == 7 || values.indexValue == 17) &&
               values.isMaster && (
@@ -1917,8 +1974,6 @@ export const AddNewtrade = () => {
                   </div> */}
                 </>
               )}
-
-          
 
             <div className="px-1">
               <Label>Trade In Time</Label>
@@ -2124,7 +2179,6 @@ export const AddNewtrade = () => {
                 min={0}
               />
             </div>
-           
           </section>
           <div className="px-1">
             <Label>Narration</Label>

@@ -242,6 +242,10 @@ export const EditTrade = () => {
         gainPercent: values.gainPercent,
         vdtmConstant: values.vdtmConstant,
         dExitMax: values.dExitMax,
+        greenCandleRatio: values.greenCandleRatio,
+        sampleCandle: values.sampleCandle,
+        exitRsi:values.exitRsi,
+        greenCandleRatioUpTrend:values.greenCandleRatioUpTrend,
       });
       alert("Update Successfully");
     } catch (error) {
@@ -611,6 +615,7 @@ export const EditTrade = () => {
                         type="number"
                       />
                     </div>
+                     
                   </>
                 )}
 
@@ -1545,6 +1550,50 @@ export const EditTrade = () => {
                               type="number"
                             />
                           </div>
+                          <div className="px-1">
+                                      <Label>Exit RSI (%)</Label>
+                                      <Input
+                                        name="exitRsi"
+                                        onChange={handleChange}
+                                        value={values.exitRsi}
+                                        className="mt-1"
+                                        min={0}
+                                        type="number"
+                                      />
+                                    </div>
+                                    <div className="px-1">
+                                      <Label>Sample Candle</Label>
+                                      <Input
+                                        name="sampleCandle"
+                                        onChange={handleChange}
+                                        value={values.sampleCandle}
+                                        className="mt-1"
+                                        min={0}
+                                        type="number"
+                                      />
+                                    </div>
+                                    <div className="px-1">
+                                      <Label>Green Candle Ratio</Label>
+                                      <Input
+                                        name="greenCandleRatio"
+                                        onChange={handleChange}
+                                        value={values.greenCandleRatio}
+                                        className="mt-1"
+                                        min={0}
+                                        type="number"
+                                      />
+                                    </div>
+                                    <div className="px-1">
+                                      <Label>Green Candle Ratio Up Trend</Label>
+                                      <Input
+                                        name="greenCandleRatioUpTrend"
+                                        onChange={handleChange}
+                                        value={values.greenCandleRatioUpTrend}
+                                        className="mt-1"
+                                        min={0}
+                                        type="number"
+                                      />
+                                    </div>
 
                           {/* <div className="px-1">
                             <Label>D_Exit Mean</Label>
