@@ -242,7 +242,7 @@ export const EditTrade = () => {
         gainPercent: values.gainPercent,
         vdtmConstant: values.vdtmConstant,
         dExitMax: values.dExitMax,
-        greenCandleRatio: values.greenCandleRatio,
+        greenCandleRatioDownTrend: values.greenCandleRatioDownTrend,
         sampleCandle: values.sampleCandle,
         exitRsi:values.exitRsi,
         greenCandleRatioUpTrend:values.greenCandleRatioUpTrend,
@@ -1573,11 +1573,11 @@ export const EditTrade = () => {
                                       />
                                     </div>
                                     <div className="px-1">
-                                      <Label>Green Candle Ratio</Label>
+                                      <Label>Green Candle Ratio Down Trend</Label>
                                       <Input
-                                        name="greenCandleRatio"
+                                        name="greenCandleRatioDownTrend"
                                         onChange={handleChange}
-                                        value={values.greenCandleRatio}
+                                        value={values.greenCandleRatioDownTrend}
                                         className="mt-1"
                                         min={0}
                                         type="number"

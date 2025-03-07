@@ -1672,7 +1672,7 @@ const Dashboard = () => {
                                   gainPercent: item.gainPercent,
                                   vdtmConstant: item.vdtmConstant,
                                   dExitMax: item.dExitMax,
-                                  greenCandleRatio: item.greenCandleRatio,
+                                  greenCandleRatioDownTrend: item.greenCandleRatioDownTrend,
                                   sampleCandle: item.sampleCandle,
                                   exitRsi:item.exitRsi,
                                   greenCandleRatioUpTrend:item.greenCandleRatioUpTrend,
