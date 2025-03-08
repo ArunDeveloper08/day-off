@@ -1676,6 +1676,8 @@ const Dashboard = () => {
                                   sampleCandle: item.sampleCandle,
                                   exitRsi:item.exitRsi,
                                   greenCandleRatioUpTrend:item.greenCandleRatioUpTrend,
+                                  rbExtiRsi:item.rbExtiRsi,
+                                  greenCandleRatioRangeBound:item.greenCandleRatioRangeBound,
                                 },
                                 getAllTrades,
                                 trades, 

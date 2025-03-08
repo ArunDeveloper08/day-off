@@ -139,7 +139,24 @@ export const BackTestingPage = () => {
   //   }
   // };
 
+  // const handleStart = () => {
+  //   axios
+  //     .post(`${BASE_URL_OVERALL}/test/startTesting`, {
+  //       ...data.data,
+  //       ...dateTime,
+  //       socketID: socket?.id,
+  //       interval: values.interval,
+  //     })
+  //     .then((res) => {
+  //       console.log("response", res.data);
+  //     })
+  //     .catch((err) => {      
+  //       console.log(err);
+  //     });
+  // };
+
   const handleStart = () => {
+    // First API call (waits for response)
     axios
       .post(`${BASE_URL_OVERALL}/test/startTesting`, {
         ...data.data,
@@ -150,10 +167,18 @@ export const BackTestingPage = () => {
       .then((res) => {
         console.log("response", res.data);
       })
-      .catch((err) => {      
+      .catch((err) => {
         console.log(err);
       });
+  
+    // Second API call (fire-and-forget, doesn't wait for response)
+    // axios.post(`${BASE_URL_OVERALL}/proxy-backtesting`, {
+    //   identifier: data.data.identifier,
+    //   backTestingFromDate: dateTime?.timestamp1+":07.519Z",
+    //   backTestingToDate: dateTime?.timestamp2+":07.519Z",
+    // }).catch((err) => console.log("Error in second API:", err));
   };
+  
 
   useEffect(() => {
     if (isConnected && socket) {

@@ -153,14 +153,18 @@ const initialState = {
   case1MasterRsiReference: "",
   case2MasterRsiReference: "",
   case3MasterRsiReference: "",
-  stopLossMf: "4",
-  gainPercent: "5",
+  stopLossMf: "10",
+  gainPercent: "10",
   vdtmConstant: "25",
   dExitMax: "100",
-  greenCandleRatioDownTrend: 30,
+  
   sampleCandle: 50,
-  exitRsi: "",
-  greenCandleRatioUpTrend:60
+  exitRsi: 40,
+  
+  rbExtiRsi: 20,
+  greenCandleRatioRangeBound:50,
+  greenCandleRatioUpTrend: 60,
+  greenCandleRatioDownTrend: 30,
 
   // Min_Order_Qty:"1"
 };
@@ -295,14 +299,18 @@ const alternateInitialState = {
   case1MasterRsiReference: "",
   case2MasterRsiReference: "",
   case3MasterRsiReference: "",
-  stopLossMf: "4",
-  gainPercent: "5",
+  stopLossMf: "10",
+  gainPercent: "10",
   vdtmConstant: "25",
   dExitMax: "100",
-  greenCandleRatioDownTrend: 30,
+ 
   sampleCandle: 50,
-  exitRsi: "",
-  greenCandleRatioUpTrend : 60,
+  exitRsi: 40,
+  
+  rbExtiRsi: 20,
+  greenCandleRatioRangeBound:50,
+  greenCandleRatioUpTrend: 60,
+  greenCandleRatioDownTrend: 30,
 };
 // tradeIndex =2
 const gammaBlastInitialState = {
@@ -434,14 +442,18 @@ const gammaBlastInitialState = {
   case1MasterRsiReference: "",
   case2MasterRsiReference: "",
   case3MasterRsiReference: "",
-  stopLossMf: "4",
-  gainPercent: "5",
+  stopLossMf: "10",
+  gainPercent: "10",
   vdtmConstant: "25",
   dExitMax: "100",
-  greenCandleRatioDownTrend: 30,
+
   sampleCandle: 50,
-  exitRsi: "",
-  greenCandleRatioUpTrend : 60
+  exitRsi: 40,
+ 
+  rbExtiRsi: 20,
+  greenCandleRatioRangeBound:50,
+  greenCandleRatioUpTrend: 60,
+  greenCandleRatioDownTrend: 30,
 };
 // tradeIndex =6
 
@@ -729,6 +741,8 @@ export const AddNewtrade = () => {
         sampleCandle: values.sampleCandle,
         exitRsi: values.exitRsi,
         greenCandleRatioUpTrend: values.greenCandleRatioUpTrend,
+        rbExtiRsi: values.rbExtiRsi,
+        greenCandleRatioRangeBound: values.greenCandleRatioRangeBound,
       });
       alert("Add Successfully");
     } catch (error) {
@@ -1016,7 +1030,7 @@ export const AddNewtrade = () => {
                     min={0}
                   />
                 </div>
-                <div className="px-1">
+                {/* <div className="px-1">
                   <Label>DEM Min</Label>
                   <Input
                     name="s1"
@@ -1026,7 +1040,7 @@ export const AddNewtrade = () => {
                     min={0}
                     type="number"
                   />
-                </div>
+                </div> */}
                 <div className="px-1">
                   <Label>DTM Min</Label>
                   <Input
@@ -1062,7 +1076,7 @@ export const AddNewtrade = () => {
                   />
                 </div>
 
-                <div className="px-1">
+                {/* <div className="px-1">
                   <Label>DEM Max</Label>
                   <Input
                     name="dExitMax"
@@ -1072,7 +1086,7 @@ export const AddNewtrade = () => {
                     min={0}
                     type="number"
                   />
-                </div>
+                </div> */}
               </>
             )}
 
@@ -1771,7 +1785,7 @@ export const AddNewtrade = () => {
                         />
                       </div>
 
-                      <div className="px-1">
+                      {/* <div className="px-1">
                         <Label>D_Exit MF </Label>
                         <Input
                           name="atrMf"
@@ -1781,7 +1795,7 @@ export const AddNewtrade = () => {
                           min={0}
                           type="number"
                         />
-                      </div>
+                      </div> */}
                       <div className="px-1">
                         <Label>Stoploss MF </Label>
                         <Input
@@ -1799,12 +1813,12 @@ export const AddNewtrade = () => {
                           name="targetLevel"
                           onChange={handleChange}
                           value={values.targetLevel}
-                          className="mt-1"            
-                          min={0}        
+                          className="mt-1"
+                          min={0}
                           type="number"
                         />
                       </div>
-                      <div className="px-1">
+                      {/* <div className="px-1">
                         <Label>D_Exit Constant</Label>
                         <Input
                           name="dExitMf"
@@ -1814,7 +1828,7 @@ export const AddNewtrade = () => {
                           min={0}
                           type="number"
                         />  
-                      </div>    
+                      </div>     */}
 
                       <div className="px-1">
                         <Label>Target Constant</Label>
@@ -1828,11 +1842,22 @@ export const AddNewtrade = () => {
                         />
                       </div>
                       <div className="px-1">
-                        <Label>Exit RSI (%)</Label>
+                        <Label>Trending Exit RSI (%)</Label>
                         <Input
                           name="exitRsi"
                           onChange={handleChange}
                           value={values.exitRsi}
+                          className="mt-1"
+                          min={0}
+                          type="number"
+                        />
+                      </div>
+                      <div className="px-1">
+                        <Label>RB Exit RSI (%)</Label>
+                        <Input
+                          name="rbExtiRsi"
+                          onChange={handleChange}
+                          value={values.rbExtiRsi}
                           className="mt-1"
                           min={0}
                           type="number"
@@ -1849,7 +1874,7 @@ export const AddNewtrade = () => {
                           type="number"
                         />
                       </div>
-            
+
                       <div className="px-1">
                         <Label>Green Candle Ratio Down Trend</Label>
                         <Input
@@ -1867,6 +1892,17 @@ export const AddNewtrade = () => {
                           name="greenCandleRatioUpTrend"
                           onChange={handleChange}
                           value={values.greenCandleRatioUpTrend}
+                          className="mt-1"
+                          min={0}
+                          type="number"
+                        />
+                      </div>
+                      <div className="px-1">
+                        <Label>Green Candle Ratio RangeBound</Label>
+                        <Input
+                          name="greenCandleRatioRangeBound"
+                          onChange={handleChange}
+                          value={values.greenCandleRatioRangeBound}
                           className="mt-1"
                           min={0}
                           type="number"
