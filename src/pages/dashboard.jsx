@@ -374,7 +374,7 @@ const Dashboard = () => {
         ) {
           match = true;
         }
-        if (activeFilters.includes("Large") && item.category === "Large") {
+        if (activeFilters.includes("RangeBound") && item.category === "RangeBound") {
           match = true;
         }
         if (activeFilters.includes("haveTrade") && item.haveTrade) {
@@ -389,10 +389,10 @@ const Dashboard = () => {
         // if (activeFilters.includes("Index") && item.category === "Index") {
         //   match = true;
         // }
-        if (activeFilters.includes("Medium") && item.category === "Medium") {
+        if (activeFilters.includes("Bearish") && item.category === "Bearish") {
           match = true;
         }
-        if (activeFilters.includes("Small") && item.category === "Small") {
+        if (activeFilters.includes("Bullish") && item.category === "Bullish") {
           match = true;
         }
         if (activeFilters.includes("Nifty50") && item.category === "Nifty50") {
@@ -557,11 +557,15 @@ const Dashboard = () => {
     toggleFilter(filterType);
   };
 
-  const toggleState = async (itemId, currentState) => {
+  const toggleState = async (item, currentState) => {
     const newState = currentState === "ON" ? "OFF" : "ON";
+
+    if (newState == "OFF" && item.haveTrade == 1) {
+      return alert("Identifier  is in trade, cannot be turned OFF");
+    }
     try {
       const response = await axios.put(`${BASE_URL_OVERALL}/config/edit`, {
-        id: itemId,
+        id: item.id,
         terminal: newState,
       });
 
@@ -570,13 +574,13 @@ const Dashboard = () => {
         setTrades((prevTrades) => ({
           ...prevTrades,
           data: prevTrades?.data?.map((trade) =>
-            trade.id === itemId ? { ...trade, terminal: newState } : trade
+            trade.id === item.id ? { ...trade, terminal: newState } : trade
           ),
         }));
         // Update filteredTrades if it's being used separately
         setFilteredTrades((prevFilteredTrades) =>
           prevFilteredTrades?.map((trade) =>
-            trade.id === itemId ? { ...trade, terminal: newState } : trade
+            trade.id === item.id ? { ...trade, terminal: newState } : trade
           )
         );
       }
@@ -687,9 +691,7 @@ const Dashboard = () => {
             // onClick={() =>
             //   navigate("/future/particular-identifier-losser-gainer")
             // }
-            onClick={() =>
-              navigate("/future/gainerlooserlog")
-            }
+            onClick={() => navigate("/future/gainerlooserlog")}
             className="px-5 py-2 rounded-md border-2"
           >
             Looser/Gainer Log
@@ -705,6 +707,12 @@ const Dashboard = () => {
             className="px-5 py-2 rounded-md border-2"
           >
             Trade Log
+          </Button>
+          <Button
+            onClick={() => window.open(`/future/analyser`, "_blank")}
+            className="px-5 py-2 rounded-md border-2"
+          >
+            Analyser Config
           </Button>
           <Button
             onClick={() => navigate("/future/angel-login")}
@@ -838,34 +846,34 @@ const Dashboard = () => {
           </Button>
 
           <Button
-            onClick={() => handleButtonClick("Small")}
+            onClick={() => handleButtonClick("Bullish")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["Small"]
+              activeButtons["Bullish"]
                 ? "bg-red-500 hover:bg-red-600"
                 : "bg-black"
             }`}
           >
-            Small
+            Bullish
           </Button>
           <Button
-            onClick={() => handleButtonClick("Medium")}
+            onClick={() => handleButtonClick("Bearish")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["Medium"]
+              activeButtons["Bearish"]
                 ? "bg-red-500 hover:bg-red-600"
                 : "bg-black"
             }`}
           >
-            Medium
+            Bearish
           </Button>
           <Button
-            onClick={() => handleButtonClick("Large")}
+            onClick={() => handleButtonClick("RangeBound")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["Large"]
+              activeButtons["RangeBound"]
                 ? "bg-red-500 hover:bg-red-600"
                 : "bg-black"
             }`}
           >
-            Large
+            RangeBound
           </Button>
 
           <Button
@@ -1116,8 +1124,8 @@ const Dashboard = () => {
                       <th>Looser/Gainer</th>
                       {/* <th>Percent Change</th> */}
                       <th>Looser/Gainer Date</th>
-                      <th>Percent Change</th>
-                      <th>Curr. Percent Change</th>
+                      {/* <th>Percent Change</th>
+                      <th>Curr. Percent Change</th> */}
                     </>
                   )
                 }
@@ -1138,6 +1146,8 @@ const Dashboard = () => {
                     {/* <th>Entry Line Below</th> */}
                     {/* <th>Entry Line Above</th> */}
                     <th>Category</th>
+                    <th>Green Candle Ratio</th>
+                    <th>Analyser Timestamp</th>
                     <th>ON/OFF</th>
                   </>
                 )}
@@ -1332,8 +1342,8 @@ const Dashboard = () => {
                                       .slice(0, 19)
                                   : ""}
                               </td>
-                              <td>{item.percentChange}</td>
-                              <td>{item.currentPercentChange}</td>
+                              {/* <td>{item.percentChange}</td>
+                              <td>{item.currentPercentChange}</td> */}
                             </>
                           )
                         }
@@ -1452,11 +1462,18 @@ const Dashboard = () => {
                                 <span>{item.category}</span>
                               )}
                             </td>
+                            <td>{item.Ratio?.toFixed(1)}</td>
+                            <td>
+                              {item.analyserDateTime
+                                ? new Date(
+                                    item.analyserDateTime
+                                  ).toLocaleString()
+                                : ""}
+                            </td>
+
                             <td>
                               <button
-                                onClick={() =>
-                                  toggleState(item.id, item.terminal)
-                                }
+                                onClick={() => toggleState(item, item.terminal)}
                                 className={`${
                                   item.terminal == "ON"
                                     ? "bg-red-500  text-white "
@@ -1672,17 +1689,20 @@ const Dashboard = () => {
                                   gainPercent: item.gainPercent,
                                   vdtmConstant: item.vdtmConstant,
                                   dExitMax: item.dExitMax,
-                                  greenCandleRatioDownTrend: item.greenCandleRatioDownTrend,
+                                  greenCandleRatioDownTrend:
+                                    item.greenCandleRatioDownTrend,
                                   sampleCandle: item.sampleCandle,
-                                  exitRsi:item.exitRsi,
-                                  greenCandleRatioUpTrend:item.greenCandleRatioUpTrend,
-                                  rbExtiRsi:item.rbExtiRsi,
-                                  greenCandleRatioRangeBound:item.greenCandleRatioRangeBound,
+                                  exitRsi: item.exitRsi,
+                                  greenCandleRatioUpTrend:
+                                    item.greenCandleRatioUpTrend,
+                                  rbExtiRsi: item.rbExtiRsi,
+                                  greenCandleRatioRangeBound:
+                                    item.greenCandleRatioRangeBound,
                                 },
                                 getAllTrades,
-                                trades, 
+                                trades,
                               })
-                            }            
+                            }
                             className="px-2 rounded-md"
                           >
                             <FilePenLine className="w-4 h-4" />

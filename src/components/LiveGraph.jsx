@@ -71,6 +71,7 @@ import {
 
 function tooltipContent(underlyingValue) {
   return ({ currentItem, xAccessor }) => {
+ 
     return {
       x: `Time: ${
         currentItem?.timestamp && formatDate(currentItem?.timestamp)
@@ -85,7 +86,7 @@ function tooltipContent(underlyingValue) {
         },
         {
           label: "Candle Index", // Display index instead of length
-          value: currentItem.index,
+          value: currentItem.idx.index,
           stroke: "black",
         },
         {
@@ -1434,7 +1435,7 @@ const CandleChart = ({
                     </>                 
                   )}
 
-                  {master?.tradeIndex == 2 && showRow?.targetLine && (
+                  { showRow?.targetLine && (
                     <LineSeries
                       strokeWidth={4}
                       stroke="violet"
@@ -1445,7 +1446,7 @@ const CandleChart = ({
                       }
                     />
                   )}
-                  {master?.tradeIndex == 2 && showRow?.targetLine && (
+                  { showRow?.targetLine && (
                     <LineSeries
                       strokeWidth={2}
                       stroke="violet"

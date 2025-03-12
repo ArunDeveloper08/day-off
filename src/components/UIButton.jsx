@@ -85,18 +85,18 @@ const UIButton = ({
         <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
           Entry Candle: {data?.data?.entryCandle}
         </p>
-        <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+        {/* <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
           D_Exit: {data?.data?.dynamicExitValue?.toFixed(2)}
-        </p>
+        </p> */}
         <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
           Last High: {data?.data?.lastHighestLTP}
         </p>
-        <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+        {/* <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
           RSI Max: {data?.data?.rsiMax}
-        </p>
-        <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+        </p> */}
+        {/* <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
           VDEM: {data?.data?.R_min?.toFixed(2)}
-        </p>
+        </p> */}
         <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
           VDTM: {data?.data?.R_max?.toFixed(2)}
         </p>
@@ -106,20 +106,20 @@ const UIButton = ({
         <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
            {(data?.data?.buyRegion)}  
         </p>
-        <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+        {/* <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
           Gain Five Min: {(data?.data?.gainFiveMinute)}  
-        </p>
+        </p> */}
        
         <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
-          Gain Three Min: {(data?.data?.gainThreeMinute)}  
+          Gain Multiplier: {(data?.data?.gainThreeMinute)}  
         </p>
         <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
-          Gain One Min: {(data?.data?.gainOneMinute)}  
+         Base  Gain : {(data?.data?.gainOneMinute)}  
         </p>
        
-        <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+        {/* <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
           Lowest Gain One Min: {(data?.data?.lowestGainOneMinute)}  
-        </p>
+        </p> */}
         {liveTrendValue && (
           <div className="flex flex-wrap gap-2 w-full mt-2">
             {liveTrendValue?.map((item, index) => (
