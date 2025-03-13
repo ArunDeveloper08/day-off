@@ -1,64 +1,59 @@
 import { Button } from "@/components/ui/button";
 import { BASE_URL_OVERALL } from "@/lib/constants";
 import axios from "axios";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState, useMemo } from "react";
 
 const TradeLogs = () => {
   const [data, setData] = useState([]);
-  const [filterIdentifier, setFilterIdentifier] = useState(""); // State for identifier filter
+  const [filterIdentifier, setFilterIdentifier] = useState("");
   const [dateTime, setDateTime] = useState({
     timestamp1: new Date().toISOString().split("T")[0] + "T09:15",
     timestamp2: new Date().toISOString().split("T")[0] + "T23:30",
   });
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
+  // Convert DateTime to YYYY-MM-DD
+  const formatDate = (dateTimeString) => {
+    return dateTimeString.split("T")[0]; // Extract YYYY-MM-DD
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setDateTime({ ...dateTime, [name]: value });
+    setDateTime((prev) => ({ ...prev, [name]: value }));
   };
 
   const getData = async () => {
     try {
+      const fromDate = formatDate(dateTime.timestamp1);
+      const toDate = formatDate(dateTime.timestamp2);
+
+      // API should work for single-day selection
+      const finalFromDate = fromDate;
+      const finalToDate = toDate;
+
       const response = await axios.get(
-        `${BASE_URL_OVERALL}/chart/getAiLogs?fromDate=${formatDate(
-          dateTime.timestamp1
-        )}&toDate=${formatDate(dateTime.timestamp2)}`
+        `${BASE_URL_OVERALL}/chart/getAiLogs?fromDate=${finalFromDate}&toDate=${finalToDate}`
       );
+
       setData(response.data.data);
     } catch (err) {
-      console.log(err);
+      console.error("Error fetching data:", err);
     }
   };
 
-  useEffect(() => {
-    getData();
-  }, []);
-
+  // Filtered Data based on Identifier Input
   const filteredData = data.filter((item) =>
     item.identifier?.toLowerCase().includes(filterIdentifier.toLowerCase())
   );
 
-  const price = useCallback(() => {
-    const TotalPrice =
-    filteredData?.reduce(
-        (acc, item) => acc + (item.exitPivot - item.entryPivot),
+  // Memoized Total Price Calculation
+  const totalPrice = useMemo(() => {
+    return (
+      filteredData?.reduce(
+        (acc, item) => acc + (item.exitPivot - item.entryPivot || 0),
         0
-      ) ?? 0;
-    return TotalPrice;
+      ) ?? 0
+    );
   }, [filteredData]);
-
-  console.log(price());
-
-  // Filtered data based on identifier input
-
 
   return (
     <div>
@@ -116,7 +111,8 @@ const TradeLogs = () => {
             const priceDiff =
               item.entryPivot !== null && item.exitPivot !== null
                 ? (item.exitPivot - item.entryPivot)?.toFixed(2)
-                : null;
+                : "N/A";
+
             return (
               <tr key={index}>
                 <td className="border border-gray-300 text-center text-[13px]">
@@ -126,7 +122,7 @@ const TradeLogs = () => {
                   {item.identifier}
                 </td>
                 <td className="border border-gray-300 text-center text-[13px] p-1">
-                  {(item.realEntryTime)}
+                  {item.realEntryTime}
                 </td>
                 <td className="border border-gray-300 text-center text-[13px] p-1">
                   {item.entryOrderType}
@@ -138,7 +134,7 @@ const TradeLogs = () => {
                   {item.CallType}
                 </td>
                 <td className="border border-gray-300 text-center text-[13px] p-1">
-                  {(item.realExitTime)}
+                  {item.realExitTime}
                 </td>
                 <td className="border border-gray-300 text-center text-[13px] p-1">
                   {item?.exitPivot?.toFixed(2)}
@@ -167,7 +163,7 @@ const TradeLogs = () => {
       </table>
 
       <h1 className="flex justify-center text-2xl font-bold">
-        Total Price : {price()?.toFixed(2)}
+        Total Price: {totalPrice.toFixed(2)}
       </h1>
     </div>
   );

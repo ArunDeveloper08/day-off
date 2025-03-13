@@ -97,15 +97,15 @@ export const LivePage = () => {
     hourly: false,
     daily: false,
     suppRes: false,
-    toolTip: false,
+    toolTip: true,
     
     rsi: false,
     atr: false,
-    dEntryLine: false,
-    dExitLine: false,
-    stopLoss: false,
-    targetLine: false,
-    entryPivotValue:false,
+    dEntryLine: true,
+    dExitLine: true,
+    stopLoss: true,
+    targetLine: true,
+    entryPivotValue:true,
     noActionLine:true,
     entryLine:true,
     alertLine:true,
@@ -143,7 +143,7 @@ export const LivePage = () => {
 
   const getChartData = async () => {
     const maxRetries = 5; // Maximum number of retries
-    const delay = 2000; // Delay in milliseconds between retries
+    const delay = 3000; // Delay in milliseconds between retries
     let attempts = 0;
     const fetchData = async () => {
       try {
@@ -159,7 +159,7 @@ export const LivePage = () => {
           setEntryLine(res?.data?.buyTrendLines);
          // setApiResponseReceived(true);
         }
-
+              
         // Process alert lines
         if (res?.data?.analysisLine?.length > 0) {
           setAlert3(res.data?.analysisLine);

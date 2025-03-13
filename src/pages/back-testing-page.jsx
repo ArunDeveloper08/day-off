@@ -172,11 +172,11 @@ export const BackTestingPage = () => {
       });
   
     // Second API call (fire-and-forget, doesn't wait for response)
-    // axios.post(`${BASE_URL_OVERALL}/proxy-backtesting`, {
-    //   identifier: data.data.identifier,
-    //   backTestingFromDate: dateTime?.timestamp1+":07.519Z",
-    //   backTestingToDate: dateTime?.timestamp2+":07.519Z",
-    // }).catch((err) => console.log("Error in second API:", err));
+    axios.post(`${BASE_URL_OVERALL}/proxy-backtesting`, {
+      identifier: data.data.identifier,
+      backTestingFromDate: dateTime?.timestamp1+":07.519Z",
+      backTestingToDate: dateTime?.timestamp2+":07.519Z",
+    }).catch((err) => console.log("Error in second API:", err));
   };
   
 

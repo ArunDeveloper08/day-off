@@ -1148,6 +1148,7 @@ const Dashboard = () => {
                     <th>Category</th>
                     <th>Green Candle Ratio</th>
                     <th>Analyser Timestamp</th>
+                    <th>Loos/Gain</th>
                     <th>ON/OFF</th>
                   </>
                 )}
@@ -1470,6 +1471,7 @@ const Dashboard = () => {
                                   ).toLocaleString()
                                 : ""}
                             </td>
+                            <td>{item.lossGainOutput}</td>
 
                             <td>
                               <button

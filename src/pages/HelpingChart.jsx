@@ -285,7 +285,7 @@ const HelpingChart = () => {
 
         // Wait for a short period before retrying
         if (attempts < maxRetries) {
-          await new Promise((resolve) => setTimeout(resolve, 2000)); // 3-second delay
+          await new Promise((resolve) => setTimeout(resolve, 3000)); // 3-second delay
         }
       }
     }
