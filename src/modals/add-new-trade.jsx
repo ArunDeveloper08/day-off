@@ -165,6 +165,9 @@ const initialState = {
   greenCandleRatioRangeBound:50,
   greenCandleRatioUpTrend: 60,
   greenCandleRatioDownTrend: 30,
+  isGroup : false,
+  
+  groupName : "",
 
   // Min_Order_Qty:"1"
 };
@@ -311,6 +314,9 @@ const alternateInitialState = {
   greenCandleRatioRangeBound:50,
   greenCandleRatioUpTrend: 60,
   greenCandleRatioDownTrend: 30,
+  isGroup : false,
+  
+  groupName : "",
 };
 // tradeIndex =2
 const gammaBlastInitialState = {
@@ -454,6 +460,9 @@ const gammaBlastInitialState = {
   greenCandleRatioRangeBound:50,
   greenCandleRatioUpTrend: 60,
   greenCandleRatioDownTrend: 30,
+  isGroup : false,
+  
+  groupName : "",
 };
 // tradeIndex =6
 
@@ -468,6 +477,7 @@ export const AddNewtrade = () => {
   const { isOpen, onClose, type, data } = useModal();
   const [values, setValues] = React.useState(initialState);
   const [expiryDates, setExpiryDates] = React.useState([]);
+  const [group , setGroup] = React.useState([])
 
   const [trades, setTrades] = React.useState({
     loading: false,
@@ -516,7 +526,9 @@ export const AddNewtrade = () => {
 
   const masterName = () => {
     const filteredData = data?.trades?.data?.filter((item) => item.isMaster);
+    const filteredData2 = data?.trades?.data?.filter((item) => item.isGroup);
     setTrades(filteredData);
+    setGroup(filteredData2)
   };
 
   React.useEffect(() => {
@@ -743,6 +755,8 @@ export const AddNewtrade = () => {
         greenCandleRatioUpTrend: values.greenCandleRatioUpTrend,
         rbExtiRsi: values.rbExtiRsi,
         greenCandleRatioRangeBound: values.greenCandleRatioRangeBound,
+        isGroup: values.isGroup,
+        groupName: values.groupName,
       });
       alert("Add Successfully");
     } catch (error) {
@@ -753,6 +767,8 @@ export const AddNewtrade = () => {
       onClose();
     }
   };
+  // console.log("trades" , trades)
+  // console.log("group" , group)
 
   return (
     <Dialog width={width} onOpenChange={onClose} open={isModalOpen}>
@@ -1130,6 +1146,33 @@ export const AddNewtrade = () => {
                 </SelectContent>
               </Select>
             </div>
+            <div className="px-1">
+              <Label>Is Group</Label>
+              <Select
+                value={String(values.isGroup)} // Convert boolean to string for the select value
+                name="isGroup"
+                onValueChange={(value) => handleSelect("isGroup", value)}
+              >
+                <SelectTrigger className="w-full mt-1 border-zinc-500">
+                  <SelectValue>{String(values.isGroup)}</SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Is Group</SelectLabel>
+                    {[{ isGroup: true }, { isGroup: false }]?.map(
+                      (suggestion) => (
+                        <SelectItem
+                          key={String(suggestion.isGroup)}
+                          value={suggestion.isGroup}
+                        >
+                          {String(suggestion.isGroup)}
+                        </SelectItem>
+                      )
+                    )}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
 
             {values?.isMaster == false && (
               <>
@@ -1193,6 +1236,38 @@ export const AddNewtrade = () => {
                 </div>
               </>
             )}
+            {values?.isGroup == false && (
+              <>
+                <div className="px-1">
+                  <Label>Group Name</Label>
+                  <Select
+                    value={values?.groupName}
+                    name="groupName"
+                   // onValueChange={(value) => console.log("groupName", value.identifier)}
+                    onValueChange={(value) => handleSelect("groupName", value.identifier)}
+                  >
+                    <SelectTrigger className="w-full mt-1 border-zinc-500">
+                      <SelectValue>{values?.groupName}</SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Group Name</SelectLabel>
+                        {/* <SelectItem value={{ masterName: "self" }}>
+                        Self
+                      </SelectItem> */}
+                        {group?.map((item, index) => (
+                          <SelectItem key={index} value={item}>
+                            {item.identifier}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+           
+              </>
+            )}
 
             {values?.isMaster == true && (
               <>
@@ -1248,7 +1323,7 @@ export const AddNewtrade = () => {
                   />
                 </div>
 
-                <div className="px-1">
+                {/* <div className="px-1">
                   <Label> Target Time Delay</Label>
                   <Select
                     value={values?.targetTime}
@@ -1272,9 +1347,9 @@ export const AddNewtrade = () => {
                       </SelectGroup>
                     </SelectContent>
                   </Select>
-                </div>
+                </div> */}
 
-                <div className="px-1">
+                {/* <div className="px-1">
                   <Label>Min Exit %</Label>
                   <Input
                     name="minExitPercent"
@@ -1283,7 +1358,7 @@ export const AddNewtrade = () => {
                     className="mt-1"
                     type="text"
                   />
-                </div>
+                </div> */}
               </>
             )}
 
@@ -1704,7 +1779,7 @@ export const AddNewtrade = () => {
                           </SelectContent>
                         </Select>
                       </div>
-                      <div className="px-1">
+                      {/* <div className="px-1">
                         <Label>Last Day Close</Label>
                         <Select
                           // disabled={loading}
@@ -1734,9 +1809,9 @@ export const AddNewtrade = () => {
                             </SelectGroup>
                           </SelectContent>
                         </Select>
-                      </div>
+                      </div> */}
 
-                      <div className="px-1">
+                      {/* <div className="px-1">
                         <Label>Entry Candle</Label>
                         <Select
                           // disabled={loading}
@@ -1760,7 +1835,7 @@ export const AddNewtrade = () => {
                             </SelectGroup>
                           </SelectContent>
                         </Select>
-                      </div>
+                      </div> */}
 
                       <div className="px-1">
                         <Label>WMA</Label>
@@ -1876,7 +1951,7 @@ export const AddNewtrade = () => {
                         />
                       </div>
 
-                      <div className="px-1">
+                      {/* <div className="px-1">
                         <Label>Green Candle Ratio Min</Label>
                         <Input
                           name="greenCandleRatioDownTrend"
@@ -1886,7 +1961,7 @@ export const AddNewtrade = () => {
                           min={0}
                           type="number"
                         />
-                      </div>
+                      </div> */}
                       {/* <div className="px-1">
                         <Label>Green Candle Ratio Up Trend</Label>
                         <Input
@@ -1917,7 +1992,7 @@ export const AddNewtrade = () => {
             {(values.indexValue == 7 || values.indexValue == 17) &&
               values.isMaster && (
                 <>
-                  <div className="px-1">
+                  {/* <div className="px-1">
                     <Label>D_Entry (%)</Label>
                     <Input
                       name="dynamicEntryPercentage"
@@ -1926,8 +2001,8 @@ export const AddNewtrade = () => {
                       className="mt-1"
                       type="number"
                     />
-                  </div>
-                  <div className="px-1">
+                  </div> */}
+                  {/* <div className="px-1">
                     <Label> Trend Candle Count</Label>
                     <Input
                       name="trendCandleCount"
@@ -1936,7 +2011,7 @@ export const AddNewtrade = () => {
                       className="mt-1"
                       type="number"
                     />
-                  </div>
+                  </div> */}
 
                   <div className="px-1">
                     <Label> TrendLine Deviation(%)</Label>
@@ -2195,7 +2270,7 @@ export const AddNewtrade = () => {
                 </SelectContent>
               </Select>
             </div>
-            <div className="px-1">
+            {/* <div className="px-1">
               <Label>Gain Percent (+/-)</Label>
               <Input
                 name="gainPercent"
@@ -2205,7 +2280,7 @@ export const AddNewtrade = () => {
                 type="number"
                 min={0}
               />
-            </div>
+            </div> */}
           </section>
           <div className="px-1">
             <Label>Narration</Label>

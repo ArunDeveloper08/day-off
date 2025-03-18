@@ -16,13 +16,13 @@ import React, { useEffect, useState } from "react";
 
 const AnalyserConfig = () => {
   const [values, setValues] = useState({
-    greenCandleBelow: "60",
-    greenCandleAbove: "60",
-    sampleCandle: "14",
-    greenCandleRef: "50",
+    greenCandleBelow: "",
+    greenCandleAbove: "",
+    sampleCandle: "",
+    greenCandleRef: "",
     greenCandleInterval: "FIFTEEN_MINUTE",
-    gainPercent: "10",
-    lossPercent: "5",
+    gainPercent: "",
+    lossPercent: "",
   });
 
   const handleChange = (e) => {
@@ -83,19 +83,9 @@ const AnalyserConfig = () => {
         Analyser Config
       </p>
       <div className="grid grid-cols-4 gap-3 items-center justify-center py-5">
+
         <div className="px-1">
-          <Label>Sample candle</Label>
-          <Input
-            name="sampleCandle"
-            onChange={handleChange}
-            value={values.sampleCandle}
-            className="mt-1"
-            type="number"
-            min={0}
-          />
-        </div>
-        <div className="px-1">
-          <Label>Gain Percent</Label>
+          <Label>Gain Percent (Bullish)</Label>
           <Input
             name="gainPercent"
             onChange={handleChange}
@@ -106,7 +96,19 @@ const AnalyserConfig = () => {
           />
         </div>
         <div className="px-1">
-          <Label>Loss Percent </Label>
+          <Label>Green Candle Above (Bullish)</Label>
+          <Input
+            name="greenCandleAbove"
+            onChange={handleChange}
+            value={values.greenCandleAbove}
+            className="mt-1"
+            type="number"
+            min={0}
+          />
+        </div>
+
+        <div className="px-1">
+          <Label>Loss Percent (Bearish) </Label>
           <Input
             name="lossPercent"
             onChange={handleChange}
@@ -117,7 +119,7 @@ const AnalyserConfig = () => {
           />
         </div>
         <div className="px-1">
-          <Label>Red Candle Above </Label>
+          <Label>Red Candle Above (Bearish)</Label>
           <Input
             name="greenCandleBelow"
             onChange={handleChange}
@@ -128,31 +130,10 @@ const AnalyserConfig = () => {
           />
         </div>
 
-        <div className="px-1">
-          <Label>Green Candle Above </Label>
-          <Input
-            name="greenCandleAbove"
-            onChange={handleChange}
-            value={values.greenCandleAbove}
-            className="mt-1"
-            type="number"
-            min={0}
-          />
-        </div>
-        <div className="px-1">
-          <Label>Green Candle Ref </Label>
-          <Input
-            name="greenCandleRef"
-            onChange={handleChange}
-            value={values.greenCandleRef}
-            className="mt-1"
-            type="number"
-            min={0}
-          />
-        </div>
+     
 
         <div className="px-1">
-          <Label>Green Candle Interval</Label>
+          <Label> Candle Interval</Label>
           <Select
             value={values.greenCandleInterval}
             name="greenCandleInterval"
@@ -205,6 +186,28 @@ const AnalyserConfig = () => {
             </SelectContent>
           </Select>
         </div>
+        <div className="px-1">
+          <Label>Sample candle</Label>
+          <Input
+            name="sampleCandle"
+            onChange={handleChange}
+            value={values.sampleCandle}
+            className="mt-1"
+            type="number"
+            min={0}
+          />
+        </div>
+        {/* <div className="px-1">
+          <Label> Candle Reference </Label>
+          <Input
+            name="greenCandleRef"
+            onChange={handleChange}
+            value={values.greenCandleRef}
+            className="mt-1"
+            type="number"
+            min={0}
+          />
+        </div> */}
       </div>
       <div className="px-1">
         <Button onClick={handleSubmit}>Submit</Button>

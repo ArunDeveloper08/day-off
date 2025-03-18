@@ -418,8 +418,8 @@ const Dashboard = () => {
           match = true;
         }
         if (
-          activeFilters.includes("S.D. Yadav") &&
-          item.category === "SDYadav"
+          activeFilters.includes("Index") &&
+          item.category === "Index"
         ) {
           match = true;
         }
@@ -886,16 +886,16 @@ const Dashboard = () => {
           >
             Nifty 50
           </Button>
-          {/* <Button
-            onClick={() => handleButtonClick("S.D. Yadav")}
+          <Button
+            onClick={() => handleButtonClick("Index")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
-              activeButtons["S.D. Yadav"]
+              activeButtons["Index"]
                 ? "bg-red-500 hover:bg-red-600"
                 : "bg-black"
             }`}
           >
-            S.D. Yadav
-          </Button> */}
+            Index
+          </Button>
           <Button
             onClick={() => handleButtonClick("todayTrade")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
@@ -1083,7 +1083,7 @@ const Dashboard = () => {
 
         <div>
           <table
-            className="dashboard-table w-[900px]  mx-auto "
+            className="dashboard-table w-[1200px]  mx-auto "
             // className={`${!activeFilters.includes("isMaster") ? 'dashboard-table w-[1200px]  mx-auto' : 'dashboard-table w-[1700px]  mx-auto'}`}
           >
             <thead>
@@ -1134,15 +1134,15 @@ const Dashboard = () => {
                     <th>Trade Type</th>
                     <th>Have Tarde</th>
 
-                    <th>Is Hedge</th>
+                    {/* <th>Is Hedge</th> */}
                     {/* <th>  Hedging Trade</th> */}
-                    <th> Identifier Under Hedge</th>
+                    {/* <th> Identifier Under Hedge</th> */}
                     {/* <th>Call Entry Value</th> */}
                     <th>LTP</th>
                     {/* <th>Put Entry Value</th> */}
                     <th>Lot Size</th>
                     {/* <th>RSI Value</th> */}
-                    <th>Trade Limit</th>
+                    {/* <th>Trade Limit</th> */}
                     {/* <th>Entry Line Below</th> */}
                     {/* <th>Entry Line Above</th> */}
                     <th>Category</th>
@@ -1372,7 +1372,7 @@ const Dashboard = () => {
                               {item?.haveTrade ? "true" : "false"}
                             </td>
 
-                            <td
+                            {/* <td
                               className={
                                 item.isHedging
                                   ? "text-green-700 font-bold"
@@ -1380,8 +1380,8 @@ const Dashboard = () => {
                               }
                             >
                               {item.isHedging ? "True" : "False"}
-                            </td>
-                            <td
+                            </td> */}
+                            {/* <td
                               className={
                                 item.isHedging
                                   ? "font-bold text-green-600"
@@ -1389,7 +1389,7 @@ const Dashboard = () => {
                               }
                             >
                               {item.hedgingIdentifier}
-                            </td>
+                            </td> */}
                             {/* <td
                               className={`${
                                 item.ResistancePrice &&
@@ -1407,7 +1407,7 @@ const Dashboard = () => {
 
                             <td>{item.lotSize}</td>
 
-                            <td>{item.maxLoss}</td>
+                            {/* <td>{item.maxLoss}</td> */}
 
                             {/* <td
                               className={`${
@@ -1563,7 +1563,7 @@ const Dashboard = () => {
                             <SquareArrowOutUpRight className="w-4 h-4" />
                           </Button>
                         </td>
-                        <td className="text-center flex gap-x-2">
+                        <td className="text-center flex gap-x-2 h-20 items-center">
                           <Button
                             onClick={() =>
                               onOpen("edit-trade", {
@@ -1700,6 +1700,8 @@ const Dashboard = () => {
                                   rbExtiRsi: item.rbExtiRsi,
                                   greenCandleRatioRangeBound:
                                     item.greenCandleRatioRangeBound,
+                                    isGroup: item.isGroup,
+                                    groupName: item.groupName,
                                 },
                                 getAllTrades,
                                 trades,
