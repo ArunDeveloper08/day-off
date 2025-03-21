@@ -116,6 +116,9 @@ const UIButton = ({
         <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
          Base  Gain : {(data?.data?.gainOneMinute)}  
         </p>
+        <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
+         Target Flag : {(data?.data?.lowestGainOneMinute)}  
+        </p>
        
         {/* <p className="text-[13px] md:text-[16px] w-full sm:w-auto">
           Lowest Gain One Min: {(data?.data?.lowestGainOneMinute)}  

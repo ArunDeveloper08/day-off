@@ -242,6 +242,8 @@ const HelpingChart = () => {
   };
 
   const getChartData = async () => {
+
+    
     const maxRetries = 5; // Maximum number of retries
     let attempts = 0; // Counter for attempts
 

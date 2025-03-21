@@ -1014,7 +1014,7 @@ const Dashboard = () => {
             className="p-1 mb-1 w-[150px]"
           />
 
-          <div>
+          {/* <div>
             <Label className="flex items-center">Gainer Qty</Label>
 
             <Input
@@ -1046,39 +1046,12 @@ const Dashboard = () => {
               className=" mb-1 w-[150px] h-[30px]"
               value={gainerLooserQty.looserProductQty}
             />
-          </div>
-
-          <Button onClick={handleSubmitLooserGainerQty}>Submit</Button>
-
-          {/* <div className=" mb-1 ">
-            <Select
-              className="w-[150px] "
-              value={tradeIdentification}
-              onValueChange={(value) => setTradeIdentification(value)}
-            >
-              <SelectTrigger className="w-full mt-1 border-zinc-500">
-                <SelectValue>
-                  {tradeOptions.find(
-                    (option) => option.value === tradeIdentification
-                  )?.label || ""}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Trade Identification</SelectLabel>
-
-                  {tradeOptions?.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Button onClick={handleSubmit}>Submit</Button>
           </div> */}
+
+         {/* <Button onClick={handleSubmitLooserGainerQty}>Submit</Button> */}
+          
+
+ 
         </div>
 
         <div>
