@@ -535,12 +535,14 @@ export const LivePage = () => {
           </div>
         </div>
 
-        {id && (
+        {(id && data?.data?.identifier )&& (
           <LiveDataTable
             id={id}
             socketData={socketData}
+           
             socketMastertData={socketMastertData}
             values={values}
+            identifier = {data?.data?.identifier}
           />
         )}
       </>

@@ -57,7 +57,7 @@ const HelpingChart = () => {
   const [bankNifty, setBankNifty] = useState();
   const [Nifty, setNifty] = useState();
   const [noActionLine, setNoActionLine] = useState([]);
- 
+
   const [tradeStatus, setTradeStatus] = useState([]);
   const [trendLineMode, setTrendLineMode] = useState(0);
 
@@ -147,11 +147,11 @@ const HelpingChart = () => {
     horizontalLine: true,
     ceEntryLine: true,
     peEntryLine: true,
-    dEntryLine:true,
-    dExitLine : true,
-    stopLoss:true,
-    targetLine : true,
-    entryPivotValue:true,
+    dEntryLine: true,
+    dExitLine: true,
+    stopLoss: true,
+    targetLine: true,
+    entryPivotValue: true,
   });
   const [hideConfig, setHideConfig] = useState(true);
 
@@ -242,8 +242,6 @@ const HelpingChart = () => {
   };
 
   const getChartData = async () => {
-
-    
     const maxRetries = 5; // Maximum number of retries
     let attempts = 0; // Counter for attempts
 
@@ -505,12 +503,11 @@ const HelpingChart = () => {
         // Update the previous value to the current value
         // prevTrendLineActive.current = values.trendLineActive;
       })
-      .catch((err) => {       
+      .catch((err) => {
         console.log(err);
         alert(err.response?.data?.message || "An error occurred");
       });
   };
-  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -580,10 +577,6 @@ const HelpingChart = () => {
     // if (!values) return;
     const interval = setInterval(getChartData, 120 * 1000);
 
-
-
-
-
     return () => clearInterval(interval);
   }, [
     tradeStatus?.haveTradeOfCE,
@@ -612,7 +605,7 @@ const HelpingChart = () => {
         clearInterval(intervalRef.current);
       } else {
         getChartData();
-        // intervalRef.current = setInterval(getChartData, 12 * 1000);
+         intervalRef.current = setInterval(getChartData, 120 * 1000);
       }
     };
 
@@ -656,7 +649,7 @@ const HelpingChart = () => {
           // Replace the `close` value in the last candle with `last_traded_price`
           updatedData[updatedData.length - 1] = {
             ...updatedData[updatedData.length - 1],
-            close: socketdata.last_traded_price ,
+            close: socketdata.last_traded_price,
           };
 
           return updatedData;
@@ -843,7 +836,7 @@ const HelpingChart = () => {
     getTestMode();
   }, []);
 
-  const getValue = (key) => tradeStatus?.[key];
+  const getValue = (key) => data.data?.[key];
 
   // const getValue = (key) => filteredData?.[0]?.[key] ?? data.data[key];
 
@@ -853,8 +846,8 @@ const HelpingChart = () => {
   };
 
   const openChartInNewTab2 = () => {
-    // const identifier = data?.data?.identifier;
-
+     
+    // const identifier = data?.data?.identifier; 
     const url = `/future/pcrchart?identifier=Nifty 50`;
 
     window.open(url, "_blank");
@@ -870,7 +863,6 @@ const HelpingChart = () => {
   ];
 
   const tradeIdentificationValue = data.data.tradeIdentification;
-
   // Find the corresponding trade option
   const tradeLabel =
     tradeOptions.find((option) => option.value === tradeIdentificationValue)
@@ -879,10 +871,8 @@ const HelpingChart = () => {
   // const trednLineModeOption = [
   //   { label: "Mannual", value: 0 },
   //   { label: "Auto", value: 1 },
-
   // ];
 
-  // console.log("trendLine" , trendLineMode)
 
   return (
     <div className="p-2">
@@ -895,23 +885,9 @@ const HelpingChart = () => {
           <button className="text-[20px] text-center font-semibold text-red-700">
             LTP : {socketData?.last_traded_price} &nbsp;
             <span>
-              {/* OI PCR :{" "}
-                {data?.data?.PCR?.toFixed(1)} &nbsp; COI PCR :{" "}
-                {data?.data?.COIPCR?.toFixed(1)} &nbsp; RSI :{" "} */}
-              {/* RSI :{" "}  {data?.data?.RSI_Value?.toFixed(1)} &nbsp; */}
+    
             </span>
-            {/* {data?.data?.lastHighestLTP > 0 && (
-              <span>Last High LTP : {data?.data?.lastHighestLTP}</span>
-            )} */}
-            &nbsp;
-            {/* {
-              // (data?.data?.haveTradeOfPEBuy ||
-              //   data?.data?.haveTradeOfPE ||
-              //   data?.data?.haveTradeOfFUTSell) &&
-              data?.data?.lastLowestLTP > 0 && (
-                <span> Last Lowest LTP : {data?.data?.lastLowestLTP} </span>
-              )
-            } */}
+
           </button>
           &nbsp; &nbsp;
           <Button
@@ -958,34 +934,6 @@ const HelpingChart = () => {
           <>
             <div>
               <div className="flex flex-wrap font-semibold py-2  justify-start">
-                {/* <p className=" text-[13px] md:text-[16px]">
-                   Terminal : {data?.data?.terminal}
-                </p>
-                <p className="text-red-600  text-[13px] md:text-[16px]">
-                  Candle :
-                  {values?.interval === "minute"
-                    ? "1 minute"
-                    : values?.interval}
-                </p> */}
-                {/* <p className=" text-[13px] md:text-[16px]">
-                    Identifier:
-                    {data?.data?.identifier}
-                  </p> */}
-                {/* <p className=" text-[13px] md:text-[16px]">
-                  Trade Index: {data?.data?.tradeIndex}
-                </p> */}
-                {/* {data?.data?.tradeIndex != 4 && data?.data?.tradeIndex != 7 && (
-                  <>
-                    <p className=" text-[13px] md:text-[16px]">
-                      SMA1 : {data?.data?.SMA1}
-                    </p>
-                    <p className=" text-[13px] md:text-[16px]">
-                      SMA2 : {data?.data?.SMA2}
-                    </p>
-                  </>
-                )} */}
-                {/* Here put socket Data */}
-                {/* CE Buy Status */}
                 <p
                   className={`${
                     getValue("haveTradeOfCE")
@@ -1079,94 +1027,6 @@ const HelpingChart = () => {
               </div>
 
               <div className="flex flex-wrap   font-semibold py-2  justify-start">
-                {/* <p
-                  className={`${
-                    getValue("haveTradeOfHedgeCE")
-                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
-                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
-                  }`}
-                >
-                  CE Buy Hedge :{" "}
-                  {getValue("haveTradeOfHedgeCE") ? "True" : "False"}
-                </p>
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-          
-                <p
-                  className={`${
-                    getValue("haveTradeOfHedgePE")
-                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
-                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
-                  }`}
-                >
-                  PE Buy Hedge :{" "}
-                  {getValue("haveTradeOfHedgePE") ? "True" : "False"}
-                </p>
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-            
-                <p
-                  className={`${
-                    getValue("haveTradeOfHedgeCESell")
-                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
-                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
-                  }`}
-                >
-                  CE SELL Hedge:{" "}
-                  {getValue("haveTradeOfHedgeCESell") ? "True" : "False"}
-                </p>
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-          
-                <p
-                  className={`${
-                    getValue("haveTradeOfHedgePESell")
-                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
-                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
-                  }`}
-                >
-                  PE SELL Hedge:{" "}
-                  {getValue("haveTradeOfHedgePESell") ? "True" : "False"}
-                </p>
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-          
-                <p
-                  className={`${
-                    getValue("haveTradeOfHedgeFUTBuy")
-                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
-                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
-                  }`}
-                >
-                  FUT Buy Hedge:{" "}
-                  {getValue("haveTradeOfHedgeFUTBuy") ? "True" : "False"}
-                </p>
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-              
-                <p
-                  className={`${
-                    getValue("haveTradeOfHedgeFUTSell")
-                      ? "text-[#dc2626] font-bold text-[13px] md:text-[16px]"
-                      : "text-green-600 font-bold text-[13px] md:text-[16px]"
-                  }`}
-                >
-                  FUT Sell Hedge:{" "}
-                  {getValue("haveTradeOfHedgeFUTSell") ? "True" : "False"}
-                </p> */}
-                <p
-                  className={`${
-                    data?.data?.maxLoss == data.data.lossLimit
-                      ? "text-red-600 font-bold"
-                      : "text-green-600 font-bold"
-                  }`}
-                >
-                  Trade Count : {data.data.lossLimit}
-                </p>
-                &nbsp; &nbsp; &nbsp; &nbsp;
-                <p>Call Entry Line : {data.data.callLine}</p>
-                &nbsp; &nbsp; &nbsp; &nbsp;
-                <p>Put Entry Line : {data.data.putLine}</p>
-                &nbsp; &nbsp; &nbsp; &nbsp;
-                <p>Call Entry Line2 : {data.data.callLine2}</p>
-                &nbsp; &nbsp; &nbsp; &nbsp;
-                <p>Put Entry Line2: {data.data.putLine2}</p>
-                &nbsp; &nbsp; &nbsp; &nbsp;
                 <button
                   onClick={openChartInNewTab}
                   className="bg-green-600 text-white px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]"
@@ -1222,7 +1082,7 @@ const HelpingChart = () => {
                   )}
                 </div>
               )}
-
+              {/* 
               {(data.data.tradeIndex == 7 || data.data.tradeIndex == 17) && (
                 <div>
                   {trendLineValue && (
@@ -1394,7 +1254,7 @@ const HelpingChart = () => {
                     </p>
                   )}
                 </div>
-              )}
+              )} */}
 
               <div className="flex justify-between flex-wrap gap-1 md:gap-y-1">
                 <button

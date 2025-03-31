@@ -4,7 +4,13 @@ import { formatDate } from "@/lib/utils";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-const LiveDataTable = ({ id, socketData, socketMastertData, values }) => {
+const LiveDataTable = ({
+  id,
+  socketData,
+  socketMastertData,
+  values,
+  identifier,
+}) => {
   const { theme } = useTheme();
   const [data, setData] = useState([]);
   const [sum, setSum] = useState(0);
@@ -12,7 +18,9 @@ const LiveDataTable = ({ id, socketData, socketMastertData, values }) => {
 
   const liveTradeData = () => {
     axios
-      .get(`${BASE_URL_OVERALL}/chart/getLogs?id=${id}`)
+      .post(`${BASE_URL_OVERALL}/chart/getLogs?id=${id}`, {
+        identifier: identifier,
+      })
       .then((res) => setData(res.data.data))
       .catch((err) => console.log(err));
   };
@@ -25,8 +33,8 @@ const LiveDataTable = ({ id, socketData, socketMastertData, values }) => {
 
   useEffect(() => {
     const total = data?.reduce((acc, item) => {
-      if (item.entryPrice !== null && item.exitPrice !== null) {
-        const diff = item.exitPrice - item?.entryPrice;
+      if (item.EntryPivot !== null && item.ExitPivot !== null && item.ExitPivot != 0) {
+        const diff = item.ExitPivot - item?.EntryPivot;
         return acc + diff;
       }
       return acc;
@@ -41,14 +49,14 @@ const LiveDataTable = ({ id, socketData, socketMastertData, values }) => {
       setLastTwoDiffs({ diff1 });
     }
   }, [data, socketData]);
- 
+
   const calculateDiff = (item) => {
     if (
       !item ||
       !socketData?.last_traded_price ||
-     // !socketMastertData?.last_traded_price ||
-      !item?.entryPivot ||
-      item?.exitPivot
+      // !socketMastertData?.last_traded_price ||
+      !item?.EntryPivot ||
+      item?.ExitPivot
     )
       return null;
 
@@ -57,26 +65,26 @@ const LiveDataTable = ({ id, socketData, socketMastertData, values }) => {
     // Check tradeIndex condition
     if (values?.tradeIndex === 7 || values?.tradeIndex === 17) {
       if (item.CallType === "CE") {
-        diff = (socketMastertData.last_traded_price - item.entryPivot)?.toFixed(
+        diff = (socketMastertData.last_traded_price - item.EntryPivot)?.toFixed(
           2
         );
       } else if (item.CallType === "PE") {
-        diff = (item.entryPivot - socketMastertData.last_traded_price)?.toFixed(
+        diff = (item.EntryPivot - socketMastertData.last_traded_price)?.toFixed(
           2
         );
       }
     } else {
-    //  if (item.entryOrderType === "BUY") {
-        diff = (socketData.last_traded_price - item.entryPivot)?.toFixed(2);
-    //  }
+      //  if (item.entryOrderType === "BUY") {
+      diff = (socketData.last_traded_price - item.EntryPivot)?.toFixed(2);
+      //  }
       //  else if (item.entryOrderType === "SELL") {
-      //   diff = (item.entryPivot - socketData.last_traded_price)?.toFixed(2);
+      //   diff = (item.EntryPivot - socketData.last_traded_price)?.toFixed(2);
       // }
     }
 
     return { identifier: item.identifier, diff };
   };
- 
+
   return (
     <div className="p-4">
       <div className="ml-3 mt-2 flex justify-around">
@@ -96,7 +104,7 @@ const LiveDataTable = ({ id, socketData, socketMastertData, values }) => {
               <th className="p-2 border border-gray-300">Sr No.</th>
               <th className="p-2 border border-gray-300">Entry Time</th>
               <th className="p-2 border border-gray-300">Entry Case</th>
-              <th className="p-2 border border-gray-300">Entry Order Type</th>
+              <th className="p-2 border border-gray-300">Entry  Type</th>
               <th className="p-2 border border-gray-300">Entry Price</th>
               <th className="p-2 border border-gray-300">Exit Time</th>
               <th className="p-2 border border-gray-300">Exit Case</th>
@@ -110,8 +118,8 @@ const LiveDataTable = ({ id, socketData, socketMastertData, values }) => {
             {data?.map((item, index) => {
               // console.log("item.entryOrderType",item.entryOrderType)
               const priceDiff =
-                item.entryPrice !== null && item.exitPrice !== null
-                  ? (item.exitPrice - item.entryPrice)?.toFixed(2)
+                item.EntryPivot !== null && item.ExitPivot !== null && item.ExitPivot != 0
+                  ? (item.ExitPivot - item.EntryPivot)?.toFixed(2)
                   : null;
 
               return (
@@ -125,28 +133,36 @@ const LiveDataTable = ({ id, socketData, socketMastertData, values }) => {
                     {index + 1}
                   </td>
                   <td className="p-2 border border-gray-300 text-center text-sm">
-                    {formatDate(item.realEntryTime)}
+                    { item.EntryTime && item.EntryTime?.split("T")
+                      .map((part, index) =>
+                        index === 1 ? part.slice(0, 8) : part
+                      )
+                      .join(" ")}
                   </td>
                   <td className="p-2 border border-gray-300 text-center text-sm">
                     {item.EntryCase}
                   </td>
                   <td className="p-2 border border-gray-300 text-center text-sm">
-                    {item.entryOrderType}
-                  </td>                          
-                  <td className="p-2 border border-gray-300 text-center text-sm">
-                    {item.entryPivot?.toFixed(2)}
+                    {item.EntryType}
                   </td>
                   <td className="p-2 border border-gray-300 text-center text-sm">
-                    {formatDate(item.realExitTime)}
+                    {item.EntryPivot?.toFixed(2)}
+                  </td>
+                  <td className="p-2 border border-gray-300 text-center text-sm">
+                    {item.ExitTime && item.ExitTime?.split("T")
+                      .map((part, index) =>
+                        index === 1 ? part.slice(0, 8) : part
+                      )
+                      .join(" ")}
                   </td>
                   <td className="p-2 border border-gray-300 text-center text-sm">
                     {item.ExitCase}
                   </td>
                   <td className="p-2 border border-gray-300 text-center text-sm">
-                    {item.exitPivot?.toFixed(2)}
+                    {item.ExitPivot?.toFixed(2)}
                   </td>
                   <td className="p-2 border border-gray-300 text-center text-sm">
-                    {item.exitOrderType}                 
+                    {item.TransactionType}
                   </td>
                   <td className="p-2 border border-gray-300 text-center text-sm">
                     {item.exitReason}

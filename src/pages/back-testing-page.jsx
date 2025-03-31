@@ -23,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import MasterBacktestingTablePage from "./MasterBacktestingTablePage";
 
 export const BackTestingPage = () => {
   const { theme, setTheme } = useTheme();
@@ -42,6 +43,7 @@ export const BackTestingPage = () => {
   const [intractiveData, setIntractiveData] = useState([]);
   const [entryLine, setEntryLine] = useState([]);
   const [chartType, setChartType] = useState("svg");
+  const [loading, setLoading] = useState(false);
 
   const [data, setData] = useState({
     loading: false,
@@ -79,9 +81,9 @@ export const BackTestingPage = () => {
     dExitLine: true,
     toolTip: true,
     bollingerBand: false,
-    stopLoss:true,
-    targetLine : true,
-    entryPivotValue:true,
+    stopLoss: true,
+    targetLine: true,
+    entryPivotValue: true,
   });
 
   const [latestValues, setLatestValues] = useState({
@@ -150,7 +152,7 @@ export const BackTestingPage = () => {
   //     .then((res) => {
   //       console.log("response", res.data);
   //     })
-  //     .catch((err) => {      
+  //     .catch((err) => {
   //       console.log(err);
   //     });
   // };
@@ -169,16 +171,30 @@ export const BackTestingPage = () => {
       })
       .catch((err) => {
         console.log(err);
+        alert("No Data is Coming.....");
       });
-  
+
     // Second API call (fire-and-forget, doesn't wait for response)
-    axios.post(`${BASE_URL_OVERALL}/proxy-backtesting`, {
-      identifier: data.data.identifier,
-      backTestingFromDate: dateTime?.timestamp1+":07.519Z",
-      backTestingToDate: dateTime?.timestamp2+":07.519Z",
-    }).catch((err) => console.log("Error in second API:", err));
   };
-  
+
+  const handleAnalyserStart = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        `${BASE_URL_OVERALL}/proxy-backtesting`,
+        {
+          identifier: data.data.identifier,
+          backTestingFromDate: dateTime?.timestamp1 + ":07.519Z",
+          backTestingToDate: dateTime?.timestamp2 + ":07.519Z",
+        }
+      );
+      alert(response.data.message);
+      setLoading(false);
+    } catch (err) {
+      console.log("Error in second API:", err);
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (isConnected && socket) {
@@ -477,21 +493,6 @@ export const BackTestingPage = () => {
             >
               D_Exit Line
             </button>
-            {/* 
-              &nbsp; &nbsp;
-         <button
-           onClick={() =>
-             setShowRow((p) => ({
-               ...p,           v 
-               arrow: !p.arrow,
-             }))
-           }
-           className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-             showRow.arrow ? "bg-blue-500 text-gray-100" : "bg-gray-300"
-           }`}
-         >
-           <span className="flex">Buy Sell (Arrow)</span>
-         </button> */}
             &nbsp; &nbsp;
             <button
               onClick={() =>
@@ -506,7 +507,7 @@ export const BackTestingPage = () => {
                   : "bg-gray-300 "
               }`}
             >
-             Target Line
+              Target Line
             </button>
             &nbsp; &nbsp;
             <button
@@ -517,12 +518,10 @@ export const BackTestingPage = () => {
                 }))
               }
               className={`px-3 py-1 duration-300 text-xs font-semibold rounded-md ${
-                showRow.stopLoss
-                  ? "bg-blue-500 text-gray-100"
-                  : "bg-gray-300 "
+                showRow.stopLoss ? "bg-blue-500 text-gray-100" : "bg-gray-300 "
               }`}
             >
-               Stop Loss
+              Stop Loss
             </button>
             &nbsp; &nbsp;
             <button
@@ -611,7 +610,7 @@ export const BackTestingPage = () => {
                 onChange={handleChange}
               />
 
-              <p className="text-xl font-serif" > -- To -- </p>
+              <p className="text-xl font-serif"> -- To -- </p>
 
               <input
                 value={dateTime.timestamp2}
@@ -683,6 +682,18 @@ export const BackTestingPage = () => {
               Trendline Submit
             </Button>
             <Button onClick={handleStart}>Start</Button>
+            <Button
+              onClick={handleAnalyserStart}
+              disabled={loading}
+              className="relative flex items-center justify-center"
+            >
+              {loading ? (
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              ) : (
+                "Analyser Start"
+              )}
+            </Button>
+
             <Button onClick={handlePlayPause}>
               {isPlaying ? "Pause" : "Play"}
             </Button>
@@ -710,11 +721,20 @@ export const BackTestingPage = () => {
             />
           )}
 
-          <BackTestingTablePage
-            updateTrigger={updateTrigger}
-            setUpdateTrigger={setUpdateTrigger}
-            id={id}
-          />
+          {data.data.isMaster ? (
+            <MasterBacktestingTablePage
+              updateTrigger={updateTrigger}
+              setUpdateTrigger={setUpdateTrigger}
+              id={id}
+              data={data.data.symbol}
+            />
+          ) : (
+            <BackTestingTablePage
+              updateTrigger={updateTrigger}
+              setUpdateTrigger={setUpdateTrigger}
+              id={id}
+            />
+          )}
         </>
       )}
     </div>
