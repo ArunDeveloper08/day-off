@@ -74,7 +74,7 @@ const LiveDataTable = ({
         );
       }
     } else {
-      //  if (item.entryOrderType === "BUY") {
+      console.log("hello  -------- >")
       diff = (socketData.last_traded_price - item.EntryPivot)?.toFixed(2);
       //  }
       //  else if (item.entryOrderType === "SELL") {
@@ -143,7 +143,7 @@ const LiveDataTable = ({
                     {item.EntryCase}
                   </td>
                   <td className="p-2 border border-gray-300 text-center text-sm">
-                    {item.EntryType}
+                    Buy
                   </td>
                   <td className="p-2 border border-gray-300 text-center text-sm">
                     {item.EntryPivot?.toFixed(2)}

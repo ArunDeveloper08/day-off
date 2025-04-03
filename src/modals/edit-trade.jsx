@@ -103,26 +103,26 @@ export const EditTrade = () => {
     if (values.isMaster && values.strikeDeviation == "") {
       return alert("Please fill Strike Deviation");
     }
-    if (
-      (values.indexValue === 2 || values.indexValue === 12) &&
-      (!values.dynamicEntryPercentage ||
-        !values.priceDecPercent ||
-        !values.atrMf ||
-        // !values.dExitMf ||
-        !values.targetLevel ||
-        // !values.targetMf ||
-        !values.entryCandle)
-      // !values.rsiReference ||
-      // !values.intervalReference ||
-      // !values.dExitMean ||
-      // !values.targetMean ||
-      //!values.masterIntervalReference ||
-      // !values.masterRsiReference
-      // !values.downBand
-      // !values.upBand
-    ) {
-      return alert("Please fill in all the required inputs for index 2.");
-    }
+    // if (
+    //   (values.indexValue === 2 || values.indexValue === 12) &&
+    //   (!values.dynamicEntryPercentage ||
+    //     !values.priceDecPercent ||
+    //     !values.atrMf ||
+    //     // !values.dExitMf ||
+    //     !values.targetLevel ||
+    //     // !values.targetMf ||
+    //     !values.entryCandle)
+    //   // !values.rsiReference ||
+    //   // !values.intervalReference ||
+    //   // !values.dExitMean ||
+    //   // !values.targetMean ||
+    //   //!values.masterIntervalReference ||
+    //   // !values.masterRsiReference
+    //   // !values.downBand
+    //   // !values.upBand
+    // ) {
+    //   return alert("Please fill in all the required inputs for index 2.");
+    // }
 
     // if (values?.rangeBoundPercent > values?.rangeBoundPercent2) {
     //   return alert(

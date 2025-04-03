@@ -614,25 +614,25 @@ export const AddNewtrade = () => {
       return alert("Please fill Strike Deviation");
     }
 
-    if (
-      (values.indexValue == 2 || values?.indexValue == 12) &&
-      (!values.dynamicEntryPercentage ||
-        !values.priceDecPercent ||
-        !values.atrMf ||
-        !values.dExitMf ||
-        !values.targetMf ||
-        !values.targetLevel ||
-        !values.entryCandle ||
-        !values.rsiReference ||
-        !values.intervalReference ||
-        !values.dExitMean ||
-        !values.targetMean ||
-        !values.masterIntervalReference ||
-        !values.masterRsiReference ||
-        !values.s1)
-    ) {
-      return alert("Please fill in all the required inputs for index 2.");
-    }
+    // if (
+    //   (values.indexValue == 2 || values?.indexValue == 12) &&
+    //   (!values.dynamicEntryPercentage ||
+    //     !values.priceDecPercent ||
+    //     !values.atrMf ||
+    //     !values.dExitMf ||
+    //     !values.targetMf ||
+    //     !values.targetLevel ||
+    //     !values.entryCandle ||
+    //     !values.rsiReference ||
+    //     !values.intervalReference ||
+    //     !values.dExitMean ||
+    //     !values.targetMean ||
+    //     !values.masterIntervalReference ||
+    //     !values.masterRsiReference ||
+    //     !values.s1)
+    // ) {
+    //   return alert("Please fill in all the required inputs for index 2.");
+    // }
     try {
       await axios.post(`${BASE_URL_OVERALL}/config/create`, {
         terminal: values.terminal,

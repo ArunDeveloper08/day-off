@@ -1040,6 +1040,15 @@ const HelpingChart = () => {
                 >
                   Nifty PCR Chart
                 </button>
+                &nbsp; &nbsp;
+              
+                  <p>Resistance Slope  : {data.data.ResistLatestVal }</p>
+               
+                   &nbsp; &nbsp;
+               
+                  <p>Support Slope   : {data.data.SupportLatestVal  }</p>
+              
+                            
               </div>
 
               {data.data.tradeIndex == 4 && (
@@ -1082,6 +1091,7 @@ const HelpingChart = () => {
                   )}
                 </div>
               )}
+
               {/* 
               {(data.data.tradeIndex == 7 || data.data.tradeIndex == 17) && (
                 <div>

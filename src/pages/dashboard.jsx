@@ -624,7 +624,7 @@ const Dashboard = () => {
             autoStrikeMode: newToggle,
           })
           .then((response) => {
-            alert(response.data.message);
+            alert("Succesfully updated");
           })
           .catch((err) => console.log(err));
 
@@ -679,7 +679,7 @@ const Dashboard = () => {
               strikeToggle ? "" : "bg-red-600 hover:bg-red-600"
             }`}
           >
-            {strikeToggle ? "Auto Strike Activated" : "Auto Strike Deactivated"}
+            {strikeToggle ? "Auto Child Deleted" : "Auto Child Not Deleted"}
           </Button>
           <Button
             onClick={deleteChild}
