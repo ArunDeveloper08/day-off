@@ -48,12 +48,12 @@ const TradeLogs = () => {
   // Memoized Total Price Calculation
   const totalPrice = useMemo(() => {
     return (
-      filteredData?.reduce(
-        (acc, item) => acc + (item.exitPivot - item.entryPivot || 0),
-        0
-      ) ?? 0
+      filteredData
+        ?.filter(item => item.ExitPivot !== 0) // ✅ Exclude ExitPivot === 0
+        .reduce((acc, item) => acc + ((item.ExitPivot - item.EntryPivot) || 0), 0) ?? 0
     );
   }, [filteredData]);
+  
 
   return (
     <div>
@@ -107,11 +107,11 @@ const TradeLogs = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredData.map((item, index) => {
+          {filteredData?.map((item, index) => {
             const priceDiff =
-              item.entryPivot !== null && item.exitPivot !== null
-                ? (item.exitPivot - item.entryPivot)?.toFixed(2)
-                : "N/A";
+              item.EntryPivot !== null && item.ExitPivot !== null && item.ExitPivot != 0
+                ? (item.ExitPivot - item.EntryPivot)?.toFixed(2)
+                : "";
 
             return (
               <tr key={index}>
@@ -122,22 +122,22 @@ const TradeLogs = () => {
                   {item.identifier}
                 </td>
                 <td className="border border-gray-300 text-center text-[13px] p-1">
-                  {item.realEntryTime}
+                  {item.EntryTime}
                 </td>
                 <td className="border border-gray-300 text-center text-[13px] p-1">
                   {item.entryOrderType}
                 </td>
                 <td className="border border-gray-300 text-center text-[13px] p-1">
-                  {item.entryPivot?.toFixed(2)}
+                  {item.EntryPivot?.toFixed(2)}
                 </td>
                 <td className="border border-gray-300 text-center text-[13px] p-1">
                   {item.CallType}
                 </td>
                 <td className="border border-gray-300 text-center text-[13px] p-1">
-                  {item.realExitTime}
+                  {item.ExitTime}
                 </td>
                 <td className="border border-gray-300 text-center text-[13px] p-1">
-                  {item?.exitPivot?.toFixed(2)}
+                  {item?.ExitPivot?.toFixed(2)}
                 </td>
                 <td className="p-1 border border-gray-300 text-center text-[13px]">
                   <button className="rounded-sm text-[13px] p-1">

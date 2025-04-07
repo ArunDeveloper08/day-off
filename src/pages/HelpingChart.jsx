@@ -874,11 +874,11 @@ const HelpingChart = () => {
   // ];
 
 
-  return (
+    return (
     <div className="p-2">
       {/* {data.error ? (
         "Some Error Occcured"
-      ) : ( */}
+      ) : ( */}   
       <>
         <h2 className="text-center font-semibold text-[18px] font-mono text-red-600 sm:text-[20px] md:text-[20px]">
           {data?.data?.identifier} &nbsp;{" "}
@@ -1013,7 +1013,7 @@ const HelpingChart = () => {
                   {getValue("haveTradeOfFUTBuy") ? "True" : "False"}
                 </p>
                 &nbsp; &nbsp;
-                {/* FUT Sell Status */}
+               
                 <p
                   className={`${
                     getValue("haveTradeOfFUTSell")

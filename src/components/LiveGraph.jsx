@@ -795,6 +795,11 @@ const CandleChart = ({
       );
     };
 
+
+
+
+
+
     const onDrawCompleteEntryLine3 = (newAlerts) => {
    
       setEnableEntryLine(false);
@@ -857,6 +862,12 @@ const CandleChart = ({
         "Entry lines saved."
       );
     };
+
+
+
+
+
+
 
     const onFibComplete1 = (newRetracements) => {
       console.log("onFibComplete1");
@@ -1436,6 +1447,7 @@ const CandleChart = ({
 
                   { showRow?.targetLine && (
                     <LineSeries
+                     strokeDasharray="Dash"
                       strokeWidth={4}
                       stroke="violet"
                       yAccessor={(d) =>
@@ -1971,8 +1983,10 @@ const CandleChart = ({
                     </>
                   )}
 
+
                   {showRow.entryLine && (
                     <>
+                   
                       <TrendLine
                         ref={(node) => {
                           entryLineNodeRef.current = node;
@@ -1983,7 +1997,11 @@ const CandleChart = ({
                         value={entryLine}
                         snapTo={(d) => [d?.high, d?.low]}
                         onStart={() => console.log("Entry Line Line Start")}
-                        onComplete={onDrawCompleteEntryLine3}
+                     
+                   // onComplete={onDrawCompleteEntryLine3}
+                    onComplete={
+                      master.interval === "FIFTEEN_MINUTE" ? onDrawCompleteEntryLine3 : undefined
+                    }
                         trends={entryLine}
                       />
                       <DrawingObjectSelector
