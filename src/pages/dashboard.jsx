@@ -288,6 +288,8 @@ const Dashboard = () => {
     }
   };
 
+  
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEditValues((prev) => ({
@@ -323,6 +325,7 @@ const Dashboard = () => {
     secureLocalStorage.clear();
     navigate("/future");
   };
+
   // const clearNotification = async () => {
   //   try {
   //     const response = await axios.put(
@@ -336,7 +339,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (trades?.data && socketData) {
-      const newFilteredTrades = trades.data.filter((item) => {
+      const newFilteredTrades = trades?.data?.filter((item) => {
         if (activeFilters.includes("ALL")) return true;
 
         let match = false;
@@ -351,7 +354,7 @@ const Dashboard = () => {
           match = true;
         }
         if (
-          activeFilters.includes("tradingStockPE") &&
+          activeFilters.includes("tradingStockPE") &&  
           item.tradingOptions == "PE"
         ) {
           match = true;
@@ -419,7 +422,7 @@ const Dashboard = () => {
         }
         if (
           activeFilters.includes("Index") &&
-          item.category === "Index"
+          item.category === "Index" 
         ) {
           match = true;
         }
@@ -457,7 +460,6 @@ const Dashboard = () => {
   const [activeButtons, setActiveButtons] = useState({ ALL: true });
 
   // Function to handle the filter toggle
-
   // const toggleFilter = (filterType) => {
   //   //console.log(filterType)
   //   setActiveFilters((prevFilters) => {
@@ -696,6 +698,7 @@ const Dashboard = () => {
           >
             Looser/Gainer Log
           </Button>
+          
           <Button
             onClick={() => navigate("/future/sop")}
             className="px-5 py-2 rounded-md border-2"
@@ -789,7 +792,7 @@ const Dashboard = () => {
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${
               activeButtons["isMaster"]
                 ? "bg-red-500 hover:bg-red-600"
-                : "bg-black"
+                : "bg-black"    
             }`}
           >
             Master
@@ -806,6 +809,7 @@ const Dashboard = () => {
               </Button>
             </>
           )}
+          
           <Button
             onClick={() => handleButtonClick("tradingStockCE")}
             className={`w-full md:w-auto px-5 py-2 rounded-md border-2 ${

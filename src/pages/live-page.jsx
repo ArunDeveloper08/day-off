@@ -266,7 +266,7 @@ export const LivePage = () => {
           // Replace the `close` value in the last candle with `last_traded_price`
           updatedData[updatedData.length - 1] = {
             ...updatedData[updatedData.length - 1],
-            close: socketdata.last_traded_price,
+               close: socketdata.last_traded_price,
           };
 
           return updatedData;
@@ -279,13 +279,14 @@ export const LivePage = () => {
         // if (currentTime - lastUpdateTimeRef.current > 10 * 1000) {
         //lastUpdateTimeRef.current = currentTime;
         // }
+        
       }
     });
 
     return () => {
       socket.off("getLiveData");
     };
-  }, [socket, data, isConnected]);
+  }, [socket, data, isConnected]); 
 
   const handleSubmit = async () => {
     try {

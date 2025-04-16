@@ -50,7 +50,7 @@ const TradeLogs = () => {
     return (
       filteredData
         ?.filter(item => item.ExitPivot !== 0) // ✅ Exclude ExitPivot === 0
-        .reduce((acc, item) => acc + ((item.ExitPivot - item.EntryPivot) || 0), 0) ?? 0
+        ?.reduce((acc, item) => acc + ((item.ExitPivot - item.EntryPivot) || 0), 0) ?? 0
     );
   }, [filteredData]);
   
@@ -107,7 +107,9 @@ const TradeLogs = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredData?.map((item, index) => {
+          {filteredData
+          ?.filter(item => item.ExitTime) 
+          ?.map((item, index) => {
             const priceDiff =
               item.EntryPivot !== null && item.ExitPivot !== null && item.ExitPivot != 0
                 ? (item.ExitPivot - item.EntryPivot)?.toFixed(2)
@@ -122,7 +124,11 @@ const TradeLogs = () => {
                   {item.identifier}
                 </td>
                 <td className="border border-gray-300 text-center text-[13px] p-1">
-                  {item.EntryTime}
+                {item.EntryTime && item.EntryTime?.split("T")
+                      .map((part, index) =>
+                        index === 1 ? part.slice(0, 8) : part
+                      )
+                      .join(" ")}
                 </td>
                 <td className="border border-gray-300 text-center text-[13px] p-1">
                   {item.entryOrderType}
@@ -134,7 +140,11 @@ const TradeLogs = () => {
                   {item.CallType}
                 </td>
                 <td className="border border-gray-300 text-center text-[13px] p-1">
-                  {item.ExitTime}
+                {item.ExitTime && item.ExitTime?.split("T")
+                      .map((part, index) =>
+                        index === 1 ? part.slice(0, 8) : part
+                      )
+                      .join(" ")}
                 </td>
                 <td className="border border-gray-300 text-center text-[13px] p-1">
                   {item?.ExitPivot?.toFixed(2)}

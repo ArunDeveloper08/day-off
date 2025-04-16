@@ -154,6 +154,7 @@ const HelpingChart = () => {
     entryPivotValue: true,
   });
   const [hideConfig, setHideConfig] = useState(true);
+  const [getTimes, setGetTimes] = useState([]);
 
   const { onOpen } = useModal();
 
@@ -293,6 +294,21 @@ const HelpingChart = () => {
     // If all retries fail
     console.log("All retry attempts failed.");
   };
+
+  const getTime = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL_OVERALL}/chart/getTime`);
+
+      setGetTimes(response.data?.[0]);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  useEffect(() => {
+    getTime();
+    const interval = setInterval(getTime, 20 * 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const roundToNearestTime = (time, interval) => {
     const date = new Date(time);
@@ -463,6 +479,19 @@ const HelpingChart = () => {
 
   // const prevTrendLineActive = useRef(values.trendLineActive);
 
+  const last10Candles = apiData &&  apiData?.slice(-10); // Get last 10 candles
+
+  // Count green candles (close > open)
+  const greenCandleCount = last10Candles.filter(candle => candle.close > candle.open).length;
+  
+  // Calculate percentage
+  const greenPercentage = (greenCandleCount / last10Candles.length) * 100;
+  
+  // console.log(`🟢 Green Candles: ${greenCandleCount}`);
+  // console.log(`✅ Green Candle Percentage: ${greenPercentage.toFixed(2)}%`);
+  
+
+
   const handleSubmit = () => {
     axios
       .put(`${BASE_URL_OVERALL}/config/editMaster?id=${id}`, {
@@ -605,7 +634,7 @@ const HelpingChart = () => {
         clearInterval(intervalRef.current);
       } else {
         getChartData();
-         intervalRef.current = setInterval(getChartData, 120 * 1000);
+        intervalRef.current = setInterval(getChartData, 120 * 1000);
       }
     };
 
@@ -640,7 +669,7 @@ const HelpingChart = () => {
         setSocketData(socketdata);
         // Throttle updates to once per second
         // if (currentTime - lastUpdateTimeRef.current > 10 * 1000) {
-        //  console.log("arun")
+        
         lastUpdateTimeRef.current = currentTime;
         setApiData((prevApiData) => {
           if (!prevApiData || prevApiData.length === 0) return prevApiData;
@@ -846,8 +875,7 @@ const HelpingChart = () => {
   };
 
   const openChartInNewTab2 = () => {
-     
-    // const identifier = data?.data?.identifier; 
+    // const identifier = data?.data?.identifier;
     const url = `/future/pcrchart?identifier=Nifty 50`;
 
     window.open(url, "_blank");
@@ -873,21 +901,17 @@ const HelpingChart = () => {
   //   { label: "Auto", value: 1 },
   // ];
 
-
-    return (
+  return (
     <div className="p-2">
       {/* {data.error ? (
         "Some Error Occcured"
-      ) : ( */}   
+      ) : ( */}
       <>
         <h2 className="text-center font-semibold text-[18px] font-mono text-red-600 sm:text-[20px] md:text-[20px]">
           {data?.data?.identifier} &nbsp;{" "}
           <button className="text-[20px] text-center font-semibold text-red-700">
             LTP : {socketData?.last_traded_price} &nbsp;
-            <span>
-    
-            </span>
-
+            <span></span>
           </button>
           &nbsp; &nbsp;
           <Button
@@ -1001,7 +1025,6 @@ const HelpingChart = () => {
                   {getValue("haveTradeOfEQSell") ? "True" : "False"}
                 </p>
                 &nbsp; &nbsp; &nbsp;
-                {/* FUT Buy Status */}
                 <p
                   className={`${
                     getValue("haveTradeOfFUTBuy")
@@ -1013,7 +1036,6 @@ const HelpingChart = () => {
                   {getValue("haveTradeOfFUTBuy") ? "True" : "False"}
                 </p>
                 &nbsp; &nbsp;
-               
                 <p
                   className={`${
                     getValue("haveTradeOfFUTSell")
@@ -1027,7 +1049,7 @@ const HelpingChart = () => {
               </div>
 
               <div className="flex flex-wrap   font-semibold py-2  justify-start">
-                <button
+                {/* <button
                   onClick={openChartInNewTab}
                   className="bg-green-600 text-white px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]"
                 >
@@ -1039,16 +1061,18 @@ const HelpingChart = () => {
                   className="bg-green-600 text-white px-1 border-muted-foreground rounded-sm text-[13px] md:text-[16px]"
                 >
                   Nifty PCR Chart
-                </button>
+                </button> */}
+                <p>Green Candle  :  {(greenPercentage)?.toFixed(1)}%</p>
                 &nbsp; &nbsp;
-              
-                  <p>Resistance Slope  : {data.data.ResistLatestVal }</p>
-               
-                   &nbsp; &nbsp;
-               
-                  <p>Support Slope   : {data.data.SupportLatestVal  }</p>
-              
-                            
+                <p className="text-[14px]">Resistance Slope : {data.data.ResistLatestVal}</p>
+                &nbsp; &nbsp;
+                <p className="text-[14px]">Support Slope : {data.data.SupportLatestVal}</p>
+                &nbsp; &nbsp;
+                <p className="text-[14px]">
+                  Entry Soft. Time : {getTimes?.EntrySoftwareTime}
+                  &nbsp; &nbsp; Exit Soft. Time : {getTimes?.ExitSoftwareTime}
+                  &nbsp; &nbsp; Order Engine : {getTimes?.OrderEngineTime}
+                </p>
               </div>
 
               {data.data.tradeIndex == 4 && (

@@ -758,46 +758,87 @@ const CandleChart = ({
       );
     };
 
+    // const onDrawCompleteHorizontal = (newAlerts) => {
+    //   setEnableHorizontalLine(false);
+
+    //   // Ensure the line spans from the first candle to the last candle
+    //   let coloredAlerts = newAlerts?.map((item) => {
+    //     let startIndex = 0; // First candle
+    //     let endIndex = data?.length - 1; // Last candle
+
+    //     // Get the timestamp for the first and last candles
+    //     let startTime = data[startIndex]?.timestamp;
+    //     let endTime = data[endIndex]?.timestamp;
+
+    //     return {
+    //       ...item,
+    //       start: [startIndex, item.start[1]], // Keep the y-coordinate same, adjust x to start at the first candle
+    //       end: [endIndex, item.start[1]], // Keep the y-coordinate same, adjust x to end at the last candle
+    //       appearance: {
+    //         ...item.appearance,
+    //         stroke: "black",
+    //         strokeWidth: 1,
+    //       },
+    //       startTime,
+    //       endTime,
+    //     };
+    //   });
+
+    //   // Update state and send data
+    //   setHorizontalLine(coloredAlerts);
+    //   logTrendLines(coloredAlerts);
+    //   setActiveLineType(null);
+    //   sendDataToAPI(
+    //     { horizontalLine: coloredAlerts },
+    //     "/config/edit",
+    //     "Horizontal lines saved."
+    //   );
+    // };
+
+
+
     const onDrawCompleteHorizontal = (newAlerts) => {
       setEnableHorizontalLine(false);
-
+    
       // Ensure the line spans from the first candle to the last candle
-      let coloredAlerts = newAlerts?.map((item) => {
+      let coloredAlerts = newAlerts?.map((item, index) => {
         let startIndex = 0; // First candle
         let endIndex = data?.length - 1; // Last candle
-
+    
         // Get the timestamp for the first and last candles
         let startTime = data[startIndex]?.timestamp;
         let endTime = data[endIndex]?.timestamp;
-
+                 
+        // Set color: green for first line, red for second, black for others
+        let strokeColor = "white";
+        if (index === 0) strokeColor = "green";
+        else if (index === 1) strokeColor = "red";
+              
         return {
           ...item,
-          start: [startIndex, item.start[1]], // Keep the y-coordinate same, adjust x to start at the first candle
-          end: [endIndex, item.start[1]], // Keep the y-coordinate same, adjust x to end at the last candle
+          start: [startIndex, item.start[1]], // y stays the same, x from first candle
+          end: [endIndex, item.start[1]],     // y stays the same, x to last candle
           appearance: {
             ...item.appearance,
-            stroke: "black",
+            stroke: strokeColor,
             strokeWidth: 1,
           },
           startTime,
           endTime,
         };
       });
-
+    
       // Update state and send data
       setHorizontalLine(coloredAlerts);
       logTrendLines(coloredAlerts);
       setActiveLineType(null);
       sendDataToAPI(
         { horizontalLine: coloredAlerts },
-        "/config/edit",
+        "/config/edit", 
         "Horizontal lines saved."
       );
     };
-
-
-
-
+    
 
 
     const onDrawCompleteEntryLine3 = (newAlerts) => {
@@ -1243,35 +1284,49 @@ const CandleChart = ({
                   // yExtents={[
                   //   (d) => [d.high, d.low, d.pivot - d.dynamicExitValue],
                   // ]}
-                  yExtents={[(d) => [d.high, d.low]]}
-                  // padding={{ top: 0, bottom: 0 }}
-                  // yExtents={(d) => [d.high, d.low]} // Ensure proper y-axis scaling based on high/low
+
+
+              
+                 // yExtents={[(d) => [d.high, d.low]]} // original 
+
+
+                //  yExtents={() => {
+                //   const lastCandle = data[data.length - 1];
+                //   const buffer = (lastCandle.high - lastCandle.low) * 3; // Add some buffer
+                //   return [lastCandle.low - buffer, lastCandle.high + buffer];
+                // }}
+
+
+                yExtents={() => {
+                  const lastTen = data.slice(-40); // Get last 10 candles
+                  const highs = lastTen.map((d) => d.high);
+                  const lows = lastTen.map((d) => d.low);
+                
+                  const maxHigh = Math.max(...highs);
+                  const minLow = Math.min(...lows);
+                  const buffer = (maxHigh - minLow) * 0.1; // Add 10% buffer
+                
+                  return [minLow - buffer, maxHigh + buffer];
+                }}
+                
+                
+                //xExtents={[data[data.length - Math.min(50, data.length)], data[data.length - 1]]}
+
+
+
+                  
                   padding={{ top: 100, bottom: 150 }} // Add some padding to prevent squeezing
                 >
                   <XAxis axisAt="bottom" orient="bottom" ticks={10} />
                   <YAxis axisAt="right" orient="right" />
 
-                  {showRow.candle && (
-                    // <CandlestickSeries
-                    //   opacity={1}
-                    //   // fill={(d) =>
-                    //   //   d.close > d.open
-                    //   //     ? d.low >= d.open
-                    //   //       ? "green"
-                    //   //       : "#70e078"
-                    //   //     : d.high <= d.open
-                    //   //     ? "red"
-                    //   //     : "#edbdb8"
-                    //   // }
-                    //   fill={(d) => (d.close > d.open ? "green" : "red")}
-                    // />
-
-                    <CandlestickSeries
+                  {showRow.candle && (                       
+                    <CandlestickSeries                   
                       opacity={1}
                       fill={(d) => (d.close > d.open ? "#089981" : "#f23645")}
                       widthRatio={0.6} // Adjust this value to control candle width and spacing
                     />
-                  )}
+                  )} 
 
                   {showRow?.bollingerBand && (
                     <>

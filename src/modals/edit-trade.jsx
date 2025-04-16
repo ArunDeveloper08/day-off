@@ -39,7 +39,7 @@ export const EditTrade = () => {
   }, [data.data]);
   const [values, setValues] = React.useState(data.data);
   const isModalOpen = isOpen && type === "edit-trade";
-  const [group , setGroup] = React.useState([])
+  const [group, setGroup] = React.useState([]);
   const [trades, setTrades] = React.useState({
     loading: false,
     data: [],
@@ -251,8 +251,7 @@ export const EditTrade = () => {
         greenCandleRatioRangeBound: values.greenCandleRatioRangeBound,
         isGroup: values.isGroup,
         groupName: values.groupName,
-
-
+      
       });
       alert("Update Successfully");
     } catch (error) {
@@ -265,7 +264,7 @@ export const EditTrade = () => {
     const filteredData = data?.trades?.data?.filter((item) => item.isMaster);
     const filteredData2 = data?.trades?.data?.filter((item) => item.isGroup);
     setTrades(filteredData);
-    setGroup(filteredData2)
+    setGroup(filteredData2);
   };
 
   React.useEffect(() => {
@@ -558,7 +557,7 @@ export const EditTrade = () => {
                         type="text"
                       />
                     </div> */}
-                   
+
                     {/* <div className="px-1">
                       <Label>DEM Max</Label>
                       <Input
@@ -595,7 +594,7 @@ export const EditTrade = () => {
                         onChange={handleChange}
                       />
                     </div>
-                    <div className="px-1">
+                    {/* <div className="px-1">
                       <Label>Hedge Deviation (%)</Label>
                       <Input
                         value={values.hedgeDeviation}
@@ -604,7 +603,7 @@ export const EditTrade = () => {
                         name="hedgeDeviation"
                         onChange={handleChange}
                       />
-                    </div>
+                    </div> */}
                   </>
                 )}
 
@@ -851,33 +850,33 @@ export const EditTrade = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                  <div className="px-1">
-                              <Label>Is Group</Label>
-                              <Select
-                                value={String(values.isGroup)} // Convert boolean to string for the select value
-                                name="isGroup"
-                                onValueChange={(value) => handleSelect("isGroup", value)}
-                              >
-                                <SelectTrigger className="w-full mt-1 border-zinc-500">
-                                  <SelectValue>{String(values.isGroup)}</SelectValue>
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectGroup>
-                                    <SelectLabel>Is Group</SelectLabel>
-                                    {[{ isGroup: true }, { isGroup: false }]?.map(
-                                      (suggestion) => (
-                                        <SelectItem
-                                          key={String(suggestion.isGroup)}
-                                          value={suggestion.isGroup}
-                                        >
-                                          {String(suggestion.isGroup)}
-                                        </SelectItem>
-                                      )
-                                    )}
-                                  </SelectGroup>
-                                </SelectContent>
-                              </Select>
-                            </div>
+                <div className="px-1">
+                  <Label>Is Group</Label>
+                  <Select
+                    value={String(values.isGroup)} // Convert boolean to string for the select value
+                    name="isGroup"
+                    onValueChange={(value) => handleSelect("isGroup", value)}
+                  >
+                    <SelectTrigger className="w-full mt-1 border-zinc-500">
+                      <SelectValue>{String(values.isGroup)}</SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Is Group</SelectLabel>
+                        {[{ isGroup: true }, { isGroup: false }]?.map(
+                          (suggestion) => (
+                            <SelectItem
+                              key={String(suggestion.isGroup)}
+                              value={suggestion.isGroup}
+                            >
+                              {String(suggestion.isGroup)}
+                            </SelectItem>
+                          )
+                        )}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
 
                 {values?.isMaster == false && (
                   <>
@@ -957,38 +956,38 @@ export const EditTrade = () => {
                   </>
                 )}
 
-                     {values?.isGroup == false && (
-                               <>
-                                 <div className="px-1">
-                                   <Label>Group Name</Label>
-                                   <Select
-                                     value={values?.groupName}
-                                     name="groupName"
-                                    // onValueChange={(value) => console.log("groupName", value.identifier)}
-                                     onValueChange={(value) => handleSelect("groupName", value.identifier)}
-                                   >
-                                     <SelectTrigger className="w-full mt-1 border-zinc-500">
-                                       <SelectValue>{values?.groupName}</SelectValue>
-                                     </SelectTrigger>
-                                     <SelectContent>
-                                       <SelectGroup>
-                                         <SelectLabel>Group Name</SelectLabel>
-                                         {/* <SelectItem value={{ masterName: "self" }}>
+                {values?.isGroup == false && (
+                  <>
+                    <div className="px-1">
+                      <Label>Group Name</Label>
+                      <Select
+                        value={values?.groupName}
+                        name="groupName"
+                        // onValueChange={(value) => console.log("groupName", value.identifier)}
+                        onValueChange={(value) =>
+                          handleSelect("groupName", value.identifier)
+                        }
+                      >
+                        <SelectTrigger className="w-full mt-1 border-zinc-500">
+                          <SelectValue>{values?.groupName}</SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>Group Name</SelectLabel>
+                            {/* <SelectItem value={{ masterName: "self" }}>
                                          Self
                                        </SelectItem> */}
-                                         {group?.map((item, index) => (
-                                           <SelectItem key={index} value={item}>
-                                             {item.identifier}
-                                           </SelectItem>
-                                         ))}
-                                       </SelectGroup>
-                                     </SelectContent>
-                                   </Select>
-                                 </div>
-                 
-                            
-                               </>
-                             )}
+                            {group?.map((item, index) => (
+                              <SelectItem key={index} value={item}>
+                                {item.identifier}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </>
+                )}
                 {values.isMaster == true && (
                   <>
                     <div className=" mb-1 ">
@@ -1286,18 +1285,18 @@ export const EditTrade = () => {
                     {(values.indexValue == 2 || values.indexValue == 12) &&
                       values.isMaster == false && (
                         <>
-                         <div className="px-1">
-                      <Label>RSI/ATR Candle</Label>
-                      <Input
-                        name="rsiCandle"
-                        onChange={handleChange}
-                        value={values.rsiCandle}
-                        className="mt-1"
-                        type="number"
-                        min={0}
-                      />
-                    </div>
-                    {/* <div className="px-1">
+                          <div className="px-1">
+                            <Label>RSI/ATR Candle</Label>
+                            <Input
+                              name="rsiCandle"
+                              onChange={handleChange}
+                              value={values.rsiCandle}
+                              className="mt-1"
+                              type="number"
+                              min={0}
+                            />
+                          </div>
+                          {/* <div className="px-1">
                       <Label>DEM Min</Label>
                       <Input
                         name="s1"
@@ -1308,39 +1307,39 @@ export const EditTrade = () => {
                         type="number"
                       />
                     </div> */}
-                    <div className="px-1">
-                      <Label>DTM Min</Label>
-                      <Input
-                        name="vdtmConstant"
-                        onChange={handleChange}
-                        value={values.vdtmConstant}
-                        className="mt-1"
-                        min={0}
-                        type="number"
-                      />
-                    </div>
-                    <div className="px-1">
-                      <Label>Candle Ratio</Label>
-                      <Input
-                        name="candleRatio"
-                        onChange={handleChange}
-                        value={values.candleRatio}
-                        className="mt-1"
-                        min={0}
-                        type="number"
-                      />
-                    </div>
-                    <div className="px-1">
-                      <Label>DTM Max</Label>
-                      <Input
-                        name="targetMean"
-                        onChange={handleChange}
-                        value={values.targetMean}
-                        className="mt-1"
-                        min={0}
-                        type="number"
-                      />
-                    </div>
+                          <div className="px-1">
+                            <Label>DTM Min</Label>
+                            <Input
+                              name="vdtmConstant"
+                              onChange={handleChange}
+                              value={values.vdtmConstant}
+                              className="mt-1"
+                              min={0}
+                              type="number"
+                            />
+                          </div>
+                          <div className="px-1">
+                            <Label>Candle Ratio</Label>
+                            <Input
+                              name="candleRatio"
+                              onChange={handleChange}
+                              value={values.candleRatio}
+                              className="mt-1"
+                              min={0}
+                              type="number"
+                            />
+                          </div>
+                          <div className="px-1">
+                            <Label>DTM Max</Label>
+                            <Input
+                              name="targetMean"
+                              onChange={handleChange}
+                              value={values.targetMean}
+                              className="mt-1"
+                              min={0}
+                              type="number"
+                            />
+                          </div>
                           <div className="px-1">
                             <Label>Candle Type</Label>
                             <Select
@@ -1596,6 +1595,17 @@ export const EditTrade = () => {
                               min={0}
                             />
                           </div>
+                          {/* <div className="px-1">
+                            <Label>Hedge ATR</Label>
+                            <Input
+                              name="hedgeDeviation"
+                              onChange={handleChange}
+                              value={values.hedgeDeviation}
+                              className="mt-1"
+                              min={0}
+                              type="number"
+                            />
+                          </div> */}
                           {/* <div className="px-1">
                             <Label>D_Exit Constant</Label>
                             <Input
@@ -2090,8 +2100,19 @@ export const EditTrade = () => {
                   type="number"
                 />
               </div> */}
+                     <div className="px-1">
+                        <Label>Hedge ATR</Label>
+                        <Input
+                          name="hedgeDeviation"
+                          onChange={handleChange}
+                          value={values.hedgeDeviation}
+                          className="mt-1"
+                          min={0}
+                          type="number"
+                        />
+                      </div>
 
-                <div className="px-1">
+                   <div className="px-1">
                   <Label>Trade In Time</Label>
                   <Input
                     name="tradeInTime"

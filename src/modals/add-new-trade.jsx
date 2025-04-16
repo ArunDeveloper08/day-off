@@ -104,7 +104,7 @@ const initialState = {
   hedgingIdentifier: "",
   FUTDeviation: "",
   hedgeValue: "",
-  hedgeDeviation: "",
+  hedgeDeviation: "1",
   tradingOptions: "",
   exitSelection: "low",
   entryCandle: "both",
@@ -253,7 +253,7 @@ const alternateInitialState = {
   hedgingIdentifier: "",
   FUTDeviation: "",
   hedgeValue: "",
-  hedgeDeviation: "",
+  hedgeDeviation: "1",
   tradingOptions: "",
   exitSelection: "low",
   entryCandle: "both",
@@ -399,7 +399,7 @@ const gammaBlastInitialState = {
   hedgingIdentifier: "",
   FUTDeviation: "",
   hedgeValue: "",
-  hedgeDeviation: "",
+  hedgeDeviation: "1",
   tradingOptions: "",
   exitSelection: "low",
   entryCandle: "both",
@@ -1073,7 +1073,7 @@ export const AddNewtrade = () => {
                     onChange={handleChange}
                   />
                 </div>
-                <div className="px-1">
+                {/* <div className="px-1">
                   <Label>Hedge Deviation (%)</Label>
                   <Input
                     value={values.hedgeDeviation}
@@ -1082,7 +1082,7 @@ export const AddNewtrade = () => {
                     name="hedgeDeviation"
                     onChange={handleChange}
                   />
-                </div>
+                </div> */}
               </>
             )}
 
@@ -1894,6 +1894,7 @@ export const AddNewtrade = () => {
                           type="number"
                         />
                       </div>
+               
                       {/* <div className="px-1">
                         <Label>D_Exit Constant</Label>
                         <Input
@@ -2076,6 +2077,17 @@ export const AddNewtrade = () => {
                   </div> */}
                 </>
               )}
+                     <div className="px-1">
+                        <Label>Hedge ATR</Label>
+                        <Input
+                          name="hedgeDeviation"
+                          onChange={handleChange}
+                          value={values.hedgeDeviation}
+                          className="mt-1"
+                          min={0}
+                          type="number"
+                        />
+                      </div>
 
             <div className="px-1">
               <Label>Trade In Time</Label>

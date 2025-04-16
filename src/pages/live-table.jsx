@@ -14,7 +14,7 @@ const LiveDataTable = ({
   const { theme } = useTheme();
   const [data, setData] = useState([]);
   const [sum, setSum] = useState(0);
-  const [lastTwoDiffs, setLastTwoDiffs] = useState({ diff1: null });
+  const [lastTwoDiffs, setLastTwoDiffs] = useState({ diff1: null , diff2 : null  });
 
   const liveTradeData = () => {
     axios
@@ -44,9 +44,11 @@ const LiveDataTable = ({
 
   useEffect(() => {
     if (data?.length >= 0 && socketData?.last_traded_price) {
-      const lastTwo = data?.slice(0, 2);
+      const lastTwo = data?.slice(0, 3);
       const diff1 = calculateDiff(lastTwo?.[0]);
-      setLastTwoDiffs({ diff1 });
+      const diff2 = calculateDiff(lastTwo?.[1]);
+      const diff3 = calculateDiff(lastTwo?.[2]);
+      setLastTwoDiffs({ diff1 , diff2 , diff3 });
     }
   }, [data, socketData]);
 
@@ -54,7 +56,7 @@ const LiveDataTable = ({
     if (
       !item ||
       !socketData?.last_traded_price ||
-      // !socketMastertData?.last_traded_price ||
+ 
       !item?.EntryPivot ||
       item?.ExitPivot
     )
@@ -74,7 +76,7 @@ const LiveDataTable = ({
         );
       }
     } else {
-      console.log("hello  -------- >")
+    
       diff = (socketData.last_traded_price - item.EntryPivot)?.toFixed(2);
       //  }
       //  else if (item.entryOrderType === "SELL") {
@@ -84,15 +86,26 @@ const LiveDataTable = ({
 
     return { identifier: item.identifier, diff };
   };
-
-  return (
+   
+  return (  
     <div className="p-4">
       <div className="ml-3 mt-2 flex justify-around">
-        {lastTwoDiffs?.diff1?.diff && (
+
+        {
+          lastTwoDiffs?.diff2?.diff  ? 
+          <p className="font-semibold font-serif">
+            {lastTwoDiffs?.diff2?.identifier} : {lastTwoDiffs?.diff2?.diff}
+          </p>
+             :
+          <p className="font-semibold font-serif">
+          {lastTwoDiffs?.diff1?.identifier} : {lastTwoDiffs?.diff1?.diff}
+        </p>
+        }
+        {/* {lastTwoDiffs?.diff1?.diff && (
           <p className="font-semibold font-serif">
             {lastTwoDiffs?.diff1?.identifier} : {lastTwoDiffs?.diff1?.diff}
           </p>
-        )}
+        )} */}
       </div>
 
       {/* Scrollable wrapper for the table */}
